@@ -650,7 +650,7 @@ const HIM_ARM = {
   far:    { up: [[-.14, .4, .2], [0, 1.15, .75], [.14, 1.32, .92], [.3, 1.16, 1.12], [.5, 1.22, 1.26], [.7, 1.08, 1.06], [.88, .92, .86], [1, .88, .8]],
             fore: [[.13, .94, 1.0], [.3, .9, .96], [.5, .8, .84], [.7, .72, .72], [.88, .66, .66], [1, .64, .64]] },
   shirt:  { up: [[-.14, .48, .22], [0, 1.3, .85], [.14, 1.48, 1.04], [.3, 1.3, 1.26], [.5, 1.38, 1.42], [.7, 1.24, 1.22], [.88, 1.12, 1.06], [1, 1.1, 1.02]], fore: [[.08, 1.12, 1.12]] },
-  skin:   { fore: [[0, .9, .95], [.15, .98, 1.06], [.35, .92, .98], [.55, .8, .82], [.78, .66, .66], [1, .56, .56]] }
+  skin:   { fore: [[0, 1.12, 1.18], [.15, 1.24, 1.3], [.35, 1.14, 1.2], [.55, .98, 1.0], [.78, .8, .8], [1, .64, .64]] }
 };
 function himArmProf(S, E, Wr, prof, outer) {
   const P = [], Wd = [], d1 = himDir(S, E), d2 = himDir(E, Wr);
@@ -829,7 +829,7 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // ---------- torsos ----------
 // Torso-local units: origin = hip centre, y up is negative. Each view gives: neck pivot (for the head), the head origin
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
-const HIM_HS = 1.2;   // the head is drawn 15% larger than the body unit (anime proportions)
+const HIM_HS = 1.24;   // the head is drawn 15% larger than the body unit (anime proportions)
 const HIM_RIG = {
   front: { neck: [0, -12.2], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.78, 0], L: [1.78, 0] } },
   q:     { neck: [.1, -12.2], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.65, -8.3] }, hip: { R: [-1.4, 0], L: [1.65, 0] } },
@@ -852,10 +852,10 @@ function himNeck(K, c, P, view) {
     if (K.det) { K.shape(P([[.72, -12.6], [1.15, -12.5], [.72, -11.4], [.34, -10.9], [.48, -11.6]]), { wash: c.skinSh, op: 90, ink: null, n: 3 });
       K.line(P([[-.13, -11.78], [0, -11.92], [.13, -11.78]]), .25, c.skinDk, { n: 3 }); }
   } else if (view === 'q') {
-    K.shape(P([[-1.4, -13.7], [1.25, -13.7], [1.3, -12.3], [1.5, -11.4], [2.05, -10.75], [-2.25, -10.75], [-1.75, -11.4], [-1.48, -12.3]]), { wash: c.skin, ink: null, n: 3 });
+    K.shape(P([[-1.4, -13.7], [1.25, -13.7], [1.3, -12.3], [1.5, -11.4], [1.95, -10.75], [-1.95, -10.75], [-1.65, -11.4], [-1.48, -12.3]]), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[-1.3, -13.4], [1.1, -13.4], [1.14, -12.6], [.4, -12.25], [-.6, -12.4], [-1.32, -12.7]]), { wash: c.skinSh, op: 210, ink: null, n: 3, wc: .6, gran: false });
     K.shape(P([[.55, -12.4], [1.16, -12.3], [1.38, -11.4], [1.95, -10.75], [1.2, -10.8], [.75, -11.6]]), { wash: c.skinSh, op: 120, ink: null, n: 3 });
-    K.line(P([[-1.4, -13.4], [-1.48, -12.3], [-1.78, -11.4], [-2.3, -10.75]]), .6); K.line(P([[1.25, -13.3], [1.3, -12.3], [1.52, -11.4], [2.08, -10.75]]), .78);
+    K.line(P([[-1.4, -13.4], [-1.48, -12.3], [-1.68, -11.4], [-2.0, -10.75]]), .6); K.line(P([[1.25, -13.3], [1.3, -12.3], [1.52, -11.4], [2.08, -10.75]]), .78);
     K.line(P([[-1.0, -13.0], [-.35, -11.8], [.35, -10.8]]), .3, c.skinDk, { n: 3 }); K.line(P([[1.0, -12.9], [.85, -11.8], [.7, -10.85]]), .26, c.skinDk, { n: 3 });
     if (K.det) K.line(P([[.12, -11.8], [.24, -11.95], [.34, -11.8]]), .25, c.skinDk, { n: 3 });
   } else {
@@ -883,7 +883,7 @@ function himTorsoFront(K, c, o, outfit) {
     K.shape(P([[.55, -9.4], [1.05, -8.8], [.9, -6.0], [.45, -4.5], [.35, -7.0]]), { wash: c.shirtSh, op: 120, ink: null, n: 3 }); }
   if (outfit === 'home') {
     // rumpled white shirt: chest and shoulders show through the pull of the cloth; untucked, two buttons open
-    const body = [[-1.3, -10.45], [-2.9, -10.4], [-3.9, -9.45], [-4.6, -8.45], [-4.8, -7.0], [-4.4, -5.2], [-3.35, -2.6], [-3.7, 0], [-3.85, 1.5, 1], [-1.4, 1.75], [.6, 1.5], [2.2, 1.8], [3.85, 1.5, 1], [3.7, 0], [3.35, -2.6], [4.4, -5.2], [4.8, -7.0], [4.6, -8.45], [3.9, -9.45], [2.9, -10.4], [1.3, -10.45]];
+    const body = [[-1.08, -10.45], [-1.32, -11.3], [-2.08, -10.8], [-2.91, -10.15], [-3.83, -9.35], [-4.6, -8.45], [-4.8, -7.0], [-4.4, -5.2], [-3.35, -2.6], [-3.7, 0], [-3.85, 1.5, 1], [-1.4, 1.75], [.6, 1.5], [2.2, 1.8], [3.85, 1.5, 1], [3.7, 0], [3.35, -2.6], [4.4, -5.2], [4.8, -7.0], [4.6, -8.45], [3.83, -9.35], [2.91, -10.15], [2.08, -10.8], [1.32, -11.3], [1.08, -10.45]];
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[1.0, -10.55], [.5, -9.4], [0, -8.2], [-.5, -9.4], [-1.0, -10.55]].concat([[-1.0, -10.55]])), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[3.0, -9.7], [3.9, -9.2], [4.6, -8.3], [4.6, -6.6], [4.1, -5.0], [3.35, -2.6], [3.6, 0], [3.75, 1.45], [2.8, 1.6], [2.9, -.5], [2.85, -2.6], [3.5, -5.0], [3.6, -7.0], [3.4, -8.8]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
@@ -898,7 +898,7 @@ function himTorsoFront(K, c, o, outfit) {
     // placket with the buttons, then the silhouette
     K.line(P([[.05, -8.2], [.12, -5.0], [-.02, -2.0], [.1, 1.5]]), .32, c.shirtSh, { n: 3 });
     for (const y of [-6.6, -4.4, -2.2, 0]) K.shape(ellPts(.18, y, .1, .1, 8), { wash: c.shirtSh, ink: null, raw: true, j: 0 });
-    K.line(P(body.slice(0, 10)), .75, c.ink, { n: 4 }); K.line(P(body.slice(9, 13)), .55, c.ink, { n: 4 }); K.line(P(body.slice(12)), .9, c.ink, { n: 4 });
+    K.line(P(body.slice(0, 11)), .75, c.ink, { n: 4 }); K.line(P(body.slice(10, 15)), .55, c.ink, { n: 4 }); K.line(P(body.slice(14)), .9, c.ink, { n: 4 });
     return;
   }
   // belt in the cutaway below the button
@@ -957,16 +957,15 @@ function himTorsoFront(K, c, o, outfit) {
 // 3/4 torso facing screen right: the near side (his right) is screen left, the chest centre line is at x ≈ 1.3.
 function himTorsoQ(K, c, o, outfit) {
   const P = himBreath(o, 'q');
-  if (outfit === 'launch') K.shape(P([[-1.35, -11.0], [-1.25, -11.5], [.1, -11.75], [1.3, -11.45], [1.4, -11.0]]), { wash: c.jacketDk, sw: .45, n: 3 });
+  if (outfit === 'launch') K.shape(P([[-1.0, -11.0], [-.95, -11.5], [.1, -11.7], [.9, -11.45], [.95, -11.0]]), { wash: c.jacketDk, sw: .45, n: 3 });
   himNeck(K, c, pts => pts.map(([x, y, k]) => [x, y, k]), 'q');
-  K.shape(P([[-1.2, -10.4], [1.5, -10.4], [2.3, -10.0], [2.9, -8.0], [2.7, -4.0], [2.6, -.4], [-2.6, -.4], [-2.8, -4.0], [-3.0, -8.0], [-2.0, -10.1]]), { wash: c.shirt, ink: null, n: 3 });
+  K.shape(P([[-1.0, -10.2], [1.3, -10.2], [2.3, -10.0], [2.9, -8.0], [2.7, -4.0], [2.6, -.4], [-2.6, -.4], [-2.8, -4.0], [-3.0, -8.0], [-2.0, -10.0]]), { wash: c.shirt, ink: null, n: 3 });
   const vd = outfit === 'home' ? -8.2 : -8.75;
-  K.shape(P([[-.15, -10.5], [1.6, -10.5], [1.2, -9.5], [.95, vd], [.45, -9.5]]), { wash: c.skin, ink: null, n: 3 });
-  K.shape(P([[-.1, -10.45], [1.55, -10.45], [1.3, -10.15], [.1, -10.15]]), { wash: c.skinSh, op: 90, ink: null, n: 3 });
+  K.shape(P([[-.15, -10.8], [1.6, -10.8], [1.2, -9.5], [.95, vd], [.45, -9.5]]), { wash: c.skin, ink: null, n: 3 });
   K.line(P([[.0, -10.0], [.45, -9.8], [.8, -9.6]]), .25, c.skinDk);
   K.line(P([[-.05, -10.75], [.45, -9.5], [.95, vd], [1.2, -9.5], [1.55, -10.75]]), .4, c.ink, { n: 3 });
   if (outfit === 'home') {
-    const body = [[-1.2, -10.45], [-2.5, -10.2], [-3.4, -9.4], [-3.95, -8.4], [-4.0, -6.8], [-3.85, -5.0], [-3.1, -2.6], [-3.45, 0], [-3.55, 1.5, 1], [-1.0, 1.75], [1.0, 1.5], [3.25, 1.6, 1], [3.15, 0], [2.95, -2.5], [3.3, -4.4], [3.62, -6.2], [3.55, -8.0], [3.1, -9.45], [2.2, -10.4], [1.5, -10.45]];
+    const body = [[-.05, -10.5], [-.85, -11.25], [-1.8, -10.72], [-2.85, -9.95], [-3.4, -9.3], [-3.95, -8.4], [-4.0, -6.8], [-3.85, -5.0], [-3.1, -2.6], [-3.45, 0], [-3.55, 1.5, 1], [-1.0, 1.75], [1.0, 1.5], [3.25, 1.6, 1], [3.15, 0], [2.95, -2.5], [3.3, -4.4], [3.62, -6.2], [3.55, -8.0], [3.15, -9.65], [2.6, -10.55], [1.95, -11.15], [1.6, -10.5]];
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[-.05, -10.6], [1.55, -10.6], [1.2, -9.4], [.95, -8.2], [.45, -9.4]]), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[1.8, -8.6], [3.3, -8.6], [3.62, -6.2], [3.3, -4.4], [2.95, -2.5], [3.15, 0], [3.25, 1.6], [2.4, 1.55], [2.4, -1.0], [2.3, -2.8], [2.9, -5.0], [2.6, -7.0]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
@@ -976,7 +975,7 @@ function himTorsoQ(K, c, o, outfit) {
     K.shape(P([[1.55, -10.95], [2.15, -10.7], [2.4, -9.2, 1], [1.8, -9.5], [1.5, -10.25]]), { wash: c.shirtSh, sw: .45, n: 3 });
     K.line(P([[1.0, -8.2], [1.25, -5.0], [1.15, -2.0], [1.3, 1.5]]), .32, c.shirtSh, { n: 3 });
     for (const y of [-6.6, -4.4, -2.2, 0]) K.shape(ellPts(1.35, y, .09, .1, 8), { wash: c.shirtSh, ink: null, raw: true, j: 0 });
-    K.line(P(body.slice(0, 10)), .8, c.ink, { n: 4 }); K.line(P(body.slice(9, 12)), .55, c.ink, { n: 4 }); K.line(P(body.slice(11)), .9, c.ink, { n: 4 });
+    K.line(P(body.slice(0, 11)), .8, c.ink, { n: 4 }); K.line(P(body.slice(10, 14)), .55, c.ink, { n: 4 }); K.line(P(body.slice(13)), .9, c.ink, { n: 4 });
     return;
   }
   K.shape(P([[-1.0, -.6], [2.9, -.6], [2.9, 0], [-1.0, 0]]), { wash: c.belt, sw: .4, n: 2 });
@@ -1326,13 +1325,13 @@ LOOPS.him_sheet = t => {
   paint(rectPts(916, 644, 988, 200, 3), { wash: '#F6DFC0', washOp: 110, ink: null });
   paint(rectPts(916, 852, 988, 212, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
   // main panel: standing, launch outfit, front and 3/4
-  him(250, 1048, 27.5, { ...himFeel('neutral', t), browIn: .3, view: 'front', boilKey: 'mf', seed: .4 });
-  him(670, 1048, 27.5, { ...himFeel('neutral', t), browIn: .3, view: 'q', boilKey: 'mq', seed: 1.3 });
+  him(255, 1048, 28.5, { ...himFeel('neutral', t), browIn: .3, view: 'front', boilKey: 'mf', seed: .4 });
+  him(675, 1048, 28.5, { ...himFeel('neutral', t), browIn: .3, view: 'q', boilKey: 'mq', seed: 1.3 });
   himLabel('launch day · front', 235, 40, 21); himLabel('3/4', 665, 40, 21);
   // the face at 2×, and the band on his left wrist
   himLabel('face 2×', 1330, 36, 19);
-  him(1140, 334, 34, { ...himFeel('neutral', t), browIn: .3, pose: 'bust', cut: 1.0, view: 'front', blink: 0, boilKey: 'f2a' });
-  him(1500, 334, 34, { ...himFeel('smile', t), pose: 'bust', cut: 1.0, view: 'q', blink: 0, boilKey: 'f2b' });
+  him(1140, 340, 32, { ...himFeel('neutral', t), browIn: .3, pose: 'bust', cut: 1.0, view: 'front', blink: 0, boilKey: 'f2a' });
+  him(1500, 340, 32, { ...himFeel('smile', t), pose: 'bust', cut: 1.0, view: 'q', blink: 0, boilKey: 'f2b' });
   himLabel('left wrist', 1810, 36, 19);
   { const c = himPal('human'), u = 28, K2 = himKit(u, c, clamp(.28 + u / 100, .32, 1.7), u * .012, false);
     boilSeed('him detail arm'); push(); translate(1800, 54);
