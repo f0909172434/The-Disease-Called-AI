@@ -200,6 +200,16 @@ function himMouthFront(K, c, f, sw, mx = 0, mk = 1) {
   }
 }
 
+// The hair's glossy band: broken lens-shaped strokes along an arc (x0..x1 at height y, sagging by `sag` at the ends).
+function himShine(K, c, x0, x1, y, sag = .3, seed = 0, w = .13) {
+  let x = x0, i = 0;
+  while (x < x1 - .1) {
+    const L = .32 + .22 * hash(seed + i * 3.1), xa = x, xb = Math.min(x1, x + L), Y = xx => y + sag * Math.pow((xx - (x0 + x1) / 2) / ((x1 - x0) / 2), 2);
+    const xm = (xa + xb) / 2, ww = w * (.7 + .5 * hash(seed + i * 7.7));
+    K.shape([[xa, Y(xa) + .04, 1], [xm, Y(xm) - ww * .6], [xb, Y(xb) - .02, 1], [xm + .05, Y(xm) + ww * .5]], { wash: c.hairHi, ink: null, n: 3 });
+    x = xb + .1 + .1 * hash(seed + i * 5.3); i++;
+  }
+}
 // The head, front view, drawn around its own origin (between the eyes).
 const HIM_BANGS_FRONT = [  // [root, tip, width, bend]: uneven clumps, swept a little toward screen left
   [[-1.62, -1.95], [-1.86, .12], .62, -.16], [[-1.2, -2.25], [-1.42, -.55], .74, .12], [[-.68, -2.35], [-.84, -.38], .74, -.08],
@@ -207,8 +217,8 @@ const HIM_BANGS_FRONT = [  // [root, tip, width, bend]: uneven clumps, swept a l
   [[1.32, -2.15], [1.48, -.72], .64, -.1], [[1.62, -1.9], [1.9, .1], .58, .2]];
 function himHeadFront(K, c, f, u, sw) {
   // hair mass behind the head: rounded volume with a few tufts breaking the silhouette, not a crown
-  const back = [[-1.96, .25, 1], [-2.06, -.7], [-2.1, -1.55], [-2.42, -2.05, 1], [-2.0, -2.35], [-1.95, -2.82, 1], [-1.42, -2.9], [-1.2, -3.32, 1], [-.62, -3.2],
-                [-.12, -3.42, 1], [.35, -3.22], [.95, -3.38, 1], [1.3, -3.0], [1.86, -2.92, 1], [1.95, -2.45], [2.36, -2.22, 1], [2.08, -1.7], [2.12, -.9], [1.98, .25, 1]];
+  const back = [[-1.96, .25, 1], [-2.06, -.7], [-2.08, -1.4], [-2.55, -1.78, 1], [-2.2, -2.15], [-2.05, -2.7], [-2.0, -3.0, 1], [-1.45, -2.92], [-1.0, -3.2], [-.62, -3.62, 1], [-.3, -3.3],
+                [.2, -3.38], [.62, -3.55, 1], [.9, -3.18], [1.5, -3.08, 1], [1.62, -2.7], [2.0, -2.55], [2.42, -2.1, 1], [2.1, -1.75], [2.08, -.9], [1.98, .25, 1]];
   K.shape(back, { wash: c.hair, ink: null, n: 4 });
   // ears
   for (const s of [-1, 1]) {
@@ -254,14 +264,136 @@ function himHeadFront(K, c, f, u, sw) {
     const P = himClump(r, t, w, b);
     K.line(P.slice(1, 4), .5, c.ink, { n: 4 }); K.line(P.slice(3, 6), .32, c.ink, { n: 4 });
   }
-  for (let i = 0; i < 7; i++) {
-    const x = -1.45 + i * .48, y = -2.25 + Math.pow(Math.abs(i - 3) / 3, 2) * .35;
-    K.shape(himClump([x - .02, y - .2], [x + .06, y + .34], .13, .12), { wash: c.hairHi, ink: null, n: 3 });
-  }
+  himShine(K, c, -1.55, 1.6, -2.5, .35, 1);
   // silhouette of the hair, broken into strokes
-  K.line(back.slice(0, 7), .7, c.ink, { n: 4 }); K.line(back.slice(6, 13), .75, c.ink, { n: 4 }); K.line(back.slice(12), .7, c.ink, { n: 4 });
+  K.line(back.slice(0, 7), .7, c.ink, { n: 4 }); K.line(back.slice(6, 14), .75, c.ink, { n: 4 }); K.line(back.slice(13), .7, c.ink, { n: 4 });
   // a few loose strands inside the mass
   K.line([[-1.5, -2.5], [-1.0, -2.75], [-.75, -2.6]], .3, c.ink, { n: 3 }); K.line([[.5, -2.8], [1.0, -2.75], [1.5, -2.45]], .3, c.ink, { n: 3 });
+}
+
+// The head in 3/4 view, facing screen right. The near eye (his right) sits left of the nose, the far eye is foreshortened.
+const HIM_BANGS_Q = [[[-1.2, -1.9], [-1.42, -.15], .58, -.12], [[-.72, -2.25], [-.82, -.52], .74, .1], [[-.18, -2.38], [-.12, -.36], .74, -.08],
+  [[.36, -2.38], [.52, -.06], .64, .15], [[.86, -2.3], [1.05, -.6], .66, -.1], [[1.28, -2.1], [1.66, -.48], .56, .2]];
+function himHeadQ(K, c, f, u, sw) {
+  const back = [[-1.05, 1.05, 1], [-1.6, .9], [-2.2, .1], [-2.38, -.9], [-2.85, -1.45, 1], [-2.4, -1.9], [-2.4, -2.6], [-2.45, -2.95, 1], [-1.85, -2.9], [-1.4, -3.2], [-1.05, -3.6, 1], [-.65, -3.28],
+                [-.1, -3.36], [.4, -3.58, 1], [.62, -3.18], [1.25, -3.1, 1], [1.4, -2.7], [1.9, -2.5], [2.2, -2.05, 1], [1.76, -1.9], [1.98, -1.3, 1], [1.45, -1.3], [1.2, -.5], [-1.2, -.3]];
+  K.shape(back, { wash: c.hair, ink: null, n: 4 });
+  const face = [[.1, -2.25], [1.0, -2.0], [1.42, -1.45], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42, 1], [.88, 1.92], [.52, 2.14], [.15, 2.08], [-.55, 1.72], [-1.12, 1.22, 1], [-1.38, .7], [-1.42, -.3], [-1.28, -1.2], [-.85, -1.95]];
+  K.shape(face, { wash: c.skin, ink: null, n: 5 });
+  // shading: the far cheek, under the cheekbone and along the jaw toward the ear
+  K.shape([[1.2, -1.5], [1.5, -.9], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42], [.88, 1.92], [.62, 2.02], [.95, 1.4], [1.18, .7], [1.26, .1], [1.25, -.7]], { wash: c.skinSh, op: 150, ink: null, n: 4 });
+  K.shape([[-1.4, .55], [-1.1, 1.15], [-.55, 1.62], [.1, 1.95], [-.4, 1.4], [-.95, .85]], { wash: c.skinSh, op: 120, ink: null, n: 3 });
+  K.shape([[-1.25, -1.6], [-1.3, -.55], [-.95, -.4], [-.7, -.82], [-.4, -.25], [-.1, -.7], [.25, -.4], [.52, .02], [.75, -.5], [1.0, -.3], [1.3, -.8], [1.45, -1.6]], { wash: c.skinSh, op: 150, ink: null, n: 3 });
+  if (f.blush > 0) {
+    K.shape(ellPts(-.35, .72, .4, .14, 14), { wash: c.blush, op: 100 * f.blush, ink: null, raw: true, j: 0 });
+    K.shape(ellPts(1.2, .72, .2, .12, 12), { wash: c.blush, op: 90 * f.blush, ink: null, raw: true, j: 0 });
+    if (f.blush > .5) for (let i = 0; i < 3; i++) K.line([[-.55 + i * .16, .8], [-.47 + i * .16, .64]], .25, c.cheekLine, { raw: true });
+  }
+  if (f.circles > 0) {
+    K.shape([[.18, .26], [-.28, .38], [-.82, .16], [-.76, .32], [-.28, .52], [.14, .36]], { wash: '#8E6F92', op: 120 * f.circles, ink: null, n: 3 });
+    K.shape([[.85, .26], [1.12, .36], [1.4, .18], [1.38, .32], [1.12, .48], [.86, .36]], { wash: '#8E6F92', op: 110 * f.circles, ink: null, n: 3 });
+  }
+  // contours: far cheek (lit edge thin), jaw line back to the ear
+  K.line([[1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42, 1], [.88, 1.92], [.52, 2.14], [.15, 2.08]], .95, c.ink, { n: 4 });
+  K.line([[.1, 2.06], [-.55, 1.72], [-1.12, 1.22], [-1.34, .82]], .75, c.ink, { n: 4 });
+  // near ear
+  const E = [[-1.2, -.22], [-1.52, -.4], [-1.78, -.15], [-1.76, .3], [-1.6, .72], [-1.38, .95], [-1.2, .8]];
+  K.shape(E, { wash: c.skin, sw: .55, n: 4 });
+  K.shape([[-1.36, -.12], [-1.62, -.1], [-1.6, .42], [-1.38, .5]], { wash: c.skinSh, op: 170, ink: null, n: 3 });
+  K.line([[-1.62, -.14], [-1.68, .2], [-1.52, .58]], .3, c.skinDk);
+  // nose: a ridge line down the far side, the tip, and its shadow
+  K.shape([[.62, .3], [.8, .62], [.92, .86], [.7, .96], [.6, .7]], { wash: c.skinSh, op: 210, ink: null, n: 3 });
+  K.line([[.66, .28], [.8, .6], [.94, .86], [.8, .95]], .5, c.ink, { n: 3 });
+  K.line([[.55, .96], [.66, .98]], .35, c.ink, { raw: true });
+  himMouthFront(K, c, f, sw, .62, .78);
+  // eyes: the near one (outer corner to the left) and the far one, foreshortened
+  himEye(K, c, f, -.28, -1, HIM_EYE.k * .98);
+  himEye(K, c, f, 1.12, 1, HIM_EYE.k * .98, .66);
+  himBrowFront(K, c, f, -1, x => -.28 - (x - .84) * .98);
+  himBrowFront(K, c, f, 1, x => 1.12 + (x - .84) * .66);
+  if (f.gloom > 0) for (let i = 0; i < 6; i++) K.line([[-1.0 + i * .4, -1.5], [-1.0 + i * .4, -1.5 + .9 * f.gloom * (.7 + .3 * hash(i))]], .25, c.inkSoft, { raw: true });
+  // glasses: the bridge, the near lens (with the temple running back to the ear), the far lens
+  K.line([[.3, -.37], [.5, -.44], [.68, -.37]], .6, c.glassDk, { n: 3 });
+  himGlassesFront(K, c, f, -1, sw, x => -.28 - (x - .84) * .98, false);
+  himGlassesFront(K, c, f, 1, sw, x => 1.12 + (x - .84) * .66, false);
+  K.line([[-.92, -.38], [-1.38, -.3]], .7, c.glassDk, { raw: true });
+  // fringe
+  K.shape([[-1.35, -1.0], [-1.3, -1.8], [-.6, -2.35], [.5, -2.5], [1.4, -2.1], [1.6, -1.2], [1.3, -1.4], [.9, -1.2], [.5, -1.5], [0, -1.25], [-.5, -1.5], [-.95, -1.25]], { wash: c.hair, ink: null, n: 3 });
+  for (const [r, t, w, b] of HIM_BANGS_Q) K.shape(himClump(r, t, w, b), { wash: c.hair, ink: null, n: 4 });
+  // side hair over the temple, down to a short sideburn in front of the ear
+  const side = [[-1.5, -1.9], [-.95, -1.6], [-1.0, -.6], [-1.06, .2, 1], [-1.2, -.25], [-1.3, -.42], [-1.55, -.5], [-1.6, -1.4]];
+  K.shape(side, { wash: c.hair, ink: null, n: 3 });
+  K.line(side.slice(1, 5), .4, c.ink, { n: 3 });
+  for (const [r, t, w, b] of HIM_BANGS_Q) { const P = himClump(r, t, w, b); K.line(P.slice(1, 4), .5, c.ink, { n: 4 }); K.line(P.slice(3, 6), .32, c.ink, { n: 4 }); }
+  himShine(K, c, -2.0, 1.4, -2.45, .4, 2);
+  K.line(back.slice(0, 8), .75, c.ink, { n: 4 }); K.line(back.slice(7, 15), .75, c.ink, { n: 4 }); K.line(back.slice(14, 21), .7, c.ink, { n: 4 });
+  K.line([[-2.0, -1.2], [-1.75, -.7], [-1.72, -.1]], .3, c.ink, { n: 3 }); K.line([[-2.2, -2.1], [-1.7, -2.4], [-1.25, -2.35]], .3, c.ink, { n: 3 });
+}
+
+// The head in profile, facing screen right.
+const HIM_BANGS_SIDE = [[[.1, -2.35], [.85, -.75], .7, -.12], [[.55, -2.3], [1.32, -.62], .62, .1], [[.95, -2.1], [1.55, -.95], .5, -.12], [[1.1, -1.85], [1.66, -1.25], .4, .15]];
+function himHeadSide(K, c, f, u, sw) {
+  const face = [[.3, -2.0], [1.05, -1.9], [1.36, -1.3], [1.44, -.6, 1], [1.36, -.22], [1.5, .2], [1.8, .74, 1], [1.5, .94, 1], [1.56, 1.18], [1.44, 1.34], [1.52, 1.5], [1.36, 1.7], [1.45, 1.98], [1.2, 2.2, 1], [.5, 2.04], [-.45, 1.55, 1], [-.85, .9], [-1.05, -.2], [-.85, -1.2], [-.3, -1.8]];
+  K.shape(face, { wash: c.skin, ink: null, n: 5 });
+  // shade: the jaw and the side plane behind the cheekbone
+  K.shape([[-.45, 1.55], [-.85, .9], [-.95, .1], [-.55, .2], [-.15, 1.0], [.6, 1.7], [1.1, 2.0], [.5, 2.04]], { wash: c.skinSh, op: 150, ink: null, n: 3 });
+  K.shape([[.2, -1.5], [1.2, -1.6], [1.38, -.8], [1.1, -.45], [.8, -.8], [.5, -.5], [.2, -.9]], { wash: c.skinSh, op: 140, ink: null, n: 3 });
+  if (f.blush > 0) { K.shape(ellPts(.9, .72, .38, .14, 14), { wash: c.blush, op: 100 * f.blush, ink: null, raw: true, j: 0 });
+    if (f.blush > .5) for (let i = 0; i < 3; i++) K.line([[.72 + i * .16, .8], [.8 + i * .16, .64]], .25, c.cheekLine, { raw: true }); }
+  if (f.circles > 0) K.shape([[.8, .26], [1.08, .38], [1.3, .2], [1.28, .34], [1.06, .5], [.82, .38]], { wash: '#8E6F92', op: 120 * f.circles, ink: null, n: 3 });
+  // profile line: brow, nose, lips, chin; jaw back to the ear
+  K.line([[1.05, -1.9], [1.36, -1.3], [1.44, -.6], [1.36, -.22], [1.5, .2], [1.8, .74, 1], [1.5, .94, 1], [1.56, 1.18], [1.44, 1.34], [1.52, 1.5], [1.36, 1.7], [1.45, 1.98], [1.2, 2.2]], .95, c.ink, { n: 4 });
+  K.line([[1.2, 2.2], [.5, 2.04], [-.45, 1.55], [-.7, 1.1]], .8, c.ink, { n: 4 });
+  K.line([[1.55, .86], [1.42, .82]], .35, c.ink, { raw: true });   // nostril
+  const m = f.mouth || 'closed', y0 = 1.4;
+  if (['A', 'E', 'O', 'gasp', 'laugh', 'grin', 'wail', 'I'].includes(m)) {
+    const h = { A: .3, E: .18, O: .24, gasp: .28, laugh: .34, grin: .2, wail: .3, I: .1 }[m];
+    K.shape([[1.5, y0 - .06], [1.18, y0 - .02], [1.24, y0 + h * .7], [1.46, y0 + h]], { wash: '#5A2630', ink: c.ink, sw: .45, n: 2 });
+  } else if (m === 'smile' || m === 'laugh') K.line([[1.47, y0 - .02], [1.32, y0 + .02], [1.2, y0 - .08]], .55, c.ink, { n: 3 });
+  else if (m === 'U') K.line([[1.6, y0], [1.48, y0 + .03]], .5, c.ink, { raw: true });
+  else K.line([[1.47, y0], [1.24, y0 + .04]], .55, c.ink, { raw: true });
+  // hair: the mass covers the skull behind a hairline that runs from the forehead to the temple and down to a short sideburn
+  const back = [[1.15, -2.0], [.6, -1.6], [.12, -1.42], [-.02, -.6], [-.06, .3, 1], [-.32, -.1], [-.6, -.48], [-1.0, -.35], [-1.05, .55], [-.72, 1.18, 1], [-1.45, .85], [-2.1, -.1], [-2.62, -.7, 1], [-2.25, -1.25], [-2.32, -1.95],
+    [-2.5, -2.3, 1], [-1.85, -2.5], [-1.5, -3.05, 1], [-.95, -2.9], [-.35, -3.4, 1], [.15, -3.05], [.85, -3.22, 1], [1.12, -2.68], [1.8, -2.36, 1], [1.45, -1.92], [1.62, -1.28, 1], [1.3, -1.5]];
+  K.shape(back, { wash: c.hair, ink: null, n: 4 });
+  K.line(back.slice(0, 5), .4, c.ink, { n: 3 });
+  // ear
+  const E = [[-.35, -.25], [-.62, -.42], [-.9, -.2], [-.92, .3], [-.76, .74], [-.5, .95], [-.32, .76]];
+  K.shape(E, { wash: c.skin, sw: .55, n: 4 });
+  K.shape([[-.5, -.15], [-.75, -.12], [-.74, .42], [-.52, .5]], { wash: c.skinSh, op: 170, ink: null, n: 3 });
+  K.line([[-.75, -.16], [-.8, .2], [-.66, .58]], .3, c.skinDk);
+  // eye in profile
+  himEyeSide(K, c, f);
+  const bi = f.browIn || 0, by = f.browY || 0;
+  K.shape([[.78, -.74 + by], [1.12, -.82 + by + bi * .06], [1.42, -.68 + by + bi * .14], [1.38, -.56 + by + bi * .14], [1.1, -.66 + by + bi * .06], [.8, -.66 + by]], { wash: c.hair, ink: c.ink, sw: .3, n: 3 });
+  // glasses: the lens edge in front of the eye, the top rim, the temple back to the ear
+  if (f.glare > 0) K.shape([[1.47, -.38], [1.56, -.36], [1.58, .3], [1.5, .36]], { wash: c.glare, op: 180 * f.glare, ink: null, raw: true, j: 0 });
+  K.line([[1.5, -.36], [1.53, .1], [1.48, .36]], .32, c.glassDk, { n: 3 });
+  K.shape([[1.58, -.42, 1], [.95, -.44], [-.45, -.32, 1], [-.45, -.24, 1], [.95, -.35], [1.56, -.34, 1]], { wash: c.glass, ink: c.ink, sw: .35, n: 3 });
+  // fringe and sideburn
+  for (const [r, t, w, b] of HIM_BANGS_SIDE) K.shape(himClump(r, t, w, b), { wash: c.hair, ink: null, n: 4 });
+  for (const [r, t, w, b] of HIM_BANGS_SIDE) { const P = himClump(r, t, w, b); K.line(P.slice(1, 4), .5, c.ink, { n: 4 }); K.line(P.slice(3, 6), .32, c.ink, { n: 4 }); }
+  himShine(K, c, -2.1, 1.1, -2.45, .35, 3);
+  K.line(back.slice(8, 17), .75, c.ink, { n: 4 }); K.line(back.slice(16), .75, c.ink, { n: 4 });
+  K.line([[-2.0, -1.6], [-1.5, -1.0], [-1.3, -.2]], .3, c.ink, { n: 3 }); K.line([[-1.0, -1.6], [-.55, -1.15], [-.4, -.7]], .3, c.ink, { n: 3 });
+}
+function himEyeSide(K, c, f) {
+  const lid = clamp(f.lid || 0), low = clamp(f.low || 0);
+  if (f.eye === 'happy') { K.line([[.76, .06], [.98, -.1], [1.2, -.02]], 1.3, c.ink, { n: 3 }); return; }
+  if (f.eye === 'squeeze') { K.line([[.74, -.12], [1.18, .04]], 1.3, c.ink, { raw: true }); return; }
+  if (lid > .86) { K.line([[.74, .08], [1.0, .16], [1.2, .04]], 1.2, c.ink, { n: 3 }); return; }
+  const ty = y => lerp(y, .12, lid), by = y => lerp(y, y - .1, low);
+  const top = [[.74, ty(-.14)], [.98, ty(-.17)], [1.2, ty(-.06)]], bot = [[1.2, by(.04)], [1.1, by(.16)], [.8, by(.18)]];
+  K.shape(top.concat(bot), { wash: c.white, ink: null, raw: true, j: 0 });
+  const ik = f.irisK ?? 1, ix = 1.08 + (f.lookX || 0) * .03, iy = .03 + (f.lookY || 0) * .06;
+  const clip = P => himBetween(P, top, bot.slice().reverse());
+  K.shape(clip(ellPts(ix, iy, .09 * ik, .24 * ik, 14)), { wash: c.iris, ink: null, raw: true, j: 0 });
+  if (!f.dull) {
+    K.shape(clip(ellPts(ix + .01, iy + .02, .045 * ik, .12 * ik, 10)), { wash: c.pupil, ink: null, raw: true, j: 0 });
+    K.shape(ellPts(ix - .02, iy - .08, .03, .05, 8), { wash: c.white, ink: null, raw: true, j: 0 });
+  }
+  K.shape([[.7, ty(-.2)], [.98, ty(-.26)], [1.22, ty(-.1)], [1.26, .02, 1], [1.18, ty(-.05)], [.98, ty(-.16)], [.76, ty(-.12)]], { wash: c.ink, ink: null, n: 3, j: 0 });
+  K.line([[1.16, by(.1)], [.96, by(.18)]], .45, c.ink, { raw: true });
 }
 
 // ---------- limbs ----------
@@ -536,13 +668,14 @@ function himArm(K, c, S, E, Wr, outfit, s, hand, view, band, far = false) {
 }
 
 // ---------- test ----------
-function himHeadQ(K, c, f, u, sw) { himHeadFront(K, c, f, u, sw); }
-function himHeadSide(K, c, f, u, sw) { himHeadFront(K, c, f, u, sw); }
 function himStandTurned() {}
 function himBust() {}
 function himDesk() {}
 LOOPS.him_test = t => {
-  him(560, 1040, 31, { mouth: 'closed', blush: .3 });
-  him(1360, 1040, 31, { outfit: 'home', mouth: 'smile', blush: .3, circles: .7, lid: .35 });
+  const c = himPal('human');
+  [['front', 330], ['q', 960], ['side', 1590]].forEach(([v, x], i) => {
+    const u = 95, sw = clamp(.25 + u / 110, .3, 1.6), K = himKit(u, c, sw, u * .012, false);
+    boilSeed('h' + i); push(); translate(x, 560); himHead(K, c, { lid: 0, mouth: 'closed', blush: .3 }, u, sw, v); pop();
+  });
 };
 LOOPS.him_test.len = 1;
