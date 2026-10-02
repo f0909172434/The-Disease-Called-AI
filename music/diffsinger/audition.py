@@ -114,6 +114,43 @@ def write_mp3(path: str, x: np.ndarray, sr: int = 48000) -> None:
                         "-b:a", "160k", path], check=True)
 
 
+def retake(lines: list[dict], voices: dict, n: int, model: str) -> dict:
+    """DiffSinger's diffusion sampler is random: render takes 0..n-1 of every line (a take
+    is a 1-cent PITD offset per take number, i.e. a new input), score them with Whisper and
+    keep the best in takes.json (the tensor cache then reproduces it exactly)."""
+    import diffsinger_backend as dsb
+    import qa
+    import soxr
+    tried: dict[str, list] = {l["id"]: [] for l in lines}
+    for take in range(n):
+        os.environ["VOCAL_DS_TAKES"] = json.dumps({l["id"]: take for l in lines})
+        dsb.prepare(lines, voices)
+        for line in lines:
+            r = dsb.render_sung(line, voices)
+            hyp = qa.transcribe(soxr.resample(r.audio, 48000, 16000), model)
+            x24 = soxr.resample(r.audio, 48000, 24000)
+            err, _ = qa.pitch_error_cents(x24, 24000, r.start, r.qa["frames_t"], r.qa["score_midi"], r.qa["vowel"])
+            tried[line["id"]].append((round(qa.wer(line["text"], hyp), 3), float(np.nan_to_num(err, nan=99.0)), take, hyp))
+            print(f"  {line['id']} take {take}: WER {tried[line['id']][-1][0]:.2f}  “{hyp}”")
+    os.environ.pop("VOCAL_DS_TAKES", None)
+    try:
+        with open(dsb.TAKES_JSON) as fh:
+            book = json.load(fh)
+    except (OSError, ValueError):
+        book = {}
+    for lid, rows in tried.items():
+        w, e, take, hyp = min(rows)
+        if take:
+            book[lid] = {"take": take, "wer": w, "transcript": hyp, "takes_tried": len(rows),
+                         "wer_take0": rows[0][0]}
+        else:
+            book.pop(lid, None)
+    with open(dsb.TAKES_JSON, "w") as fh:
+        json.dump(dict(sorted(book.items())), fh, ensure_ascii=False, indent=1)
+        fh.write("\n")
+    return book
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--lines", required=True)
@@ -122,6 +159,9 @@ def main(argv=None):
     ap.add_argument("--qa-model", default="medium.en")
     ap.add_argument("--no-wer", action="store_true")
     ap.add_argument("--cache-dir", help="render cache (default music/build/cache)")
+    ap.add_argument("--retake", type=int, default=0, metavar="N",
+                    help="sing each line as takes 0..N-1, keep the best (Whisper WER, then pitch) "
+                         "in music/diffsinger/takes.json")
     a = ap.parse_args(argv)
     import cache
     if a.cache_dir:
@@ -133,6 +173,8 @@ def main(argv=None):
         vocals = json.load(fh)
     L = {l["id"]: l for l in vocals["lines"]}
     lines = [L[i] for i in a.lines.split(",")]
+    if a.retake:
+        retake(lines, vocals["voices"], a.retake, a.qa_model)
     t = time.time()
     st = dsb.prepare(lines, vocals["voices"])
     t_ds = time.time() - t

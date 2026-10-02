@@ -248,18 +248,19 @@ const AI_HAIR = {
     len: 6.1, side: 2.8, grad: [.55, 3.7], gradS: [.45, 2.7], wl: 2.3, amp: .34, wb: .6, ws: .34, nb: 8, curl: .36, zk: .55, zb: .35, wp: 1.0, crown: [1.17, 1.13], phj: [1.1, 1.1] },
 };
 // The bangs, painted in this order: [root x, root y, tip x, tip y, width, bow (outward arc), S-curve], front-view head
-// units. They fan out from a part left of centre (x -.2): a big side-swept lock each way and a second one inside it
-// (their inner edges frame the forehead), then chunky pointed locks swept away from the part, the longest falling
-// between the eyes. AI_STRANDS are the long thin strands between the eyes and across the gaps.
+// units. Six wide, soft locks fan out from a part left of centre (x -.2): a big side-swept lock each way (their inner
+// edges frame the forehead), one more each side inside it, a lock right of the part, and the one falling between the
+// eyes. AI_STRANDS: the long thin strand between the eyes. Only the free lower ends are inked, so the fringe reads as a
+// few soft masses.
 const AI_BANGS = [
-  [-.27, -1.08, -1.1, .22, .7, .2, .03], [-.1, -1.1, 1.08, .12, .74, .2, -.04],
-  [-.31, -1.06, -.74, .06, .56, .09, -.02], [-.06, -1.1, .76, -.02, .56, .11, .03],
-  [-.3, -1.05, -.5, .16, .5, -.02, .03], [-.02, -1.09, .36, .1, .5, -.04, -.03],
-  [-.13, -1.1, .08, .36, .48, -.03, -.04], [-.22, -1.09, -.2, .44, .52, -.1, .03],
+  [-.27, -1.08, -1.08, .26, .86, .2, .03], [-.1, -1.1, 1.06, .16, .9, .2, -.04],
+  [-.3, -1.06, -.58, .24, .78, .04, -.02], [-.04, -1.1, .6, .2, .8, .06, .03],
+  [-.1, -1.1, .2, .36, .7, -.03, -.03], [-.22, -1.09, -.12, .5, .66, -.08, .03],
 ];
-const AI_STRANDS = [[-.18, -.85, -.1, .52, .055, .02, .05], [-.07, -.8, .05, .47, .05, .02, -.04], [-.38, -.5, -.82, .04, .05, .06, .02], [.28, -.45, .66, -.02, .05, .05, -.02]];
-// The shine band: an arc across the crown at y = AI_SHINE[0] + AI_SHINE[1] x², a glossy segment on each bang it crosses.
-const AI_SHINE = [-.56, .3];
+const AI_STRANDS = [[-.2, -.85, -.17, .56, .05, .02, .05]];
+// The shine band: a ring around the crown at y = AI_SHINE[0] + AI_SHINE[1] x² (it arcs down at the sides with the head),
+// a glossy segment on each bang it crosses.
+const AI_SHINE = [-.62, .55];
 // How much of the head's tilt a point of hanging hair keeps at depth b (long hair hangs, it doesn't swing with the head).
 const aiHangW = b => 1 - .75 * clamp((b - .6) / 2.2);
 
@@ -425,18 +426,18 @@ function aiBangs(hd) {
   const shine = (B, sd) => {
     for (let j = 0; j < B.P3.length - 1; j++) {
       const a = B.P3[j], b = B.P3[j + 1], fa = a[1] - Y(a[0]), fb = b[1] - Y(b[0]); if (!(fa <= 0 && fb > 0)) continue;
-      const t = fa / (fa - fb), c = [lerp(a[0], b[0], t), lerp(a[1], b[1], t)], dl = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, d = [(b[0] - a[0]) / dl, (b[1] - a[1]) / dl], oy = (hash(sd + 2) - .5) * .05;
-      if (Math.abs(c[0]) > .8) return;
-      const hh = (.055 + .045 * hash(sd)) * (1 - .55 * Math.abs(c[0]));
-      aiPaint(piece(c, d, B.w, hh, .1 + .16 * hash(sd + 1), oy), { wash: mixCol(P.hairHi, P.hair4, .7), op: 245, ink: null });
-      if (B.w > .45 && Math.abs(c[0]) < .5) aiPaint(piece([c[0] - .02, c[1]], d, B.w * .7, hh * .45, .2, oy - hh * .25), { wash: mixCol(P.hair4, '#FFFFFF', .4), op: 220, ink: null });
+      const t = fa / (fa - fb), c = [lerp(a[0], b[0], t), lerp(a[1], b[1], t)], dl = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, d = [(b[0] - a[0]) / dl, (b[1] - a[1]) / dl], oy = (hash(sd + 2) - .5) * .03;
+      if (Math.abs(c[0]) > .85) return;
+      const hh = (.06 + .025 * hash(sd)) * (1 - .45 * Math.abs(c[0]));
+      aiPaint(piece(c, d, B.w, hh, .3 + .15 * hash(sd + 1), oy), { wash: mixCol(P.hairHi, P.hair4, .7), op: 245, ink: null });
+      if (Math.abs(c[0]) < .3) aiPaint(piece([c[0] - .02, c[1]], d, B.w * .7, hh * .3, .25, oy - hh * .2), { wash: mixCol(P.hair4, '#FFFFFF', .65), op: 230, ink: null });   // the white core
       return;
     }
   };
   for (const B of aiBangLocks(hd, AI_BANGS)) {
     hd.A.rs('bang ' + B.i);
-    const n = B.C.length, Wd = B.C.map((_, j) => { const v = j / (n - 1); return B.w * k * (v < .2 ? .35 + 3.25 * v : 1 - .97 * Math.pow((v - .2) / .8, 1.25)); });
-    Es.push([aiLock(B.C, Wd, [[0, base]], { seed: B.i * 3.3, inkFrom: B.i < 4 ? .36 : .28, inkFromR: .34, sw: S.sw * .46, mid: S.u > 12 ? () => shine(B, B.i * 3.3) : null }), B.i * 3.3]);
+    const n = B.C.length, Wd = B.C.map((_, j) => { const v = j / (n - 1); return B.w * k * (v < .2 ? .75 + 1.25 * v : 1 - .97 * Math.pow((v - .2) / .8, 1.9)); });
+    Es.push([aiLock(B.C, Wd, [[0, base]], { seed: B.i * 3.3, inkFrom: B.i < 2 ? .42 : .55, inkFromR: B.i < 2 ? .42 : .5, sw: S.sw * .55, mid: S.u > 12 ? () => shine(B, B.i * 3.3) : null }), B.i * 3.3]);
   }
   // then two glazes over the whole fringe, one colour each: the crown's shade above the shine, lighter tips
   hd.A.rs('bangglaze');
@@ -451,10 +452,10 @@ function aiBangs(hd) {
 function aiBangShadow(hd) {
   const P = AI_S.P, k = hd.k;
   for (const B of aiBangLocks(hd, AI_BANGS)) {
-    const E = aiRib(B.C.map(([x, y]) => [x + .015 * k, y + .07 * k]), B.C.map((_, j) => B.w * k * (j < 2 ? .7 : 1 - .9 * Math.pow((j - 1.5) / 4.5, 1.3))), 3);
+    const E = aiRib(B.C.map(([x, y]) => [x + .02 * k, y + .09 * k]), B.C.map((_, j) => B.w * k * (j < 2 ? .85 : 1 - .9 * Math.pow((j - 1.5) / 4.5, 1.9))), 3);
     const xl = -.95 + .2 * hd.s, xr = .95 + .2 * hd.s;
     let Q = aiClipHalf(aiRibPts(E), hd.H(-2, -.42), hd.H(2, -.42)); Q = aiClipHalf(Q, hd.H(xl, 2), hd.H(xl, -2)); Q = aiClipHalf(Q, hd.H(xr, -2), hd.H(xr, 2));
-    if (Q.length > 2) aiPaint(Q, { wash: P.skinSh, op: 190, ink: null });
+    if (Q.length > 2) aiPaint(Q, { wash: mixCol(P.skinSh, P.cheek, .35), op: 200, ink: null });
   }
 }
 
@@ -1187,7 +1188,7 @@ function aiCurtsy(o, A, tt) {
   // the hair sweeps out to the screen-left as in the reference
   const cH = aiRF([454.4, 58.7]), KH = 38 / 52.5, T0 = R.tilt;
   const hpt = (a, b, tl) => { const r = aiRot([a * KH, b * KH], [0, 0], tl); return HD([cH[0] + r[0], cH[1] + r[1]]); };
-  const H = (a, b) => hpt(a, b, T0), hd = aiHD(H, (a, b) => hpt(a, b, T0 * aiHangW(b)), 'full', 'front', A, KH * u, { sweepL: -1.05, sweepR: .1, lenL: 6.2, lenR: 4.8, side: 2.7 });
+  const H = (a, b) => hpt(a, b, T0), hd = aiHD(H, (a, b) => hpt(a, b, T0 * aiHangW(b)), 'full', 'front', A, KH * u, { sweepL: -1.05, sweepR: .55, lenL: 6.2, lenR: 5.6, side: 2.7 });
   // ---- back hair (behind everything but the tail) ----
   rs('hairback'); aiHairBack(hd);
   // ---- tail ----
