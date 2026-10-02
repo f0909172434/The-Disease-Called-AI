@@ -141,7 +141,7 @@ function himEyeFront(K, c, f, s, sw) {
   K.shape(clip(ellPts(icx, icy + .1 * ik, .14 * ik, .13 * ik, 14)), { wash: c.irisLt, op: 210, ink: null, raw: true, j: 0 });
   if (!f.dull) K.shape(clip(ellPts(icx, icy + .01, .08 * ik, .11 * ik, 12)), { wash: c.pupil, ink: null, raw: true, j: 0 });
   // shadow of the upper lid across the white and the iris
-  K.shape(T.concat(T.slice().reverse().map(([x, y]) => [x, y + .09 * E])), { wash: c.ink, op: 110, ink: null, raw: true, j: 0 });
+  K.shape(T.concat(T.slice().reverse().map(([x, y]) => [x, y + .07 * E])), { wash: c.skinDk, op: 120, ink: null, raw: true, j: 0 });
   if (!f.dull) {
     K.shape(ellPts(icx - .07 * s * E, icy - .07 * E, .06 * E, .065 * E, 10), { wash: c.white, ink: null, raw: true, j: 0 });
     K.shape(ellPts(icx + .07 * s * E, icy + .1 * E, .028 * E, .028 * E, 8), { wash: c.white, ink: null, raw: true, j: 0 });
@@ -223,7 +223,7 @@ function himHeadFront(K, c, f, u, sw) {
   // light from the upper left: a shadow down the right side and under the jaw
   K.shape([[1.42, -1.4], [1.7, -.9], [1.74, -.3], [1.7, .35], [1.6, .85], [1.45, 1.22], [.98, 1.74], [.55, 2.04], [.85, 1.55], [1.2, 1.05], [1.4, .45], [1.48, -.4]], { wash: c.skinSh, op: 160, ink: null, n: 4 });
   // shadow under the fringe
-  K.shape([[-1.7, -1.6], [-1.68, -.6], [-1.3, -.4], [-1.05, -.85], [-.8, -.25], [-.5, -.75], [-.2, .05], [.05, -.7], [.3, -.48], [.62, -.85], [.9, -.25], [1.2, -.95], [1.5, -.6], [1.72, -.2], [1.72, -1.6]], { wash: c.skinSh, op: 150, ink: null, n: 3 });
+  K.shape([[-1.58, -1.6], [-1.6, -.6], [-1.3, -.4], [-1.05, -.85], [-.8, -.25], [-.5, -.75], [-.2, .05], [.05, -.7], [.3, -.48], [.62, -.85], [.9, -.25], [1.2, -.95], [1.5, -.6], [1.62, -.5], [1.6, -1.6]], { wash: c.skinSh, op: 150, ink: null, n: 3 });
   // blush
   if (f.blush > 0) for (const s of [-1, 1]) {
     K.shape(ellPts(s * 1.02, .7, .36, .14, 14), { wash: c.blush, op: 100 * f.blush, ink: null, raw: true, j: 0 });
