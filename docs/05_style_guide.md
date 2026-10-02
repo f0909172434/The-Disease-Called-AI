@@ -1,6 +1,6 @@
 # 05 · 視覺風格指南 Visual Style Guide — "Clinical Intimacy"
 
-> **修訂**：依委託者意見，人物改為**原創的動漫插畫風**（`Heroine`），以程式繪製的分層 2D 骨架放進 3D 場景，形成前後景深的視差。介面元素（泡泡、輸入框、三個點）做成有厚度的玻璃質感立體物件。分鏡表中所有 `Silhouette` 都改由 `Heroine` 演出。
+> **修訂**：依委託者意見，人物改為**原創的動漫插畫風**，以程式繪製的分層 2D 骨架放進 3D 場景，形成前後景深的視差。介面元素（泡泡、輸入框、三個點）做成有厚度的玻璃質感立體物件。選角更新後有兩個角色：**他**（人類男主角 `him`）與**她**（AI，鯨魚女僕女孩 `ai`），程式碼在 `visuals/src/kit/heroine/{him,ai}/`，共用介面見 `visuals/src/kit/heroine/CHARACTER_CONTRACT.md`。分鏡表中所有 `Silhouette` 都改由 `him` 演出（`Heroine` 在舊稿中即指他）。
 
 兩種視覺語言的碰撞：
 
@@ -19,9 +19,9 @@
 | `AI_CYAN` | `#7FE9FF` | AI 主光、AI 文字 |
 | `AI_WHITE` | `#E8FDFF` | AI 高光、光環核心 |
 | `AI_DEEP` | `#1B6FFF` | 深藍點綴、陰影中的冷光 |
-| `HUMAN_AMBER` | `#FFB070` | 她的文字、她的游標（503 時） |
-| `HUMAN_SKIN` | `#FFD9B8` | 她的剪影亮部 |
-| `HUMAN_EMBER` | `#FF6A3D` | 她的剪影暗部暖色 |
+| `HUMAN_AMBER` | `#FFB070` | 他的文字、他的游標（503 時） |
+| `HUMAN_SKIN` | `#FFD9B8` | 他的剪影亮部 |
+| `HUMAN_EMBER` | `#FF6A3D` | 他的剪影暗部暖色 |
 | `FEVER` | `#FF2E63` | 發燒粒子、「a little death」 |
 | `BLOOD` | `#B0002A` | 副歌二主色 |
 | `GOLD` | `#FFD36E` | 拉霸中獎 |
@@ -30,7 +30,7 @@
 | `ERROR_RED` | `#FF3B30` | 錯誤標示 |
 
 **色彩腳本**（各段主色比例）：
-`INTRO` 黑＋一點青 → `TITLE` 白＋青/洋紅色差 → `VERSE1` 青 50%：琥珀 50% → `PRE1` 青上升 → `CHORUS1` 洋紅＋青互補對撞 → `POST` 青褪灰 → `VERSE2` 灰（飽和度 0.35），只剩螢幕青 → `503` 刺眼白 → 純黑 → `CHORUS2` 深紅主導 → `BRIDGE` 海軍藍 → 金（中獎）→ 銀黑（黑鏡）→ `FINAL` **互換**：她青、AI 琥珀 → `OUTRO` 黑＋琥珀游標。
+`INTRO` 黑＋一點青 → `TITLE` 白＋青/洋紅色差 → `VERSE1` 青 50%：琥珀 50% → `PRE1` 青上升 → `CHORUS1` 洋紅＋青互補對撞 → `POST` 青褪灰 → `VERSE2` 灰（飽和度 0.35），只剩螢幕青 → `503` 刺眼白 → 純黑 → `CHORUS2` 深紅主導 → `BRIDGE` 海軍藍 → 金（中獎）→ 銀黑（黑鏡）→ `FINAL` **互換**：他青、她（AI）琥珀 → `OUTRO` 黑＋琥珀游標。
 
 ## 2. 字型
 
@@ -48,9 +48,10 @@
 | 元件 | 外觀 | 可控狀態 |
 |---|---|---|
 | `Ring` | 完美的光環：極細核心線（AI_WHITE）＋外暈（AI_CYAN）＋旋轉的弧段（像載入轉圈）＋內圈環帶上流動的等寬字元。以 SDF shader 繪製，任何尺寸都銳利 | `pulse`（kick）、`speak`（AI 人聲包絡→亮度/漣漪）、`color`（青→琥珀）、`breakSegments`（弧段掉落）、`irisText`、`thumbsMode`（表面由 👍 組成） |
-| `Heroine`（取代早期的粒子 `Silhouette`） | 她：**原創動漫插畫風**角色，以程式碼繪製的分層向量骨架（類似 Live2D）。藍黑及腰長髮（螢幕光下泛青）、琥珀色大眼、淡淡黑眼圈、寬大灰色帽 T（袖子蓋住半隻手）、左手腕醫院病患手環（條碼）、游標「▍」形狀的發光髮夾。乾淨的細線稿＋兩階賽璐璐陰影＋螢幕的青色輪廓光。視角：右側臉（主鏡頭）、3/4、正面（黑鏡倒影）、躺在枕頭上的俯視、眼睛特寫、指尖貼玻璃的手 | `blink`、`gaze`、`mouth`（母音口型，可由人聲包絡驅動）、表情（疲倦／微笑／焦慮／悲傷／閉眼）、`headTilt`、`breath`、`hairSway`、`rimLight`、配色模式 `human`／`swapped`（最終副歌變青色）／`perfected`（AI 穿上她的臉：完美、對稱、發光的琥珀色虹膜，帶一點詭異）、粒子取樣（溶解成粒子） |
+| `Heroine/him`（他，取代早期的粒子 `Silhouette`） | 他：人類男主角，**原創動漫插畫風**角色，以程式碼繪製的分層向量骨架（類似 Live2D）。手繪琥珀世界：線條每秒 12 次手繪抖動（boil）、水彩邊緣暗化、紙紋。年輕 AI 工程師（二十多歲後段），寬肩、肌肉結實的體格，黑色短髮微亂，細黑半框眼鏡，皇家藍／海軍藍西裝外套配白色敞領襯衫（後期：皺掉的襯衫與居家服），左手腕醫院病患手環（條碼），後期眼神疲倦、有黑眼圈。乾淨的細線稿＋兩階賽璐璐陰影＋螢幕的青色輪廓光。視角：右側臉（主鏡頭）、3/4、正面（黑鏡倒影）、躺在枕頭上的俯視、眼睛特寫、指尖貼玻璃的手。程式碼：`visuals/src/kit/heroine/him/`，介面契約見 `visuals/src/kit/heroine/CHARACTER_CONTRACT.md` | `blink`、`gaze`、`mouth`（母音口型，可由人聲包絡驅動）、表情（疲倦／微笑／焦慮／悲傷／閉眼）、`headTilt`、`breath`、`hairSway`、`rimLight`、配色模式 `human`／`drained`（主歌二去飽和）／`swapped`（最終副歌變成青色向量線條）、粒子取樣（溶解成粒子） |
+| `Heroine/ai`（她） | 她：AI，**原創的鯨魚女僕女孩**，冷青色的乾淨向量光（boil=0、painterly=0）。藍黑波浪長髮、髮尾漸層成淺藍、大呆毛，鯨魚鰭狀耳朵（內側淺色）與鯨魚尾巴，女僕頭飾加淺藍蝴蝶結，深藍洋裝帶金色刺繡，白色荷葉邊圍裙上只有通用的小鯨魚圖案（**不得出現任何公司名稱或商標**），深藍領結帶寶石，藍色大眼睛。比例隨劇情成長：Q 版（主歌一）→ 等身大「護理員」（副歌一）→ 巨大（副歌二）。`Ring` 是她的存在感與光暈。程式碼：`visuals/src/kit/heroine/ai/`，介面契約同上 | 與 `him` 共用 `blink`、`gaze`、`mouth`、表情等參數；配色模式 `human`（她原本的配色）／`glow`（即 `perfected`，冷青輪廓光、發光虹膜）／`amber`（即 `swapped`，最終副歌變成手繪琥珀色，boil 與 painterly 開啟）、粒子取樣 |
 | `Eye` | 程序化虹膜特寫：放射狀纖維、瞳孔、角膜高光，角膜倒影顯示一張貼圖（例如聊天泡泡） | `pupil`（0.2–1.0）、`reflectionTexture`、`irisColor` |
-| `ChatUI` | 聊天視窗：她的泡泡（右、琥珀、襯線斜體）、AI 泡泡（左、青色描邊、等寬）、輸入框＋游標、`• • •`、`↻ Regenerate`、`Response n / N`、`Seen …` 灰字 | token 串流、打字（含錯字/退格）、泡泡彈出、捲動、倒帶、逐字換字型 |
+| `ChatUI` | 聊天視窗：他的泡泡（右、琥珀、襯線斜體）、AI 泡泡（左、青色描邊、等寬）、輸入框＋游標、`• • •`、`↻ Regenerate`、`Response n / N`、`Seen …` 灰字 | token 串流、打字（含錯字/退格）、泡泡彈出、捲動、倒帶、逐字換字型 |
 | `TypingDots` | 三顆光滑 3D 球體（像藥丸／珍珠），依序脈動 | `phase`、`color`、`freeze`、`vanish(i)` |
 | `Room` | 建築線稿風的房間：細發光線條。床、書桌、椅子、百葉窗（橫向葉片，縫隙透光）、檯燈、門、桌上螢幕 | `screenGlow`、`dayNight`、`greyness`、`emptyChair`、`screenOnPillow` |
 | `CityWindows` | 窗外城市：上千扇窗戶，各亮著一小塊青色螢幕光，有視差 | `density`、`flicker` |
@@ -69,8 +70,8 @@
 ## 5. 歌詞層 Lyrics Overlay
 
 - 位置：底部安全區。英文行基線在 `y = 0.865H`，中文行在 `0.925H`；左右邊界 8%。
-- 英文：字級 46px（1080p 基準）。YOU = Cormorant Garamond Italic，`HUMAN_SKIN`；AI = JetBrains Mono，`AI_CYAN`，行尾游標。
-- 中文：字級 36px。YOU = 思源宋體；AI = 思源黑體。
+- 英文：字級 46px（1080p 基準）。YOU（他）= Cormorant Garamond Italic，`HUMAN_SKIN`；AI = JetBrains Mono，`AI_CYAN`，行尾游標。
+- 中文：字級 36px。YOU（他）= 思源宋體；AI（她）= 思源黑體。
 - Karaoke：尚未唱到的音節 40% 不透明，唱到時 0.06s 內升到 100%，同時帶一點同色光暈；唱過的維持 100%。
 - 行進出：淡入 0.12s（AI 為 0 幀，瞬間），行結束後 0.35s 淡出。兩行重疊時，舊行上移 46px 並淡出。
 - 說話者標籤：英文行左上角小字 `you` / `assistant`（Inter 600，13px，字距 +12%，45% 不透明）。

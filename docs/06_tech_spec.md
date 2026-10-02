@@ -96,17 +96,17 @@ Each has `tb`, `d` (beats) and free-form `params`.
 {
   "meta": { "bpm": 172, "sr": 48000 },
   "voices": {                                   // Kokoro-82M voice blends (weights sum to 1)
-    "you":     { "blend": { "af_heart": 1.0 } },
-    "ai_0":    { "blend": { "am_michael": 0.5, "af_nicole": 0.5 } },
-    "ai_1":    { "blend": { "am_michael": 0.3, "af_nicole": 0.3, "af_heart": 0.4 } },
-    "ai_2":    { "blend": { "am_michael": 0.15, "af_nicole": 0.15, "af_heart": 0.7 } },
-    "ai_her":  { "blend": { "af_heart": 1.0 } }
+    "you":    { "blend": { "am_michael": 0.5, "bm_george": 0.5 } },                       // him, the human (male; sings the written melody 12 semitones down)
+    "ai_0":   { "blend": { "af_heart": 1.0 } },                                           // her, the whale-maid AI (provisional female blend)
+    "ai_1":   { "blend": { "af_heart": 0.85, "am_michael": 0.075, "bm_george": 0.075 } }, // 15% him
+    "ai_2":   { "blend": { "af_heart": 0.5,  "am_michael": 0.25,  "bm_george": 0.25 } },  // half him
+    "ai_him": { "blend": { "am_michael": 0.5, "bm_george": 0.5 } }                        // his voice, worn by the AI (final chorus lines 5-8, tag, outro)
   },
   "lines": [
     {
       "id": "V1_1", "section": "S02", "speaker": "you", "voice": "you",
       "mode": "sung",                 // sung | spoken | whisper
-      "style": "human",               // human | ai | ai_her | choir
+      "style": "human",               // human | ai | ai_him | choir
       "text": "Seven a.m., the blinds stay down,",   // display text (EN)
       "zh": "早上七點，百葉窗依舊緊閉，",
       "words": [ { "text": "Seven", "say": "seven", "syl": [0, 1] }, ... ],   // syl = indices into syllables
@@ -115,7 +115,7 @@ Each has `tb`, `d` (beats) and free-form `params`.
         { "text": "en",  "notes": [ { "tb": 64.5, "d": 0.5, "p": 62 } ] },
         { "text": "town", "notes": [ { "tb": 76.5, "d": 1.0, "p": 64 }, { "tb": 77.5, "d": 0.5, "p": 62 } ] }  // melisma
       ],
-      "harmony": [ { "voice": "ai_1", "interval": -12, "gain_db": -8 } ]   // optional doubled parts
+      "harmony": [ { "voice": "ai_1", "interval": 12, "gain_db": -8 } ]   // optional doubled parts (chorus 2 lines 5-8: the AI shadows him an octave above)
     },
     {
       "id": "INTRO_AI", "section": "S00", "speaker": "ai", "voice": "ai_0",
@@ -125,6 +125,8 @@ Each has `tb`, `d` (beats) and free-form `params`.
   ]
 }
 ```
+
+Voice story: her voice drifts into his — `ai_0` (her) → `ai_1` → `ai_2` → `ai_him`. Written melodies sit in the original register; male voices (`you`, `ai_him`) sing them an octave down, and final chorus lines 1–4 ("BOTH") are male + female in octaves. Lyrics are unchanged.
 
 Rules: a syllable's first note `tb` is where the **vowel** should land; consonant onsets are
 placed *before* it (singer's anticipation). `say` overrides pronunciation for the TTS

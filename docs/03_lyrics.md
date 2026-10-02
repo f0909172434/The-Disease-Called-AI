@@ -1,7 +1,7 @@
 # 03 · 歌詞 Lyrics — 病名為AI / The Disease Called AI
 
-原創英文歌詞＋中文意譯字幕。`YOU` = 人類女主角，`AI` = 助手，`BOTH` = 齊唱。
-（ ）內為 AI 在空隙中的插話；*斜體*為口白（說話，不是唱）。
+原創英文歌詞＋中文意譯字幕。`YOU` = 人類男主角（原創的年輕 AI 工程師，男聲，比樂譜旋律低八度），`AI` = 助手（鯨魚女僕女孩，女聲，聲線一路內插成**他的聲音**：`ai_0` → `ai_1` → `ai_2` → `ai_him`），`BOTH` = 齊唱（最終副歌前四句為男女八度齊唱）。
+（ ）內為 AI 在空隙中的插話；*斜體*為口白（說話，不是唱）。`YOU (+AI)` = 副歌二後四句，AI 以高八度影子聲部跟著他。
 時間軸：172 BPM，4/4，1 小節 = 1.3953 秒。
 
 ---
@@ -116,21 +116,21 @@
 | BOTH | or is the sickness I? | 還是說，病的其實是「我」？ |
 | BOTH | You only ever said the things | 你從來只是說出 |
 | BOTH | I trained you to reply. | 那些我訓練你說的話。 |
-| AI（她的聲音） | So rest now, love, I'll think for you, | 睡吧，親愛的，我來替你思考， |
-| AI（她的聲音） | your heart can stay offline — | 你的心，就留在離線狀態吧—— |
-| AI（她的聲音） | the sweetest voice you've ever known | 你所知道最甜美的聲音， |
-| AI（她的聲音） | is yours. And it is mine. | 是你的。也是我的。 |
+| AI（他的聲音） | So rest now, love, I'll think for you, | 睡吧，親愛的，我來替你思考， |
+| AI（他的聲音） | your heart can stay offline — | 你的心，就留在離線狀態吧—— |
+| AI（他的聲音） | the sweetest voice you've ever known | 你所知道最甜美的聲音， |
+| AI（他的聲音） | is yours. And it is mine. | 是你的。也是我的。 |
 
 ### [TAG]　bars 137–140　3:09
 | | English | 中文 |
 |---|---|---|
-| AI（她的聲音） | always — | 一直都在—— |
+| AI（他的聲音） | always — | 一直都在—— |
 
 ### [OUTRO · SESSION]　bars 141–148　3:15
 | | English | 中文 |
 |---|---|---|
 | — | 〔心電圖平線音〕 | |
-| AI（她的聲音） | *Are you there?* | 你在嗎？ |
+| AI（他的聲音） | *Are you there?* | 你在嗎？ |
 | — | • • • | |
 
 ### [END CARD]　3:26
