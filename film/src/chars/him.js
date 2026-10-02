@@ -877,7 +877,7 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // ---------- torsos ----------
 // Torso-local units: origin = hip centre, y up is negative. Each view gives: neck pivot (for the head), the head origin
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
-const HIM_HS = .96;   // head size relative to the body unit: ~7.5 heads tall (v7: slim build, was 1.24)
+const HIM_HS = .92;   // head size relative to the body unit (v7: slim build, ~7 heads with the hair, was 1.24)
 const HIM_TRAP = .1, HIM_NECKDN = .3;   // HIM_NECKDN: how far the head sits lower than in v5 (a shorter neck)
 const HIM_RIG = {
   front: { neck: [0, -12.2 + HIM_NECKDN], head: [0, -1.5], sh: { R: [-3.15, -8.5], L: [3.15, -8.5] }, hip: { R: [-1.42, 0], L: [1.42, 0] } },
@@ -951,13 +951,12 @@ function himTorsoFront(K, c, o, outfit) {
   if (K.det) { K.line(P([[-.95, -8.4], [-.4, -7.6], [-.15, -6.4]]), .25, c.shirtSh, { n: 3 }); K.line(P([[.9, -8.0], [.45, -7.0]]), .25, c.shirtSh, { n: 2 });
     K.shape(P([[.55, -9.4], [1.05, -8.8], [.9, -6.0], [.45, -4.5], [.35, -7.0]]), { wash: c.shirtSh, op: 120, ink: null, n: 3 }); }
   if (outfit === 'home') {
-    // rumpled white shirt: chest and shoulders show through the pull of the cloth; untucked, two buttons open
+    // rumpled white shirt, a little loose: soft drape folds; untucked, two buttons open
     const body = [[-1.08, -10.45], [-1.32, -11.3], [-2.08, -10.8], [-2.91, -10.15], [-3.83, -9.35], [-4.6, -8.45], [-4.8, -7.0], [-4.4, -5.2], [-3.45, -2.6], [-3.82, 0], [-3.95, 1.55, 1], [-1.4, 1.8], [.6, 1.55], [2.2, 1.85], [3.95, 1.55, 1], [3.82, 0], [3.45, -2.6], [4.4, -5.2], [4.8, -7.0], [4.6, -8.45], [3.83, -9.35], [2.91, -10.15], [2.08, -10.8], [1.32, -11.3], [1.08, -10.45]];
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[1.0, -10.55], [.5, -9.4], [0, -8.2], [-.5, -9.4], [-1.0, -10.55]].concat([[-1.0, -10.55]])), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[3.0, -9.7], [3.9, -9.2], [4.6, -8.3], [4.6, -6.6], [4.1, -5.0], [3.45, -2.6], [3.74, 0], [3.86, 1.5], [3.0, 1.65], [2.95, -.5], [2.85, -2.6], [3.5, -5.0], [3.6, -7.0], [3.4, -8.8]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
-    K.line(P([[-2.6, -6.9], [-1.5, -6.3], [-.5, -6.5]]), .3, c.shirtSh, { n: 3 }); K.line(P([[2.6, -6.9], [1.5, -6.3], [.5, -6.5]]), .3, c.shirtSh, { n: 3 });   // the pecs under the cloth
-    for (const [a, b, m] of [[[-3.2, -8.6], [-1.0, -7.6], -.2], [[3.2, -8.6], [1.0, -7.6], -.2], [[-3.5, -4.6], [-1.3, -3.4], .2], [[3.4, -4.8], [1.5, -3.5], .2], [[-3.0, -1.6], [-1.0, -2.2], -.15], [[3.0, -1.4], [1.3, -2.1], -.15], [[-1.6, .4], [-.8, 1.4], 0], [[1.4, .3], [2.0, 1.5], 0]])
+    for (const [a, b, m] of [[[-3.0, -8.4], [-2.6, -5.6], .15], [[3.1, -8.0], [2.8, -5.4], -.15], [[-2.2, -3.6], [-1.6, -.4], .12], [[2.4, -3.2], [2.0, -.2], -.12], [[-1.6, .4], [-.8, 1.4], 0], [[1.4, .3], [2.0, 1.5], 0]])
       K.line(P([a, himAt(a, b, .5).map((v, i) => v + (i ? m : 0)), b]), .3, c.shirtSh, { n: 3 });
     // collar points standing up, rumpled
     for (const s of [-1, 1]) {
@@ -983,19 +982,13 @@ function himTorsoFront(K, c, o, outfit) {
     K.shape(P([[1.5, -11.0], [2.4, -10.55], [3.6, -9.5], [3.1, -9.35], [2.2, -10.0]].map(([x, y]) => [s * x, y])), { wash: c.jacketHi, op: s < 0 ? 220 : 120, ink: null, n: 3 });
     // one real watercolour fill per figure, on an interior chest mass (it never reaches the silhouette, so its bleed stays inside)
     if (s > 0 && HIM_WCFILL && K.det && c.name !== 'swapped') K.shape(P([[2.7, -8.5], [3.85, -8.1], [4.15, -6.6], [3.7, -5.4], [2.7, -4.8], [2.2, -6.2]]), { fill: c.jacketDk, fillOp: 80, bleed: .015, tex: .7, ink: null, n: 4 });
-    // the chest: a shadow under the pec, light across its top
-    K.shape(P([[.95, -5.7], [2.0, -5.3], [3.5, -5.55], [4.3, -6.5], [3.6, -6.05], [2.1, -5.75]].map(([x, y]) => [s * x, y])), { wash: c.jacketSh, op: s < 0 ? 120 : 170, ink: null, n: 3 });
-    if (s < 0) K.shape(P([[-2.0, -8.0], [-3.1, -8.5], [-4.0, -8.0], [-3.4, -7.4], [-2.4, -7.3]]), { wash: c.jacketHi, op: 90, ink: null, n: 3 });
-    K.line(P([[1.2 * s, -5.62], [2.4 * s, -5.42], [3.7 * s, -5.8]]), .28, c.jacketDk, { n: 3 });
-    // the buttoned waist pulls into an X of stress folds
-    K.line(P([[.32 * s, -3.72], [1.45 * s, -4.62], [2.95 * s, -5.3]]), .34, c.jacketDk, { n: 3 });
-    K.line(P([[.4 * s, -3.55], [1.75 * s, -3.98], [3.35 * s, -4.3]]), .3, c.jacketDk, { n: 3 });
-    K.line(P([[.4 * s, -3.32], [1.6 * s, -2.85], [3.05 * s, -2.05]]), .3, c.jacketDk, { n: 3 });
-    K.line(P([[.3 * s, -3.15], [1.05 * s, -2.25], [1.7 * s, -1.4]]), .26, c.jacketDk, { n: 3 });
-    if (K.det) K.shape(P([[.4, -3.75], [1.5, -4.5], [2.9, -5.15], [1.6, -4.75]].map(([x, y]) => [s * x, y])), { wash: c.jacketSh, op: 120, ink: null, n: 3 });
+    if (s < 0) K.shape(P([[-2.0, -8.0], [-3.1, -8.5], [-4.0, -8.0], [-3.4, -7.4], [-2.4, -7.3]]), { wash: c.jacketHi, op: 70, ink: null, n: 3 });
+    // a loose fit: one soft pull from the button, the cloth hanging in long gentle folds
+    K.line(P([[.35 * s, -3.55], [1.3 * s, -4.15], [2.3 * s, -4.5]]), .24, c.jacketDk, { n: 3 });
     if (K.det) {
-      K.line(P([[4.45 * s, -6.6], [3.6 * s, -6.2], [2.9 * s, -6.3]]), .3, c.jacketDk, { n: 3 });   // armpit folds pulling across the chest
-      K.line(P([[4.3 * s, -5.6], [3.5 * s, -5.0]]), .26, c.jacketDk, { n: 2 });
+      K.shape(P([[.4, -3.7], [1.3, -4.25], [2.3, -4.6], [1.4, -4.05]].map(([x, y]) => [s * x, y])), { wash: c.jacketSh, op: 90, ink: null, n: 3 });
+      K.line(P([[3.6 * s, -7.8], [3.75 * s, -5.9], [3.5 * s, -4.0]]), .22, c.jacketDk, { n: 3 });   // drape at the side
+      K.line(P([[.6 * s, -2.9], [1.1 * s, -1.6], [1.25 * s, -.4]]), .2, c.jacketDk, { n: 3 });
       K.line(P([[2.3 * s, -10.55], [3.1 * s, -10.0], [3.75 * s, -9.35]]), .26, c.jacketDk, { n: 3 });   // shoulder seam
       if (s < 0) K.line(P([[-2.2, -10.55], [-3.5, -9.5], [-4.3, -8.5], [-4.55, -7.4]]), .3, c.jacketEdge, { n: 3 });   // lit edge
       K.line(P([[3.5 * s, -2.2], [3.78 * s, -.2], [3.85 * s, 1.6]]), .25, s < 0 ? c.jacketEdge : c.jacketDk, { n: 3 });
@@ -1038,7 +1031,7 @@ function himTorsoQ(K, c, o, outfit, farArm) {
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[-.05, -10.6], [1.55, -10.6], [1.2, -9.4], [.95, -8.2], [.45, -9.4]]), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[1.8, -8.6], [3.3, -8.6], [3.62, -6.2], [3.3, -4.4], [2.95, -2.5], [3.25, 0], [3.35, 1.65], [2.5, 1.6], [2.4, -1.0], [2.3, -2.8], [2.9, -5.0], [2.6, -7.0]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
-    for (const [a, b, m] of [[[-3.0, -8.4], [-.4, -7.3], -.2], [[-3.3, -4.6], [-.8, -3.5], .2], [[2.9, -6.6], [1.4, -6.0], -.1], [[-2.6, -1.5], [-.5, -2.3], -.15], [[-1.2, .4], [-.5, 1.4], 0], [[1.6, .3], [2.2, 1.4], 0]])
+    for (const [a, b, m] of [[[-2.9, -8.2], [-2.5, -5.4], .15], [[-2.0, -3.4], [-1.5, -.3], .12], [[2.5, -6.8], [2.3, -4.4], -.1], [[-1.2, .4], [-.5, 1.4], 0], [[1.6, .3], [2.2, 1.4], 0]])
       K.line(P([a, himAt(a, b, .5).map((v, i) => v + (i ? m : 0)), b]), .3, c.shirtSh, { n: 3 });
     K.line(P(body.slice(13)), .9, c.ink, { n: 4 });
     if (farArm) { const cut = K.cut; farArm(); K.cut = cut; }   // the far arm over the far side, under the collar
@@ -1063,13 +1056,12 @@ function himTorsoQ(K, c, o, outfit, farArm) {
   K.shape(P([[-1.0, -10.95], [-1.9, -10.55], [-2.7, -9.85], [-2.25, -9.7], [-1.3, -10.2]]), { wash: c.jacketHi, op: 220, ink: null, n: 3 });
   K.shape(P([[.95, -6.0], [1.4, -3.4], [1.12, -1.0], [1.0, 2.0], [.4, 2.0], [.5, -1.2], [.4, -3.4]]), { wash: c.jacketSh, op: 180, ink: null, n: 3 });
   if (HIM_WCFILL && K.det && c.name !== 'swapped') K.shape(P([[-1.2, -8.4], [-2.6, -8.0], [-3.2, -6.5], [-2.6, -5.4], [-1.2, -5.0], [-.8, -6.6]]), { fill: c.jacketSh, fillOp: 70, bleed: .015, tex: .7, ink: null, n: 4 });
-  K.line(P([[1.2, -3.65], [-.1, -4.6], [-2.1, -5.5]]), .34, c.jacketDk, { n: 3 }); K.line(P([[1.15, -3.5], [-.4, -3.95], [-2.3, -4.3]]), .3, c.jacketDk, { n: 3 });
-  K.line(P([[1.15, -3.3], [-.2, -2.8], [-1.9, -2.1]]), .3, c.jacketDk, { n: 3 }); K.line(P([[1.5, -3.6], [2.3, -4.4], [3.0, -5.0]]), .28, c.jacketDk, { n: 3 });
-  K.shape(P([[-.5, -5.6], [-1.8, -5.3], [-3.3, -5.7], [-3.8, -6.5], [-3.1, -6.0], [-1.7, -5.75]]), { wash: c.jacketSh, op: 120, ink: null, n: 3 });
-  if (K.det) K.shape(P([[1.1, -3.75], [-.1, -4.5], [-1.9, -5.2], [-.3, -4.75]]), { wash: c.jacketSh, op: 110, ink: null, n: 3 });
+  K.line(P([[1.2, -3.6], [.1, -4.25], [-1.4, -4.7]]), .24, c.jacketDk, { n: 3 }); K.line(P([[1.5, -3.6], [2.2, -4.1]]), .22, c.jacketDk, { n: 3 });   // a soft pull from the button
+  if (K.det) { K.shape(P([[1.1, -3.75], [.1, -4.35], [-1.4, -4.85], [-.1, -4.15]]), { wash: c.jacketSh, op: 90, ink: null, n: 3 });
+    K.line(P([[-3.3, -7.6], [-3.5, -5.8], [-3.2, -4.0]]), .22, c.jacketDk, { n: 3 }); K.line(P([[.4, -2.9], [.6, -1.6], [.7, -.4]]), .2, c.jacketDk, { n: 3 }); }
   K.shape(P([[-.25, -.5], [-2.2, -.62], [-2.18, .2], [-.3, .3]]), { wash: c.jacket, ink: c.ink, sw: .35, n: 2 });
   K.line(P([[-.35, .38], [-2.1, .28]]), .3, c.jacketDk, { n: 2 });
-  if (K.det) { K.line(P([[-3.85, -6.6], [-2.9, -6.1], [-2.0, -6.2]]), .3, c.jacketDk, { n: 3 }); K.line(P([[-1.9, -10.6], [-2.8, -9.95], [-3.35, -9.3]]), .26, c.jacketDk, { n: 3 });
+  if (K.det) { K.line(P([[-1.9, -10.6], [-2.8, -9.95], [-3.35, -9.3]]), .26, c.jacketDk, { n: 3 });
     K.line(P([[-1.6, -10.55], [-2.8, -9.85], [-3.5, -8.95], [-3.8, -7.4]]), .3, c.jacketEdge, { n: 3 }); K.line(P([[-2.9, -2.2], [-3.1, -.2], [-3.15, 1.6]]), .25, c.jacketEdge, { n: 3 }); }
   K.line(P(near.slice(1, 11)), .85, c.ink, { n: 4 }); K.line(P(near.slice(10, 15)), .6, c.ink, { n: 4 });
   // lapels: near one wide, far one narrow
@@ -1081,7 +1073,6 @@ function himTorsoQ(K, c, o, outfit, farArm) {
   K.shape(P([[-.05, -11.08], [-.7, -10.78], [-.95, -9.48], [-.35, -9.83]]), { wash: c.jacketDk, op: 140, ink: null, n: 3 });
   K.shape(P([[-.05, -11.13], [-.55, -10.88], [-.68, -9.83, 1], [-.32, -10.13], [.0, -10.58]]), { wash: c.shirt, sw: .45, n: 3 });
   K.shape(P([[1.55, -11.13], [1.88, -10.9], [1.96, -9.88, 1], [1.72, -10.08], [1.52, -10.58]]), { wash: c.shirtSh, sw: .4, n: 3 });
-  K.line(P([[-2.6, -5.6], [-1.6, -5.75]]), .35, c.jacketDk);
   himButton(K, c, 1.32 * .9, -3.45, .17); himButton(K, c, 1.38 * .9, -1.6, .15);
 }
 // Profile torso facing screen right.
@@ -1105,7 +1096,7 @@ function himTorsoSide(K, c, o, outfit) {
   K.shape(P(jk), { wash: c.jacket, ink: null, n: 4, wc: 1 });
   K.shape(P([[-1.9, -10.3], [-2.4, -9.3], [-2.65, -7.5], [-2.45, -5.5], [-1.95, -3.2], [-2.2, -1.0], [-2.62, .6], [-2.66, 1.95], [-1.7, 1.95], [-1.45, -1.0], [-1.2, -3.2], [-1.7, -5.5], [-1.9, -7.6], [-1.5, -9.6]]), { wash: c.jacketSh, ink: null, n: 3, wc: 1.2, ring: true });
   K.shape(P([[-.8, -10.8], [.6, -10.7], [1.4, -10.2], [.6, -9.9], [-.6, -10.2]]), { wash: c.jacketHi, op: 200, ink: null, n: 3 });
-  K.line(P([[2.5, -3.5], [.8, -3.0], [-.6, -2.6]]), .3, c.jacketDk, { n: 3 }); K.line(P([[3.1, -6.6], [1.2, -5.6]]), .28, c.jacketDk, { n: 3 });
+  K.line(P([[2.4, -3.5], [1.0, -3.15]]), .24, c.jacketDk, { n: 3 }); K.line(P([[.2, -7.6], [.45, -5.6], [.3, -4.0]]), .22, c.jacketDk, { n: 3 });
   K.line(P([[-1.95, -.3], [-2.3, 1.9]]), .3, c.jacketDk);   // back vent
   K.line(P([[1.9, -.35], [.2, -.45]]), .32, c.jacketDk);    // pocket flap
   // collar and lapel along the chest front
@@ -1164,11 +1155,18 @@ function himFace(o) {
   f.lid = clamp(lerp(o.lid || 0, 1, b));
   return f;
 }
+// v7: short hair — everything above the hairline (y < -2) is pressed down toward the skull (HIM_HAIRK), so the volume
+// on top is about half of what it was; the face below is untouched.
+const HIM_HAIRK = .6;
 function himHead(K, c, f, u, sw, view) {
-  if (view === 'front') himHeadFront(K, c, f, u, sw);
-  else if (view === 'q') himHeadQ(K, c, f, u, sw);
-  else himHeadSide(K, c, f, u, sw);
-  himHeadFx(K, c, f, view);
+  const sh = K.shape, ln = K.line, sq = P => P.map(p => p[1] < -2 ? [p[0], -2 + (p[1] + 2) * HIM_HAIRK, p[2]] : p);
+  K.shape = (P, o) => sh(sq(P), o); K.line = (P, w, col, o) => ln(sq(P), w, col, o);
+  try {
+    if (view === 'front') himHeadFront(K, c, f, u, sw);
+    else if (view === 'q') himHeadQ(K, c, f, u, sw);
+    else himHeadSide(K, c, f, u, sw);
+    himHeadFx(K, c, f, view);
+  } finally { K.shape = sh; K.line = ln; }
 }
 // Tears, sweat, the monitor's light: drawn over the head in head-local units.
 function himHeadFx(K, c, f, view) {
