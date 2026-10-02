@@ -9,7 +9,8 @@ const HIM_BASE = {
   shirt: '#F7F2EA', shirtSh: '#CFCBD6', pants: '#3A3D50', pantsSh: '#2A2C3B', pantsHi: '#55596F',
   shoe: '#F1EADF', shoeSh: '#C2B9AB', sole: '#6A5A54', belt: '#4E3529', buckle: '#B9B2A6', sock: '#8C8999',
   glass: '#B4BAC6', glassDk: '#666C7A', band: '#FCF9F3', bandSh: '#D8D4DE', code: '#2B2233',
-  ink: '#2B2233', inkSoft: '#5A4650', glare: '#7FE9FF', tear: '#BFE6F5', cheekLine: '#D9806F'
+  ink: '#2B2233', inkSoft: '#5A4650', glare: '#7FE9FF', tear: '#BFE6F5', cheekLine: '#D9806F',
+  irisDk: '#2E1B16', lash: '#231A24', hairMid: '#4A4458', jacketEdge: '#7690D2', stitch: '#5E78BC', nail: '#F7DCCB'
 };
 const himHex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 const himToHex = (r, g, b) => '#' + [r, g, b].map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('');
@@ -107,19 +108,22 @@ function himClipLine(P, g) {
 // Shorthands bound to one character draw: shape() = scaled, smoothed, boiled shape; line() = the same for a stroke.
 // k.cut (px, in the current local space) clips everything below a slightly wavy line (the bust's painted edge).
 function himKit(u, c, swBase, J, clean) {
-  const k = { u, cut: null };
+  const k = { u, cut: null, det: u * HIM_HS >= 15, det2: u * HIM_HS >= 34 };   // det / det2: levels of detail
   const g = () => k.keep ? k.keep : k.cut == null ? null : (p => p[1] - (k.cut + Math.sin(p[0] / u * 1.7) * .12 * u));
   k.pts = (P, closed = true, n = 5, j = J) => himS(himJ(P, j / u), closed, n).map(([x, y]) => [x * u, y * u]);
   k.shape = (P, o = {}) => {
     let pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, true, o.n || 5, o.j ?? J);
     const G = g(); if (G) { pts = himClipPoly(pts, G); if (pts.length < 3) return pts; }
-    paint(pts, { wash: o.wash, washOp: o.op, ink: o.ink === undefined ? c.ink : o.ink, sw: (o.sw ?? 1) * swBase, br: clean ? 'inkfine' : (o.br || 'ink'), hatch: o.hatch });
+    const sw = (o.sw ?? 1) * swBase;
+    paint(pts, { wash: o.wash, washOp: o.op, ink: o.ink === undefined ? c.ink : o.ink, sw, br: o.br || (clean || (o.sw ?? 1) < .5 ? 'inkfine' : 'ink'), hatch: o.hatch && k.det ? o.hatch : null });
     return pts;
   };
   k.line = (P, w = .5, col = c.ink, o = {}) => {
     const pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, false, o.n || 5, o.j ?? J);
     const G = g(), runs = G ? himClipLine(pts, G) : [pts];
-    for (const r of runs) inkLine(r, w * swBase, col, clean ? 'inkfine' : (o.br || 'ink'), o.curv ?? 0);
+    // line-weight hierarchy: silhouettes and main contours in 'ink', thin inner details in 'inkfine'
+    const br = o.br || (clean || w < .5 ? 'inkfine' : 'ink'), ww = br === 'inkfine' && !o.br ? w * 1.5 : w;
+    for (const r of runs) inkLine(r, ww * swBase, col, br, o.curv ?? 0);
   };
   return k;
 }
@@ -140,66 +144,100 @@ function himEye(K, c, f, cx, s, E = HIM_EYE.k, cmp = 1) {
   bot = bot.map(([x, y]) => [x, lerp(y, y - .11, low * (1 - Math.abs(x) * .8))]);
   top = top.map(([x, y], i) => [x, lerp(y, shut[i], lid)]);
   const T = top.map(([x, y]) => [X(x), Y(y)]), B = bot.map(([x, y]) => [X(x), Y(y)]);
-  const w = cmp < .9 ? .85 : 1;
-  if (f.eye === 'happy') {   // laughing: closed upward arcs
-    K.line([[X(-.42), Y(.12)], [X(-.15), Y(-.1)], [X(.18), Y(-.13)], [X(.48), Y(.04)]], 1.4 * w, c.ink, { n: 4 });
+  const w = cmp < .9 ? .85 : 1, d2 = K.det2;
+  // double-eyelid crease (rides up as the lid lowers) and the inner-corner mark
+  const crease = () => { if (lid < .8) K.line([[X(-.18), Y(-.3 + lid * .12)], [X(.12), Y(-.36 + lid * .14)], [X(.38), Y(-.31 + lid * .12)], [X(.52), Y(-.17 + lid * .1)]], .38 * w, c.inkSoft, { n: 3 }); };
+  if (f.eye === 'happy') {   // laughing: closed upward arcs with lashes
+    K.line([[X(-.42), Y(.12)], [X(-.15), Y(-.1)], [X(.18), Y(-.13)], [X(.48), Y(.04)]], 1.45 * w, c.lash, { n: 4 });
+    if (d2) K.line([[X(.4), Y(-.02)], [X(.6), Y(.08)]], .55 * w, c.lash, { raw: true });
+    K.line([[X(-.3), Y(-.28)], [X(.05), Y(-.36)], [X(.35), Y(-.3)]], .35 * w, c.inkSoft, { n: 3 });
     return;
   }
   if (f.eye === 'squeeze') {   // shut tight: a > < crease
-    K.line([[X(-.42), Y(-.14)], [X(.08), Y(.02)], [X(.5), Y(.12)]], 1.4 * w, c.ink, { n: 3 });
+    K.line([[X(-.42), Y(-.14)], [X(.08), Y(.02)], [X(.5), Y(.12)]], 1.4 * w, c.lash, { n: 3 });
     K.line([[X(-.28), Y(.2)], [X(.22), Y(.14)]], .6 * w, c.ink, { n: 3 });
     return;
   }
-  if (lid > .86) {   // closed: one lash curve and a little flick
-    K.line([[X(-.42), Y(.1)], [X(-.1), Y(.18)], [X(.22), Y(.16)], [X(.5), Y(.04)]], 1.3 * w, c.ink, { n: 4 });
-    K.line([[X(.42), Y(.06)], [X(.58), Y(.16)]], .8 * w, c.ink, { raw: true });
+  if (lid > .86) {   // closed: one heavy lash curve with flicks, the crease above
+    K.line([[X(-.42), Y(.1)], [X(-.1), Y(.18)], [X(.22), Y(.16)], [X(.5), Y(.04)]], 1.35 * w, c.lash, { n: 4 });
+    K.line([[X(.42), Y(.06)], [X(.6), Y(.18)]], .7 * w, c.lash, { raw: true });
+    if (d2) K.line([[X(.3), Y(.15)], [X(.42), Y(.3)]], .45 * w, c.lash, { raw: true });
+    K.line([[X(-.2), Y(-.08)], [X(.15), Y(-.12)], [X(.45), Y(-.06)]], .35 * w, c.inkSoft, { n: 3 });
     return;
   }
+  // the white, with the lid's shadow along its top
   K.shape(T.concat(B.slice(1, -1)), { wash: c.white, ink: null, j: 0, n: 3 });
-  // iris, clipped between the lids
-  const ik = (f.irisK ?? 1) * E, lx = (f.lookX || 0) * .15 * E * cmp, ly = (f.lookY || 0) * .07;
-  const icx = X(.04) + lx, icy = Y(.03) + ly, ir = .2 * ik * (cmp < .9 ? .8 : 1);
   const asc = C => C[0][0] < C[C.length - 1][0] ? C : C.slice().reverse();
   const clip = P => himBetween(P, asc(T), asc(B));
-  K.shape(clip(ellPts(icx, icy, ir * .95, .25 * ik, 18)), { wash: c.iris, ink: null, raw: true, j: 0 });
-  K.shape(clip(ellPts(icx, icy + .1 * ik, ir * .7, .13 * ik, 14)), { wash: c.irisLt, op: 210, ink: null, raw: true, j: 0 });
-  if (!f.dull) K.shape(clip(ellPts(icx, icy + .01, ir * .4, .11 * ik, 12)), { wash: c.pupil, ink: null, raw: true, j: 0 });
-  K.shape(T.concat(T.slice().reverse().map(([x, y]) => [x, y + .07 * E])), { wash: c.skinDk, op: 120, ink: null, raw: true, j: 0 });
+  // iris in three washes (dark top, mid, a light crescent at the bottom), the pupil, two highlights
+  const ik = (f.irisK ?? 1) * E, lx = (f.lookX || 0) * .15 * E * cmp, ly = (f.lookY || 0) * .07;
+  const icx = X(.04) + lx, icy = Y(.03) + ly, ir = .2 * ik * (cmp < .9 ? .8 : 1), iry = .25 * ik;
+  K.shape(clip(ellPts(icx, icy, ir * .96, iry, 20)), { wash: c.irisDk, ink: null, raw: true, j: 0 });
+  K.shape(clip(ellPts(icx, icy + iry * .14, ir * .8, iry * .78, 18)), { wash: c.iris, ink: null, raw: true, j: 0 });
   if (!f.dull) {
-    K.shape(ellPts(icx - .07 * E * cmp, icy - .07 * E, .06 * E, .065 * E, 10), { wash: c.white, ink: null, raw: true, j: 0 });
-    K.shape(ellPts(icx + .06 * E * cmp, icy + .1 * E, .028 * E, .028 * E, 8), { wash: c.white, ink: null, raw: true, j: 0 });
+    const cres = []; for (let i = 0; i <= 8; i++) { const a = .25 + i / 8 * (Math.PI - .5); cres.push([icx + Math.cos(a) * ir * .76, icy + iry * .12 + Math.sin(a) * iry * .74]); }
+    for (let i = 8; i >= 0; i--) { const a = .25 + i / 8 * (Math.PI - .5); cres.push([icx + Math.cos(a) * ir * .5, icy + Math.sin(a) * iry * .42]); }
+    K.shape(clip(cres), { wash: c.irisLt, op: 235, ink: null, raw: true, j: 0 });
+    K.shape(clip(ellPts(icx, icy + iry * .05, ir * .36, iry * .42, 12)), { wash: c.pupil, ink: null, raw: true, j: 0 });
+  } else K.shape(clip(ellPts(icx, icy + iry * .2, ir * .6, iry * .5, 14)), { wash: mixCol(c.iris, c.white, .25), op: 150, ink: null, raw: true, j: 0 });
+  if (d2) K.line(clip(ellPts(icx, icy, ir * .96, iry, 20)).concat([clip(ellPts(icx, icy, ir * .96, iry, 20))[0]]), .3, c.irisDk, { raw: true, j: 0 });
+  K.shape(T.concat(T.slice().reverse().map(([x, y]) => [x, y + .08 * E])), { wash: c.skinDk, op: 130, ink: null, raw: true, j: 0 });
+  if (!f.dull) {
+    K.shape(ellPts(icx - .075 * E * cmp, icy - .075 * E, .06 * E, .07 * E, 10, 0, -.4), { wash: c.white, ink: null, raw: true, j: 0 });
+    K.shape(ellPts(icx + .065 * E * cmp, icy + .1 * E, .03 * E, .026 * E, 8), { wash: c.white, ink: null, raw: true, j: 0 });
   }
-  // upper lash: a thick tapered stroke heaviest at the outer corner, with a small wing
-  const th = [.035, .07, .1, .13, .15];
-  const lash = T.map(p => [p[0], p[1]]).concat([[X(.6), Y(.08), 1]], T.slice().reverse().map(([x, y], i) => [x, y - th[4 - i] * E]));
-  K.shape(lash, { wash: c.ink, ink: null, n: 3, j: 0 });
-  K.line([[X(.45), B[0][1] + .1 * E], [X(.3), B[1][1] + .05 * E], [X(.05), B[2][1] + .03 * E]], .5 * w, c.ink, { n: 3 });
-  if (lid < .55) K.line([[X(-.1), T[2][1] - .15 * E], [X(.2), T[2][1] - .15 * E], [X(.46), T[4][1] - .12 * E]], .35 * w, c.inkSoft, { n: 3 });
+  // upper lash: a thick tapered stroke, heaviest at the outer corner, a wing and two lash flicks
+  const th = [.04, .08, .115, .145, .165];
+  const lash = T.map(p => [p[0], p[1]]).concat([[X(.62), Y(.1), 1]], T.slice().reverse().map(([x, y], i) => [x, y - th[4 - i] * E]));
+  K.shape(lash, { wash: c.lash, ink: null, n: 3, j: 0 });
+  if (K.det) {
+    K.shape(himClump([X(.3), T[3][1] - .1 * E], [X(.66), T[3][1] - .2 * E], .07 * E, .15 * s), { wash: c.lash, ink: null, n: 2, j: 0 });
+    K.shape(himClump([X(.42), T[4][1] - .06 * E], [X(.74), T[4][1] + .02 * E], .06 * E, .1 * s), { wash: c.lash, ink: null, n: 2, j: 0 });
+    if (d2) K.line([[X(-.4), T[0][1]], [X(-.47), T[0][1] + .05 * E]], .4 * w, c.skinDk, { raw: true });   // inner corner
+  }
+  // lower lid: a soft line along the outer half and a couple of lower-lash hints
+  K.line([[X(.46), B[0][1] + .1 * E], [X(.3), B[1][1] + .05 * E], [X(.05), B[2][1] + .03 * E]], .5 * w, c.ink, { n: 3 });
+  if (K.det) K.line([[X(-.05), B[3][1] + .03 * E], [X(-.3), B[4][1] + .02 * E]], .3 * w, c.inkSoft, { n: 2 });
+  if (d2) for (const k of [.36, .22]) K.line([[X(k), B[1][1] + (k > .3 ? .07 : .09) * E], [X(k + .05), B[1][1] + (k > .3 ? .14 : .16) * E]], .35 * w, c.lash, { raw: true });
+  crease();
 }
 function himEyeFront(K, c, f, s) { himEye(K, c, f, s * HIM_EYE.cx, s); }
 function himBrowFront(K, c, f, s, X = x => s * x) {
   const bi = f.browIn || 0, bo = f.browOut || 0, by = f.browY || 0;
-  const P = [[.24, -.66 + bi * (bi < 0 ? .26 : .17) + by], [.75, -.8 + by + (bi + bo) * .06], [1.38, -.76 + bo * .12 + by]];
-  const w = [.17, .13, .05];
+  const P = [[.22, -.66 + bi * (bi < 0 ? .26 : .17) + by], [.75, -.8 + by + (bi + bo) * .06], [1.4, -.75 + bo * .12 + by]];
+  const w = [.15, .11, .03];
   const top = P.map(([x, y], i) => [X(x), y - w[i] / 2]), bot = P.map(([x, y], i) => [X(x), y + w[i] / 2]).reverse();
-  K.shape(top.concat([[X(1.46), P[2][1] + .03, 1]], bot), { wash: c.hair, ink: c.ink, sw: .3, n: 4 });
+  K.shape(top.concat([[X(1.48), P[2][1] + .03, 1]], bot), { wash: c.hair, ink: null, n: 4 });
+  K.line([[X(.22), P[0][1] - .07], [X(.75), P[1][1] - .055], [X(1.47), P[2][1] + .02]], .5, c.lash, { n: 4 });   // the upper edge, tapering out
+  if (K.det) for (let i = 0; i < 5; i++) {   // hair strokes along the brow
+    const k = (i + .5) / 5, x = lerp(.26, 1.3, k), y = lerp(lerp(P[0][1], P[1][1], Math.min(1, k * 2)), P[2][1], Math.max(0, k * 2 - 1));
+    K.line([[X(x - .02), y + .05], [X(x + .14), y - .04]], .3, c.lash, { raw: true });
+  }
 }
 function himGlassesFront(K, c, f, s, sw, X = x => s * x, temple = true) {
+  // the frame's faint shadow on the cheek, just under the lens edge
+  if (K.det) K.line([[X(.36), .5], [X(.85), .52], [X(1.32), .46], [X(1.5), .3]], .45, c.skinSh, { n: 3 });
   if (f.glare > 0) {   // the screen's light on the lenses
     K.shape([[X(.26), -.36], [X(1.42), -.36], [X(1.42), .2], [X(1.3), .38], [X(.38), .38], [X(.26), .22]], { wash: c.glare, op: 115 * f.glare, ink: null, raw: true, j: 0 });
     K.line([[X(.55), .3], [X(1.0), -.3]], 1.4 * f.glare, c.white, { raw: true });
     K.line([[X(.85), .32], [X(1.2), -.12]], .7 * f.glare, c.white, { raw: true });
+  } else {   // a glare streak across the lens
+    K.shape([[X(.95), -.33], [X(1.2), -.33], [X(.82), .35], [X(.6), .35]], { wash: c.white, op: 45, ink: null, raw: true, j: 0 });
+    if (K.det) K.line([[X(1.12), -.28], [X(.8), .26]], .3, c.white, { raw: true });
   }
   // the rimless lower edge of the lens
   K.line([[X(.25), -.34], [X(.27), .2], [X(.42), .38], [X(1.28), .38], [X(1.42), .2], [X(1.44), -.34]], .3, c.glassDk, { n: 4 });
-  // the top rim (half-rim frame)
-  K.shape([[X(.2), -.38, 1], [X(.8), -.45], [X(1.48), -.4, 1], [X(1.48), -.31, 1], [X(.8), -.36], [X(.24), -.3, 1]], { wash: c.glass, ink: c.ink, sw: .4, n: 4 });
+  // the top rim (half-rim frame) with a highlight along its upper edge, a nose pad
+  K.shape([[X(.2), -.38, 1], [X(.8), -.45], [X(1.48), -.4, 1], [X(1.49), -.3, 1], [X(.8), -.35], [X(.24), -.29, 1]], { wash: c.glass, ink: c.ink, sw: .45, n: 4 });
+  if (K.det) { K.line([[X(.3), -.39], [X(.8), -.43], [X(1.35), -.39]], .3, c.white, { n: 3 }); K.shape(ellPts(X(.26), .02, .035, .07, 8), { wash: c.glass, ink: c.glassDk, sw: .3, raw: true, j: 0 }); }
   if (temple) K.line([[X(1.47), -.37], [X(1.76), -.3]], .6, c.glassDk, { raw: true });
-  if (!f.glare) K.line([[X(1.2), -.24], [X(1.36), -.06]], .45, c.white, { raw: true });
 }
 function himMouthFront(K, c, f, sw, mx = 0, mk = 1) {
   const m = f.mouth || 'closed', dark = '#5A2630', y0 = 1.42;
   const K0 = K; K = { shape: (P, o) => K0.shape(P.map(([x, y, k]) => [mx + x * mk, y, k]), o), line: (P, w, col, o) => K0.line(P.map(([x, y, k]) => [mx + x * mk, y, k]), w, col, o) };
+  // the lower lip's soft shadow and the philtrum above the mouth
+  const lipShade = dy => { if (!K0.det) return; K.shape([[-.17, y0 + dy - .06], [0, y0 + dy - .1], [.17, y0 + dy - .06], [.1, y0 + dy + .04], [-.1, y0 + dy + .04]], { wash: c.skinSh, op: 150, ink: null, n: 3 });
+    K.line([[0, y0 - .3], [.01, y0 - .17]], .3, c.skinSh, { raw: true }); };
   const open = (P, tongue = true, teeth = false) => {
     K.shape(P, { wash: dark, ink: c.ink, sw: .5, n: 4 });
     const t0 = Math.min(...P.map(p => p[1])), b = Math.max(...P.map(p => p[1])), hw = Math.max(...P.map(p => p[0])) * .6;
@@ -207,8 +245,9 @@ function himMouthFront(K, c, f, sw, mx = 0, mk = 1) {
     if (tongue && b - t0 > .14) K.shape(ellPts(0, b - .06, hw * .7, .06, 10), { wash: '#D9707A', ink: null, raw: true, j: 0 });
   };
   switch (m) {
-    case 'closed': K.line([[-.3, y0 - .02], [-.1, y0 + .015], [.12, y0 + .015], [.3, y0 - .03]], .6, c.ink, { n: 3 }); K.line([[-.09, y0 + .22], [.09, y0 + .22]], .4, c.skinDk, { raw: true }); break;
-    case 'smile': K.line([[-.38, y0 - .1], [-.14, y0 + .04], [.14, y0 + .04], [.38, y0 - .1]], .65, c.ink, { n: 3 }); K.line([[-.08, y0 + .24], [.08, y0 + .24]], .4, c.skinDk, { raw: true }); break;
+    case 'closed': lipShade(.2); K.line([[-.3, y0 - .02], [-.1, y0 + .015], [.12, y0 + .015], [.3, y0 - .03]], .6, c.ink, { n: 3 }); K.line([[-.09, y0 + .22], [.09, y0 + .22]], .4, c.skinDk, { raw: true }); break;
+    case 'smile': lipShade(.22); K.line([[-.38, y0 - .1], [-.14, y0 + .04], [.14, y0 + .04], [.38, y0 - .1]], .65, c.ink, { n: 3 }); K.line([[-.08, y0 + .24], [.08, y0 + .24]], .4, c.skinDk, { raw: true });
+      if (K0.det) { K.line([[-.42, y0 - .16], [-.38, y0 - .06]], .3, c.skinDk, { raw: true }); K.line([[.42, y0 - .16], [.38, y0 - .06]], .3, c.skinDk, { raw: true }); } break;
     case 'frown': K.line([[-.3, y0 + .07], [-.1, y0 - .01], [.12, y0 - .01], [.3, y0 + .08]], .6, c.ink, { n: 3 }); break;
     case 'flat': K.line([[-.24, y0], [.24, y0]], .55, c.ink, { raw: true }); break;
     case 'tight': K.line([[-.3, y0 + .02], [-.15, y0 - .03], [0, y0 + .02], [.15, y0 - .03], [.3, y0 + .02]], .55, c.ink, { n: 3 }); break;

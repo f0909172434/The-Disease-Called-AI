@@ -1,8 +1,8 @@
 // Adapted from ClaudeAnimationBase (https://github.com/JohnHeibel/ClaudeAnimationBase, MIT, (c) 2026 John Heibel).
-// core.js: constants, helpers, paper, paint wrapper, compositing and render hooks.
-// Length and rhythm come from PROJECT in config.js.
+// core.js: constants, helpers, paper, paint wrapper, cached layers, compositing and render hooks.
+// Length, frame rate and rhythm come from PROJECT in config.js; the song's data from data.js; the lyric overlay from lyrics.js.
 const W = 1920, H = 1080;
-const BPM = PROJECT.bpm, BEAT = 60 / BPM, OFF = PROJECT.offset || 0, BOIL = 12, DUR = PROJECT.duration;
+const BPM = PROJECT.bpm, BEAT = 60 / BPM, OFF = PROJECT.offset || 0, BOIL = 12, DUR = PROJECT.duration, FPS = PROJECT.fps || 24;
 const TAU = Math.PI * 2;
 const PAL = {
   paper: '#F3EBDC', ink: '#2B2233', clay: '#D97757', clayDk: '#A84D33', clayLt: '#F2A283',
@@ -244,6 +244,61 @@ function flushLetters() {
   push(); resetMatrix(); translate(-W / 2, -H / 2); image(letG, 0, 0); pop();
 }
 
+// ---------- cached layers ----------
+// cachedLayer(key, variants, drawFn, o) paints a STATIC layer (background, set dressing) once per boil variant and keeps
+// it as an offscreen framebuffer, drawn as one image from then on: a watercolour fill costs seconds on a CPU, an image
+// next to nothing. The variant is the boil frame mod `variants` (3 drawings cycled at 12/s: a held-cel boil), so the
+// frame stays a pure function of t: whichever frame paints a variant first paints the same thing. Rules:
+//   - drawFn(v, o) paints in layer pixels (0..w, 0..h), with no camera; its boilSeed()/jit() follow the variant, not
+//     the frame. Everything it draws must depend only on the key (and v): if it changes with t, put that in the key.
+//   - The image is drawn with the current transform, so a camera pans and zooms it. o.w/o.h make it bigger than the
+//     frame (painted in frame-sized tiles: keep strokes/fills from crossing tile seams at multiples of 1920/1080),
+//     placed at o.x/o.y. o.paper (default true) starts it on the paper texture, opaque; paper: false gives a transparent
+//     overlay (its pigment then mixes with transparent paper, not with what is under it later).
+// It is painted on the main canvas and copied out: p5.brush fills painted straight into a p5.Framebuffer come out
+// different every time (not a pure function of t). ?nocache (render.mjs --nocache) paints drawFn every frame instead.
+const LAYERS = new Map(), LAYER_MAX = 24, LAYER_STATS = { hits: 0, misses: 0, ms: 0 };   // ~8 MB per 1080p layer
+const NOCACHE = typeof location !== 'undefined' && new URLSearchParams(location.search).has('nocache');
+function freeImage(img) { const R = window._renderer || (window.p5 && p5.instance && p5.instance._renderer), tx = R && R.textures && R.textures.get(img); if (tx) { tx.remove(); R.textures.delete(img); } }
+function cachedLayer(key, variants, drawFn, o = {}) {
+  if (typeof variants === 'function') { o = drawFn || {}; drawFn = variants; variants = 3; }
+  const n = Math.max(1, variants | 0), v = BOILN % n, w = o.w || W, h = o.h || H, x = o.x || 0, y = o.y || 0, paper = o.paper !== false;
+  const id = `${key}#${v}/${n}@${w}x${h}${paper ? 'p' : ''}`;
+  flushBrush();
+  const paintIt = (dx, dy, screen = true) => {   // the layer, offset by (dx, dy), onto the main canvas (in screen space)
+    const sb = BOILN, sc = CAM, sl = LETTERS;
+    BOILN = v; CAM = null; LETTERS = [];
+    push(); if (screen) { resetMatrix(); translate(-W / 2, -H / 2); } translate(dx, dy);
+    if (paper) image(paperG, 0, 0, w, h);
+    boilSeed(key); drawFn(v, o); flushBrush();
+    pop();
+    if (LETTERS.length && screen && w === W && h === H) flushLetters();
+    BOILN = sb; CAM = sc; LETTERS = sl;
+  };
+  if (NOCACHE) { paintIt(x, y, false); boilSeed(key + '|after'); return; }
+  let fb = LAYERS.get(id);
+  if (fb) { LAYERS.delete(id); LAYERS.set(id, fb); LAYER_STATS.hits++; }
+  else {
+    const t0 = performance.now();
+    while (LAYERS.size >= LAYER_MAX) { const [k, old] = LAYERS.entries().next().value; LAYERS.delete(k); old.remove(); }
+    const saved = get();                                    // the frame so far
+    fb = createFramebuffer({ width: w, height: h, density: 1, depth: false, antialias: false });
+    fb.begin(); clear(); fb.end();
+    for (let ty = 0; ty < h; ty += H) for (let tx = 0; tx < w; tx += W) {
+      push(); resetMatrix(); clear(); pop();
+      paintIt(-tx, -ty);
+      const tile = get(0, 0, Math.min(W, w - tx), Math.min(H, h - ty));
+      fb.begin(); push(); translate(-w / 2, -h / 2); image(tile, tx, ty); pop(); fb.end();
+      freeImage(tile);
+    }
+    push(); resetMatrix(); translate(-W / 2, -H / 2); clear(); image(saved, 0, 0, W, H); pop();
+    freeImage(saved);
+    LAYERS.set(id, fb); LAYER_STATS.misses++; LAYER_STATS.ms += performance.now() - t0;
+  }
+  image(fb, x, y, w, h);
+  boilSeed(key + '|after');      // the random stream after this call is the same whether it painted or not
+}
+
 // ---------- paper ----------
 function lcg(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
 function makePaper() {
@@ -278,6 +333,9 @@ async function setup() {
   brush.scaleBrushes(5); defineBrushes();
   paperG = makePaper(); grainC = makeGrain(); glowTex = makeGlowTex(); letG = createGraphics(W, H); letG.pixelDensity(1);
   outC = document.getElementById('out'); outX = outC.getContext('2d');
+  // the song's data (data.js) and the lyric fonts (lyrics.js), both local; a missing file only logs a warning
+  try { if (typeof loadMVData === 'function') loadMVData(); } catch (e) { console.warn('data: ' + e.message); }   // (already loaded by data.js)
+  try { await Promise.race([loadMVFonts(), new Promise(r => setTimeout(r, 20000))]); } catch (e) { console.warn('fonts: ' + e.message); }
   try { await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 3000))]); } catch (e) {}
   window.ready = true;
   if (!location.search.includes('render')) devUI();
@@ -286,7 +344,7 @@ function draw() {
   if (!window.ready) return;
   LETTERS = []; CAM = LAST_CAM = null;
   push(); translate(-W / 2, -H / 2);
-  BOILN = Math.floor(T * BOIL); CLAWD_N = 0; boilSeed('frame'); noiseSeed(77);
+  BOILN = Math.floor(T * BOIL + 1e-6); CLAWD_N = 0; boilSeed('frame'); noiseSeed(77);
   image(paperG, 0, 0);
   drawWorld(T);
   pop();
@@ -296,6 +354,7 @@ function composite(t) {
   c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
   c.drawImage(drawingContext.canvas, 0, 0, W, H);
   drawLetters(c);
+  drawLyricsAt(c, t);                                        // subtitles: after the paint, under the grain
   c.globalCompositeOperation = 'multiply'; c.drawImage(grainC, 0, 0);
   c.globalCompositeOperation = 'source-over';
 }
@@ -316,6 +375,24 @@ window.renderSheet = async (times, cols = 3, w = 640, crop = null, at = null) =>
   }
   return { url: sc.toDataURL('image/jpeg', .9), ms };
 };
+// Lyric overlay mode at t: ?lyrics=<mode> > the shot's (or loop's) lyricMode > 'karaoke' (loops: 'hidden').
+const LYRIC_OVERRIDE = typeof location !== 'undefined' && new URLSearchParams(location.search).get('lyrics');
+function drawLyricsAt(c, t) {
+  if (typeof drawLyrics !== 'function') return;
+  const sh = window.LOOP ? { fn: window.LOOP, opts: {}, t0: 0 } : typeof shotAt === 'function' ? shotAt(t) : null;
+  const src = sh ? { lyricMode: sh.fn.lyricMode, lyricStyle: sh.fn.lyricStyle, ...sh.opts } : {};
+  let mode = LYRIC_OVERRIDE || src.lyricMode || (window.LOOP ? 'hidden' : 'karaoke');
+  if (typeof mode === 'function') mode = mode(t, t - (sh ? sh.t0 : 0));
+  drawLyrics(c, t, mode, src.lyricStyle || null);
+}
+// SHA-256 of the composited frame's pixels (tools/check_determinism.mjs)
+window.frameHash = async (t) => {
+  T = t; await redraw(); composite(t);
+  const px = outX.getImageData(0, 0, W, H).data, d = await crypto.subtle.digest('SHA-256', px);
+  return Array.from(new Uint8Array(d)).map((b) => b.toString(16).padStart(2, '0')).join('');
+};
+window.mvInfo = () => ({ duration: DUR, fps: FPS, bpm: BPM, sources: MV.sources, sections: MV.sections.length, lyrics: LYRICS.length,
+  events: Object.fromEntries(Object.entries(MV.events).map(([k, v]) => [k, v.length])), fonts: FONTS_OK, shots: SHOTS.length, layers: { ...LAYER_STATS, live: LAYERS.size } });
 window.gpuInfo = () => { const gl = drawingContext, e = gl.getExtension('WEBGL_debug_renderer_info'); return e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); };
 
 function devUI() {

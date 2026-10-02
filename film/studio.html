@@ -18,11 +18,13 @@
 <body>
 <main>
   <canvas id="out" width="1920" height="1080"></canvas>
-  <div class="bar"><input id="scrub" type="range" min="0" max="215" step="0.0333" value="0"><span id="tt">loading…</span></div>
+  <div class="bar"><input id="scrub" type="range" min="0" max="215" step="0.041667" value="0"><span id="tt">loading…</span></div>
 </main>
 <!-- engine (adapted from ClaudeAnimationBase, MIT; see docs/ClaudeAnimationBase.LICENSE) -->
 <script src="src/config.js"></script>
 <script src="src/core.js"></script>
+<script src="src/data.js"></script>      <!-- song data: sections, beats, events, lyrics (MV, section(t), events(name) ...) -->
+<script src="src/lyrics.js"></script>    <!-- fonts + bilingual karaoke overlay -->
 <script src="src/timeline.js"></script>
 <!-- characters: each file defines its draw functions and registers its model-sheet loops in LOOPS -->
 <script src="src/chars/him.js"></script>
@@ -30,7 +32,9 @@
 <script src="src/chars/_smoke.js"></script>
 <!-- scenes: one script per scene file, in order -->
 <script>
-  // studio.html?loop=<name> scrubs a standalone loop (model sheets) instead of the film.
+  // studio.html?loop=<name> scrubs a standalone loop (model sheets) instead of the film. ?t=55.8 jumps to a time,
+  // ?lyrics=hidden|karaoke|subtitle-only overrides the overlay, ?nocache paints cached layers every frame.
+  // Data and fonts load over XHR: open it through `node render.mjs --serve` (a local server), not from file://.
   const q = new URLSearchParams(location.search).get('loop'); if (q && LOOPS[q]) window.LOOP = LOOPS[q];
 </script>
 </body>

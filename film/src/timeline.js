@@ -4,9 +4,17 @@
 // shots([[t0, fn], [t1, fn], ...]) registers shots in time order. Each fn(t, lt, dur) is called with t = video time,
 // lt = time since the shot started, dur = the shot's length. It paints the WHOLE frame, background included, and must be
 // a pure function of t: frames render in parallel and out of order, so nothing may carry over from one frame to the next.
+// An optional third element sets the lyric overlay for the shot (see lyrics.js): [t0, fn, { lyricMode, lyricStyle }]
+// (or set fn.lyricMode / fn.lyricStyle). Cut on beats: t0 = tAt(bar, beat) or section('S04').start (data.js).
 
 const SHOTS = [];
 function shots(list) { SHOTS.push(...list); SHOTS.sort((a, b) => a[0] - b[0]); }
+// the shot playing at t: { i, t0, end, fn, opts } (null when there are no shots)
+function shotAt(t) {
+  if (!SHOTS.length) return null;
+  let i = 0; while (i + 1 < SHOTS.length && t >= SHOTS[i + 1][0]) i++;
+  return { i, t0: SHOTS[i][0], end: i + 1 < SHOTS.length ? SHOTS[i + 1][0] : DUR, fn: SHOTS[i][1], opts: SHOTS[i][2] || {} };
+}
 
 // Standalone loops (model sheets, GIFs, tests), outside the main timeline: window.LOOP = LOOPS[name] swaps the whole
 // frame for that function, called with loop time. Give each a length: LOOPS.x = t => { ... }; LOOPS.x.len = 4;
@@ -16,9 +24,8 @@ function drawWorld(t) {
   if (window.LOOP) window.LOOP(t);
   else if (!SHOTS.length) placeholder(t);
   else {
-    let i = 0; while (i + 1 < SHOTS.length && t >= SHOTS[i + 1][0]) i++;
-    const t0 = SHOTS[i][0], end = i + 1 < SHOTS.length ? SHOTS[i + 1][0] : DUR;
-    SHOTS[i][1](t, t - t0, end - t0);
+    const s = shotAt(t);
+    s.fn(t, t - s.t0, s.end - s.t0);
     CAM = null;
   }
   flushLetters();

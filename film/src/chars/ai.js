@@ -1057,3 +1057,17 @@ LOOPS.ai_med = t => { ai(960, 1040, 88, { form: 'full', t }); };
 LOOPS.ai_med.len = 1;
 LOOPS.ai_none = t => { };
 LOOPS.ai_none.len = 1;
+LOOPS.ai_hatch = t => {
+  for (let i = 0; i < 6; i++) { boilSeed('h' + i);
+    paint(ellPts(200 + i * 300, 400, 120, 250, 24), { wash: '#252C60', ink: '#1C2142', sw: .6, br: 'inkfine' });
+    paint(ellPts(230 + i * 300, 420, 70, 200, 24), { wash: '#171B44', washOp: 150, ink: null, hatch: { d: [3, 5, 8, 12, 5, 5][i], a: [.8, .8, .8, .8, 1.2, -.5][i], o: { rand: .15 }, b: ['HB', 'HB', 'HB', 'HB', '2B', 'cpencil'][i], c: '#0E1236', w: .6 } });
+  }
+};
+LOOPS.ai_hatch.len = 1;
+LOOPS.ai_nohatch = t => {
+  for (let i = 0; i < 6; i++) { boilSeed('h' + i);
+    paint(ellPts(200 + i * 300, 400, 120, 250, 24), { wash: '#252C60', ink: '#1C2142', sw: .6, br: 'inkfine' });
+    paint(ellPts(230 + i * 300, 420, 70, 200, 24), { wash: '#171B44', washOp: 150, ink: null });
+  }
+};
+LOOPS.ai_nohatch.len = 1;
