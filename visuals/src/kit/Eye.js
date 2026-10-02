@@ -205,7 +205,7 @@ export class Eye extends THREE.Group {
     return this;
   }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { pupil: 0.35, reflection: 0, lidOpen: 1, brightness: 1, screenLight: 1, reveal: 1 }, states);   // per-frame defaults (no carry-over)
     const u = this.material.uniforms;
     u.uTime.value = t; u.uPupil.value = this.pupil; u.uRefStr.value = this.reflection; u.uLid.value = this.lidOpen;
     u.uBright.value = this.brightness; u.uScreen.value = this.screenLight; u.uReveal.value = this.reveal;

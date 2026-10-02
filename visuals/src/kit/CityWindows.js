@@ -98,7 +98,7 @@ export class CityWindows extends THREE.Group {
     Object.assign(this, { density: 0.8, flicker: 0.2, warmRatio: 0.08, brightness: 1, opacity: 1, outline: 1 });
   }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { density: 0.8, flicker: 0.2, warmRatio: 0.08, brightness: 1, opacity: 1, outline: 1 }, states);   // per-frame defaults (no carry-over)
     const u = this.material.uniforms;
     u.uTime.value = t; u.uDensity.value = this.density; u.uFlicker.value = this.flicker;
     u.uWarmRatio.value = this.warmRatio; u.uBright.value = this.brightness; u.uOpacity.value = this.opacity;

@@ -297,6 +297,15 @@ function buildHairLines(strands, { every = 4, step = 3 } = {}) {
   return expandInstanced(geo);   // plain batched draw: ~3x cheaper than instancing on SwiftShader
 }
 
+// Per-frame states: update(t, states) starts from these defaults, so a state you do not pass is NOT
+// carried over from an earlier frame (frames render out of order). Config (size, viewHeight,
+// viewWidth, colors, screenPos) persists.
+export const SILHOUETTE_STATE = Object.freeze({
+  warmth: 1, innerGlow: 0, jitter: 0, gridify: 0, dissolve: 0, morph: 0, colorSwap: 0, mouthOpen: 0,
+  eyeClosed: 0, opacity: 1, mirror: false, screenLight: 1, breathe: 1, twinkle: 0.5, focus: 3.5, aperture: 0,
+  bustFade: -0.95, hairLines: 0.55,
+});
+
 let CACHE = null; // geometry is deterministic: build once per page
 
 export class Silhouette extends THREE.Group {
@@ -353,11 +362,7 @@ export class Silhouette extends THREE.Group {
     this.hair.frustumCulled = false;
     this.add(this.hair);
     // public state (documented in the header)
-    Object.assign(this, {
-      warmth: 1, innerGlow: 0, jitter: 0, gridify: 0, dissolve: 0, morph: 0, colorSwap: 0, mouthOpen: 0,
-      eyeClosed: 0, opacity: 1, mirror: false, screenLight: 1, breathe: 1, twinkle: 0.5, size: 0.0048, viewHeight: 0,
-      focus: 3.5, aperture: 0, bustFade: -0.95, hairLines: 0.55, viewWidth: 0,
-    });
+    Object.assign(this, SILHOUETTE_STATE, { size: 0.0048, viewHeight: 0, viewWidth: 0 });
     this.screenPos = this.material.uniforms.uScreenPos.value;
   }
 
@@ -387,7 +392,7 @@ export class Silhouette extends THREE.Group {
   }
 
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, SILHOUETTE_STATE, states);
     const u = this.material.uniforms;
     u.uTime.value = t;
     u.uPx.value = ((this.viewHeight || this.ctx.H) * 0.5) / Math.tan(((this._fovHint || 35) * Math.PI) / 360);

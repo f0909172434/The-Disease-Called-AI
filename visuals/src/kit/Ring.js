@@ -226,7 +226,7 @@ export class Ring extends THREE.Group {
   }
 
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { pulse: 0, speak: 0, colorMix: 0, breakSegments: 0, thumbsMode: 0, thumbScale: 0.03 * this.radius, brightness: 1, opacity: 1, bandOpacity: 1, streamSpeed: 1, spin: 1, corona: 1 }, states);   // per-frame defaults (no carry-over)
     const u = this.material.uniforms;
     u.uTime.value = t;
     u.uPulse.value = this.pulse; u.uSpeak.value = this.speak; u.uColorMix.value = this.colorMix;

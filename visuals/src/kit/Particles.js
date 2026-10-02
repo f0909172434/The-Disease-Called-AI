@@ -95,7 +95,7 @@ export class DustParticles extends THREE.Points {
   /** set the camera so point sizes follow its fov / viewport */
   setCamera(cam, viewHeight) { this.material.uniforms.uPx.value = (viewHeight || this.ctx.H) * 0.5 / Math.tan(cam.fov * Math.PI / 360); return this; }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { opacity: 1, speed: 1, focus: 3, aperture: 0, twinkle: 0, ambient: 0.08, beamStrength: 1, beamRadius: 0.8 }, states);   // per-frame defaults
     const u = this.material.uniforms;
     u.uTime.value = t; u.uOpacity.value = this.opacity; u.uSpeed.value = this.speed; u.uFocus.value = this.focus;
     u.uAperture.value = this.aperture; u.uTwinkle.value = this.twinkle; u.uAmbient.value = this.ambient;
@@ -196,7 +196,7 @@ export class FeverStream extends THREE.Mesh {
   /** match streak width to a camera (fov) and viewport height */
   setCamera(cam, viewHeight) { this.material.uniforms.uFocal.value = (viewHeight || this.ctx.H) * 0.5 / Math.tan(cam.fov * Math.PI / 360); return this; }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { opacity: 1, speed: 0.12, pulse: 0, trail: 0, width: 0.012, swirl: 0.8, brightness: 1 }, states);   // per-frame defaults
     const u = this.material.uniforms;
     u.uTime.value = t; u.uSpeed.value = this.speed; u.uPulse.value = this.pulse; u.uTrail.value = this.trail;
     u.uWidth.value = this.width; u.uSwirl.value = this.swirl; u.uOpacity.value = this.opacity; u.uBright.value = this.brightness;
@@ -317,7 +317,7 @@ export class TokenConfetti extends AtlasQuads {
     this.color = this.material.uniforms.uColor.value;
   }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { opacity: 1, brightness: 1, gravity: -2.2, drag: 1.4, flutter: 1 }, states);   // per-frame defaults
     const P = this.attr('aP').array, Q = this.attr('aQ').array, S = this.attr('aS').array, U = this.attr('aUV').array, A = this.attr('aA').array;
     const k = this.drag;
     this.particles.forEach((p, i) => {
@@ -382,7 +382,7 @@ export class NotificationSnow extends AtlasQuads {
     Object.assign(this, { opacity: 1, brightness: 1, top, floor, size, speed });
   }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { opacity: 1, brightness: 1 }, states);   // per-frame defaults
     const P = this.attr('aP').array, Q = this.attr('aQ').array, S = this.attr('aS').array, U = this.attr('aUV').array, A = this.attr('aA').array;
     let landed = 0;
     this.cards.forEach((c, i) => {

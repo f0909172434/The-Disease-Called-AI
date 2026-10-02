@@ -101,7 +101,7 @@ export class TypingDots extends THREE.Group {
   }
 
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { phase: 0, glow: null, freeze: 0, vanish: [0, 0, 0], brightness: 1, opacity: 1, fog: 0 }, states);   // per-frame defaults (no carry-over)
     const u = this.material.uniforms;
     const g = this.glow || [0, 1, 2].map((i) => TypingDots.glowAt(this.phase, i));
     u.uG.value.set(g[0], g[1], g[2]);

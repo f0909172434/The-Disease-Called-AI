@@ -146,6 +146,45 @@ export default {
     // ------------------------------------------------------------------ interface
     this.typed.update(t, { opacity: t < this.sendT ? 1 : 0 });
     const caretX = t < this.sendT ? this.typed.caretX(t) : 0;
+
+    // camera FIRST: everything below may depend on it (never read last frame's camera)
+    let pos, target, fov = 30;
+    if (t < this.b3) {                                           // 0.1 locked extreme close-up
+      target = this.cursorStart.clone();
+      pos = target.clone().add(V(0, 0, 0.3));
+    } else if (t < this.alwaysT + 0.35) {                        // 0.2 / 0.3 dolly out (exponential)
+      const u = clamp((t - this.b3) / (this.alwaysT + 0.35 - this.b3));
+      const e = inOutSine(u);
+      const d = 0.3 * Math.pow(3.4 / 0.3, e);
+      const caretW = this.G.clone().add(V(caretX + 0.03, 0.031, 0));
+      const textMid = this.G.clone().add(V(Math.max(caretX, 0.62) * 0.5, 0.06, 0));
+      target = caretW.lerp(textMid, smoothstep(0.08, 0.45, u)).lerp(this.comp, smoothstep(0.45, 1.0, u));
+      pos = target.clone().add(V(-0.03 * e, 0.04 * e, d));
+      // micro push on each keypress
+      let push = 0;
+      for (const k of this.keyTimes) if (k <= t && t - k < 0.6) push += Math.exp(-(t - k) / 0.09);
+      pos.lerp(target, 0.012 * Math.min(push, 1.5));
+    } else if (t < this.b7) {                                    // 0.4 orbit around her profile
+      const u = clamp((t - this.alwaysT - 0.35) / (this.b7 - this.alwaysT - 0.35));
+      pos = this._orbitPos(u);
+      target = this.comp.clone().lerp(this.pivot, inOutSine(u));
+    } else if (t < this.b8) {                                    // push toward her eye
+      const u = clamp((t - this.b7) / (this.b8 - this.b7));
+      const e = inOutCubic(u);
+      const d0 = this._orbitPos(1).distanceTo(this.eyeW);
+      const d = d0 * Math.pow(0.16 / d0, e);
+      const start = this._orbitPos(1);
+      const dir = start.clone().sub(this.eyeW).normalize();
+      pos = this.eyeW.clone().addScaledVector(dir.lerp(this.pushDir, e), d);
+      target = this.pivot.clone().lerp(this.eyeW, smoothstep(0, 0.6, u));
+    } else {                                                     // 0.5 into the pupil
+      const u = clamp((t - this.b8) / (this.b84 - this.b8));
+      const d = 0.16 * Math.pow(0.012 / 0.16, inQuad(u) * 0.75 + u * 0.25);
+      pos = this.eyeW.clone().addScaledVector(this.pushDir, d + 0.004);
+      target = this.eyeW.clone();
+    }
+    applyCamera(this.camera, { pos, target, fov, handheld: t > this.alwaysT ? { t, seed: 3, pos: 0.0015, rotDeg: 0.05, freq: 0.3 } : null, near: 0.0008 });
+
     const lastKey = this.typed.lastKeyTime(t);
     const typingNow = t >= this.firstKey - 0.05 && t < this.sendT && t - lastKey < 0.45;
     let curB;
@@ -206,44 +245,6 @@ export default {
       beamStrength: 0.9 + 1.1 * heart + 1.5 * flashK, beamRadius: 0.3, ambient: 0.018, twinkle: heart,
       focus: camDist * 0.9, aperture: 0.9,
     });
-
-    // ------------------------------------------------------------------ camera
-    let pos, target, fov = 30;
-    if (t < this.b3) {                                           // 0.1 locked extreme close-up
-      target = this.cursorStart.clone();
-      pos = target.clone().add(V(0, 0, 0.3));
-    } else if (t < this.alwaysT + 0.35) {                        // 0.2 / 0.3 dolly out (exponential)
-      const u = clamp((t - this.b3) / (this.alwaysT + 0.35 - this.b3));
-      const e = inOutSine(u);
-      const d = 0.3 * Math.pow(3.4 / 0.3, e);
-      const caretW = this.G.clone().add(V(caretX + 0.03, 0.031, 0));
-      const textMid = this.G.clone().add(V(Math.max(caretX, 0.62) * 0.5, 0.06, 0));
-      target = caretW.lerp(textMid, smoothstep(0.08, 0.45, u)).lerp(this.comp, smoothstep(0.45, 1.0, u));
-      pos = target.clone().add(V(-0.03 * e, 0.04 * e, d));
-      // micro push on each keypress
-      let push = 0;
-      for (const k of this.keyTimes) if (k <= t && t - k < 0.6) push += Math.exp(-(t - k) / 0.09);
-      pos.lerp(target, 0.012 * Math.min(push, 1.5));
-    } else if (t < this.b7) {                                    // 0.4 orbit around her profile
-      const u = clamp((t - this.alwaysT - 0.35) / (this.b7 - this.alwaysT - 0.35));
-      pos = this._orbitPos(u);
-      target = this.comp.clone().lerp(this.pivot, inOutSine(u));
-    } else if (t < this.b8) {                                    // push toward her eye
-      const u = clamp((t - this.b7) / (this.b8 - this.b7));
-      const e = inOutCubic(u);
-      const d0 = this._orbitPos(1).distanceTo(this.eyeW);
-      const d = d0 * Math.pow(0.16 / d0, e);
-      const start = this._orbitPos(1);
-      const dir = start.clone().sub(this.eyeW).normalize();
-      pos = this.eyeW.clone().addScaledVector(dir.lerp(this.pushDir, e), d);
-      target = this.pivot.clone().lerp(this.eyeW, smoothstep(0, 0.6, u));
-    } else {                                                     // 0.5 into the pupil
-      const u = clamp((t - this.b8) / (this.b84 - this.b8));
-      const d = 0.16 * Math.pow(0.012 / 0.16, inQuad(u) * 0.75 + u * 0.25);
-      pos = this.eyeW.clone().addScaledVector(this.pushDir, d + 0.004);
-      target = this.eyeW.clone();
-    }
-    applyCamera(this.camera, { pos, target, fov, handheld: t > this.alwaysT ? { t, seed: 3, pos: 0.0015, rotDeg: 0.05, freq: 0.3 } : null, near: 0.0008 });
 
     // ------------------------------------------------------------------ macro eye
     const eyeIn = smoothstep(9.15, 9.85, t);

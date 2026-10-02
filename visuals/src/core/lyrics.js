@@ -93,6 +93,12 @@ export class LyricsOverlay {
   }
 
   /** visibility + vertical offset of every line at t (newest two at most) */
+  _cursorIdx(l, t) {
+    let lastSung = -1;
+    for (let i = 0; i < l._assign.length; i++) if (t >= l.syllables[l._assign[i]].start) lastSung = i;
+    return lastSung;
+  }
+
   _activeLines(t) {
     const out = [];
     for (const l of this.lines) {
@@ -112,6 +118,8 @@ export class LyricsOverlay {
       out[i].shift = -46 * outCubic(k);
       out[i].alpha *= 1 - k;
     }
+    // quantize everything that is drawn; the cache key is built from these exact values
+    for (const o of out) { o.alpha = Math.round(o.alpha * 128) / 128; o.shift = Math.round(o.shift * 2) / 2; }
     return out.filter((o) => o.alpha > 0.004).slice(-2);
   }
 
@@ -147,8 +155,8 @@ export class LyricsOverlay {
         const x = align === 'center' ? (W - w) / 2 : left;
         const syl = l.syllables;
         const assign = l._assign;
-        const sylAlpha = syl.map((s) => 0.4 + 0.6 * clamp((t - s.start) / 0.06));
-        const sylGlow = syl.map((s) => (t < s.start ? 0 : t <= s.end ? 1 : Math.exp(-(t - s.end) / 0.25)));
+        const sylAlpha = syl.map((s) => 0.4 + 0.6 * LyricsOverlay.qa(t, s));
+        const sylGlow = syl.map((s) => LyricsOverlay.qg(t, s));
         this.text.draw(c, l.text, x, enY, { ...style, alpha: a.alpha, glow: 14 * u, glowAlpha: 0.75 }, {
           charAlpha: (i) => sylAlpha[assign[i]] ?? 1,
           charGlow: (i) => sylGlow[assign[i]] ?? 0,
@@ -156,8 +164,7 @@ export class LyricsOverlay {
         // AI cursor: after the last sung character, stepped blink once the line is done
         if (ai && st.cursor !== false) {
           const lay = this.text.charLayout(l.text, style);
-          let lastSung = -1;
-          for (let i = 0; i < assign.length; i++) if (t >= syl[assign[i]].start) lastSung = i;
+          const lastSung = this._cursorIdx(l, t);
           const done = t >= l.end;
           const cx = x + (lastSung >= 0 ? lay[lastSung].x + lay[lastSung].w : 0) + 6 * u;
           const blink = done ? (Math.floor(t * 2.4) % 2 === 0 ? 1 : 0.15) : 1;
@@ -187,6 +194,10 @@ export class LyricsOverlay {
     }
   }
 
+  // quantized per-syllable progress / glow (shared by the cache key and the drawing)
+  static qa(t, s) { return Math.round(clamp((t - s.start) / 0.06) * 32) / 32; }
+  static qg(t, s) { return Math.round((t < s.start ? 0 : t <= s.end ? 1 : Math.exp(-(t - s.end) / 0.25)) * 32) / 32; }
+
   /** draw (if changed) and composite onto the current framebuffer */
   render(t, mode = 'karaoke', styleFn = null) {
     const active = mode === 'hidden' ? [] : this._activeLines(t);
@@ -195,9 +206,9 @@ export class LyricsOverlay {
       a.style = styleFn ? (styleFn(a.line, t) || {}) : {};
       key += JSON.stringify(a.style);
       const l = a.line;
-      const sylKey = l.syllables.map((s) => Math.round(clamp((t - s.start) / 0.06) * 32) + ':' + (t < s.start ? 0 : t <= s.end ? 32 : Math.round(Math.exp(-(t - s.end) / 0.25) * 32))).join(',');
+      const sylKey = l.syllables.map((s) => LyricsOverlay.qa(t, s) + ':' + LyricsOverlay.qg(t, s)).join(',');
       const ai = this._isAI(l, null);
-      key += `${l.id}@${Math.round(a.alpha * 128)}/${Math.round(a.shift * 2)}/${sylKey}/${ai && t >= l.end ? Math.floor(t * 2.4) % 2 : 'x'};`;
+      key += `${l.id}@${a.alpha}/${a.shift}/${sylKey}/${ai && t >= l.end ? Math.floor(t * 2.4) % 2 : 'x'}/${this._cursorIdx(l, t)};`;
     }
     if (key !== this._lastKey) {
       this._draw(t, active, mode);

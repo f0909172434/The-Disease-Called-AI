@@ -194,7 +194,7 @@ export class Room extends THREE.Group {
   setResolution(W, H) { this.lines.setResolution(W, H); this.laptopLines.setResolution(W, H); }
 
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { screenGlow: 1, dayNight: 0, greyness: 0, emptyChair: 0, screenOnPillow: 0, lampOn: 0.4, lineBrightness: 0.35, reveal: 1, opacity: 1 }, states);   // per-frame defaults (no carry-over)
     const g = this.screenGlow, dn = this.dayNight, o = this.opacity;
     this.lines.brightness = this.lineBrightness * o;
     this.lines.reveal = this.reveal;

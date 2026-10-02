@@ -82,7 +82,7 @@ export class HUD extends THREE.Group {
     const wd = this.widgets.ecg, a = this.ctx.audio;
     const win = this.ecgWindow, Wc = wd.w, Hc = wd.h;
     const sweep = ((t % win) + win) % win / win * Wc;
-    const key = `${Math.round(sweep)}|${this.ecgColor}|${this.opacity}`;
+    const key = `${Math.round(t * 240)}|${this.ecgOnset}|${win}|${this.ecgColor}|${this.glow}`;   // exact per frame
     if (key === wd.key) return;
     wd.key = key;
     const c = wd.begin();
@@ -131,8 +131,8 @@ export class HUD extends THREE.Group {
 
   _drawVitals(t) {
     const wd = this.widgets.vitals, a = this.ctx.audio;
-    const beat = Math.exp(-a.since(this.ecgOnset, t) / 0.12);
-    const key = `${this.bpm}|${this.temp}|${this.dosage}|${Math.round(beat * 16)}`;
+    const beat = Math.round(Math.exp(-a.since(this.ecgOnset, t) / 0.12) * 16) / 16;   // draw from the quantized value
+    const key = `${this.bpm}|${this.temp}|${this.dosage}|${beat}`;
     if (key === wd.key) return;
     wd.key = key;
     const c = wd.begin();
@@ -183,7 +183,8 @@ export class HUD extends THREE.Group {
   }
 
   update(t, states = {}) {
-    Object.assign(this, states);
+    // per-frame defaults (no carry-over between out-of-order frames); `show` is layout config
+    Object.assign(this, { bpm: 172, temp: 41.2, dosage: '∞', clock: '07:00', session: 0, ecgOnset: 'kick', ecgWindow: 2.4, ecgColor: C.AI_WHITE, opacity: 1, glow: 1 }, states);
     const w = this.widgets, sh = this.show;
     for (const [k, wd] of Object.entries(w)) { wd.mesh.visible = !!sh[k] && this.opacity > 0.001; wd.material.uniforms.opacity.value = this.opacity; }
     if (sh.ecg) this._drawECG(t);

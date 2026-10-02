@@ -202,10 +202,12 @@ def main():
     print(f"rendering {len(jobs)} jobs on {args.jobs} processes -> {os.path.relpath(TRACK_DIR)}")
     t0 = time.time()
     man_path = os.path.join(TRACK_DIR, "manifest.json")
-    manifest = {}
+    manifest, full_seconds = {}, None
     if only and os.path.exists(man_path):
         with open(man_path) as f:
-            manifest = {e["stem"]: e for e in json.load(f)["stems"]}
+            old = json.load(f)
+        manifest = {e["stem"]: e for e in old["stems"]}
+        full_seconds = old.get("render_seconds")
     with Pool(args.jobs) as pool:
         for entries in pool.imap_unordered(run_job, jobs):
             for e in entries:
@@ -216,7 +218,9 @@ def main():
     write_analysis_stems(arr, manifest)
     total = time.time() - t0
     with open(man_path, "w") as f:
-        json.dump({"sr": SR, "samples": N_TOTAL, "render_seconds": round(total, 1),
+        json.dump({"sr": SR, "samples": N_TOTAL,
+                   "render_seconds": full_seconds if only else round(total, 1),   # last full render
+                   "last_run_seconds": round(total, 1), "workers": args.jobs,
                    "stems": sorted(manifest.values(), key=lambda e: e["stem"])}, f, indent=1)
     print(f"done in {total:.1f} s; analysis stems kick/snare/hat/musicbox.wav written to {os.path.relpath(STEMS)}")
 

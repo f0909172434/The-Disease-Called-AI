@@ -325,7 +325,7 @@ export class ChatUI extends THREE.Group {
 
   /** draw state at t (only if changed) */
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { opacity: 1, brightness: 1 }, states);   // per-frame defaults (no carry-over)
     this.material.uniforms.opacity.value = this.opacity;
     this.material.uniforms.brightness.value = this.brightness;
     this.visible = this.opacity > 0.001;
@@ -343,11 +343,23 @@ export class ChatUI extends THREE.Group {
     const keyParts = [msgs.map((m) => `${m.id}:${t < m.at ? 'd' + Math.floor(t / (this.ctx.audio.beatDur / 2)) : this._visibleChars(m, t)}:${this._swapCount(m, t)}:${Math.round(clamp((t - m.at) / 0.25) * 20)}:${m.seen && t >= m.seen.at ? 1 : 0}:${m.rewind && t >= m.rewind.at && t < m.rewind.at + 0.4 ? Math.floor(t * 30) : 0}:${!this._streamDone(m, t) || t - this._doneTime(m) < 0.9 ? Math.floor(t * 3.3) % 2 : 'x'}`).join('|'),
       typed, inp.ghost && t >= inp.ghost.at ? Math.floor((t - inp.ghost.at) * (inp.ghost.rate || 40)) : -1,
       Math.floor(t / 0.53) % 2, inp.events ? (inp.events.filter((e) => e.t <= t).pop()?.t ?? -1) : -1];
+    let animating = false;
     if (s.regenerate) {
       const rg = s.regenerate;
       const lc = (rg.clicks || []).filter((k) => k <= t).pop() ?? -1e9;
-      keyParts.push(t >= rg.show[0] && t < rg.show[1], Math.round(Math.exp(-(t - lc) / 0.18) * 20), JSON.stringify((rg.counter || []).filter((r) => r[0] <= t).pop() || 0));
+      const hover = rg.hover && rg.hover.some(([a, b]) => t >= a && t < b);
+      keyParts.push(t >= rg.show[0] && t < rg.show[1], hover, JSON.stringify((rg.counter || []).filter((r) => r[0] <= t).pop() || 0));
+      if (t - lc < 1.2) animating = true;
     }
+    // continuous animations (dots, pop-ins, slides, rewind, ghost) -> exact per-frame key, so a
+    // cached canvas is only reused when the drawing is provably identical (out-of-order safe)
+    for (const m of msgs) {
+      if (m.dots && t < (m.at ?? Infinity)) animating = true;
+      if (m.from === 'you' && t - m.at < 0.3) animating = true;
+      if (m.from === 'ai' && t - m.at < 1 / 15) animating = true;
+      if (m.rewind && t >= m.rewind.at - 0.05 && t < m.rewind.at + (m.rewind.dur || 0.35) + 0.05) animating = true;
+    }
+    if (animating) keyParts.push(Math.round(t * 240));
     const key = keyParts.join('#');
     if (key === this._key) return this;
     this._key = key;

@@ -83,7 +83,7 @@ export class KineticText extends THREE.Group {
   update(t, states = {}) {
     // reset transient effects each frame (pure function of t): only keys passed this frame apply
     this.slam = this.type = this.decode = this.split = this.drop = null;
-    this.glitch = 0; this.pulse = 0;
+    this.glitch = 0; this.pulse = 0; this.opacity = 1; this.brightness = 1;
     Object.assign(this, states);
     const n = this.glyphs.length;
     const fq = Math.floor(t * 30);

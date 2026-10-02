@@ -72,7 +72,7 @@ export class TypedText extends THREE.Group {
     for (const it of this.inst) { if (it.tAdd <= t) best = Math.max(best, it.tAdd); if (it.tDel <= t) best = Math.max(best, it.tDel); }
     return best;
   }
-  update(t, { opacity = this.opacity, jitter = 0.5 } = {}) {
+  update(t, { opacity = 1, jitter = 0.5 } = {}) {
     this.opacity = opacity;
     const alive = this.alive(t);
     const str = alive.map((it) => it.ch).join('');
@@ -142,7 +142,7 @@ export class ScreenCursor extends THREE.Mesh {
     this.color = mat.uniforms.uColor.value;
   }
   update(t, states = {}) {
-    Object.assign(this, states);
+    Object.assign(this, { brightness: 1, grid: 1, opacity: 1 }, states);   // per-frame defaults
     const u = this.material.uniforms;
     u.uBright.value = this.brightness; u.uGrid.value = this.grid; u.uOpacity.value = this.opacity;
     this.visible = this.opacity > 0.001;
