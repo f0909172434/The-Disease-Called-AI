@@ -905,8 +905,10 @@ function ai(x, y, u, o = {}) {
   const tt = o.t ?? T, sq = o.sq || 0, fl = o.float ?? .25, bob = o.bob ?? .07 * Math.sin(tt * TAU * .5 + (o.seed || 0));
   const X = x + (o.dx || 0) * u, Y = y + ((o.dy || 0) - fl - bob) * u;
   const sx = (o.flip ? -1 : 1) * (1 + sq * .6), sy = 1 - sq;
+  // squash and stretch pivot at her waist (she hovers, so no foot contact to keep)
+  const py = -6 * u;
   let clip = null;
-  if (o.clip) { const [a, b, c, d] = o.clip, xs = [(a - X) / sx, (c - X) / sx].sort((p, q) => p - q); clip = [xs[0], (b - Y) / sy, xs[1], (d - Y) / sy]; }
+  if (o.clip) { const [a, b, c, d] = o.clip, xs = [(a - X) / sx, (c - X) / sx].sort((p, q) => p - q); clip = [xs[0], (b - Y - py) / sy + py, xs[1], (d - Y - py) / sy + py]; }
   const g = clamp(o.glitch || 0), gf = Math.floor(tt * 12);
   const rotA = o.rot || 0, warp = g > 0 ? yy => { const band = Math.floor(yy / (u * .38)) + 300, r = hash(band * 7.13 + gf * 3.31 + 1); return r < g * .6 ? (hash(band * 1.7 + gf * .91) - .5) * 2.2 * g * u : 0; } : null;
   AI_S = { P: pal, u, k: G.k * u, sw: clamp(u / 85, .22, 1.7) * pal.swk, swF: clamp(G.k * u / 75, .22, 1.5) * pal.swk, J: pal.J * u / 60, warp, clip, rot: rotA };
@@ -917,7 +919,7 @@ function ai(x, y, u, o = {}) {
     mouth: o.mouth || 'smile', brow: o.brow || 0, blush: o.blush ?? .3, fin: o.fin || 0, flap: o.flap ?? .07 * Math.sin(tt * TAU * .6 + 1),
     ahoge: (o.ahoge || 0) + .1 * Math.sin(tt * TAU * .7), sway: (o.hairLag || 0) + .1 * Math.sin(tt * TAU * .3 + 2),
   };
-  push(); translate(X, Y); scale(sx, sy);
+  push(); translate(X, Y + py); scale(sx, sy); translate(0, -py);
   rs('shadow');
   if (!o.noShadow) { const k = 1 / (1 + (fl + bob) * .4), sy0 = (fl + bob) * u; aiPaint(aiEll(0, sy0, 1.55 * u * k * (form === 'chibi' ? 1.1 : 1), .24 * u * k, 20), { wash: pal.shadow, op: 50, ink: null }); }
   if (pal.glowK) { rs('halo'); aiGlow(0, (form === 'chibi' ? -6.2 : -5.6) * u, 6 * u, pal.rim, .4 * pal.glowK); }
@@ -1039,7 +1041,7 @@ function aiEmotions(t, keys, o = {}) {
   // the take this key fires, plus the anticipation squash of the next one (take() from core.js, scaled to her height)
   const t1 = prev ? take(t, tc, (E.take ?? .5) * tk) : { sq: 0, dy: 0 };
   const En = i + 1 < keys.length ? AI_EMO[keys[i + 1][1]] || AI_EMO.smile : null, t2 = En ? take(t, tn, (En.take ?? .5) * tk) : { sq: 0, dy: 0 };
-  cur.sq = (cur.sq || 0) + (t1.sq + t2.sq) * .7; cur.dy = (cur.dy || 0) + (t1.dy + t2.dy) * .5;
+  cur.sq = (cur.sq || 0) + (t1.sq + t2.sq) * .3; cur.dy = (cur.dy || 0) + (t1.dy + t2.dy) * .35;
   cur.fin = (cur.fin || 0) + .5 * spring(t, tc, 7, 20) * (prev ? 1 : 0);
   cur.ahoge = (cur.ahoge || 0) + .6 * spring(t, tc + .05, 5, 16) * (prev ? 1 : 0);
   if (blink > 0) cur.blink = blink;
