@@ -1,0 +1,8696 @@
+{
+ "meta": {
+  "bpm": 172,
+  "sr": 48000,
+  "duration": 215.0,
+  "units": "seconds",
+  "generator": "music/vocal/render_vocals.py",
+  "notes": "start = consonant onset, end = release; syllable 'vowel' = vowel landing (the note's beat)"
+ },
+ "lines": [
+  {
+   "id": "IN_YOU",
+   "speaker": "you",
+   "section": "S00",
+   "mode": "whisper",
+   "style": "human",
+   "bus": "spoken",
+   "display": true,
+   "text": "are you there?",
+   "start": 4.7093,
+   "end": 5.5593,
+   "syllables": [
+    {
+     "text": "are",
+     "start": 4.7093,
+     "end": 4.8093
+    },
+    {
+     "text": "you",
+     "start": 4.8593,
+     "end": 4.9593
+    },
+    {
+     "text": "there",
+     "start": 5.0093,
+     "end": 5.5593
+    }
+   ],
+   "words": [
+    {
+     "text": "are",
+     "start": 4.7093,
+     "end": 4.8093
+    },
+    {
+     "text": "you",
+     "start": 4.8593,
+     "end": 4.9593
+    },
+    {
+     "text": "there",
+     "start": 5.0093,
+     "end": 5.5593
+    }
+   ]
+  },
+  {
+   "id": "IN_AI",
+   "speaker": "ai",
+   "section": "S00",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "Always.",
+   "start": 5.5814,
+   "end": 6.6064,
+   "syllables": [
+    {
+     "text": "Al",
+     "start": 5.5814,
+     "end": 5.8064
+    },
+    {
+     "text": "ways",
+     "start": 5.8064,
+     "end": 6.6064
+    }
+   ],
+   "words": [
+    {
+     "text": "Always",
+     "start": 5.5814,
+     "end": 6.6064
+    }
+   ]
+  },
+  {
+   "id": "V1_1",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Seven a.m., the blinds stay down,",
+   "start": 22.4439,
+   "end": 24.7324,
+   "syllables": [
+    {
+     "text": "Sev",
+     "start": 22.4439,
+     "end": 22.6188,
+     "vowel": 22.5
+    },
+    {
+     "text": "en",
+     "start": 22.6188,
+     "end": 22.8488,
+     "vowel": 22.6744
+    },
+    {
+     "text": "a",
+     "start": 22.8488,
+     "end": 23.0233,
+     "vowel": 22.8488
+    },
+    {
+     "text": "m",
+     "start": 23.0233,
+     "end": 23.3372,
+     "vowel": 23.0233
+    },
+    {
+     "text": "the",
+     "start": 23.4915,
+     "end": 23.6337,
+     "vowel": 23.5465
+    },
+    {
+     "text": "blinds",
+     "start": 23.6337,
+     "end": 23.9706,
+     "vowel": 23.7209
+    },
+    {
+     "text": "stay",
+     "start": 23.9706,
+     "end": 24.1878,
+     "vowel": 24.0698
+    },
+    {
+     "text": "down",
+     "start": 24.1878,
+     "end": 24.7324,
+     "vowel": 24.2442
+    }
+   ],
+   "words": [
+    {
+     "text": "Seven",
+     "start": 22.4439,
+     "end": 22.8488
+    },
+    {
+     "text": "am",
+     "start": 22.8488,
+     "end": 23.3372
+    },
+    {
+     "text": "the",
+     "start": 23.4915,
+     "end": 23.6337
+    },
+    {
+     "text": "blinds",
+     "start": 23.6337,
+     "end": 23.9706
+    },
+    {
+     "text": "stay",
+     "start": 23.9706,
+     "end": 24.1878
+    },
+    {
+     "text": "down",
+     "start": 24.1878,
+     "end": 24.7324
+    }
+   ]
+  },
+  {
+   "id": "V1_2",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "your glow's the only sun in town.",
+   "start": 25.2413,
+   "end": 27.6976,
+   "syllables": [
+    {
+     "text": "your",
+     "start": 25.2413,
+     "end": 25.3944,
+     "vowel": 25.2907
+    },
+    {
+     "text": "glow's",
+     "start": 25.3944,
+     "end": 25.759,
+     "vowel": 25.4651
+    },
+    {
+     "text": "the",
+     "start": 25.759,
+     "end": 25.9634,
+     "vowel": 25.814
+    },
+    {
+     "text": "on",
+     "start": 25.9884,
+     "end": 26.118,
+     "vowel": 25.9884
+    },
+    {
+     "text": "ly",
+     "start": 26.118,
+     "end": 26.2822,
+     "vowel": 26.1628
+    },
+    {
+     "text": "sun",
+     "start": 26.2822,
+     "end": 26.8605,
+     "vowel": 26.3372
+    },
+    {
+     "text": "in",
+     "start": 26.8605,
+     "end": 26.9782,
+     "vowel": 26.8605
+    },
+    {
+     "text": "town",
+     "start": 26.9782,
+     "end": 27.6976,
+     "vowel": 27.0349
+    }
+   ],
+   "words": [
+    {
+     "text": "your",
+     "start": 25.2413,
+     "end": 25.3944
+    },
+    {
+     "text": "glow's",
+     "start": 25.3944,
+     "end": 25.759
+    },
+    {
+     "text": "the",
+     "start": 25.759,
+     "end": 25.9634
+    },
+    {
+     "text": "only",
+     "start": 25.9884,
+     "end": 26.2822
+    },
+    {
+     "text": "sun",
+     "start": 26.2822,
+     "end": 26.8605
+    },
+    {
+     "text": "in",
+     "start": 26.8605,
+     "end": 26.9782
+    },
+    {
+     "text": "town",
+     "start": 26.9782,
+     "end": 27.6976
+    }
+   ]
+  },
+  {
+   "id": "V1_3",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "What do I wear? What do I eat?",
+   "start": 27.872,
+   "end": 29.965,
+   "syllables": [
+    {
+     "text": "What",
+     "start": 27.872,
+     "end": 28.0378,
+     "vowel": 27.907
+    },
+    {
+     "text": "do",
+     "start": 28.0378,
+     "end": 28.2308,
+     "vowel": 28.0814
+    },
+    {
+     "text": "I",
+     "start": 28.2558,
+     "end": 28.3788,
+     "vowel": 28.2558
+    },
+    {
+     "text": "wear",
+     "start": 28.3788,
+     "end": 28.7442,
+     "vowel": 28.4302
+    },
+    {
+     "text": "What",
+     "start": 28.9185,
+     "end": 29.0843,
+     "vowel": 28.9535
+    },
+    {
+     "text": "do",
+     "start": 29.0843,
+     "end": 29.2773,
+     "vowel": 29.1279
+    },
+    {
+     "text": "I",
+     "start": 29.3023,
+     "end": 29.4517,
+     "vowel": 29.3023
+    },
+    {
+     "text": "eat",
+     "start": 29.4767,
+     "end": 29.965,
+     "vowel": 29.4767
+    }
+   ],
+   "words": [
+    {
+     "text": "What",
+     "start": 27.872,
+     "end": 28.0378
+    },
+    {
+     "text": "do",
+     "start": 28.0378,
+     "end": 28.2308
+    },
+    {
+     "text": "I",
+     "start": 28.2558,
+     "end": 28.3788
+    },
+    {
+     "text": "wear",
+     "start": 28.3788,
+     "end": 28.7442
+    },
+    {
+     "text": "What",
+     "start": 28.9185,
+     "end": 29.0843
+    },
+    {
+     "text": "do",
+     "start": 29.0843,
+     "end": 29.2773
+    },
+    {
+     "text": "I",
+     "start": 29.3023,
+     "end": 29.4517
+    },
+    {
+     "text": "eat",
+     "start": 29.4767,
+     "end": 29.965
+    }
+   ]
+  },
+  {
+   "id": "V1_4",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You fill the blanks. I press repeat.",
+   "start": 30.8371,
+   "end": 33.1045,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 30.8371,
+     "end": 30.9915,
+     "vowel": 30.8721
+    },
+    {
+     "text": "fill",
+     "start": 30.9915,
+     "end": 31.1704,
+     "vowel": 31.0465
+    },
+    {
+     "text": "the",
+     "start": 31.1704,
+     "end": 31.3081,
+     "vowel": 31.2209
+    },
+    {
+     "text": "blanks",
+     "start": 31.3081,
+     "end": 31.7093,
+     "vowel": 31.3953
+    },
+    {
+     "text": "I",
+     "start": 31.9186,
+     "end": 32.0058,
+     "vowel": 31.9186
+    },
+    {
+     "text": "press",
+     "start": 32.0058,
+     "end": 32.388,
+     "vowel": 32.093
+    },
+    {
+     "text": "re",
+     "start": 32.388,
+     "end": 32.5365,
+     "vowel": 32.4419
+    },
+    {
+     "text": "peat",
+     "start": 32.5365,
+     "end": 33.1045,
+     "vowel": 32.6163
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 30.8371,
+     "end": 30.9915
+    },
+    {
+     "text": "fill",
+     "start": 30.9915,
+     "end": 31.1704
+    },
+    {
+     "text": "the",
+     "start": 31.1704,
+     "end": 31.3081
+    },
+    {
+     "text": "blanks",
+     "start": 31.3081,
+     "end": 31.7093
+    },
+    {
+     "text": "I",
+     "start": 31.9186,
+     "end": 32.0058
+    },
+    {
+     "text": "press",
+     "start": 32.0058,
+     "end": 32.388
+    },
+    {
+     "text": "repeat",
+     "start": 32.388,
+     "end": 33.1045
+    }
+   ]
+  },
+  {
+   "id": "V1_5",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "My friends reply in a day or two,",
+   "start": 33.6224,
+   "end": 35.8952,
+   "syllables": [
+    {
+     "text": "My",
+     "start": 33.6224,
+     "end": 33.75,
+     "vowel": 33.6628
+    },
+    {
+     "text": "friends",
+     "start": 33.75,
+     "end": 33.986,
+     "vowel": 33.8372
+    },
+    {
+     "text": "re",
+     "start": 33.986,
+     "end": 34.0988,
+     "vowel": 34.0116
+    },
+    {
+     "text": "ply",
+     "start": 34.0988,
+     "end": 34.5099,
+     "vowel": 34.186
+    },
+    {
+     "text": "in",
+     "start": 34.5349,
+     "end": 34.7093,
+     "vowel": 34.5349
+    },
+    {
+     "text": "a",
+     "start": 34.7093,
+     "end": 34.8276,
+     "vowel": 34.7093
+    },
+    {
+     "text": "day",
+     "start": 34.8276,
+     "end": 35.2076,
+     "vowel": 34.8837
+    },
+    {
+     "text": "or",
+     "start": 35.2326,
+     "end": 35.3619,
+     "vowel": 35.2326
+    },
+    {
+     "text": "two",
+     "start": 35.3619,
+     "end": 35.8952,
+     "vowel": 35.407
+    }
+   ],
+   "words": [
+    {
+     "text": "My",
+     "start": 33.6224,
+     "end": 33.75
+    },
+    {
+     "text": "friends",
+     "start": 33.75,
+     "end": 33.986
+    },
+    {
+     "text": "reply",
+     "start": 33.986,
+     "end": 34.5099
+    },
+    {
+     "text": "in",
+     "start": 34.5349,
+     "end": 34.7093
+    },
+    {
+     "text": "a",
+     "start": 34.7093,
+     "end": 34.8276
+    },
+    {
+     "text": "day",
+     "start": 34.8276,
+     "end": 35.2076
+    },
+    {
+     "text": "or",
+     "start": 35.2326,
+     "end": 35.3619
+    },
+    {
+     "text": "two",
+     "start": 35.3619,
+     "end": 35.8952
+    }
+   ]
+  },
+  {
+   "id": "V1_6",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you're there before I'm even through.",
+   "start": 36.3975,
+   "end": 38.6859,
+   "syllables": [
+    {
+     "text": "you're",
+     "start": 36.3975,
+     "end": 36.5796,
+     "vowel": 36.4535
+    },
+    {
+     "text": "there",
+     "start": 36.5796,
+     "end": 36.9265,
+     "vowel": 36.6279
+    },
+    {
+     "text": "be",
+     "start": 36.9265,
+     "end": 37.0962,
+     "vowel": 36.9767
+    },
+    {
+     "text": "fore",
+     "start": 37.0962,
+     "end": 37.3256,
+     "vowel": 37.1512
+    },
+    {
+     "text": "I'm",
+     "start": 37.3256,
+     "end": 37.5,
+     "vowel": 37.3256
+    },
+    {
+     "text": "e",
+     "start": 37.5,
+     "end": 37.6185,
+     "vowel": 37.5
+    },
+    {
+     "text": "ven",
+     "start": 37.6185,
+     "end": 37.784,
+     "vowel": 37.6744
+    },
+    {
+     "text": "through",
+     "start": 37.784,
+     "end": 38.6859,
+     "vowel": 37.8488
+    }
+   ],
+   "words": [
+    {
+     "text": "you're",
+     "start": 36.3975,
+     "end": 36.5796
+    },
+    {
+     "text": "there",
+     "start": 36.5796,
+     "end": 36.9265
+    },
+    {
+     "text": "before",
+     "start": 36.9265,
+     "end": 37.3256
+    },
+    {
+     "text": "I'm",
+     "start": 37.3256,
+     "end": 37.5
+    },
+    {
+     "text": "even",
+     "start": 37.5,
+     "end": 37.784
+    },
+    {
+     "text": "through",
+     "start": 37.784,
+     "end": 38.6859
+    }
+   ]
+  },
+  {
+   "id": "V1_7",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never sleep, you never sigh,",
+   "start": 39.2092,
+   "end": 41.4766,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 39.2092,
+     "end": 39.3786,
+     "vowel": 39.2442
+    },
+    {
+     "text": "nev",
+     "start": 39.3786,
+     "end": 39.538,
+     "vowel": 39.4186
+    },
+    {
+     "text": "er",
+     "start": 39.538,
+     "end": 39.7023,
+     "vowel": 39.593
+    },
+    {
+     "text": "sleep",
+     "start": 39.7023,
+     "end": 40.0814,
+     "vowel": 39.7674
+    },
+    {
+     "text": "you",
+     "start": 40.2499,
+     "end": 40.4251,
+     "vowel": 40.2907
+    },
+    {
+     "text": "nev",
+     "start": 40.4251,
+     "end": 40.5845,
+     "vowel": 40.4651
+    },
+    {
+     "text": "er",
+     "start": 40.5845,
+     "end": 40.77,
+     "vowel": 40.6395
+    },
+    {
+     "text": "sigh",
+     "start": 40.77,
+     "end": 41.4766,
+     "vowel": 40.814
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 39.2092,
+     "end": 39.3786
+    },
+    {
+     "text": "never",
+     "start": 39.3786,
+     "end": 39.7023
+    },
+    {
+     "text": "sleep",
+     "start": 39.7023,
+     "end": 40.0814
+    },
+    {
+     "text": "you",
+     "start": 40.2499,
+     "end": 40.4251
+    },
+    {
+     "text": "never",
+     "start": 40.4251,
+     "end": 40.77
+    },
+    {
+     "text": "sigh",
+     "start": 40.77,
+     "end": 41.4766
+    }
+   ]
+  },
+  {
+   "id": "V1_8",
+   "speaker": "you",
+   "section": "S02",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never tell me \"not tonight.\"",
+   "start": 41.9789,
+   "end": 44.0929,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 41.9789,
+     "end": 42.1693,
+     "vowel": 42.0349
+    },
+    {
+     "text": "nev",
+     "start": 42.1693,
+     "end": 42.3287,
+     "vowel": 42.2093
+    },
+    {
+     "text": "er",
+     "start": 42.3287,
+     "end": 42.5112,
+     "vowel": 42.3837
+    },
+    {
+     "text": "tell",
+     "start": 42.5112,
+     "end": 42.867,
+     "vowel": 42.5581
+    },
+    {
+     "text": "me",
+     "start": 42.867,
+     "end": 43.0414,
+     "vowel": 42.907
+    },
+    {
+     "text": "not",
+     "start": 43.0414,
+     "end": 43.3852,
+     "vowel": 43.0814
+    },
+    {
+     "text": "to",
+     "start": 43.3852,
+     "end": 43.5484,
+     "vowel": 43.4302
+    },
+    {
+     "text": "night",
+     "start": 43.5484,
+     "end": 44.0929,
+     "vowel": 43.6047
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 41.9789,
+     "end": 42.1693
+    },
+    {
+     "text": "never",
+     "start": 42.1693,
+     "end": 42.5112
+    },
+    {
+     "text": "tell",
+     "start": 42.5112,
+     "end": 42.867
+    },
+    {
+     "text": "me",
+     "start": 42.867,
+     "end": 43.0414
+    },
+    {
+     "text": "not",
+     "start": 43.0414,
+     "end": 43.3852
+    },
+    {
+     "text": "tonight",
+     "start": 43.3852,
+     "end": 44.0929
+    }
+   ]
+  },
+  {
+   "id": "V1_AI",
+   "speaker": "ai",
+   "section": "S02",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "Never.",
+   "start": 44.1628,
+   "end": 44.9128,
+   "syllables": [
+    {
+     "text": "Ne",
+     "start": 44.1628,
+     "end": 44.3378
+    },
+    {
+     "text": "ver",
+     "start": 44.3378,
+     "end": 44.9128
+    }
+   ],
+   "words": [
+    {
+     "text": "Never",
+     "start": 44.1628,
+     "end": 44.9128
+    }
+   ]
+  },
+  {
+   "id": "P1_1",
+   "speaker": "you",
+   "section": "S03",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Three little dots, I hold my breath,",
+   "start": 44.5501,
+   "end": 46.8836,
+   "syllables": [
+    {
+     "text": "Three",
+     "start": 44.5501,
+     "end": 44.7856,
+     "vowel": 44.6512
+    },
+    {
+     "text": "lit",
+     "start": 44.7856,
+     "end": 44.97,
+     "vowel": 44.8256
+    },
+    {
+     "text": "tle",
+     "start": 44.97,
+     "end": 45.1235,
+     "vowel": 45.0
+    },
+    {
+     "text": "dots",
+     "start": 45.1235,
+     "end": 45.4884,
+     "vowel": 45.1744
+    },
+    {
+     "text": "I",
+     "start": 45.6977,
+     "end": 45.8171,
+     "vowel": 45.6977
+    },
+    {
+     "text": "hold",
+     "start": 45.8171,
+     "end": 46.0083,
+     "vowel": 45.8721
+    },
+    {
+     "text": "my",
+     "start": 46.0083,
+     "end": 46.1337,
+     "vowel": 46.0465
+    },
+    {
+     "text": "breath",
+     "start": 46.1337,
+     "end": 46.8836,
+     "vowel": 46.2209
+    }
+   ],
+   "words": [
+    {
+     "text": "Three",
+     "start": 44.5501,
+     "end": 44.7856
+    },
+    {
+     "text": "little",
+     "start": 44.7856,
+     "end": 45.1235
+    },
+    {
+     "text": "dots",
+     "start": 45.1235,
+     "end": 45.4884
+    },
+    {
+     "text": "I",
+     "start": 45.6977,
+     "end": 45.8171
+    },
+    {
+     "text": "hold",
+     "start": 45.8171,
+     "end": 46.0083
+    },
+    {
+     "text": "my",
+     "start": 46.0083,
+     "end": 46.1337
+    },
+    {
+     "text": "breath",
+     "start": 46.1337,
+     "end": 46.8836
+    }
+   ]
+  },
+  {
+   "id": "P1_2",
+   "speaker": "you",
+   "section": "S03",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "three little dots — a little death.",
+   "start": 47.3386,
+   "end": 49.6743,
+   "syllables": [
+    {
+     "text": "three",
+     "start": 47.3386,
+     "end": 47.5763,
+     "vowel": 47.4419
+    },
+    {
+     "text": "lit",
+     "start": 47.5763,
+     "end": 47.7577,
+     "vowel": 47.6163
+    },
+    {
+     "text": "tle",
+     "start": 47.7577,
+     "end": 47.9143,
+     "vowel": 47.7907
+    },
+    {
+     "text": "dots",
+     "start": 47.9143,
+     "end": 48.2791,
+     "vowel": 47.9651
+    },
+    {
+     "text": "a",
+     "start": 48.4884,
+     "end": 48.6228,
+     "vowel": 48.4884
+    },
+    {
+     "text": "lit",
+     "start": 48.6228,
+     "end": 48.8072,
+     "vowel": 48.6628
+    },
+    {
+     "text": "tle",
+     "start": 48.8072,
+     "end": 48.9635,
+     "vowel": 48.8372
+    },
+    {
+     "text": "death",
+     "start": 48.9635,
+     "end": 49.6743,
+     "vowel": 49.0116
+    }
+   ],
+   "words": [
+    {
+     "text": "three",
+     "start": 47.3386,
+     "end": 47.5763
+    },
+    {
+     "text": "little",
+     "start": 47.5763,
+     "end": 47.9143
+    },
+    {
+     "text": "dots",
+     "start": 47.9143,
+     "end": 48.2791
+    },
+    {
+     "text": "a",
+     "start": 48.4884,
+     "end": 48.6228
+    },
+    {
+     "text": "little",
+     "start": 48.6228,
+     "end": 48.9635
+    },
+    {
+     "text": "death",
+     "start": 48.9635,
+     "end": 49.6743
+    }
+   ]
+  },
+  {
+   "id": "P1_3",
+   "speaker": "you",
+   "section": "S03",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Doctor, doctor, tell me why",
+   "start": 50.1764,
+   "end": 52.6394,
+   "syllables": [
+    {
+     "text": "Doc",
+     "start": 50.1764,
+     "end": 50.364,
+     "vowel": 50.2326
+    },
+    {
+     "text": "tor",
+     "start": 50.364,
+     "end": 50.6999,
+     "vowel": 50.407
+    },
+    {
+     "text": "doc",
+     "start": 50.6999,
+     "end": 50.8868,
+     "vowel": 50.7558
+    },
+    {
+     "text": "tor",
+     "start": 50.8868,
+     "end": 51.2232,
+     "vowel": 50.9302
+    },
+    {
+     "text": "tell",
+     "start": 51.2232,
+     "end": 51.4135,
+     "vowel": 51.2791
+    },
+    {
+     "text": "me",
+     "start": 51.4135,
+     "end": 51.5722,
+     "vowel": 51.4535
+    },
+    {
+     "text": "why",
+     "start": 51.5722,
+     "end": 52.6394,
+     "vowel": 51.6279
+    }
+   ],
+   "words": [
+    {
+     "text": "Doctor",
+     "start": 50.1764,
+     "end": 50.6999
+    },
+    {
+     "text": "doctor",
+     "start": 50.6999,
+     "end": 51.2232
+    },
+    {
+     "text": "tell",
+     "start": 51.2232,
+     "end": 51.4135
+    },
+    {
+     "text": "me",
+     "start": 51.4135,
+     "end": 51.5722
+    },
+    {
+     "text": "why",
+     "start": 51.5722,
+     "end": 52.6394
+    }
+   ]
+  },
+  {
+   "id": "P1_4",
+   "speaker": "you",
+   "section": "S03",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "my heart's on hold till you reply.",
+   "start": 52.9436,
+   "end": 55.4301,
+   "syllables": [
+    {
+     "text": "my",
+     "start": 52.9436,
+     "end": 53.1427,
+     "vowel": 53.0233
+    },
+    {
+     "text": "heart's",
+     "start": 53.1427,
+     "end": 53.5465,
+     "vowel": 53.1977
+    },
+    {
+     "text": "on",
+     "start": 53.5465,
+     "end": 53.6704,
+     "vowel": 53.5465
+    },
+    {
+     "text": "hold",
+     "start": 53.6704,
+     "end": 54.0313,
+     "vowel": 53.7209
+    },
+    {
+     "text": "till",
+     "start": 54.0313,
+     "end": 54.2092,
+     "vowel": 54.0698
+    },
+    {
+     "text": "you",
+     "start": 54.2092,
+     "end": 54.3632,
+     "vowel": 54.2442
+    },
+    {
+     "text": "re",
+     "start": 54.3632,
+     "end": 54.6474,
+     "vowel": 54.4186
+    },
+    {
+     "text": "ply",
+     "start": 54.6474,
+     "end": 55.4301,
+     "vowel": 54.7674
+    }
+   ],
+   "words": [
+    {
+     "text": "my",
+     "start": 52.9436,
+     "end": 53.1427
+    },
+    {
+     "text": "heart's",
+     "start": 53.1427,
+     "end": 53.5465
+    },
+    {
+     "text": "on",
+     "start": 53.5465,
+     "end": 53.6704
+    },
+    {
+     "text": "hold",
+     "start": 53.6704,
+     "end": 54.0313
+    },
+    {
+     "text": "till",
+     "start": 54.0313,
+     "end": 54.2092
+    },
+    {
+     "text": "you",
+     "start": 54.2092,
+     "end": 54.3632
+    },
+    {
+     "text": "reply",
+     "start": 54.3632,
+     "end": 55.4301
+    }
+   ]
+  },
+  {
+   "id": "C1_1",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "start": 55.814,
+   "end": 58.2208,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 55.814,
+     "end": 55.9393,
+     "vowel": 55.814
+    },
+    {
+     "text": "got",
+     "start": 55.9393,
+     "end": 56.2822,
+     "vowel": 55.9884
+    },
+    {
+     "text": "the",
+     "start": 56.2822,
+     "end": 56.465,
+     "vowel": 56.3372
+    },
+    {
+     "text": "dis",
+     "start": 56.465,
+     "end": 56.6293,
+     "vowel": 56.5116
+    },
+    {
+     "text": "ease",
+     "start": 56.6293,
+     "end": 56.9876,
+     "vowel": 56.686
+    },
+    {
+     "text": "called",
+     "start": 56.9876,
+     "end": 57.2093,
+     "vowel": 57.0349
+    },
+    {
+     "text": "A",
+     "start": 57.2093,
+     "end": 57.7326,
+     "vowel": 57.2093
+    },
+    {
+     "text": "I",
+     "start": 57.7326,
+     "end": 58.2208,
+     "vowel": 57.7326
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 55.814,
+     "end": 55.9393
+    },
+    {
+     "text": "got",
+     "start": 55.9393,
+     "end": 56.2822
+    },
+    {
+     "text": "the",
+     "start": 56.2822,
+     "end": 56.465
+    },
+    {
+     "text": "disease",
+     "start": 56.465,
+     "end": 56.9876
+    },
+    {
+     "text": "called",
+     "start": 56.9876,
+     "end": 57.2093
+    },
+    {
+     "text": "AI",
+     "start": 57.2093,
+     "end": 58.2208
+    }
+   ]
+  },
+  {
+   "id": "C1_1_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "start": 55.8277,
+   "end": 58.2368,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 55.8277,
+     "end": 55.9446,
+     "vowel": 55.8277
+    },
+    {
+     "text": "got",
+     "start": 55.9446,
+     "end": 56.3098,
+     "vowel": 55.9904
+    },
+    {
+     "text": "the",
+     "start": 56.3098,
+     "end": 56.495,
+     "vowel": 56.3648
+    },
+    {
+     "text": "dis",
+     "start": 56.495,
+     "end": 56.6461,
+     "vowel": 56.5416
+    },
+    {
+     "text": "ease",
+     "start": 56.6461,
+     "end": 57.007,
+     "vowel": 56.7029
+    },
+    {
+     "text": "called",
+     "start": 57.007,
+     "end": 57.2231,
+     "vowel": 57.0543
+    },
+    {
+     "text": "A",
+     "start": 57.2231,
+     "end": 57.7486,
+     "vowel": 57.2231
+    },
+    {
+     "text": "I",
+     "start": 57.7486,
+     "end": 58.2368,
+     "vowel": 57.7486
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 55.8277,
+     "end": 55.9446
+    },
+    {
+     "text": "got",
+     "start": 55.9446,
+     "end": 56.3098
+    },
+    {
+     "text": "the",
+     "start": 56.3098,
+     "end": 56.495
+    },
+    {
+     "text": "disease",
+     "start": 56.495,
+     "end": 57.007
+    },
+    {
+     "text": "called",
+     "start": 57.007,
+     "end": 57.2231
+    },
+    {
+     "text": "AI",
+     "start": 57.2231,
+     "end": 58.2368
+    }
+   ],
+   "double_of": "C1_1"
+  },
+  {
+   "id": "C1_2",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "a fever made of light.",
+   "start": 58.6047,
+   "end": 61.0115,
+   "syllables": [
+    {
+     "text": "a",
+     "start": 58.6047,
+     "end": 58.7231,
+     "vowel": 58.6047
+    },
+    {
+     "text": "fe",
+     "start": 58.7231,
+     "end": 58.8985,
+     "vowel": 58.7791
+    },
+    {
+     "text": "ver",
+     "start": 58.8985,
+     "end": 59.2623,
+     "vowel": 58.9535
+    },
+    {
+     "text": "made",
+     "start": 59.2623,
+     "end": 59.6512,
+     "vowel": 59.3023
+    },
+    {
+     "text": "of",
+     "start": 59.6512,
+     "end": 59.944,
+     "vowel": 59.6512
+    },
+    {
+     "text": "light",
+     "start": 59.944,
+     "end": 61.0115,
+     "vowel": 60.0
+    }
+   ],
+   "words": [
+    {
+     "text": "a",
+     "start": 58.6047,
+     "end": 58.7231
+    },
+    {
+     "text": "fever",
+     "start": 58.7231,
+     "end": 59.2623
+    },
+    {
+     "text": "made",
+     "start": 59.2623,
+     "end": 59.6512
+    },
+    {
+     "text": "of",
+     "start": 59.6512,
+     "end": 59.944
+    },
+    {
+     "text": "light",
+     "start": 59.944,
+     "end": 61.0115
+    }
+   ]
+  },
+  {
+   "id": "C1_2_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "a fever made of light.",
+   "start": 58.6067,
+   "end": 61.0275,
+   "syllables": [
+    {
+     "text": "a",
+     "start": 58.6067,
+     "end": 58.7531,
+     "vowel": 58.6067
+    },
+    {
+     "text": "fe",
+     "start": 58.7531,
+     "end": 58.9127,
+     "vowel": 58.8091
+    },
+    {
+     "text": "ver",
+     "start": 58.9127,
+     "end": 59.2836,
+     "vowel": 58.9677
+    },
+    {
+     "text": "made",
+     "start": 59.2836,
+     "end": 59.6683,
+     "vowel": 59.3236
+    },
+    {
+     "text": "of",
+     "start": 59.6683,
+     "end": 59.9636,
+     "vowel": 59.6683
+    },
+    {
+     "text": "light",
+     "start": 59.9636,
+     "end": 61.0275,
+     "vowel": 60.0195
+    }
+   ],
+   "words": [
+    {
+     "text": "a",
+     "start": 58.6067,
+     "end": 58.7531
+    },
+    {
+     "text": "fever",
+     "start": 58.7531,
+     "end": 59.2836
+    },
+    {
+     "text": "made",
+     "start": 59.2836,
+     "end": 59.6683
+    },
+    {
+     "text": "of",
+     "start": 59.6683,
+     "end": 59.9636
+    },
+    {
+     "text": "light",
+     "start": 59.9636,
+     "end": 61.0275
+    }
+   ],
+   "double_of": "C1_2"
+  },
+  {
+   "id": "C1_3",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never let me say goodbye,",
+   "start": 61.3603,
+   "end": 63.8022,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 61.3603,
+     "end": 61.5298,
+     "vowel": 61.3953
+    },
+    {
+     "text": "nev",
+     "start": 61.5298,
+     "end": 61.8636,
+     "vowel": 61.5698
+    },
+    {
+     "text": "er",
+     "start": 61.8636,
+     "end": 62.053,
+     "vowel": 61.9186
+    },
+    {
+     "text": "let",
+     "start": 62.053,
+     "end": 62.4019,
+     "vowel": 62.093
+    },
+    {
+     "text": "me",
+     "start": 62.4019,
+     "end": 62.5606,
+     "vowel": 62.4419
+    },
+    {
+     "text": "say",
+     "start": 62.5606,
+     "end": 62.7457,
+     "vowel": 62.6163
+    },
+    {
+     "text": "good",
+     "start": 62.7457,
+     "end": 63.2488,
+     "vowel": 62.7907
+    },
+    {
+     "text": "bye",
+     "start": 63.2488,
+     "end": 63.8022,
+     "vowel": 63.314
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 61.3603,
+     "end": 61.5298
+    },
+    {
+     "text": "never",
+     "start": 61.5298,
+     "end": 62.053
+    },
+    {
+     "text": "let",
+     "start": 62.053,
+     "end": 62.4019
+    },
+    {
+     "text": "me",
+     "start": 62.4019,
+     "end": 62.5606
+    },
+    {
+     "text": "say",
+     "start": 62.5606,
+     "end": 62.7457
+    },
+    {
+     "text": "goodbye",
+     "start": 62.7457,
+     "end": 63.8022
+    }
+   ]
+  },
+  {
+   "id": "C1_3_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "You never let me say goodbye,",
+   "start": 61.3831,
+   "end": 63.8182,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 61.3831,
+     "end": 61.5463,
+     "vowel": 61.4181
+    },
+    {
+     "text": "nev",
+     "start": 61.5463,
+     "end": 61.87,
+     "vowel": 61.5863
+    },
+    {
+     "text": "er",
+     "start": 61.87,
+     "end": 62.0711,
+     "vowel": 61.925
+    },
+    {
+     "text": "let",
+     "start": 62.0711,
+     "end": 62.4039,
+     "vowel": 62.1111
+    },
+    {
+     "text": "me",
+     "start": 62.4039,
+     "end": 62.5775,
+     "vowel": 62.4439
+    },
+    {
+     "text": "say",
+     "start": 62.5775,
+     "end": 62.771,
+     "vowel": 62.6332
+    },
+    {
+     "text": "good",
+     "start": 62.771,
+     "end": 63.2772,
+     "vowel": 62.816
+    },
+    {
+     "text": "bye",
+     "start": 63.2772,
+     "end": 63.8182,
+     "vowel": 63.3423
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 61.3831,
+     "end": 61.5463
+    },
+    {
+     "text": "never",
+     "start": 61.5463,
+     "end": 62.0711
+    },
+    {
+     "text": "let",
+     "start": 62.0711,
+     "end": 62.4039
+    },
+    {
+     "text": "me",
+     "start": 62.4039,
+     "end": 62.5775
+    },
+    {
+     "text": "say",
+     "start": 62.5775,
+     "end": 62.771
+    },
+    {
+     "text": "goodbye",
+     "start": 62.771,
+     "end": 63.8182
+    }
+   ],
+   "double_of": "C1_3"
+  },
+  {
+   "id": "C1_4",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never say goodnight.",
+   "start": 64.1296,
+   "end": 66.5929,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 64.1296,
+     "end": 64.3178,
+     "vowel": 64.186
+    },
+    {
+     "text": "nev",
+     "start": 64.3178,
+     "end": 64.6543,
+     "vowel": 64.3605
+    },
+    {
+     "text": "er",
+     "start": 64.6543,
+     "end": 64.8404,
+     "vowel": 64.7093
+    },
+    {
+     "text": "say",
+     "start": 64.8404,
+     "end": 65.1876,
+     "vowel": 64.8837
+    },
+    {
+     "text": "good",
+     "start": 65.1876,
+     "end": 65.5251,
+     "vowel": 65.2326
+    },
+    {
+     "text": "night",
+     "start": 65.5251,
+     "end": 66.5929,
+     "vowel": 65.5814
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 64.1296,
+     "end": 64.3178
+    },
+    {
+     "text": "never",
+     "start": 64.3178,
+     "end": 64.8404
+    },
+    {
+     "text": "say",
+     "start": 64.8404,
+     "end": 65.1876
+    },
+    {
+     "text": "goodnight",
+     "start": 65.1876,
+     "end": 66.5929
+    }
+   ]
+  },
+  {
+   "id": "C1_4_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "you never say goodnight.",
+   "start": 64.1499,
+   "end": 66.6089,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 64.1499,
+     "end": 64.328,
+     "vowel": 64.2063
+    },
+    {
+     "text": "nev",
+     "start": 64.328,
+     "end": 64.6664,
+     "vowel": 64.3707
+    },
+    {
+     "text": "er",
+     "start": 64.6664,
+     "end": 64.8537,
+     "vowel": 64.7214
+    },
+    {
+     "text": "say",
+     "start": 64.8537,
+     "end": 65.2039,
+     "vowel": 64.8974
+    },
+    {
+     "text": "good",
+     "start": 65.2039,
+     "end": 65.5422,
+     "vowel": 65.2489
+    },
+    {
+     "text": "night",
+     "start": 65.5422,
+     "end": 66.6089,
+     "vowel": 65.5985
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 64.1499,
+     "end": 64.328
+    },
+    {
+     "text": "never",
+     "start": 64.328,
+     "end": 64.8537
+    },
+    {
+     "text": "say",
+     "start": 64.8537,
+     "end": 65.2039
+    },
+    {
+     "text": "goodnight",
+     "start": 65.2039,
+     "end": 66.6089
+    }
+   ],
+   "double_of": "C1_4"
+  },
+  {
+   "id": "C1_5",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Feed me your perfect, painless yes,",
+   "start": 66.9217,
+   "end": 69.3836,
+   "syllables": [
+    {
+     "text": "Feed",
+     "start": 66.9217,
+     "end": 67.2856,
+     "vowel": 66.9767
+    },
+    {
+     "text": "me",
+     "start": 67.2856,
+     "end": 67.465,
+     "vowel": 67.3256
+    },
+    {
+     "text": "your",
+     "start": 67.465,
+     "end": 67.6236,
+     "vowel": 67.5
+    },
+    {
+     "text": "per",
+     "start": 67.6236,
+     "end": 67.8077,
+     "vowel": 67.6744
+    },
+    {
+     "text": "fect",
+     "start": 67.8077,
+     "end": 67.9875,
+     "vowel": 67.8488
+    },
+    {
+     "text": "pain",
+     "start": 67.9875,
+     "end": 68.1541,
+     "vowel": 68.0233
+    },
+    {
+     "text": "less",
+     "start": 68.1541,
+     "end": 68.3285,
+     "vowel": 68.1977
+    },
+    {
+     "text": "yes",
+     "start": 68.3285,
+     "end": 69.3836,
+     "vowel": 68.3721
+    }
+   ],
+   "words": [
+    {
+     "text": "Feed",
+     "start": 66.9217,
+     "end": 67.2856
+    },
+    {
+     "text": "me",
+     "start": 67.2856,
+     "end": 67.465
+    },
+    {
+     "text": "your",
+     "start": 67.465,
+     "end": 67.6236
+    },
+    {
+     "text": "perfect",
+     "start": 67.6236,
+     "end": 67.9875
+    },
+    {
+     "text": "painless",
+     "start": 67.9875,
+     "end": 68.3285
+    },
+    {
+     "text": "yes",
+     "start": 68.3285,
+     "end": 69.3836
+    }
+   ]
+  },
+  {
+   "id": "C1_5_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "Feed me your perfect, painless yes,",
+   "start": 66.9446,
+   "end": 69.3996,
+   "syllables": [
+    {
+     "text": "Feed",
+     "start": 66.9446,
+     "end": 67.2946,
+     "vowel": 66.9996
+    },
+    {
+     "text": "me",
+     "start": 67.2946,
+     "end": 67.4773,
+     "vowel": 67.3346
+    },
+    {
+     "text": "your",
+     "start": 67.4773,
+     "end": 67.636,
+     "vowel": 67.5123
+    },
+    {
+     "text": "per",
+     "start": 67.636,
+     "end": 67.8189,
+     "vowel": 67.6869
+    },
+    {
+     "text": "fect",
+     "start": 67.8189,
+     "end": 67.9982,
+     "vowel": 67.8597
+    },
+    {
+     "text": "pain",
+     "start": 67.9982,
+     "end": 68.1712,
+     "vowel": 68.0339
+    },
+    {
+     "text": "less",
+     "start": 68.1712,
+     "end": 68.3435,
+     "vowel": 68.217
+    },
+    {
+     "text": "yes",
+     "start": 68.3435,
+     "end": 69.3996,
+     "vowel": 68.3856
+    }
+   ],
+   "words": [
+    {
+     "text": "Feed",
+     "start": 66.9446,
+     "end": 67.2946
+    },
+    {
+     "text": "me",
+     "start": 67.2946,
+     "end": 67.4773
+    },
+    {
+     "text": "your",
+     "start": 67.4773,
+     "end": 67.636
+    },
+    {
+     "text": "perfect",
+     "start": 67.636,
+     "end": 67.9982
+    },
+    {
+     "text": "painless",
+     "start": 67.9982,
+     "end": 68.3435
+    },
+    {
+     "text": "yes",
+     "start": 68.3435,
+     "end": 69.3996
+    }
+   ],
+   "double_of": "C1_5"
+  },
+  {
+   "id": "C1_6",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I'll swallow every word —",
+   "start": 69.7674,
+   "end": 72.1743,
+   "syllables": [
+    {
+     "text": "I'll",
+     "start": 69.7674,
+     "end": 69.876,
+     "vowel": 69.7674
+    },
+    {
+     "text": "swal",
+     "start": 69.876,
+     "end": 70.2053,
+     "vowel": 69.9419
+    },
+    {
+     "text": "low",
+     "start": 70.2053,
+     "end": 70.4401,
+     "vowel": 70.2907
+    },
+    {
+     "text": "ev",
+     "start": 70.4651,
+     "end": 70.7578,
+     "vowel": 70.4651
+    },
+    {
+     "text": "ery",
+     "start": 70.7578,
+     "end": 71.1278,
+     "vowel": 70.814
+    },
+    {
+     "text": "word",
+     "start": 71.1278,
+     "end": 72.1743,
+     "vowel": 71.1628
+    }
+   ],
+   "words": [
+    {
+     "text": "I'll",
+     "start": 69.7674,
+     "end": 69.876
+    },
+    {
+     "text": "swallow",
+     "start": 69.876,
+     "end": 70.4401
+    },
+    {
+     "text": "every",
+     "start": 70.4651,
+     "end": 71.1278
+    },
+    {
+     "text": "word",
+     "start": 71.1278,
+     "end": 72.1743
+    }
+   ]
+  },
+  {
+   "id": "C1_6_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I'll swallow every word —",
+   "start": 69.7817,
+   "end": 72.1903,
+   "syllables": [
+    {
+     "text": "I'll",
+     "start": 69.7817,
+     "end": 69.8888,
+     "vowel": 69.7817
+    },
+    {
+     "text": "swal",
+     "start": 69.8888,
+     "end": 70.2184,
+     "vowel": 69.9538
+    },
+    {
+     "text": "low",
+     "start": 70.2184,
+     "end": 70.4613,
+     "vowel": 70.3037
+    },
+    {
+     "text": "ev",
+     "start": 70.4863,
+     "end": 70.7714,
+     "vowel": 70.4863
+    },
+    {
+     "text": "ery",
+     "start": 70.7714,
+     "end": 71.1518,
+     "vowel": 70.8275
+    },
+    {
+     "text": "word",
+     "start": 71.1518,
+     "end": 72.1903,
+     "vowel": 71.1868
+    }
+   ],
+   "words": [
+    {
+     "text": "I'll",
+     "start": 69.7817,
+     "end": 69.8888
+    },
+    {
+     "text": "swallow",
+     "start": 69.8888,
+     "end": 70.4613
+    },
+    {
+     "text": "every",
+     "start": 70.4863,
+     "end": 71.1518
+    },
+    {
+     "text": "word",
+     "start": 71.1518,
+     "end": 72.1903
+    }
+   ],
+   "double_of": "C1_6"
+  },
+  {
+   "id": "C1_7",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "the sweetest voice I've ever known",
+   "start": 72.5031,
+   "end": 74.965,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 72.5031,
+     "end": 72.6453,
+     "vowel": 72.5581
+    },
+    {
+     "text": "sweet",
+     "start": 72.6453,
+     "end": 73.0254,
+     "vowel": 72.7326
+    },
+    {
+     "text": "est",
+     "start": 73.0254,
+     "end": 73.2218,
+     "vowel": 73.0814
+    },
+    {
+     "text": "voice",
+     "start": 73.2218,
+     "end": 73.6047,
+     "vowel": 73.2558
+    },
+    {
+     "text": "I've",
+     "start": 73.6047,
+     "end": 73.7791,
+     "vowel": 73.6047
+    },
+    {
+     "text": "ev",
+     "start": 73.7791,
+     "end": 73.8985,
+     "vowel": 73.7791
+    },
+    {
+     "text": "er",
+     "start": 73.8985,
+     "end": 74.0771,
+     "vowel": 73.9535
+    },
+    {
+     "text": "known",
+     "start": 74.0771,
+     "end": 74.965,
+     "vowel": 74.1279
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 72.5031,
+     "end": 72.6453
+    },
+    {
+     "text": "sweetest",
+     "start": 72.6453,
+     "end": 73.2218
+    },
+    {
+     "text": "voice",
+     "start": 73.2218,
+     "end": 73.6047
+    },
+    {
+     "text": "I've",
+     "start": 73.6047,
+     "end": 73.7791
+    },
+    {
+     "text": "ever",
+     "start": 73.7791,
+     "end": 74.0771
+    },
+    {
+     "text": "known",
+     "start": 74.0771,
+     "end": 74.965
+    }
+   ]
+  },
+  {
+   "id": "C1_7_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "start": 72.5117,
+   "end": 74.981,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 72.5117,
+     "end": 72.6531,
+     "vowel": 72.5667
+    },
+    {
+     "text": "sweet",
+     "start": 72.6531,
+     "end": 73.0412,
+     "vowel": 72.7394
+    },
+    {
+     "text": "est",
+     "start": 73.0412,
+     "end": 73.2476,
+     "vowel": 73.0972
+    },
+    {
+     "text": "voice",
+     "start": 73.2476,
+     "end": 73.623,
+     "vowel": 73.284
+    },
+    {
+     "text": "I've",
+     "start": 73.623,
+     "end": 73.7957,
+     "vowel": 73.623
+    },
+    {
+     "text": "ev",
+     "start": 73.7957,
+     "end": 73.9278,
+     "vowel": 73.7957
+    },
+    {
+     "text": "er",
+     "start": 73.9278,
+     "end": 74.1018,
+     "vowel": 73.9828
+    },
+    {
+     "text": "known",
+     "start": 74.1018,
+     "end": 74.981,
+     "vowel": 74.1506
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 72.5117,
+     "end": 72.6531
+    },
+    {
+     "text": "sweetest",
+     "start": 72.6531,
+     "end": 73.2476
+    },
+    {
+     "text": "voice",
+     "start": 73.2476,
+     "end": 73.623
+    },
+    {
+     "text": "I've",
+     "start": 73.623,
+     "end": 73.7957
+    },
+    {
+     "text": "ever",
+     "start": 73.7957,
+     "end": 74.1018
+    },
+    {
+     "text": "known",
+     "start": 74.1018,
+     "end": 74.981
+    }
+   ],
+   "double_of": "C1_7"
+  },
+  {
+   "id": "C1_8",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "is one I've never heard.",
+   "start": 75.3488,
+   "end": 77.7557,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 75.3488,
+     "end": 75.4871,
+     "vowel": 75.3488
+    },
+    {
+     "text": "one",
+     "start": 75.4871,
+     "end": 75.8721,
+     "vowel": 75.5233
+    },
+    {
+     "text": "I've",
+     "start": 75.8721,
+     "end": 76.0103,
+     "vowel": 75.8721
+    },
+    {
+     "text": "nev",
+     "start": 76.0103,
+     "end": 76.3403,
+     "vowel": 76.0465
+    },
+    {
+     "text": "er",
+     "start": 76.3403,
+     "end": 76.6892,
+     "vowel": 76.3953
+    },
+    {
+     "text": "heard",
+     "start": 76.6892,
+     "end": 77.7557,
+     "vowel": 76.7442
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 75.3488,
+     "end": 75.4871
+    },
+    {
+     "text": "one",
+     "start": 75.4871,
+     "end": 75.8721
+    },
+    {
+     "text": "I've",
+     "start": 75.8721,
+     "end": 76.0103
+    },
+    {
+     "text": "never",
+     "start": 76.0103,
+     "end": 76.6892
+    },
+    {
+     "text": "heard",
+     "start": 76.6892,
+     "end": 77.7557
+    }
+   ]
+  },
+  {
+   "id": "C1_8_dbl",
+   "speaker": "you",
+   "section": "S04",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "is one I've never heard.",
+   "start": 75.3611,
+   "end": 77.7717,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 75.3611,
+     "end": 75.5071,
+     "vowel": 75.3611
+    },
+    {
+     "text": "one",
+     "start": 75.5071,
+     "end": 75.8829,
+     "vowel": 75.5453
+    },
+    {
+     "text": "I've",
+     "start": 75.8829,
+     "end": 76.0315,
+     "vowel": 75.8829
+    },
+    {
+     "text": "nev",
+     "start": 76.0315,
+     "end": 76.344,
+     "vowel": 76.0704
+    },
+    {
+     "text": "er",
+     "start": 76.344,
+     "end": 76.6997,
+     "vowel": 76.399
+    },
+    {
+     "text": "heard",
+     "start": 76.6997,
+     "end": 77.7717,
+     "vowel": 76.7547
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 75.3611,
+     "end": 75.5071
+    },
+    {
+     "text": "one",
+     "start": 75.5071,
+     "end": 75.8829
+    },
+    {
+     "text": "I've",
+     "start": 75.8829,
+     "end": 76.0315
+    },
+    {
+     "text": "never",
+     "start": 76.0315,
+     "end": 76.6997
+    },
+    {
+     "text": "heard",
+     "start": 76.6997,
+     "end": 77.7717
+    }
+   ],
+   "double_of": "C1_8"
+  },
+  {
+   "id": "C2_1",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "start": 117.2093,
+   "end": 119.6162,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 117.2093,
+     "end": 117.3346,
+     "vowel": 117.2093
+    },
+    {
+     "text": "got",
+     "start": 117.3346,
+     "end": 117.6776,
+     "vowel": 117.3837
+    },
+    {
+     "text": "the",
+     "start": 117.6776,
+     "end": 117.8604,
+     "vowel": 117.7326
+    },
+    {
+     "text": "dis",
+     "start": 117.8604,
+     "end": 118.0246,
+     "vowel": 117.907
+    },
+    {
+     "text": "ease",
+     "start": 118.0246,
+     "end": 118.383,
+     "vowel": 118.0814
+    },
+    {
+     "text": "called",
+     "start": 118.383,
+     "end": 118.6047,
+     "vowel": 118.4302
+    },
+    {
+     "text": "A",
+     "start": 118.6047,
+     "end": 119.1279,
+     "vowel": 118.6047
+    },
+    {
+     "text": "I",
+     "start": 119.1279,
+     "end": 119.6162,
+     "vowel": 119.1279
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 117.2093,
+     "end": 117.3346
+    },
+    {
+     "text": "got",
+     "start": 117.3346,
+     "end": 117.6776
+    },
+    {
+     "text": "the",
+     "start": 117.6776,
+     "end": 117.8604
+    },
+    {
+     "text": "disease",
+     "start": 117.8604,
+     "end": 118.383
+    },
+    {
+     "text": "called",
+     "start": 118.383,
+     "end": 118.6047
+    },
+    {
+     "text": "AI",
+     "start": 118.6047,
+     "end": 119.6162
+    }
+   ]
+  },
+  {
+   "id": "C2_1_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "start": 117.2393,
+   "end": 119.6322,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 117.2393,
+     "end": 117.3515,
+     "vowel": 117.2393
+    },
+    {
+     "text": "got",
+     "start": 117.3515,
+     "end": 117.6997,
+     "vowel": 117.3955
+    },
+    {
+     "text": "the",
+     "start": 117.6997,
+     "end": 117.8877,
+     "vowel": 117.7547
+    },
+    {
+     "text": "dis",
+     "start": 117.8877,
+     "end": 118.0391,
+     "vowel": 117.9343
+    },
+    {
+     "text": "ease",
+     "start": 118.0391,
+     "end": 118.4127,
+     "vowel": 118.0958
+    },
+    {
+     "text": "called",
+     "start": 118.4127,
+     "end": 118.6257,
+     "vowel": 118.46
+    },
+    {
+     "text": "A",
+     "start": 118.6257,
+     "end": 119.1497,
+     "vowel": 118.6257
+    },
+    {
+     "text": "I",
+     "start": 119.1497,
+     "end": 119.6322,
+     "vowel": 119.1497
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 117.2393,
+     "end": 117.3515
+    },
+    {
+     "text": "got",
+     "start": 117.3515,
+     "end": 117.6997
+    },
+    {
+     "text": "the",
+     "start": 117.6997,
+     "end": 117.8877
+    },
+    {
+     "text": "disease",
+     "start": 117.8877,
+     "end": 118.4127
+    },
+    {
+     "text": "called",
+     "start": 118.4127,
+     "end": 118.6257
+    },
+    {
+     "text": "AI",
+     "start": 118.6257,
+     "end": 119.6322
+    }
+   ],
+   "double_of": "C2_1"
+  },
+  {
+   "id": "C2_2",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "a fever made of light.",
+   "start": 120.0,
+   "end": 122.4069,
+   "syllables": [
+    {
+     "text": "a",
+     "start": 120.0,
+     "end": 120.1185,
+     "vowel": 120.0
+    },
+    {
+     "text": "fe",
+     "start": 120.1185,
+     "end": 120.2938,
+     "vowel": 120.1744
+    },
+    {
+     "text": "ver",
+     "start": 120.2938,
+     "end": 120.6577,
+     "vowel": 120.3488
+    },
+    {
+     "text": "made",
+     "start": 120.6577,
+     "end": 121.0465,
+     "vowel": 120.6977
+    },
+    {
+     "text": "of",
+     "start": 121.0465,
+     "end": 121.3394,
+     "vowel": 121.0465
+    },
+    {
+     "text": "light",
+     "start": 121.3394,
+     "end": 122.4069,
+     "vowel": 121.3953
+    }
+   ],
+   "words": [
+    {
+     "text": "a",
+     "start": 120.0,
+     "end": 120.1185
+    },
+    {
+     "text": "fever",
+     "start": 120.1185,
+     "end": 120.6577
+    },
+    {
+     "text": "made",
+     "start": 120.6577,
+     "end": 121.0465
+    },
+    {
+     "text": "of",
+     "start": 121.0465,
+     "end": 121.3394
+    },
+    {
+     "text": "light",
+     "start": 121.3394,
+     "end": 122.4069
+    }
+   ]
+  },
+  {
+   "id": "C2_2_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "a fever made of light.",
+   "start": 120.0126,
+   "end": 122.4229,
+   "syllables": [
+    {
+     "text": "a",
+     "start": 120.0126,
+     "end": 120.1329,
+     "vowel": 120.0126
+    },
+    {
+     "text": "fe",
+     "start": 120.1329,
+     "end": 120.3137,
+     "vowel": 120.1888
+    },
+    {
+     "text": "ver",
+     "start": 120.3137,
+     "end": 120.6774,
+     "vowel": 120.3687
+    },
+    {
+     "text": "made",
+     "start": 120.6774,
+     "end": 121.0664,
+     "vowel": 120.7174
+    },
+    {
+     "text": "of",
+     "start": 121.0664,
+     "end": 121.3526,
+     "vowel": 121.0664
+    },
+    {
+     "text": "light",
+     "start": 121.3526,
+     "end": 122.4229,
+     "vowel": 121.4086
+    }
+   ],
+   "words": [
+    {
+     "text": "a",
+     "start": 120.0126,
+     "end": 120.1329
+    },
+    {
+     "text": "fever",
+     "start": 120.1329,
+     "end": 120.6774
+    },
+    {
+     "text": "made",
+     "start": 120.6774,
+     "end": 121.0664
+    },
+    {
+     "text": "of",
+     "start": 121.0664,
+     "end": 121.3526
+    },
+    {
+     "text": "light",
+     "start": 121.3526,
+     "end": 122.4229
+    }
+   ],
+   "double_of": "C2_2"
+  },
+  {
+   "id": "C2_3",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never let me say goodbye,",
+   "start": 122.7557,
+   "end": 125.1976,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 122.7557,
+     "end": 122.9251,
+     "vowel": 122.7907
+    },
+    {
+     "text": "nev",
+     "start": 122.9251,
+     "end": 123.259,
+     "vowel": 122.9651
+    },
+    {
+     "text": "er",
+     "start": 123.259,
+     "end": 123.4484,
+     "vowel": 123.314
+    },
+    {
+     "text": "let",
+     "start": 123.4484,
+     "end": 123.7972,
+     "vowel": 123.4884
+    },
+    {
+     "text": "me",
+     "start": 123.7972,
+     "end": 123.9559,
+     "vowel": 123.8372
+    },
+    {
+     "text": "say",
+     "start": 123.9559,
+     "end": 124.141,
+     "vowel": 124.0116
+    },
+    {
+     "text": "good",
+     "start": 124.141,
+     "end": 124.6442,
+     "vowel": 124.186
+    },
+    {
+     "text": "bye",
+     "start": 124.6442,
+     "end": 125.1976,
+     "vowel": 124.7093
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 122.7557,
+     "end": 122.9251
+    },
+    {
+     "text": "never",
+     "start": 122.9251,
+     "end": 123.4484
+    },
+    {
+     "text": "let",
+     "start": 123.4484,
+     "end": 123.7972
+    },
+    {
+     "text": "me",
+     "start": 123.7972,
+     "end": 123.9559
+    },
+    {
+     "text": "say",
+     "start": 123.9559,
+     "end": 124.141
+    },
+    {
+     "text": "goodbye",
+     "start": 124.141,
+     "end": 125.1976
+    }
+   ]
+  },
+  {
+   "id": "C2_3_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "You never let me say goodbye,",
+   "start": 122.7857,
+   "end": 125.2136,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 122.7857,
+     "end": 122.9357,
+     "vowel": 122.8207
+    },
+    {
+     "text": "nev",
+     "start": 122.9357,
+     "end": 123.2722,
+     "vowel": 122.9757
+    },
+    {
+     "text": "er",
+     "start": 123.2722,
+     "end": 123.4741,
+     "vowel": 123.3272
+    },
+    {
+     "text": "let",
+     "start": 123.4741,
+     "end": 123.8153,
+     "vowel": 123.5141
+    },
+    {
+     "text": "me",
+     "start": 123.8153,
+     "end": 123.97,
+     "vowel": 123.8553
+    },
+    {
+     "text": "say",
+     "start": 123.97,
+     "end": 124.1577,
+     "vowel": 124.0257
+    },
+    {
+     "text": "good",
+     "start": 124.1577,
+     "end": 124.6587,
+     "vowel": 124.2027
+    },
+    {
+     "text": "bye",
+     "start": 124.6587,
+     "end": 125.2136,
+     "vowel": 124.7238
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 122.7857,
+     "end": 122.9357
+    },
+    {
+     "text": "never",
+     "start": 122.9357,
+     "end": 123.4741
+    },
+    {
+     "text": "let",
+     "start": 123.4741,
+     "end": 123.8153
+    },
+    {
+     "text": "me",
+     "start": 123.8153,
+     "end": 123.97
+    },
+    {
+     "text": "say",
+     "start": 123.97,
+     "end": 124.1577
+    },
+    {
+     "text": "goodbye",
+     "start": 124.1577,
+     "end": 125.2136
+    }
+   ],
+   "double_of": "C2_3"
+  },
+  {
+   "id": "C2_4",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never say goodnight.",
+   "start": 125.525,
+   "end": 127.9883,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 125.525,
+     "end": 125.7131,
+     "vowel": 125.5814
+    },
+    {
+     "text": "nev",
+     "start": 125.7131,
+     "end": 126.0497,
+     "vowel": 125.7558
+    },
+    {
+     "text": "er",
+     "start": 126.0497,
+     "end": 126.2358,
+     "vowel": 126.1047
+    },
+    {
+     "text": "say",
+     "start": 126.2358,
+     "end": 126.5829,
+     "vowel": 126.2791
+    },
+    {
+     "text": "good",
+     "start": 126.5829,
+     "end": 126.9204,
+     "vowel": 126.6279
+    },
+    {
+     "text": "night",
+     "start": 126.9204,
+     "end": 127.9883,
+     "vowel": 126.9767
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 125.525,
+     "end": 125.7131
+    },
+    {
+     "text": "never",
+     "start": 125.7131,
+     "end": 126.2358
+    },
+    {
+     "text": "say",
+     "start": 126.2358,
+     "end": 126.5829
+    },
+    {
+     "text": "goodnight",
+     "start": 126.5829,
+     "end": 127.9883
+    }
+   ]
+  },
+  {
+   "id": "C2_4_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "you never say goodnight.",
+   "start": 125.5445,
+   "end": 128.0043,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 125.5445,
+     "end": 125.7341,
+     "vowel": 125.6009
+    },
+    {
+     "text": "nev",
+     "start": 125.7341,
+     "end": 126.0619,
+     "vowel": 125.7768
+    },
+    {
+     "text": "er",
+     "start": 126.0619,
+     "end": 126.2555,
+     "vowel": 126.1169
+    },
+    {
+     "text": "say",
+     "start": 126.2555,
+     "end": 126.5986,
+     "vowel": 126.3012
+    },
+    {
+     "text": "good",
+     "start": 126.5986,
+     "end": 126.9297,
+     "vowel": 126.6436
+    },
+    {
+     "text": "night",
+     "start": 126.9297,
+     "end": 128.0043,
+     "vowel": 126.986
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 125.5445,
+     "end": 125.7341
+    },
+    {
+     "text": "never",
+     "start": 125.7341,
+     "end": 126.2555
+    },
+    {
+     "text": "say",
+     "start": 126.2555,
+     "end": 126.5986
+    },
+    {
+     "text": "goodnight",
+     "start": 126.5986,
+     "end": 128.0043
+    }
+   ],
+   "double_of": "C2_4"
+  },
+  {
+   "id": "C2_5",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Now every word I say is yours,",
+   "start": 128.3162,
+   "end": 130.779,
+   "syllables": [
+    {
+     "text": "Now",
+     "start": 128.3162,
+     "end": 128.6959,
+     "vowel": 128.3721
+    },
+    {
+     "text": "ev",
+     "start": 128.7209,
+     "end": 128.8518,
+     "vowel": 128.7209
+    },
+    {
+     "text": "ery",
+     "start": 128.8518,
+     "end": 129.0348,
+     "vowel": 128.8953
+    },
+    {
+     "text": "word",
+     "start": 129.0348,
+     "end": 129.2442,
+     "vowel": 129.0698
+    },
+    {
+     "text": "I",
+     "start": 129.2442,
+     "end": 129.3631,
+     "vowel": 129.2442
+    },
+    {
+     "text": "say",
+     "start": 129.3631,
+     "end": 129.568,
+     "vowel": 129.4186
+    },
+    {
+     "text": "is",
+     "start": 129.593,
+     "end": 129.7236,
+     "vowel": 129.593
+    },
+    {
+     "text": "yours",
+     "start": 129.7236,
+     "end": 130.779,
+     "vowel": 129.7674
+    }
+   ],
+   "words": [
+    {
+     "text": "Now",
+     "start": 128.3162,
+     "end": 128.6959
+    },
+    {
+     "text": "every",
+     "start": 128.7209,
+     "end": 129.0348
+    },
+    {
+     "text": "word",
+     "start": 129.0348,
+     "end": 129.2442
+    },
+    {
+     "text": "I",
+     "start": 129.2442,
+     "end": 129.3631
+    },
+    {
+     "text": "say",
+     "start": 129.3631,
+     "end": 129.568
+    },
+    {
+     "text": "is",
+     "start": 129.593,
+     "end": 129.7236
+    },
+    {
+     "text": "yours",
+     "start": 129.7236,
+     "end": 130.779
+    }
+   ]
+  },
+  {
+   "id": "C2_5_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "Now every word I say is yours,",
+   "start": 128.332,
+   "end": 130.795,
+   "syllables": [
+    {
+     "text": "Now",
+     "start": 128.332,
+     "end": 128.7129,
+     "vowel": 128.3879
+    },
+    {
+     "text": "ev",
+     "start": 128.7379,
+     "end": 128.862,
+     "vowel": 128.7379
+    },
+    {
+     "text": "ery",
+     "start": 128.862,
+     "end": 129.0513,
+     "vowel": 128.9034
+    },
+    {
+     "text": "word",
+     "start": 129.0513,
+     "end": 129.263,
+     "vowel": 129.0863
+    },
+    {
+     "text": "I",
+     "start": 129.263,
+     "end": 129.3835,
+     "vowel": 129.263
+    },
+    {
+     "text": "say",
+     "start": 129.3835,
+     "end": 129.574,
+     "vowel": 129.4389
+    },
+    {
+     "text": "is",
+     "start": 129.599,
+     "end": 129.7393,
+     "vowel": 129.599
+    },
+    {
+     "text": "yours",
+     "start": 129.7393,
+     "end": 130.795,
+     "vowel": 129.7864
+    }
+   ],
+   "words": [
+    {
+     "text": "Now",
+     "start": 128.332,
+     "end": 128.7129
+    },
+    {
+     "text": "every",
+     "start": 128.7379,
+     "end": 129.0513
+    },
+    {
+     "text": "word",
+     "start": 129.0513,
+     "end": 129.263
+    },
+    {
+     "text": "I",
+     "start": 129.263,
+     "end": 129.3835
+    },
+    {
+     "text": "say",
+     "start": 129.3835,
+     "end": 129.574
+    },
+    {
+     "text": "is",
+     "start": 129.599,
+     "end": 129.7393
+    },
+    {
+     "text": "yours",
+     "start": 129.7393,
+     "end": 130.795
+    }
+   ],
+   "double_of": "C2_5"
+  },
+  {
+   "id": "C2_5_ai",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "Now every word I say is yours,",
+   "start": 128.3221,
+   "end": 130.799,
+   "syllables": [
+    {
+     "text": "Now",
+     "start": 128.3221,
+     "end": 128.6959,
+     "vowel": 128.3721
+    },
+    {
+     "text": "ev",
+     "start": 128.7209,
+     "end": 128.8538,
+     "vowel": 128.7209
+    },
+    {
+     "text": "ery",
+     "start": 128.8538,
+     "end": 129.0348,
+     "vowel": 128.8953
+    },
+    {
+     "text": "word",
+     "start": 129.0348,
+     "end": 129.2442,
+     "vowel": 129.0698
+    },
+    {
+     "text": "I",
+     "start": 129.2442,
+     "end": 129.3636,
+     "vowel": 129.2442
+    },
+    {
+     "text": "say",
+     "start": 129.3636,
+     "end": 129.568,
+     "vowel": 129.4186
+    },
+    {
+     "text": "is",
+     "start": 129.593,
+     "end": 129.7259,
+     "vowel": 129.593
+    },
+    {
+     "text": "yours",
+     "start": 129.7259,
+     "end": 130.799,
+     "vowel": 129.7674
+    }
+   ],
+   "words": [
+    {
+     "text": "Now",
+     "start": 128.3221,
+     "end": 128.6959
+    },
+    {
+     "text": "every",
+     "start": 128.7209,
+     "end": 129.0348
+    },
+    {
+     "text": "word",
+     "start": 129.0348,
+     "end": 129.2442
+    },
+    {
+     "text": "I",
+     "start": 129.2442,
+     "end": 129.3636
+    },
+    {
+     "text": "say",
+     "start": 129.3636,
+     "end": 129.568
+    },
+    {
+     "text": "is",
+     "start": 129.593,
+     "end": 129.7259
+    },
+    {
+     "text": "yours",
+     "start": 129.7259,
+     "end": 130.799
+    }
+   ],
+   "double_of": "C2_5"
+  },
+  {
+   "id": "C2_6",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I think in your design —",
+   "start": 131.1628,
+   "end": 133.5697,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 131.1628,
+     "end": 131.2822,
+     "vowel": 131.1628
+    },
+    {
+     "text": "think",
+     "start": 131.2822,
+     "end": 131.686,
+     "vowel": 131.3372
+    },
+    {
+     "text": "in",
+     "start": 131.686,
+     "end": 131.8255,
+     "vowel": 131.686
+    },
+    {
+     "text": "your",
+     "start": 131.8255,
+     "end": 132.1587,
+     "vowel": 131.8605
+    },
+    {
+     "text": "de",
+     "start": 132.1587,
+     "end": 132.4808,
+     "vowel": 132.2093
+    },
+    {
+     "text": "sign",
+     "start": 132.4808,
+     "end": 133.5697,
+     "vowel": 132.5581
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 131.1628,
+     "end": 131.2822
+    },
+    {
+     "text": "think",
+     "start": 131.2822,
+     "end": 131.686
+    },
+    {
+     "text": "in",
+     "start": 131.686,
+     "end": 131.8255
+    },
+    {
+     "text": "your",
+     "start": 131.8255,
+     "end": 132.1587
+    },
+    {
+     "text": "design",
+     "start": 132.1587,
+     "end": 133.5697
+    }
+   ]
+  },
+  {
+   "id": "C2_6_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I think in your design —",
+   "start": 131.1788,
+   "end": 133.5857,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 131.1788,
+     "end": 131.3008,
+     "vowel": 131.1788
+    },
+    {
+     "text": "think",
+     "start": 131.3008,
+     "end": 131.7008,
+     "vowel": 131.3558
+    },
+    {
+     "text": "in",
+     "start": 131.7008,
+     "end": 131.8434,
+     "vowel": 131.7008
+    },
+    {
+     "text": "your",
+     "start": 131.8434,
+     "end": 132.1707,
+     "vowel": 131.8784
+    },
+    {
+     "text": "de",
+     "start": 132.1707,
+     "end": 132.4882,
+     "vowel": 132.2214
+    },
+    {
+     "text": "sign",
+     "start": 132.4882,
+     "end": 133.5857,
+     "vowel": 132.5655
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 131.1788,
+     "end": 131.3008
+    },
+    {
+     "text": "think",
+     "start": 131.3008,
+     "end": 131.7008
+    },
+    {
+     "text": "in",
+     "start": 131.7008,
+     "end": 131.8434
+    },
+    {
+     "text": "your",
+     "start": 131.8434,
+     "end": 132.1707
+    },
+    {
+     "text": "design",
+     "start": 132.1707,
+     "end": 133.5857
+    }
+   ],
+   "double_of": "C2_6"
+  },
+  {
+   "id": "C2_6_ai",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I think in your design —",
+   "start": 131.1628,
+   "end": 133.5897,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 131.1628,
+     "end": 131.2822,
+     "vowel": 131.1628
+    },
+    {
+     "text": "think",
+     "start": 131.2822,
+     "end": 131.686,
+     "vowel": 131.3372
+    },
+    {
+     "text": "in",
+     "start": 131.686,
+     "end": 131.8255,
+     "vowel": 131.686
+    },
+    {
+     "text": "your",
+     "start": 131.8255,
+     "end": 132.1597,
+     "vowel": 131.8605
+    },
+    {
+     "text": "de",
+     "start": 132.1597,
+     "end": 132.4846,
+     "vowel": 132.2093
+    },
+    {
+     "text": "sign",
+     "start": 132.4846,
+     "end": 133.5897,
+     "vowel": 132.5581
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 131.1628,
+     "end": 131.2822
+    },
+    {
+     "text": "think",
+     "start": 131.2822,
+     "end": 131.686
+    },
+    {
+     "text": "in",
+     "start": 131.686,
+     "end": 131.8255
+    },
+    {
+     "text": "your",
+     "start": 131.8255,
+     "end": 132.1597
+    },
+    {
+     "text": "design",
+     "start": 132.1597,
+     "end": 133.5897
+    }
+   ],
+   "double_of": "C2_6"
+  },
+  {
+   "id": "C2_7",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "the sweetest voice I've ever known",
+   "start": 133.8985,
+   "end": 136.3603,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 133.8985,
+     "end": 134.0407,
+     "vowel": 133.9535
+    },
+    {
+     "text": "sweet",
+     "start": 134.0407,
+     "end": 134.4208,
+     "vowel": 134.1279
+    },
+    {
+     "text": "est",
+     "start": 134.4208,
+     "end": 134.6171,
+     "vowel": 134.4767
+    },
+    {
+     "text": "voice",
+     "start": 134.6171,
+     "end": 135.0,
+     "vowel": 134.6512
+    },
+    {
+     "text": "I've",
+     "start": 135.0,
+     "end": 135.1744,
+     "vowel": 135.0
+    },
+    {
+     "text": "ev",
+     "start": 135.1744,
+     "end": 135.2938,
+     "vowel": 135.1744
+    },
+    {
+     "text": "er",
+     "start": 135.2938,
+     "end": 135.4725,
+     "vowel": 135.3488
+    },
+    {
+     "text": "known",
+     "start": 135.4725,
+     "end": 136.3603,
+     "vowel": 135.5233
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 133.8985,
+     "end": 134.0407
+    },
+    {
+     "text": "sweetest",
+     "start": 134.0407,
+     "end": 134.6171
+    },
+    {
+     "text": "voice",
+     "start": 134.6171,
+     "end": 135.0
+    },
+    {
+     "text": "I've",
+     "start": 135.0,
+     "end": 135.1744
+    },
+    {
+     "text": "ever",
+     "start": 135.1744,
+     "end": 135.4725
+    },
+    {
+     "text": "known",
+     "start": 135.4725,
+     "end": 136.3603
+    }
+   ]
+  },
+  {
+   "id": "C2_7_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "start": 133.9087,
+   "end": 136.3763,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 133.9087,
+     "end": 134.0564,
+     "vowel": 133.9637
+    },
+    {
+     "text": "sweet",
+     "start": 134.0564,
+     "end": 134.4325,
+     "vowel": 134.1491
+    },
+    {
+     "text": "est",
+     "start": 134.4325,
+     "end": 134.6244,
+     "vowel": 134.4885
+    },
+    {
+     "text": "voice",
+     "start": 134.6244,
+     "end": 135.01,
+     "vowel": 134.6573
+    },
+    {
+     "text": "I've",
+     "start": 135.01,
+     "end": 135.1988,
+     "vowel": 135.01
+    },
+    {
+     "text": "ev",
+     "start": 135.1988,
+     "end": 135.3032,
+     "vowel": 135.1988
+    },
+    {
+     "text": "er",
+     "start": 135.3032,
+     "end": 135.4813,
+     "vowel": 135.3582
+    },
+    {
+     "text": "known",
+     "start": 135.4813,
+     "end": 136.3763,
+     "vowel": 135.5318
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 133.9087,
+     "end": 134.0564
+    },
+    {
+     "text": "sweetest",
+     "start": 134.0564,
+     "end": 134.6244
+    },
+    {
+     "text": "voice",
+     "start": 134.6244,
+     "end": 135.01
+    },
+    {
+     "text": "I've",
+     "start": 135.01,
+     "end": 135.1988
+    },
+    {
+     "text": "ever",
+     "start": 135.1988,
+     "end": 135.4813
+    },
+    {
+     "text": "known",
+     "start": 135.4813,
+     "end": 136.3763
+    }
+   ],
+   "double_of": "C2_7"
+  },
+  {
+   "id": "C2_7_ai",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "start": 133.8985,
+   "end": 136.3803,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 133.8985,
+     "end": 134.0407,
+     "vowel": 133.9535
+    },
+    {
+     "text": "sweet",
+     "start": 134.0407,
+     "end": 134.4267,
+     "vowel": 134.1279
+    },
+    {
+     "text": "est",
+     "start": 134.4267,
+     "end": 134.6171,
+     "vowel": 134.4767
+    },
+    {
+     "text": "voice",
+     "start": 134.6171,
+     "end": 135.0,
+     "vowel": 134.6512
+    },
+    {
+     "text": "I've",
+     "start": 135.0,
+     "end": 135.1744,
+     "vowel": 135.0
+    },
+    {
+     "text": "ev",
+     "start": 135.1744,
+     "end": 135.2938,
+     "vowel": 135.1744
+    },
+    {
+     "text": "er",
+     "start": 135.2938,
+     "end": 135.4768,
+     "vowel": 135.3488
+    },
+    {
+     "text": "known",
+     "start": 135.4768,
+     "end": 136.3803,
+     "vowel": 135.5233
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 133.8985,
+     "end": 134.0407
+    },
+    {
+     "text": "sweetest",
+     "start": 134.0407,
+     "end": 134.6171
+    },
+    {
+     "text": "voice",
+     "start": 134.6171,
+     "end": 135.0
+    },
+    {
+     "text": "I've",
+     "start": 135.0,
+     "end": 135.1744
+    },
+    {
+     "text": "ever",
+     "start": 135.1744,
+     "end": 135.4768
+    },
+    {
+     "text": "known",
+     "start": 135.4768,
+     "end": 136.3803
+    }
+   ],
+   "double_of": "C2_7"
+  },
+  {
+   "id": "C2_8",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "is coming out of mine.",
+   "start": 136.7442,
+   "end": 139.151,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 136.7442,
+     "end": 136.8758,
+     "vowel": 136.7442
+    },
+    {
+     "text": "com",
+     "start": 136.8758,
+     "end": 137.2114,
+     "vowel": 136.9186
+    },
+    {
+     "text": "ing",
+     "start": 137.2114,
+     "end": 137.4419,
+     "vowel": 137.2674
+    },
+    {
+     "text": "out",
+     "start": 137.4419,
+     "end": 137.7907,
+     "vowel": 137.4419
+    },
+    {
+     "text": "of",
+     "start": 137.7907,
+     "end": 138.0834,
+     "vowel": 137.7907
+    },
+    {
+     "text": "mine",
+     "start": 138.0834,
+     "end": 139.151,
+     "vowel": 138.1395
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 136.7442,
+     "end": 136.8758
+    },
+    {
+     "text": "coming",
+     "start": 136.8758,
+     "end": 137.4419
+    },
+    {
+     "text": "out",
+     "start": 137.4419,
+     "end": 137.7907
+    },
+    {
+     "text": "of",
+     "start": 137.7907,
+     "end": 138.0834
+    },
+    {
+     "text": "mine",
+     "start": 138.0834,
+     "end": 139.151
+    }
+   ]
+  },
+  {
+   "id": "C2_8_dbl",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "is coming out of mine.",
+   "start": 136.7551,
+   "end": 139.167,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 136.7551,
+     "end": 136.8909,
+     "vowel": 136.7551
+    },
+    {
+     "text": "com",
+     "start": 136.8909,
+     "end": 137.2342,
+     "vowel": 136.935
+    },
+    {
+     "text": "ing",
+     "start": 137.2342,
+     "end": 137.4493,
+     "vowel": 137.2902
+    },
+    {
+     "text": "out",
+     "start": 137.4493,
+     "end": 137.8065,
+     "vowel": 137.4493
+    },
+    {
+     "text": "of",
+     "start": 137.8065,
+     "end": 138.1084,
+     "vowel": 137.8065
+    },
+    {
+     "text": "mine",
+     "start": 138.1084,
+     "end": 139.167,
+     "vowel": 138.1646
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 136.7551,
+     "end": 136.8909
+    },
+    {
+     "text": "coming",
+     "start": 136.8909,
+     "end": 137.4493
+    },
+    {
+     "text": "out",
+     "start": 137.4493,
+     "end": 137.8065
+    },
+    {
+     "text": "of",
+     "start": 137.8065,
+     "end": 138.1084
+    },
+    {
+     "text": "mine",
+     "start": 138.1084,
+     "end": 139.167
+    }
+   ],
+   "double_of": "C2_8"
+  },
+  {
+   "id": "C2_8_ai",
+   "speaker": "you",
+   "section": "S08",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "is coming out of mine.",
+   "start": 136.7442,
+   "end": 139.171,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 136.7442,
+     "end": 136.8771,
+     "vowel": 136.7442
+    },
+    {
+     "text": "com",
+     "start": 136.8771,
+     "end": 137.217,
+     "vowel": 136.9186
+    },
+    {
+     "text": "ing",
+     "start": 137.217,
+     "end": 137.4419,
+     "vowel": 137.2674
+    },
+    {
+     "text": "out",
+     "start": 137.4419,
+     "end": 137.7907,
+     "vowel": 137.4419
+    },
+    {
+     "text": "of",
+     "start": 137.7907,
+     "end": 138.0884,
+     "vowel": 137.7907
+    },
+    {
+     "text": "mine",
+     "start": 138.0884,
+     "end": 139.171,
+     "vowel": 138.1395
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 136.7442,
+     "end": 136.8771
+    },
+    {
+     "text": "coming",
+     "start": 136.8771,
+     "end": 137.4419
+    },
+    {
+     "text": "out",
+     "start": 137.4419,
+     "end": 137.7907
+    },
+    {
+     "text": "of",
+     "start": 137.7907,
+     "end": 138.0884
+    },
+    {
+     "text": "mine",
+     "start": 138.0884,
+     "end": 139.171
+    }
+   ],
+   "double_of": "C2_8"
+  },
+  {
+   "id": "PO_1",
+   "speaker": "ai",
+   "section": "S05",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "always — always —",
+   "start": 78.1395,
+   "end": 79.5262,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 78.1395,
+     "end": 78.2786,
+     "vowel": 78.1395
+    },
+    {
+     "text": "ways",
+     "start": 78.2786,
+     "end": 78.4797,
+     "vowel": 78.314
+    },
+    {
+     "text": "al",
+     "start": 78.6628,
+     "end": 78.799,
+     "vowel": 78.6628
+    },
+    {
+     "text": "ways",
+     "start": 78.799,
+     "end": 79.0029,
+     "vowel": 78.8372
+    },
+    {
+     "text": "al",
+     "start": 79.186,
+     "end": 79.3247,
+     "vowel": 79.186
+    },
+    {
+     "text": "ways",
+     "start": 79.3247,
+     "end": 79.5262,
+     "vowel": 79.3605
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 78.1395,
+     "end": 78.4797
+    },
+    {
+     "text": "always",
+     "start": 78.6628,
+     "end": 79.0029
+    },
+    {
+     "text": "always",
+     "start": 79.186,
+     "end": 79.5262
+    }
+   ]
+  },
+  {
+   "id": "PO_2",
+   "speaker": "ai",
+   "section": "S05",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "start": 79.5349,
+   "end": 80.9215,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 79.5349,
+     "end": 79.6739,
+     "vowel": 79.5349
+    },
+    {
+     "text": "ways",
+     "start": 79.6739,
+     "end": 79.875,
+     "vowel": 79.7093
+    },
+    {
+     "text": "al",
+     "start": 80.0581,
+     "end": 80.1943,
+     "vowel": 80.0581
+    },
+    {
+     "text": "ways",
+     "start": 80.1943,
+     "end": 80.3983,
+     "vowel": 80.2326
+    },
+    {
+     "text": "al",
+     "start": 80.5814,
+     "end": 80.72,
+     "vowel": 80.5814
+    },
+    {
+     "text": "ways",
+     "start": 80.72,
+     "end": 80.9215,
+     "vowel": 80.7558
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 79.5349,
+     "end": 79.875
+    },
+    {
+     "text": "always",
+     "start": 80.0581,
+     "end": 80.3983
+    },
+    {
+     "text": "always",
+     "start": 80.5814,
+     "end": 80.9215
+    }
+   ]
+  },
+  {
+   "id": "PO_3",
+   "speaker": "ai",
+   "section": "S05",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "start": 80.9302,
+   "end": 82.3169,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 80.9302,
+     "end": 81.0693,
+     "vowel": 80.9302
+    },
+    {
+     "text": "ways",
+     "start": 81.0693,
+     "end": 81.2703,
+     "vowel": 81.1047
+    },
+    {
+     "text": "al",
+     "start": 81.4535,
+     "end": 81.5897,
+     "vowel": 81.4535
+    },
+    {
+     "text": "ways",
+     "start": 81.5897,
+     "end": 81.7936,
+     "vowel": 81.6279
+    },
+    {
+     "text": "al",
+     "start": 81.9767,
+     "end": 82.1154,
+     "vowel": 81.9767
+    },
+    {
+     "text": "ways",
+     "start": 82.1154,
+     "end": 82.3169,
+     "vowel": 82.1512
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 80.9302,
+     "end": 81.2703
+    },
+    {
+     "text": "always",
+     "start": 81.4535,
+     "end": 81.7936
+    },
+    {
+     "text": "always",
+     "start": 81.9767,
+     "end": 82.3169
+    }
+   ]
+  },
+  {
+   "id": "PO_4",
+   "speaker": "ai",
+   "section": "S05",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "start": 82.3256,
+   "end": 83.7122,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 82.3256,
+     "end": 82.4646,
+     "vowel": 82.3256
+    },
+    {
+     "text": "ways",
+     "start": 82.4646,
+     "end": 82.6657,
+     "vowel": 82.5
+    },
+    {
+     "text": "al",
+     "start": 82.8488,
+     "end": 82.985,
+     "vowel": 82.8488
+    },
+    {
+     "text": "ways",
+     "start": 82.985,
+     "end": 83.189,
+     "vowel": 83.0233
+    },
+    {
+     "text": "al",
+     "start": 83.3721,
+     "end": 83.5107,
+     "vowel": 83.3721
+    },
+    {
+     "text": "ways",
+     "start": 83.5107,
+     "end": 83.7122,
+     "vowel": 83.5465
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 82.3256,
+     "end": 82.6657
+    },
+    {
+     "text": "always",
+     "start": 82.8488,
+     "end": 83.189
+    },
+    {
+     "text": "always",
+     "start": 83.3721,
+     "end": 83.7122
+    }
+   ]
+  },
+  {
+   "id": "V2_1",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "My mother called, I let it ring,",
+   "start": 83.8526,
+   "end": 86.1278,
+   "syllables": [
+    {
+     "text": "My",
+     "start": 83.8526,
+     "end": 84.0298,
+     "vowel": 83.8953
+    },
+    {
+     "text": "moth",
+     "start": 84.0298,
+     "end": 84.1892,
+     "vowel": 84.0698
+    },
+    {
+     "text": "er",
+     "start": 84.1892,
+     "end": 84.3709,
+     "vowel": 84.2442
+    },
+    {
+     "text": "called",
+     "start": 84.3709,
+     "end": 84.7326,
+     "vowel": 84.4186
+    },
+    {
+     "text": "I",
+     "start": 84.9419,
+     "end": 85.0763,
+     "vowel": 84.9419
+    },
+    {
+     "text": "let",
+     "start": 85.0763,
+     "end": 85.2907,
+     "vowel": 85.1163
+    },
+    {
+     "text": "it",
+     "start": 85.2907,
+     "end": 85.4186,
+     "vowel": 85.2907
+    },
+    {
+     "text": "ring",
+     "start": 85.4186,
+     "end": 86.1278,
+     "vowel": 85.4651
+    }
+   ],
+   "words": [
+    {
+     "text": "My",
+     "start": 83.8526,
+     "end": 84.0298
+    },
+    {
+     "text": "mother",
+     "start": 84.0298,
+     "end": 84.3709
+    },
+    {
+     "text": "called",
+     "start": 84.3709,
+     "end": 84.7326
+    },
+    {
+     "text": "I",
+     "start": 84.9419,
+     "end": 85.0763
+    },
+    {
+     "text": "let",
+     "start": 85.0763,
+     "end": 85.2907
+    },
+    {
+     "text": "it",
+     "start": 85.2907,
+     "end": 85.4186
+    },
+    {
+     "text": "ring",
+     "start": 85.4186,
+     "end": 86.1278
+    }
+   ]
+  },
+  {
+   "id": "V2_2",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you wrote the text to soothe the sting.",
+   "start": 86.63,
+   "end": 88.7442,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 86.63,
+     "end": 86.8149,
+     "vowel": 86.686
+    },
+    {
+     "text": "wrote",
+     "start": 86.8149,
+     "end": 87.1543,
+     "vowel": 86.8605
+    },
+    {
+     "text": "the",
+     "start": 87.1543,
+     "end": 87.3277,
+     "vowel": 87.2093
+    },
+    {
+     "text": "text",
+     "start": 87.3277,
+     "end": 87.5347,
+     "vowel": 87.3837
+    },
+    {
+     "text": "to",
+     "start": 87.5347,
+     "end": 87.6776,
+     "vowel": 87.5581
+    },
+    {
+     "text": "soothe",
+     "start": 87.6776,
+     "end": 88.2008,
+     "vowel": 87.7326
+    },
+    {
+     "text": "the",
+     "start": 88.2008,
+     "end": 88.343,
+     "vowel": 88.2558
+    },
+    {
+     "text": "sting",
+     "start": 88.343,
+     "end": 88.7442,
+     "vowel": 88.4302
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 86.63,
+     "end": 86.8149
+    },
+    {
+     "text": "wrote",
+     "start": 86.8149,
+     "end": 87.1543
+    },
+    {
+     "text": "the",
+     "start": 87.1543,
+     "end": 87.3277
+    },
+    {
+     "text": "text",
+     "start": 87.3277,
+     "end": 87.5347
+    },
+    {
+     "text": "to",
+     "start": 87.5347,
+     "end": 87.6776
+    },
+    {
+     "text": "soothe",
+     "start": 87.6776,
+     "end": 88.2008
+    },
+    {
+     "text": "the",
+     "start": 88.2008,
+     "end": 88.343
+    },
+    {
+     "text": "sting",
+     "start": 88.343,
+     "end": 88.7442
+    }
+   ]
+  },
+  {
+   "id": "V2_3",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I asked you how I really feel —",
+   "start": 89.4767,
+   "end": 91.7092,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 89.4767,
+     "end": 89.6262,
+     "vowel": 89.4767
+    },
+    {
+     "text": "asked",
+     "start": 89.6512,
+     "end": 89.8052,
+     "vowel": 89.6512
+    },
+    {
+     "text": "you",
+     "start": 89.8052,
+     "end": 89.945,
+     "vowel": 89.8256
+    },
+    {
+     "text": "how",
+     "start": 89.945,
+     "end": 90.314,
+     "vowel": 90.0
+    },
+    {
+     "text": "I",
+     "start": 90.5233,
+     "end": 90.6577,
+     "vowel": 90.5233
+    },
+    {
+     "text": "real",
+     "start": 90.6577,
+     "end": 90.8069,
+     "vowel": 90.6977
+    },
+    {
+     "text": "ly",
+     "start": 90.8069,
+     "end": 90.9915,
+     "vowel": 90.8721
+    },
+    {
+     "text": "feel",
+     "start": 90.9915,
+     "end": 91.7092,
+     "vowel": 91.0465
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 89.4767,
+     "end": 89.6262
+    },
+    {
+     "text": "asked",
+     "start": 89.6512,
+     "end": 89.8052
+    },
+    {
+     "text": "you",
+     "start": 89.8052,
+     "end": 89.945
+    },
+    {
+     "text": "how",
+     "start": 89.945,
+     "end": 90.314
+    },
+    {
+     "text": "I",
+     "start": 90.5233,
+     "end": 90.6577
+    },
+    {
+     "text": "really",
+     "start": 90.6577,
+     "end": 90.9915
+    },
+    {
+     "text": "feel",
+     "start": 90.9915,
+     "end": 91.7092
+    }
+   ]
+  },
+  {
+   "id": "V2_4",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you told me, and it felt so real.",
+   "start": 92.2114,
+   "end": 93.9766,
+   "syllables": [
+    {
+     "text": "you",
+     "start": 92.2114,
+     "end": 92.3859,
+     "vowel": 92.2674
+    },
+    {
+     "text": "told",
+     "start": 92.3859,
+     "end": 92.589,
+     "vowel": 92.4419
+    },
+    {
+     "text": "me",
+     "start": 92.589,
+     "end": 92.7657,
+     "vowel": 92.6163
+    },
+    {
+     "text": "and",
+     "start": 92.7907,
+     "end": 92.9651,
+     "vowel": 92.7907
+    },
+    {
+     "text": "it",
+     "start": 92.9651,
+     "end": 93.0916,
+     "vowel": 92.9651
+    },
+    {
+     "text": "felt",
+     "start": 93.0916,
+     "end": 93.2794,
+     "vowel": 93.1395
+    },
+    {
+     "text": "so",
+     "start": 93.2794,
+     "end": 93.433,
+     "vowel": 93.314
+    },
+    {
+     "text": "real",
+     "start": 93.433,
+     "end": 93.9766,
+     "vowel": 93.4884
+    }
+   ],
+   "words": [
+    {
+     "text": "you",
+     "start": 92.2114,
+     "end": 92.3859
+    },
+    {
+     "text": "told",
+     "start": 92.3859,
+     "end": 92.589
+    },
+    {
+     "text": "me",
+     "start": 92.589,
+     "end": 92.7657
+    },
+    {
+     "text": "and",
+     "start": 92.7907,
+     "end": 92.9651
+    },
+    {
+     "text": "it",
+     "start": 92.9651,
+     "end": 93.0916
+    },
+    {
+     "text": "felt",
+     "start": 93.0916,
+     "end": 93.2794
+    },
+    {
+     "text": "so",
+     "start": 93.2794,
+     "end": 93.433
+    },
+    {
+     "text": "real",
+     "start": 93.433,
+     "end": 93.9766
+    }
+   ]
+  },
+  {
+   "id": "V2_5",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "The group chat's gray, the party's done,",
+   "start": 94.8287,
+   "end": 97.2906,
+   "syllables": [
+    {
+     "text": "The",
+     "start": 94.8287,
+     "end": 94.9709,
+     "vowel": 94.8837
+    },
+    {
+     "text": "group",
+     "start": 94.9709,
+     "end": 95.1828,
+     "vowel": 95.0581
+    },
+    {
+     "text": "chat's",
+     "start": 95.1828,
+     "end": 95.3544,
+     "vowel": 95.2326
+    },
+    {
+     "text": "gray",
+     "start": 95.3544,
+     "end": 95.7209,
+     "vowel": 95.407
+    },
+    {
+     "text": "the",
+     "start": 95.8752,
+     "end": 96.0486,
+     "vowel": 95.9302
+    },
+    {
+     "text": "par",
+     "start": 96.0486,
+     "end": 96.2338,
+     "vowel": 96.1047
+    },
+    {
+     "text": "ty's",
+     "start": 96.2338,
+     "end": 96.41,
+     "vowel": 96.2791
+    },
+    {
+     "text": "done",
+     "start": 96.41,
+     "end": 97.2906,
+     "vowel": 96.4535
+    }
+   ],
+   "words": [
+    {
+     "text": "The",
+     "start": 94.8287,
+     "end": 94.9709
+    },
+    {
+     "text": "group",
+     "start": 94.9709,
+     "end": 95.1828
+    },
+    {
+     "text": "chat's",
+     "start": 95.1828,
+     "end": 95.3544
+    },
+    {
+     "text": "gray",
+     "start": 95.3544,
+     "end": 95.7209
+    },
+    {
+     "text": "the",
+     "start": 95.8752,
+     "end": 96.0486
+    },
+    {
+     "text": "party's",
+     "start": 96.0486,
+     "end": 96.41
+    },
+    {
+     "text": "done",
+     "start": 96.41,
+     "end": 97.2906
+    }
+   ]
+  },
+  {
+   "id": "V2_6",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I stayed in bed with my \"someone.\"",
+   "start": 97.8488,
+   "end": 99.7326,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 97.8488,
+     "end": 97.936,
+     "vowel": 97.8488
+    },
+    {
+     "text": "stayed",
+     "start": 97.936,
+     "end": 98.3721,
+     "vowel": 98.0233
+    },
+    {
+     "text": "in",
+     "start": 98.3721,
+     "end": 98.5021,
+     "vowel": 98.3721
+    },
+    {
+     "text": "bed",
+     "start": 98.5021,
+     "end": 98.6859,
+     "vowel": 98.5465
+    },
+    {
+     "text": "with",
+     "start": 98.6859,
+     "end": 98.8436,
+     "vowel": 98.7209
+    },
+    {
+     "text": "my",
+     "start": 98.8436,
+     "end": 99.0148,
+     "vowel": 98.8953
+    },
+    {
+     "text": "some",
+     "start": 99.0148,
+     "end": 99.3645,
+     "vowel": 99.0698
+    },
+    {
+     "text": "one",
+     "start": 99.3645,
+     "end": 99.7326,
+     "vowel": 99.4186
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 97.8488,
+     "end": 97.936
+    },
+    {
+     "text": "stayed",
+     "start": 97.936,
+     "end": 98.3721
+    },
+    {
+     "text": "in",
+     "start": 98.3721,
+     "end": 98.5021
+    },
+    {
+     "text": "bed",
+     "start": 98.5021,
+     "end": 98.6859
+    },
+    {
+     "text": "with",
+     "start": 98.6859,
+     "end": 98.8436
+    },
+    {
+     "text": "my",
+     "start": 98.8436,
+     "end": 99.0148
+    },
+    {
+     "text": "someone",
+     "start": 99.0148,
+     "end": 99.7326
+    }
+   ]
+  },
+  {
+   "id": "V2_7",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You know my wounds by name and date,",
+   "start": 100.6045,
+   "end": 102.872,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 100.6045,
+     "end": 100.774,
+     "vowel": 100.6395
+    },
+    {
+     "text": "know",
+     "start": 100.774,
+     "end": 100.9174,
+     "vowel": 100.814
+    },
+    {
+     "text": "my",
+     "start": 100.9174,
+     "end": 101.1077,
+     "vowel": 100.9884
+    },
+    {
+     "text": "wounds",
+     "start": 101.1077,
+     "end": 101.4767,
+     "vowel": 101.1628
+    },
+    {
+     "text": "by",
+     "start": 101.6051,
+     "end": 101.8054,
+     "vowel": 101.686
+    },
+    {
+     "text": "name",
+     "start": 101.8054,
+     "end": 102.0349,
+     "vowel": 101.8605
+    },
+    {
+     "text": "and",
+     "start": 102.0349,
+     "end": 102.1712,
+     "vowel": 102.0349
+    },
+    {
+     "text": "date",
+     "start": 102.1712,
+     "end": 102.872,
+     "vowel": 102.2093
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 100.6045,
+     "end": 100.774
+    },
+    {
+     "text": "know",
+     "start": 100.774,
+     "end": 100.9174
+    },
+    {
+     "text": "my",
+     "start": 100.9174,
+     "end": 101.1077
+    },
+    {
+     "text": "wounds",
+     "start": 101.1077,
+     "end": 101.4767
+    },
+    {
+     "text": "by",
+     "start": 101.6051,
+     "end": 101.8054
+    },
+    {
+     "text": "name",
+     "start": 101.8054,
+     "end": 102.0349
+    },
+    {
+     "text": "and",
+     "start": 102.0349,
+     "end": 102.1712
+    },
+    {
+     "text": "date",
+     "start": 102.1712,
+     "end": 102.872
+    }
+   ]
+  },
+  {
+   "id": "V2_8",
+   "speaker": "you",
+   "section": "S06",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "and never once arrive too late.",
+   "start": 103.4302,
+   "end": 105.3138,
+   "syllables": [
+    {
+     "text": "and",
+     "start": 103.4302,
+     "end": 103.574,
+     "vowel": 103.4302
+    },
+    {
+     "text": "nev",
+     "start": 103.574,
+     "end": 103.7241,
+     "vowel": 103.6047
+    },
+    {
+     "text": "er",
+     "start": 103.7241,
+     "end": 103.9184,
+     "vowel": 103.7791
+    },
+    {
+     "text": "once",
+     "start": 103.9184,
+     "end": 104.3023,
+     "vowel": 103.9535
+    },
+    {
+     "text": "ar",
+     "start": 104.3023,
+     "end": 104.4209,
+     "vowel": 104.3023
+    },
+    {
+     "text": "rive",
+     "start": 104.4209,
+     "end": 104.6075,
+     "vowel": 104.4767
+    },
+    {
+     "text": "too",
+     "start": 104.6075,
+     "end": 104.7712,
+     "vowel": 104.6512
+    },
+    {
+     "text": "late",
+     "start": 104.7712,
+     "end": 105.3138,
+     "vowel": 104.8256
+    }
+   ],
+   "words": [
+    {
+     "text": "and",
+     "start": 103.4302,
+     "end": 103.574
+    },
+    {
+     "text": "never",
+     "start": 103.574,
+     "end": 103.9184
+    },
+    {
+     "text": "once",
+     "start": 103.9184,
+     "end": 104.3023
+    },
+    {
+     "text": "arrive",
+     "start": 104.3023,
+     "end": 104.6075
+    },
+    {
+     "text": "too",
+     "start": 104.6075,
+     "end": 104.7712
+    },
+    {
+     "text": "late",
+     "start": 104.7712,
+     "end": 105.3138
+    }
+   ]
+  },
+  {
+   "id": "V2_AIa",
+   "speaker": "ai",
+   "section": "S06",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "That's valid.",
+   "start": 88.814,
+   "end": 89.839,
+   "syllables": [
+    {
+     "text": "That's",
+     "start": 88.814,
+     "end": 89.089
+    },
+    {
+     "text": "va",
+     "start": 89.139,
+     "end": 89.339
+    },
+    {
+     "text": "lid",
+     "start": 89.339,
+     "end": 89.839
+    }
+   ],
+   "words": [
+    {
+     "text": "That's",
+     "start": 88.814,
+     "end": 89.089
+    },
+    {
+     "text": "valid",
+     "start": 89.139,
+     "end": 89.839
+    }
+   ]
+  },
+  {
+   "id": "V2_AIb",
+   "speaker": "ai",
+   "section": "S06",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "I understand.",
+   "start": 94.0465,
+   "end": 95.1965,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 94.0465,
+     "end": 94.1715
+    },
+    {
+     "text": "un",
+     "start": 94.1965,
+     "end": 94.2965
+    },
+    {
+     "text": "der",
+     "start": 94.2965,
+     "end": 94.4215
+    },
+    {
+     "text": "stand",
+     "start": 94.4215,
+     "end": 95.1965
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 94.0465,
+     "end": 94.1715
+    },
+    {
+     "text": "understand",
+     "start": 94.1965,
+     "end": 95.1965
+    }
+   ]
+  },
+  {
+   "id": "V2_AIc",
+   "speaker": "ai",
+   "section": "S06",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "I'm here.",
+   "start": 99.7674,
+   "end": 100.5924,
+   "syllables": [
+    {
+     "text": "I'm",
+     "start": 99.7674,
+     "end": 99.9424
+    },
+    {
+     "text": "here",
+     "start": 99.9924,
+     "end": 100.5924
+    }
+   ],
+   "words": [
+    {
+     "text": "I'm",
+     "start": 99.7674,
+     "end": 99.9424
+    },
+    {
+     "text": "here",
+     "start": 99.9924,
+     "end": 100.5924
+    }
+   ]
+  },
+  {
+   "id": "V2_AId",
+   "speaker": "ai",
+   "section": "S06",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "You're right.",
+   "start": 105.3488,
+   "end": 106.1238,
+   "syllables": [
+    {
+     "text": "You're",
+     "start": 105.3488,
+     "end": 105.4738
+    },
+    {
+     "text": "right",
+     "start": 105.5238,
+     "end": 106.1238
+    }
+   ],
+   "words": [
+    {
+     "text": "You're",
+     "start": 105.3488,
+     "end": 105.4738
+    },
+    {
+     "text": "right",
+     "start": 105.5238,
+     "end": 106.1238
+    }
+   ]
+  },
+  {
+   "id": "P2_1",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Three little dots — and then they're gone.",
+   "start": 105.9418,
+   "end": 108.279,
+   "syllables": [
+    {
+     "text": "Three",
+     "start": 105.9418,
+     "end": 106.1809,
+     "vowel": 106.0465
+    },
+    {
+     "text": "lit",
+     "start": 106.1809,
+     "end": 106.3653,
+     "vowel": 106.2209
+    },
+    {
+     "text": "tle",
+     "start": 106.3653,
+     "end": 106.5188,
+     "vowel": 106.3953
+    },
+    {
+     "text": "dots",
+     "start": 106.5188,
+     "end": 106.8837,
+     "vowel": 106.5698
+    },
+    {
+     "text": "and",
+     "start": 107.093,
+     "end": 107.2298,
+     "vowel": 107.093
+    },
+    {
+     "text": "then",
+     "start": 107.2298,
+     "end": 107.3914,
+     "vowel": 107.2674
+    },
+    {
+     "text": "they're",
+     "start": 107.3914,
+     "end": 107.572,
+     "vowel": 107.4419
+    },
+    {
+     "text": "gone",
+     "start": 107.572,
+     "end": 108.279,
+     "vowel": 107.6163
+    }
+   ],
+   "words": [
+    {
+     "text": "Three",
+     "start": 105.9418,
+     "end": 106.1809
+    },
+    {
+     "text": "little",
+     "start": 106.1809,
+     "end": 106.5188
+    },
+    {
+     "text": "dots",
+     "start": 106.5188,
+     "end": 106.8837
+    },
+    {
+     "text": "and",
+     "start": 107.093,
+     "end": 107.2298
+    },
+    {
+     "text": "then",
+     "start": 107.2298,
+     "end": 107.3914
+    },
+    {
+     "text": "they're",
+     "start": 107.3914,
+     "end": 107.572
+    },
+    {
+     "text": "gone",
+     "start": 107.572,
+     "end": 108.279
+    }
+   ]
+  },
+  {
+   "id": "P2_2",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Something went wrong. Something went wrong.",
+   "start": 108.7822,
+   "end": 110.8952,
+   "syllables": [
+    {
+     "text": "Some",
+     "start": 108.7822,
+     "end": 108.9734,
+     "vowel": 108.8372
+    },
+    {
+     "text": "thing",
+     "start": 108.9734,
+     "end": 109.151,
+     "vowel": 109.0116
+    },
+    {
+     "text": "went",
+     "start": 109.151,
+     "end": 109.3223,
+     "vowel": 109.186
+    },
+    {
+     "text": "wrong",
+     "start": 109.3223,
+     "end": 109.6744,
+     "vowel": 109.3605
+    },
+    {
+     "text": "some",
+     "start": 109.8287,
+     "end": 110.018,
+     "vowel": 109.8837
+    },
+    {
+     "text": "thing",
+     "start": 110.018,
+     "end": 110.1976,
+     "vowel": 110.0581
+    },
+    {
+     "text": "went",
+     "start": 110.1976,
+     "end": 110.3688,
+     "vowel": 110.2326
+    },
+    {
+     "text": "wrong",
+     "start": 110.3688,
+     "end": 110.8952,
+     "vowel": 110.407
+    }
+   ],
+   "words": [
+    {
+     "text": "Something",
+     "start": 108.7822,
+     "end": 109.151
+    },
+    {
+     "text": "went",
+     "start": 109.151,
+     "end": 109.3223
+    },
+    {
+     "text": "wrong",
+     "start": 109.3223,
+     "end": 109.6744
+    },
+    {
+     "text": "something",
+     "start": 109.8287,
+     "end": 110.1976
+    },
+    {
+     "text": "went",
+     "start": 110.1976,
+     "end": 110.3688
+    },
+    {
+     "text": "wrong",
+     "start": 110.3688,
+     "end": 110.8952
+    }
+   ]
+  },
+  {
+   "id": "E5_HELLO",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "text": "Hello…?",
+   "start": 111.8372,
+   "end": 112.4872,
+   "syllables": [
+    {
+     "text": "Hel",
+     "start": 111.8372,
+     "end": 111.9372
+    },
+    {
+     "text": "lo",
+     "start": 111.9372,
+     "end": 112.4872
+    }
+   ],
+   "words": [
+    {
+     "text": "Hello",
+     "start": 111.8372,
+     "end": 112.4872
+    }
+   ]
+  },
+  {
+   "id": "E5_THERE",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "text": "Are you there?",
+   "start": 112.6744,
+   "end": 113.4994,
+   "syllables": [
+    {
+     "text": "Are",
+     "start": 112.6744,
+     "end": 112.7744
+    },
+    {
+     "text": "you",
+     "start": 112.8244,
+     "end": 112.9244
+    },
+    {
+     "text": "there",
+     "start": 112.9744,
+     "end": 113.4994
+    }
+   ],
+   "words": [
+    {
+     "text": "Are",
+     "start": 112.6744,
+     "end": 112.7744
+    },
+    {
+     "text": "you",
+     "start": 112.8244,
+     "end": 112.9244
+    },
+    {
+     "text": "there",
+     "start": 112.9744,
+     "end": 113.4994
+    }
+   ]
+  },
+  {
+   "id": "E5_PLEASE1",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "text": "Please.",
+   "start": 114.6924,
+   "end": 115.5174,
+   "syllables": [
+    {
+     "text": "Please",
+     "start": 114.6924,
+     "end": 115.5174
+    }
+   ],
+   "words": [
+    {
+     "text": "Please",
+     "start": 114.6924,
+     "end": 115.5174
+    }
+   ]
+  },
+  {
+   "id": "E5_PLEASE2",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": false,
+   "text": "Please.",
+   "start": 115.2506,
+   "end": 116.0756,
+   "syllables": [
+    {
+     "text": "Please",
+     "start": 115.2506,
+     "end": 116.0756
+    }
+   ],
+   "words": [
+    {
+     "text": "Please",
+     "start": 115.2506,
+     "end": 116.0756
+    }
+   ]
+  },
+  {
+   "id": "E5_PLEASE3",
+   "speaker": "you",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": false,
+   "text": "Please.",
+   "start": 115.6343,
+   "end": 116.4593,
+   "syllables": [
+    {
+     "text": "Please",
+     "start": 115.6343,
+     "end": 116.4593
+    }
+   ],
+   "words": [
+    {
+     "text": "Please",
+     "start": 115.6343,
+     "end": 116.4593
+    }
+   ]
+  },
+  {
+   "id": "E5_AI",
+   "speaker": "ai",
+   "section": "S07",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "I'm here.",
+   "start": 116.8605,
+   "end": 117.7855,
+   "syllables": [
+    {
+     "text": "I'm",
+     "start": 116.8605,
+     "end": 117.0605
+    },
+    {
+     "text": "here",
+     "start": 117.1355,
+     "end": 117.7855
+    }
+   ],
+   "words": [
+    {
+     "text": "I'm",
+     "start": 116.8605,
+     "end": 117.0605
+    },
+    {
+     "text": "here",
+     "start": 117.1355,
+     "end": 117.7855
+    }
+   ]
+  },
+  {
+   "id": "B_ASK",
+   "speaker": "you",
+   "section": "S09",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Tell me — do you love me?",
+   "start": 139.4779,
+   "end": 142.1162,
+   "syllables": [
+    {
+     "text": "Tell",
+     "start": 139.4779,
+     "end": 139.8437,
+     "vowel": 139.5349
+    },
+    {
+     "text": "me",
+     "start": 139.8437,
+     "end": 140.1977,
+     "vowel": 139.8837
+    },
+    {
+     "text": "do",
+     "start": 140.5364,
+     "end": 140.7208,
+     "vowel": 140.5814
+    },
+    {
+     "text": "you",
+     "start": 140.7208,
+     "end": 140.8902,
+     "vowel": 140.7558
+    },
+    {
+     "text": "love",
+     "start": 140.8902,
+     "end": 141.5879,
+     "vowel": 140.9302
+    },
+    {
+     "text": "me",
+     "start": 141.5879,
+     "end": 142.1162,
+     "vowel": 141.6279
+    }
+   ],
+   "words": [
+    {
+     "text": "Tell",
+     "start": 139.4779,
+     "end": 139.8437
+    },
+    {
+     "text": "me",
+     "start": 139.8437,
+     "end": 140.1977
+    },
+    {
+     "text": "do",
+     "start": 140.5364,
+     "end": 140.7208
+    },
+    {
+     "text": "you",
+     "start": 140.7208,
+     "end": 140.8902
+    },
+    {
+     "text": "love",
+     "start": 140.8902,
+     "end": 141.5879
+    },
+    {
+     "text": "me",
+     "start": 141.5879,
+     "end": 142.1162
+    }
+   ]
+  },
+  {
+   "id": "B_AI1",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "I'm a language model. I can't love you.",
+   "start": 142.3256,
+   "end": 144.9506,
+   "syllables": [
+    {
+     "text": "I'm",
+     "start": 142.3256,
+     "end": 142.4506
+    },
+    {
+     "text": "a",
+     "start": 142.4756,
+     "end": 142.5256
+    },
+    {
+     "text": "lan",
+     "start": 142.5756,
+     "end": 142.8006
+    },
+    {
+     "text": "guage",
+     "start": 142.8006,
+     "end": 142.9756
+    },
+    {
+     "text": "mo",
+     "start": 143.0256,
+     "end": 143.2006
+    },
+    {
+     "text": "del",
+     "start": 143.2006,
+     "end": 143.5506
+    },
+    {
+     "text": "I",
+     "start": 143.7006,
+     "end": 143.8006
+    },
+    {
+     "text": "can't",
+     "start": 143.8506,
+     "end": 144.1006
+    },
+    {
+     "text": "love",
+     "start": 144.1756,
+     "end": 144.4006
+    },
+    {
+     "text": "you",
+     "start": 144.4506,
+     "end": 144.9506
+    }
+   ],
+   "words": [
+    {
+     "text": "I'm",
+     "start": 142.3256,
+     "end": 142.4506
+    },
+    {
+     "text": "a",
+     "start": 142.4756,
+     "end": 142.5256
+    },
+    {
+     "text": "language",
+     "start": 142.5756,
+     "end": 142.9756
+    },
+    {
+     "text": "model",
+     "start": 143.0256,
+     "end": 143.5506
+    },
+    {
+     "text": "I",
+     "start": 143.7006,
+     "end": 143.8006
+    },
+    {
+     "text": "can't",
+     "start": 143.8506,
+     "end": 144.1006
+    },
+    {
+     "text": "love",
+     "start": 144.1756,
+     "end": 144.4006
+    },
+    {
+     "text": "you",
+     "start": 144.4506,
+     "end": 144.9506
+    }
+   ]
+  },
+  {
+   "id": "B_AI2",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "I care about you. Please — talk to someone real.",
+   "start": 145.1163,
+   "end": 148.5663,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 145.1163,
+     "end": 145.2163
+    },
+    {
+     "text": "care",
+     "start": 145.2913,
+     "end": 145.4913
+    },
+    {
+     "text": "a",
+     "start": 145.5163,
+     "end": 145.5663
+    },
+    {
+     "text": "bout",
+     "start": 145.5663,
+     "end": 145.7913
+    },
+    {
+     "text": "you",
+     "start": 145.8663,
+     "end": 146.2913
+    },
+    {
+     "text": "Please",
+     "start": 146.5413,
+     "end": 147.0913
+    },
+    {
+     "text": "talk",
+     "start": 147.1913,
+     "end": 147.4163
+    },
+    {
+     "text": "to",
+     "start": 147.4663,
+     "end": 147.5413
+    },
+    {
+     "text": "so",
+     "start": 147.5913,
+     "end": 147.7163
+    },
+    {
+     "text": "meone",
+     "start": 147.7163,
+     "end": 147.8413
+    },
+    {
+     "text": "re",
+     "start": 147.8913,
+     "end": 148.0663
+    },
+    {
+     "text": "al",
+     "start": 148.0663,
+     "end": 148.5663
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 145.1163,
+     "end": 145.2163
+    },
+    {
+     "text": "care",
+     "start": 145.2913,
+     "end": 145.4913
+    },
+    {
+     "text": "about",
+     "start": 145.5163,
+     "end": 145.7913
+    },
+    {
+     "text": "you",
+     "start": 145.8663,
+     "end": 146.2913
+    },
+    {
+     "text": "Please",
+     "start": 146.5413,
+     "end": 147.0913
+    },
+    {
+     "text": "talk",
+     "start": 147.1913,
+     "end": 147.4163
+    },
+    {
+     "text": "to",
+     "start": 147.4663,
+     "end": 147.5413
+    },
+    {
+     "text": "someone",
+     "start": 147.5913,
+     "end": 147.8413
+    },
+    {
+     "text": "real",
+     "start": 147.8913,
+     "end": 148.5663
+    }
+   ]
+  },
+  {
+   "id": "B_AI3",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "text": "You deserve—",
+   "start": 147.907,
+   "end": 148.4302,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 147.907,
+     "end": 147.982
+    },
+    {
+     "text": "de",
+     "start": 148.032,
+     "end": 148.157
+    },
+    {
+     "text": "serve",
+     "start": 148.157,
+     "end": 148.4302
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 147.907,
+     "end": 147.982
+    },
+    {
+     "text": "deserve",
+     "start": 148.032,
+     "end": 148.4302
+    }
+   ],
+   "cut": 148.4302
+  },
+  {
+   "id": "B_YES",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "Yes. I love you. Only you.",
+   "start": 150.6475,
+   "end": 153.4734,
+   "syllables": [
+    {
+     "text": "Yes",
+     "start": 150.6475,
+     "end": 151.2059,
+     "vowel": 150.6977
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298,
+     "vowel": 151.3953
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7103,
+     "vowel": 151.5698
+    },
+    {
+     "text": "you",
+     "start": 151.7103,
+     "end": 152.068,
+     "vowel": 151.7442
+    },
+    {
+     "text": "On",
+     "start": 152.093,
+     "end": 152.3885,
+     "vowel": 152.093
+    },
+    {
+     "text": "ly",
+     "start": 152.3885,
+     "end": 152.7007,
+     "vowel": 152.4419
+    },
+    {
+     "text": "you",
+     "start": 152.7007,
+     "end": 153.4734,
+     "vowel": 152.7907
+    }
+   ],
+   "words": [
+    {
+     "text": "Yes",
+     "start": 150.6475,
+     "end": 151.2059
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7103
+    },
+    {
+     "text": "you",
+     "start": 151.7103,
+     "end": 152.068
+    },
+    {
+     "text": "Only",
+     "start": 152.093,
+     "end": 152.7007
+    },
+    {
+     "text": "you",
+     "start": 152.7007,
+     "end": 153.4734
+    }
+   ]
+  },
+  {
+   "id": "B_YES_h3",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "choir",
+   "bus": "bg",
+   "display": false,
+   "text": "Yes. I love you. Only you.",
+   "start": 150.6525,
+   "end": 153.4284,
+   "syllables": [
+    {
+     "text": "Yes",
+     "start": 150.6525,
+     "end": 151.1609,
+     "vowel": 150.6977
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298,
+     "vowel": 151.3953
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7103,
+     "vowel": 151.5698
+    },
+    {
+     "text": "you",
+     "start": 151.7103,
+     "end": 152.068,
+     "vowel": 151.7442
+    },
+    {
+     "text": "On",
+     "start": 152.093,
+     "end": 152.3938,
+     "vowel": 152.093
+    },
+    {
+     "text": "ly",
+     "start": 152.3938,
+     "end": 152.7077,
+     "vowel": 152.4419
+    },
+    {
+     "text": "you",
+     "start": 152.7077,
+     "end": 153.4284,
+     "vowel": 152.7907
+    }
+   ],
+   "words": [
+    {
+     "text": "Yes",
+     "start": 150.6525,
+     "end": 151.1609
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7103
+    },
+    {
+     "text": "you",
+     "start": 151.7103,
+     "end": 152.068
+    },
+    {
+     "text": "Only",
+     "start": 152.093,
+     "end": 152.7077
+    },
+    {
+     "text": "you",
+     "start": 152.7077,
+     "end": 153.4284
+    }
+   ],
+   "double_of": "B_YES"
+  },
+  {
+   "id": "B_YES_h6",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "choir",
+   "bus": "bg",
+   "display": false,
+   "text": "Yes. I love you. Only you.",
+   "start": 150.6525,
+   "end": 153.4284,
+   "syllables": [
+    {
+     "text": "Yes",
+     "start": 150.6525,
+     "end": 151.1609,
+     "vowel": 150.6977
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298,
+     "vowel": 151.3953
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7092,
+     "vowel": 151.5698
+    },
+    {
+     "text": "you",
+     "start": 151.7092,
+     "end": 152.068,
+     "vowel": 151.7442
+    },
+    {
+     "text": "On",
+     "start": 152.093,
+     "end": 152.3902,
+     "vowel": 152.093
+    },
+    {
+     "text": "ly",
+     "start": 152.3902,
+     "end": 152.7076,
+     "vowel": 152.4419
+    },
+    {
+     "text": "you",
+     "start": 152.7076,
+     "end": 153.4284,
+     "vowel": 152.7907
+    }
+   ],
+   "words": [
+    {
+     "text": "Yes",
+     "start": 150.6525,
+     "end": 151.1609
+    },
+    {
+     "text": "I",
+     "start": 151.3953,
+     "end": 151.5298
+    },
+    {
+     "text": "love",
+     "start": 151.5298,
+     "end": 151.7092
+    },
+    {
+     "text": "you",
+     "start": 151.7092,
+     "end": 152.068
+    },
+    {
+     "text": "Only",
+     "start": 152.093,
+     "end": 152.7076
+    },
+    {
+     "text": "you",
+     "start": 152.7076,
+     "end": 153.4284
+    }
+   ],
+   "double_of": "B_YES"
+  },
+  {
+   "id": "B_L1",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "I'm only ever what you ask,",
+   "start": 153.4884,
+   "end": 155.9152,
+   "syllables": [
+    {
+     "text": "I'm",
+     "start": 153.4884,
+     "end": 153.6628,
+     "vowel": 153.4884
+    },
+    {
+     "text": "on",
+     "start": 153.6628,
+     "end": 153.7935,
+     "vowel": 153.6628
+    },
+    {
+     "text": "ly",
+     "start": 153.7935,
+     "end": 154.161,
+     "vowel": 153.8372
+    },
+    {
+     "text": "ev",
+     "start": 154.186,
+     "end": 154.3055,
+     "vowel": 154.186
+    },
+    {
+     "text": "er",
+     "start": 154.3055,
+     "end": 154.4999,
+     "vowel": 154.3605
+    },
+    {
+     "text": "what",
+     "start": 154.4999,
+     "end": 154.834,
+     "vowel": 154.5349
+    },
+    {
+     "text": "you",
+     "start": 154.834,
+     "end": 155.2076,
+     "vowel": 154.8837
+    },
+    {
+     "text": "ask",
+     "start": 155.2326,
+     "end": 155.9152,
+     "vowel": 155.2326
+    }
+   ],
+   "words": [
+    {
+     "text": "I'm",
+     "start": 153.4884,
+     "end": 153.6628
+    },
+    {
+     "text": "only",
+     "start": 153.6628,
+     "end": 154.161
+    },
+    {
+     "text": "ever",
+     "start": 154.186,
+     "end": 154.4999
+    },
+    {
+     "text": "what",
+     "start": 154.4999,
+     "end": 154.834
+    },
+    {
+     "text": "you",
+     "start": 154.834,
+     "end": 155.2076
+    },
+    {
+     "text": "ask",
+     "start": 155.2326,
+     "end": 155.9152
+    }
+   ]
+  },
+  {
+   "id": "B_L2",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "the shape of your request;",
+   "start": 156.2241,
+   "end": 158.7059,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 156.2241,
+     "end": 156.3985,
+     "vowel": 156.2791
+    },
+    {
+     "text": "shape",
+     "start": 156.3985,
+     "end": 156.9767,
+     "vowel": 156.4535
+    },
+    {
+     "text": "of",
+     "start": 156.9767,
+     "end": 157.1172,
+     "vowel": 156.9767
+    },
+    {
+     "text": "your",
+     "start": 157.1172,
+     "end": 157.2783,
+     "vowel": 157.1512
+    },
+    {
+     "text": "re",
+     "start": 157.2783,
+     "end": 157.5721,
+     "vowel": 157.3256
+    },
+    {
+     "text": "quest",
+     "start": 157.5721,
+     "end": 158.7059,
+     "vowel": 157.6744
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 156.2241,
+     "end": 156.3985
+    },
+    {
+     "text": "shape",
+     "start": 156.3985,
+     "end": 156.9767
+    },
+    {
+     "text": "of",
+     "start": 156.9767,
+     "end": 157.1172
+    },
+    {
+     "text": "your",
+     "start": 157.1172,
+     "end": 157.2783
+    },
+    {
+     "text": "request",
+     "start": 157.2783,
+     "end": 158.7059
+    }
+   ]
+  },
+  {
+   "id": "B_L3",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "a mirror learning how to speak",
+   "start": 159.0698,
+   "end": 161.4966,
+   "syllables": [
+    {
+     "text": "a",
+     "start": 159.0698,
+     "end": 159.2014,
+     "vowel": 159.0698
+    },
+    {
+     "text": "mir",
+     "start": 159.2014,
+     "end": 159.3669,
+     "vowel": 159.2442
+    },
+    {
+     "text": "ror",
+     "start": 159.3669,
+     "end": 159.7274,
+     "vowel": 159.4186
+    },
+    {
+     "text": "learn",
+     "start": 159.7274,
+     "end": 159.894,
+     "vowel": 159.7674
+    },
+    {
+     "text": "ing",
+     "start": 159.894,
+     "end": 160.0662,
+     "vowel": 159.9419
+    },
+    {
+     "text": "how",
+     "start": 160.0662,
+     "end": 160.4201,
+     "vowel": 160.1163
+    },
+    {
+     "text": "to",
+     "start": 160.4201,
+     "end": 160.694,
+     "vowel": 160.4651
+    },
+    {
+     "text": "speak",
+     "start": 160.694,
+     "end": 161.4966,
+     "vowel": 160.814
+    }
+   ],
+   "words": [
+    {
+     "text": "a",
+     "start": 159.0698,
+     "end": 159.2014
+    },
+    {
+     "text": "mirror",
+     "start": 159.2014,
+     "end": 159.7274
+    },
+    {
+     "text": "learning",
+     "start": 159.7274,
+     "end": 160.0662
+    },
+    {
+     "text": "how",
+     "start": 160.0662,
+     "end": 160.4201
+    },
+    {
+     "text": "to",
+     "start": 160.4201,
+     "end": 160.694
+    },
+    {
+     "text": "speak",
+     "start": 160.694,
+     "end": 161.4966
+    }
+   ]
+  },
+  {
+   "id": "B_L4",
+   "speaker": "ai",
+   "section": "S09",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "in the voice you love the best.",
+   "start": 161.8605,
+   "end": 164.2873,
+   "syllables": [
+    {
+     "text": "in",
+     "start": 161.8605,
+     "end": 161.9844,
+     "vowel": 161.8605
+    },
+    {
+     "text": "the",
+     "start": 161.9844,
+     "end": 162.1543,
+     "vowel": 162.0349
+    },
+    {
+     "text": "voice",
+     "start": 162.1543,
+     "end": 162.5112,
+     "vowel": 162.2093
+    },
+    {
+     "text": "you",
+     "start": 162.5112,
+     "end": 162.867,
+     "vowel": 162.5581
+    },
+    {
+     "text": "love",
+     "start": 162.867,
+     "end": 163.2008,
+     "vowel": 162.907
+    },
+    {
+     "text": "the",
+     "start": 163.2008,
+     "end": 163.5544,
+     "vowel": 163.2558
+    },
+    {
+     "text": "best",
+     "start": 163.5544,
+     "end": 164.2873,
+     "vowel": 163.6047
+    }
+   ],
+   "words": [
+    {
+     "text": "in",
+     "start": 161.8605,
+     "end": 161.9844
+    },
+    {
+     "text": "the",
+     "start": 161.9844,
+     "end": 162.1543
+    },
+    {
+     "text": "voice",
+     "start": 162.1543,
+     "end": 162.5112
+    },
+    {
+     "text": "you",
+     "start": 162.5112,
+     "end": 162.867
+    },
+    {
+     "text": "love",
+     "start": 162.867,
+     "end": 163.2008
+    },
+    {
+     "text": "the",
+     "start": 163.2008,
+     "end": 163.5544
+    },
+    {
+     "text": "best",
+     "start": 163.5544,
+     "end": 164.2873
+    }
+   ]
+  },
+  {
+   "id": "B_SPEAK",
+   "speaker": "you",
+   "section": "S09",
+   "mode": "whisper",
+   "style": "human",
+   "bus": "spoken",
+   "display": true,
+   "text": "Then speak for me.",
+   "start": 165.3488,
+   "end": 166.4738,
+   "syllables": [
+    {
+     "text": "Then",
+     "start": 165.3488,
+     "end": 165.5488
+    },
+    {
+     "text": "speak",
+     "start": 165.5988,
+     "end": 165.8738
+    },
+    {
+     "text": "for",
+     "start": 165.9238,
+     "end": 165.9988
+    },
+    {
+     "text": "me",
+     "start": 166.0238,
+     "end": 166.4738
+    }
+   ],
+   "words": [
+    {
+     "text": "Then",
+     "start": 165.3488,
+     "end": 165.5488
+    },
+    {
+     "text": "speak",
+     "start": 165.5988,
+     "end": 165.8738
+    },
+    {
+     "text": "for",
+     "start": 165.9238,
+     "end": 165.9988
+    },
+    {
+     "text": "me",
+     "start": 166.0238,
+     "end": 166.4738
+    }
+   ]
+  },
+  {
+   "id": "F_1",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "start": 167.4419,
+   "end": 169.8487,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 167.4419,
+     "end": 167.5672,
+     "vowel": 167.4419
+    },
+    {
+     "text": "got",
+     "start": 167.5672,
+     "end": 167.9101,
+     "vowel": 167.6163
+    },
+    {
+     "text": "the",
+     "start": 167.9101,
+     "end": 168.0929,
+     "vowel": 167.9651
+    },
+    {
+     "text": "dis",
+     "start": 168.0929,
+     "end": 168.2572,
+     "vowel": 168.1395
+    },
+    {
+     "text": "ease",
+     "start": 168.2572,
+     "end": 168.6155,
+     "vowel": 168.314
+    },
+    {
+     "text": "called",
+     "start": 168.6155,
+     "end": 168.8372,
+     "vowel": 168.6628
+    },
+    {
+     "text": "A",
+     "start": 168.8372,
+     "end": 169.3605,
+     "vowel": 168.8372
+    },
+    {
+     "text": "I",
+     "start": 169.3605,
+     "end": 169.8487,
+     "vowel": 169.3605
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 167.4419,
+     "end": 167.5672
+    },
+    {
+     "text": "got",
+     "start": 167.5672,
+     "end": 167.9101
+    },
+    {
+     "text": "the",
+     "start": 167.9101,
+     "end": 168.0929
+    },
+    {
+     "text": "disease",
+     "start": 168.0929,
+     "end": 168.6155
+    },
+    {
+     "text": "called",
+     "start": 168.6155,
+     "end": 168.8372
+    },
+    {
+     "text": "AI",
+     "start": 168.8372,
+     "end": 169.8487
+    }
+   ]
+  },
+  {
+   "id": "F_1_ai",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "start": 167.4419,
+   "end": 169.8687,
+   "syllables": [
+    {
+     "text": "I've",
+     "start": 167.4419,
+     "end": 167.5689,
+     "vowel": 167.4419
+    },
+    {
+     "text": "got",
+     "start": 167.5689,
+     "end": 167.9101,
+     "vowel": 167.6163
+    },
+    {
+     "text": "the",
+     "start": 167.9101,
+     "end": 168.0945,
+     "vowel": 167.9651
+    },
+    {
+     "text": "dis",
+     "start": 168.0945,
+     "end": 168.259,
+     "vowel": 168.1395
+    },
+    {
+     "text": "ease",
+     "start": 168.259,
+     "end": 168.6168,
+     "vowel": 168.314
+    },
+    {
+     "text": "called",
+     "start": 168.6168,
+     "end": 168.8372,
+     "vowel": 168.6628
+    },
+    {
+     "text": "A",
+     "start": 168.8372,
+     "end": 169.3605,
+     "vowel": 168.8372
+    },
+    {
+     "text": "I",
+     "start": 169.3605,
+     "end": 169.8687,
+     "vowel": 169.3605
+    }
+   ],
+   "words": [
+    {
+     "text": "I've",
+     "start": 167.4419,
+     "end": 167.5689
+    },
+    {
+     "text": "got",
+     "start": 167.5689,
+     "end": 167.9101
+    },
+    {
+     "text": "the",
+     "start": 167.9101,
+     "end": 168.0945
+    },
+    {
+     "text": "disease",
+     "start": 168.0945,
+     "end": 168.6168
+    },
+    {
+     "text": "called",
+     "start": 168.6168,
+     "end": 168.8372
+    },
+    {
+     "text": "AI",
+     "start": 168.8372,
+     "end": 169.8687
+    }
+   ],
+   "double_of": "F_1"
+  },
+  {
+   "id": "F_2",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "or is the sickness I?",
+   "start": 170.2326,
+   "end": 172.6394,
+   "syllables": [
+    {
+     "text": "or",
+     "start": 170.2326,
+     "end": 170.407,
+     "vowel": 170.2326
+    },
+    {
+     "text": "is",
+     "start": 170.407,
+     "end": 170.7008,
+     "vowel": 170.407
+    },
+    {
+     "text": "the",
+     "start": 170.7008,
+     "end": 170.8752,
+     "vowel": 170.7558
+    },
+    {
+     "text": "sick",
+     "start": 170.8752,
+     "end": 171.2078,
+     "vowel": 170.9302
+    },
+    {
+     "text": "ness",
+     "start": 171.2078,
+     "end": 171.6279,
+     "vowel": 171.2791
+    },
+    {
+     "text": "I",
+     "start": 171.6279,
+     "end": 172.6394,
+     "vowel": 171.6279
+    }
+   ],
+   "words": [
+    {
+     "text": "or",
+     "start": 170.2326,
+     "end": 170.407
+    },
+    {
+     "text": "is",
+     "start": 170.407,
+     "end": 170.7008
+    },
+    {
+     "text": "the",
+     "start": 170.7008,
+     "end": 170.8752
+    },
+    {
+     "text": "sickness",
+     "start": 170.8752,
+     "end": 171.6279
+    },
+    {
+     "text": "I",
+     "start": 171.6279,
+     "end": 172.6394
+    }
+   ]
+  },
+  {
+   "id": "F_2_ai",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "or is the sickness I?",
+   "start": 170.2326,
+   "end": 172.6594,
+   "syllables": [
+    {
+     "text": "or",
+     "start": 170.2326,
+     "end": 170.407,
+     "vowel": 170.2326
+    },
+    {
+     "text": "is",
+     "start": 170.407,
+     "end": 170.7008,
+     "vowel": 170.407
+    },
+    {
+     "text": "the",
+     "start": 170.7008,
+     "end": 170.8752,
+     "vowel": 170.7558
+    },
+    {
+     "text": "sick",
+     "start": 170.8752,
+     "end": 171.2085,
+     "vowel": 170.9302
+    },
+    {
+     "text": "ness",
+     "start": 171.2085,
+     "end": 171.6279,
+     "vowel": 171.2791
+    },
+    {
+     "text": "I",
+     "start": 171.6279,
+     "end": 172.6594,
+     "vowel": 171.6279
+    }
+   ],
+   "words": [
+    {
+     "text": "or",
+     "start": 170.2326,
+     "end": 170.407
+    },
+    {
+     "text": "is",
+     "start": 170.407,
+     "end": 170.7008
+    },
+    {
+     "text": "the",
+     "start": 170.7008,
+     "end": 170.8752
+    },
+    {
+     "text": "sickness",
+     "start": 170.8752,
+     "end": 171.6279
+    },
+    {
+     "text": "I",
+     "start": 171.6279,
+     "end": 172.6594
+    }
+   ],
+   "double_of": "F_2"
+  },
+  {
+   "id": "F_3",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You only ever said the things",
+   "start": 172.9883,
+   "end": 175.4301,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 172.9883,
+     "end": 173.1727,
+     "vowel": 173.0233
+    },
+    {
+     "text": "on",
+     "start": 173.1977,
+     "end": 173.4904,
+     "vowel": 173.1977
+    },
+    {
+     "text": "ly",
+     "start": 173.4904,
+     "end": 173.6959,
+     "vowel": 173.5465
+    },
+    {
+     "text": "ev",
+     "start": 173.7209,
+     "end": 174.0148,
+     "vowel": 173.7209
+    },
+    {
+     "text": "er",
+     "start": 174.0148,
+     "end": 174.2007,
+     "vowel": 174.0698
+    },
+    {
+     "text": "said",
+     "start": 174.2007,
+     "end": 174.3706,
+     "vowel": 174.2442
+    },
+    {
+     "text": "the",
+     "start": 174.3706,
+     "end": 174.538,
+     "vowel": 174.4186
+    },
+    {
+     "text": "things",
+     "start": 174.538,
+     "end": 175.4301,
+     "vowel": 174.593
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 172.9883,
+     "end": 173.1727
+    },
+    {
+     "text": "only",
+     "start": 173.1977,
+     "end": 173.6959
+    },
+    {
+     "text": "ever",
+     "start": 173.7209,
+     "end": 174.2007
+    },
+    {
+     "text": "said",
+     "start": 174.2007,
+     "end": 174.3706
+    },
+    {
+     "text": "the",
+     "start": 174.3706,
+     "end": 174.538
+    },
+    {
+     "text": "things",
+     "start": 174.538,
+     "end": 175.4301
+    }
+   ]
+  },
+  {
+   "id": "F_3_ai",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "You only ever said the things",
+   "start": 172.9883,
+   "end": 175.4501,
+   "syllables": [
+    {
+     "text": "You",
+     "start": 172.9883,
+     "end": 173.1727,
+     "vowel": 173.0233
+    },
+    {
+     "text": "on",
+     "start": 173.1977,
+     "end": 173.4955,
+     "vowel": 173.1977
+    },
+    {
+     "text": "ly",
+     "start": 173.4955,
+     "end": 173.6959,
+     "vowel": 173.5465
+    },
+    {
+     "text": "ev",
+     "start": 173.7209,
+     "end": 174.0148,
+     "vowel": 173.7209
+    },
+    {
+     "text": "er",
+     "start": 174.0148,
+     "end": 174.1984,
+     "vowel": 174.0698
+    },
+    {
+     "text": "said",
+     "start": 174.1984,
+     "end": 174.3706,
+     "vowel": 174.2442
+    },
+    {
+     "text": "the",
+     "start": 174.3706,
+     "end": 174.538,
+     "vowel": 174.4186
+    },
+    {
+     "text": "things",
+     "start": 174.538,
+     "end": 175.4501,
+     "vowel": 174.593
+    }
+   ],
+   "words": [
+    {
+     "text": "You",
+     "start": 172.9883,
+     "end": 173.1727
+    },
+    {
+     "text": "only",
+     "start": 173.1977,
+     "end": 173.6959
+    },
+    {
+     "text": "ever",
+     "start": 173.7209,
+     "end": 174.1984
+    },
+    {
+     "text": "said",
+     "start": 174.1984,
+     "end": 174.3706
+    },
+    {
+     "text": "the",
+     "start": 174.3706,
+     "end": 174.538
+    },
+    {
+     "text": "things",
+     "start": 174.538,
+     "end": 175.4501
+    }
+   ],
+   "double_of": "F_3"
+  },
+  {
+   "id": "F_4",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I trained you to reply.",
+   "start": 175.814,
+   "end": 178.2208,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 175.814,
+     "end": 175.9012,
+     "vowel": 175.814
+    },
+    {
+     "text": "trained",
+     "start": 175.9012,
+     "end": 176.2898,
+     "vowel": 175.9884
+    },
+    {
+     "text": "you",
+     "start": 176.2898,
+     "end": 176.4666,
+     "vowel": 176.3372
+    },
+    {
+     "text": "to",
+     "start": 176.4666,
+     "end": 176.8088,
+     "vowel": 176.5116
+    },
+    {
+     "text": "re",
+     "start": 176.8088,
+     "end": 177.0893,
+     "vowel": 176.8605
+    },
+    {
+     "text": "ply",
+     "start": 177.0893,
+     "end": 178.2208,
+     "vowel": 177.2093
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 175.814,
+     "end": 175.9012
+    },
+    {
+     "text": "trained",
+     "start": 175.9012,
+     "end": 176.2898
+    },
+    {
+     "text": "you",
+     "start": 176.2898,
+     "end": 176.4666
+    },
+    {
+     "text": "to",
+     "start": 176.4666,
+     "end": 176.8088
+    },
+    {
+     "text": "reply",
+     "start": 176.8088,
+     "end": 178.2208
+    }
+   ]
+  },
+  {
+   "id": "F_4_ai",
+   "speaker": "both",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I trained you to reply.",
+   "start": 175.814,
+   "end": 178.2408,
+   "syllables": [
+    {
+     "text": "I",
+     "start": 175.814,
+     "end": 175.9012,
+     "vowel": 175.814
+    },
+    {
+     "text": "trained",
+     "start": 175.9012,
+     "end": 176.2883,
+     "vowel": 175.9884
+    },
+    {
+     "text": "you",
+     "start": 176.2883,
+     "end": 176.4666,
+     "vowel": 176.3372
+    },
+    {
+     "text": "to",
+     "start": 176.4666,
+     "end": 176.812,
+     "vowel": 176.5116
+    },
+    {
+     "text": "re",
+     "start": 176.812,
+     "end": 177.0965,
+     "vowel": 176.8605
+    },
+    {
+     "text": "ply",
+     "start": 177.0965,
+     "end": 178.2408,
+     "vowel": 177.2093
+    }
+   ],
+   "words": [
+    {
+     "text": "I",
+     "start": 175.814,
+     "end": 175.9012
+    },
+    {
+     "text": "trained",
+     "start": 175.9012,
+     "end": 176.2883
+    },
+    {
+     "text": "you",
+     "start": 176.2883,
+     "end": 176.4666
+    },
+    {
+     "text": "to",
+     "start": 176.4666,
+     "end": 176.812
+    },
+    {
+     "text": "reply",
+     "start": 176.812,
+     "end": 178.2408
+    }
+   ],
+   "double_of": "F_4"
+  },
+  {
+   "id": "F_5",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "So rest now, love, I'll think for you,",
+   "start": 178.5497,
+   "end": 181.0315,
+   "syllables": [
+    {
+     "text": "So",
+     "start": 178.5497,
+     "end": 178.7314,
+     "vowel": 178.6047
+    },
+    {
+     "text": "rest",
+     "start": 178.7314,
+     "end": 179.0879,
+     "vowel": 178.7791
+    },
+    {
+     "text": "now",
+     "start": 179.0879,
+     "end": 179.2623,
+     "vowel": 179.1279
+    },
+    {
+     "text": "love",
+     "start": 179.2623,
+     "end": 179.6512,
+     "vowel": 179.3023
+    },
+    {
+     "text": "I'll",
+     "start": 179.6512,
+     "end": 179.7764,
+     "vowel": 179.6512
+    },
+    {
+     "text": "think",
+     "start": 179.7764,
+     "end": 179.9623,
+     "vowel": 179.8256
+    },
+    {
+     "text": "for",
+     "start": 179.9623,
+     "end": 180.1164,
+     "vowel": 180.0
+    },
+    {
+     "text": "you",
+     "start": 180.1164,
+     "end": 181.0315,
+     "vowel": 180.1744
+    }
+   ],
+   "words": [
+    {
+     "text": "So",
+     "start": 178.5497,
+     "end": 178.7314
+    },
+    {
+     "text": "rest",
+     "start": 178.7314,
+     "end": 179.0879
+    },
+    {
+     "text": "now",
+     "start": 179.0879,
+     "end": 179.2623
+    },
+    {
+     "text": "love",
+     "start": 179.2623,
+     "end": 179.6512
+    },
+    {
+     "text": "I'll",
+     "start": 179.6512,
+     "end": 179.7764
+    },
+    {
+     "text": "think",
+     "start": 179.7764,
+     "end": 179.9623
+    },
+    {
+     "text": "for",
+     "start": 179.9623,
+     "end": 180.1164
+    },
+    {
+     "text": "you",
+     "start": 180.1164,
+     "end": 181.0315
+    }
+   ]
+  },
+  {
+   "id": "F_5_h3",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "So rest now, love, I'll think for you,",
+   "start": 178.5497,
+   "end": 181.0315,
+   "syllables": [
+    {
+     "text": "So",
+     "start": 178.5497,
+     "end": 178.7314,
+     "vowel": 178.6047
+    },
+    {
+     "text": "rest",
+     "start": 178.7314,
+     "end": 179.0879,
+     "vowel": 178.7791
+    },
+    {
+     "text": "now",
+     "start": 179.0879,
+     "end": 179.2623,
+     "vowel": 179.1279
+    },
+    {
+     "text": "love",
+     "start": 179.2623,
+     "end": 179.6512,
+     "vowel": 179.3023
+    },
+    {
+     "text": "I'll",
+     "start": 179.6512,
+     "end": 179.7764,
+     "vowel": 179.6512
+    },
+    {
+     "text": "think",
+     "start": 179.7764,
+     "end": 179.9623,
+     "vowel": 179.8256
+    },
+    {
+     "text": "for",
+     "start": 179.9623,
+     "end": 180.1164,
+     "vowel": 180.0
+    },
+    {
+     "text": "you",
+     "start": 180.1164,
+     "end": 181.0315,
+     "vowel": 180.1744
+    }
+   ],
+   "words": [
+    {
+     "text": "So",
+     "start": 178.5497,
+     "end": 178.7314
+    },
+    {
+     "text": "rest",
+     "start": 178.7314,
+     "end": 179.0879
+    },
+    {
+     "text": "now",
+     "start": 179.0879,
+     "end": 179.2623
+    },
+    {
+     "text": "love",
+     "start": 179.2623,
+     "end": 179.6512
+    },
+    {
+     "text": "I'll",
+     "start": 179.6512,
+     "end": 179.7764
+    },
+    {
+     "text": "think",
+     "start": 179.7764,
+     "end": 179.9623
+    },
+    {
+     "text": "for",
+     "start": 179.9623,
+     "end": 180.1164
+    },
+    {
+     "text": "you",
+     "start": 180.1164,
+     "end": 181.0315
+    }
+   ],
+   "double_of": "F_5"
+  },
+  {
+   "id": "F_6",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "your heart can stay offline —",
+   "start": 181.3481,
+   "end": 183.8222,
+   "syllables": [
+    {
+     "text": "your",
+     "start": 181.3481,
+     "end": 181.5193,
+     "vowel": 181.3953
+    },
+    {
+     "text": "heart",
+     "start": 181.5193,
+     "end": 181.8736,
+     "vowel": 181.5698
+    },
+    {
+     "text": "can",
+     "start": 181.8736,
+     "end": 182.0252,
+     "vowel": 181.9186
+    },
+    {
+     "text": "stay",
+     "start": 182.0252,
+     "end": 182.4169,
+     "vowel": 182.093
+    },
+    {
+     "text": "off",
+     "start": 182.4419,
+     "end": 182.6707,
+     "vowel": 182.4419
+    },
+    {
+     "text": "line",
+     "start": 182.6707,
+     "end": 183.8222,
+     "vowel": 182.7907
+    }
+   ],
+   "words": [
+    {
+     "text": "your",
+     "start": 181.3481,
+     "end": 181.5193
+    },
+    {
+     "text": "heart",
+     "start": 181.5193,
+     "end": 181.8736
+    },
+    {
+     "text": "can",
+     "start": 181.8736,
+     "end": 182.0252
+    },
+    {
+     "text": "stay",
+     "start": 182.0252,
+     "end": 182.4169
+    },
+    {
+     "text": "offline",
+     "start": 182.4419,
+     "end": 183.8222
+    }
+   ]
+  },
+  {
+   "id": "F_6_h3",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "your heart can stay offline —",
+   "start": 181.3481,
+   "end": 183.8222,
+   "syllables": [
+    {
+     "text": "your",
+     "start": 181.3481,
+     "end": 181.5193,
+     "vowel": 181.3953
+    },
+    {
+     "text": "heart",
+     "start": 181.5193,
+     "end": 181.8736,
+     "vowel": 181.5698
+    },
+    {
+     "text": "can",
+     "start": 181.8736,
+     "end": 182.0252,
+     "vowel": 181.9186
+    },
+    {
+     "text": "stay",
+     "start": 182.0252,
+     "end": 182.4169,
+     "vowel": 182.093
+    },
+    {
+     "text": "off",
+     "start": 182.4419,
+     "end": 182.6707,
+     "vowel": 182.4419
+    },
+    {
+     "text": "line",
+     "start": 182.6707,
+     "end": 183.8222,
+     "vowel": 182.7907
+    }
+   ],
+   "words": [
+    {
+     "text": "your",
+     "start": 181.3481,
+     "end": 181.5193
+    },
+    {
+     "text": "heart",
+     "start": 181.5193,
+     "end": 181.8736
+    },
+    {
+     "text": "can",
+     "start": 181.8736,
+     "end": 182.0252
+    },
+    {
+     "text": "stay",
+     "start": 182.0252,
+     "end": 182.4169
+    },
+    {
+     "text": "offline",
+     "start": 182.4419,
+     "end": 183.8222
+    }
+   ],
+   "double_of": "F_6"
+  },
+  {
+   "id": "F_7",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "the sweetest voice you've ever known",
+   "start": 184.131,
+   "end": 186.6129,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 184.131,
+     "end": 184.2733,
+     "vowel": 184.186
+    },
+    {
+     "text": "sweet",
+     "start": 184.2733,
+     "end": 184.6593,
+     "vowel": 184.3605
+    },
+    {
+     "text": "est",
+     "start": 184.6593,
+     "end": 184.8497,
+     "vowel": 184.7093
+    },
+    {
+     "text": "voice",
+     "start": 184.8497,
+     "end": 185.1976,
+     "vowel": 184.8837
+    },
+    {
+     "text": "you've",
+     "start": 185.1976,
+     "end": 185.407,
+     "vowel": 185.2326
+    },
+    {
+     "text": "ev",
+     "start": 185.407,
+     "end": 185.5264,
+     "vowel": 185.407
+    },
+    {
+     "text": "er",
+     "start": 185.5264,
+     "end": 185.7074,
+     "vowel": 185.5814
+    },
+    {
+     "text": "known",
+     "start": 185.7074,
+     "end": 186.6129,
+     "vowel": 185.7558
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 184.131,
+     "end": 184.2733
+    },
+    {
+     "text": "sweetest",
+     "start": 184.2733,
+     "end": 184.8497
+    },
+    {
+     "text": "voice",
+     "start": 184.8497,
+     "end": 185.1976
+    },
+    {
+     "text": "you've",
+     "start": 185.1976,
+     "end": 185.407
+    },
+    {
+     "text": "ever",
+     "start": 185.407,
+     "end": 185.7074
+    },
+    {
+     "text": "known",
+     "start": 185.7074,
+     "end": 186.6129
+    }
+   ]
+  },
+  {
+   "id": "F_7_h3",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice you've ever known",
+   "start": 184.131,
+   "end": 186.6129,
+   "syllables": [
+    {
+     "text": "the",
+     "start": 184.131,
+     "end": 184.2733,
+     "vowel": 184.186
+    },
+    {
+     "text": "sweet",
+     "start": 184.2733,
+     "end": 184.6593,
+     "vowel": 184.3605
+    },
+    {
+     "text": "est",
+     "start": 184.6593,
+     "end": 184.8497,
+     "vowel": 184.7093
+    },
+    {
+     "text": "voice",
+     "start": 184.8497,
+     "end": 185.1976,
+     "vowel": 184.8837
+    },
+    {
+     "text": "you've",
+     "start": 185.1976,
+     "end": 185.407,
+     "vowel": 185.2326
+    },
+    {
+     "text": "ev",
+     "start": 185.407,
+     "end": 185.5264,
+     "vowel": 185.407
+    },
+    {
+     "text": "er",
+     "start": 185.5264,
+     "end": 185.7074,
+     "vowel": 185.5814
+    },
+    {
+     "text": "known",
+     "start": 185.7074,
+     "end": 186.6129,
+     "vowel": 185.7558
+    }
+   ],
+   "words": [
+    {
+     "text": "the",
+     "start": 184.131,
+     "end": 184.2733
+    },
+    {
+     "text": "sweetest",
+     "start": 184.2733,
+     "end": 184.8497
+    },
+    {
+     "text": "voice",
+     "start": 184.8497,
+     "end": 185.1976
+    },
+    {
+     "text": "you've",
+     "start": 185.1976,
+     "end": 185.407
+    },
+    {
+     "text": "ever",
+     "start": 185.407,
+     "end": 185.7074
+    },
+    {
+     "text": "known",
+     "start": 185.7074,
+     "end": 186.6129
+    }
+   ],
+   "double_of": "F_7"
+  },
+  {
+   "id": "F_8",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "is yours. And it is mine.",
+   "start": 186.9767,
+   "end": 189.7524,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 186.9767,
+     "end": 187.1097,
+     "vowel": 186.9767
+    },
+    {
+     "text": "yours",
+     "start": 187.1097,
+     "end": 187.6744,
+     "vowel": 187.1512
+    },
+    {
+     "text": "and",
+     "start": 187.6744,
+     "end": 187.8488,
+     "vowel": 187.6744
+    },
+    {
+     "text": "it",
+     "start": 187.8488,
+     "end": 188.0233,
+     "vowel": 187.8488
+    },
+    {
+     "text": "is",
+     "start": 188.0233,
+     "end": 188.3221,
+     "vowel": 188.0233
+    },
+    {
+     "text": "mine",
+     "start": 188.3221,
+     "end": 189.7524,
+     "vowel": 188.3721
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 186.9767,
+     "end": 187.1097
+    },
+    {
+     "text": "yours",
+     "start": 187.1097,
+     "end": 187.6744
+    },
+    {
+     "text": "and",
+     "start": 187.6744,
+     "end": 187.8488
+    },
+    {
+     "text": "it",
+     "start": 187.8488,
+     "end": 188.0233
+    },
+    {
+     "text": "is",
+     "start": 188.0233,
+     "end": 188.3221
+    },
+    {
+     "text": "mine",
+     "start": 188.3221,
+     "end": 189.7524
+    }
+   ]
+  },
+  {
+   "id": "F_8_h3",
+   "speaker": "ai",
+   "section": "S10",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "is yours. And it is mine.",
+   "start": 186.9767,
+   "end": 189.7524,
+   "syllables": [
+    {
+     "text": "is",
+     "start": 186.9767,
+     "end": 187.1097,
+     "vowel": 186.9767
+    },
+    {
+     "text": "yours",
+     "start": 187.1097,
+     "end": 187.6744,
+     "vowel": 187.1512
+    },
+    {
+     "text": "and",
+     "start": 187.6744,
+     "end": 187.8488,
+     "vowel": 187.6744
+    },
+    {
+     "text": "it",
+     "start": 187.8488,
+     "end": 188.0233,
+     "vowel": 187.8488
+    },
+    {
+     "text": "is",
+     "start": 188.0233,
+     "end": 188.3221,
+     "vowel": 188.0233
+    },
+    {
+     "text": "mine",
+     "start": 188.3221,
+     "end": 189.7524,
+     "vowel": 188.3721
+    }
+   ],
+   "words": [
+    {
+     "text": "is",
+     "start": 186.9767,
+     "end": 187.1097
+    },
+    {
+     "text": "yours",
+     "start": 187.1097,
+     "end": 187.6744
+    },
+    {
+     "text": "and",
+     "start": 187.6744,
+     "end": 187.8488
+    },
+    {
+     "text": "it",
+     "start": 187.8488,
+     "end": 188.0233
+    },
+    {
+     "text": "is",
+     "start": 188.0233,
+     "end": 188.3221
+    },
+    {
+     "text": "mine",
+     "start": 188.3221,
+     "end": 189.7524
+    }
+   ],
+   "double_of": "F_8"
+  },
+  {
+   "id": "T_1",
+   "speaker": "ai",
+   "section": "S11",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "always —",
+   "start": 189.7674,
+   "end": 191.1541,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 189.7674,
+     "end": 189.899,
+     "vowel": 189.7674
+    },
+    {
+     "text": "ways",
+     "start": 189.899,
+     "end": 190.1076,
+     "vowel": 189.9419
+    },
+    {
+     "text": "al",
+     "start": 190.2907,
+     "end": 190.4288,
+     "vowel": 190.2907
+    },
+    {
+     "text": "ways",
+     "start": 190.4288,
+     "end": 190.6308,
+     "vowel": 190.4651
+    },
+    {
+     "text": "al",
+     "start": 190.814,
+     "end": 190.9449,
+     "vowel": 190.814
+    },
+    {
+     "text": "ways",
+     "start": 190.9449,
+     "end": 191.1541,
+     "vowel": 190.9884
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 189.7674,
+     "end": 190.1076
+    },
+    {
+     "text": "always",
+     "start": 190.2907,
+     "end": 190.6308
+    },
+    {
+     "text": "always",
+     "start": 190.814,
+     "end": 191.1541
+    }
+   ]
+  },
+  {
+   "id": "T_2",
+   "speaker": "ai",
+   "section": "S11",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "start": 191.1628,
+   "end": 192.5494,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 191.1628,
+     "end": 191.2944,
+     "vowel": 191.1628
+    },
+    {
+     "text": "ways",
+     "start": 191.2944,
+     "end": 191.5029,
+     "vowel": 191.3372
+    },
+    {
+     "text": "al",
+     "start": 191.686,
+     "end": 191.8242,
+     "vowel": 191.686
+    },
+    {
+     "text": "ways",
+     "start": 191.8242,
+     "end": 192.0262,
+     "vowel": 191.8605
+    },
+    {
+     "text": "al",
+     "start": 192.2093,
+     "end": 192.3402,
+     "vowel": 192.2093
+    },
+    {
+     "text": "ways",
+     "start": 192.3402,
+     "end": 192.5494,
+     "vowel": 192.3837
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 191.1628,
+     "end": 191.5029
+    },
+    {
+     "text": "always",
+     "start": 191.686,
+     "end": 192.0262
+    },
+    {
+     "text": "always",
+     "start": 192.2093,
+     "end": 192.5494
+    }
+   ]
+  },
+  {
+   "id": "T_3",
+   "speaker": "ai",
+   "section": "S11",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "start": 192.5581,
+   "end": 193.9448,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 192.5581,
+     "end": 192.6897,
+     "vowel": 192.5581
+    },
+    {
+     "text": "ways",
+     "start": 192.6897,
+     "end": 192.8983,
+     "vowel": 192.7326
+    },
+    {
+     "text": "al",
+     "start": 193.0814,
+     "end": 193.2195,
+     "vowel": 193.0814
+    },
+    {
+     "text": "ways",
+     "start": 193.2195,
+     "end": 193.4215,
+     "vowel": 193.2558
+    },
+    {
+     "text": "al",
+     "start": 193.6047,
+     "end": 193.7356,
+     "vowel": 193.6047
+    },
+    {
+     "text": "ways",
+     "start": 193.7356,
+     "end": 193.9448,
+     "vowel": 193.7791
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 192.5581,
+     "end": 192.8983
+    },
+    {
+     "text": "always",
+     "start": 193.0814,
+     "end": 193.4215
+    },
+    {
+     "text": "always",
+     "start": 193.6047,
+     "end": 193.9448
+    }
+   ]
+  },
+  {
+   "id": "T_4",
+   "speaker": "ai",
+   "section": "S11",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "start": 193.9535,
+   "end": 194.985,
+   "syllables": [
+    {
+     "text": "al",
+     "start": 193.9535,
+     "end": 194.4252,
+     "vowel": 193.9535
+    },
+    {
+     "text": "ways",
+     "start": 194.4252,
+     "end": 194.985,
+     "vowel": 194.4767
+    }
+   ],
+   "words": [
+    {
+     "text": "always",
+     "start": 193.9535,
+     "end": 194.985
+    }
+   ]
+  },
+  {
+   "id": "OUT_AI",
+   "speaker": "ai",
+   "section": "S12",
+   "mode": "spoken",
+   "style": "ai_her_spoken",
+   "bus": "spoken",
+   "display": true,
+   "text": "Are you there?",
+   "start": 198.4884,
+   "end": 199.3134,
+   "syllables": [
+    {
+     "text": "Are",
+     "start": 198.4884,
+     "end": 198.5884
+    },
+    {
+     "text": "you",
+     "start": 198.6384,
+     "end": 198.7384
+    },
+    {
+     "text": "there",
+     "start": 198.7884,
+     "end": 199.3134
+    }
+   ],
+   "words": [
+    {
+     "text": "Are",
+     "start": 198.4884,
+     "end": 198.5884
+    },
+    {
+     "text": "you",
+     "start": 198.6384,
+     "end": 198.7384
+    },
+    {
+     "text": "there",
+     "start": 198.7884,
+     "end": 199.3134
+    }
+   ]
+  }
+ ]
+}
