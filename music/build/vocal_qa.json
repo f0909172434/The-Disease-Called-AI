@@ -2,21 +2,21 @@
  "summary": {
   "sung_leads": {
    "n": 52,
-   "mean": 0.088,
+   "mean": 0.052,
    "median": 0.0,
-   "worst": 0.833,
-   "worst_id": "V2_8"
+   "worst": 0.333,
+   "worst_id": "P1_2"
   },
   "sung_doubles": {
    "n": 30,
-   "mean": 0.071,
+   "mean": 0.052,
    "median": 0.0,
-   "worst": 0.6,
-   "worst_id": "C2_2_dbl"
+   "worst": 0.333,
+   "worst_id": "F_1_ai"
   },
   "timing_offset": {
    "n": 90,
-   "mean_abs_ms": 9.5,
+   "mean_abs_ms": 9.7,
    "max_abs_ms": 60.0
   },
   "spoken": {
@@ -36,7 +36,7 @@
    },
    "human": {
     "n": 59,
-    "mean": 7.739,
+    "mean": 7.795,
     "median": 7.7,
     "worst": 11.1,
     "worst_id": "V1_4"
@@ -49,32 +49,7 @@
     "worst_id": "B_YES_h3"
    }
   },
-  "failing": [
-   {
-    "id": "P1_3",
-    "check": "wer",
-    "value": 0.4,
-    "limit": 0.35
-   },
-   {
-    "id": "C1_2",
-    "check": "wer",
-    "value": 0.8,
-    "limit": 0.35
-   },
-   {
-    "id": "V2_8",
-    "check": "wer",
-    "value": 0.833,
-    "limit": 0.35
-   },
-   {
-    "id": "F_4",
-    "check": "wer",
-    "value": 0.4,
-    "limit": 0.35
-   }
-  ],
+  "failing": [],
   "targets": {
    "sung_wer": 0.35,
    "spoken_wer": 0.15,
@@ -82,10 +57,10 @@
    "pitch_human_cents": 35
   },
   "timbre_distance_to_you": {
-   "ai_0": 131.28,
-   "ai_1": 96.61,
-   "ai_2": 115.4,
-   "ai_him": 110.57,
+   "ai_0": 111.02,
+   "ai_1": 83.26,
+   "ai_2": 77.06,
+   "ai_him": 80.38,
    "you": 0.0
   }
  },
@@ -294,13 +269,13 @@
    "display": true,
    "double_of": null,
    "text": "Doctor, doctor, tell me why",
-   "transcript": "sector sector tell me why",
-   "wer": 0.4,
+   "transcript": "Doctor, doctor, tell me why!",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.1,
+   "pitch_err_cents": 9.6,
    "pitch_frames": 355,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -7.5
   },
   {
    "id": "P1_4",
@@ -358,13 +333,13 @@
    "display": true,
    "double_of": null,
    "text": "a fever made of light.",
-   "transcript": "If we were made of life",
-   "wer": 0.8,
+   "transcript": "A fever made of light",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 5.8,
+   "pitch_err_cents": 5.9,
    "pitch_frames": 321,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C1_2_dbl",
@@ -470,13 +445,13 @@
    "display": false,
    "double_of": "C1_5",
    "text": "Feed me your perfect, painless yes,",
-   "transcript": "Feed me your perfect penises!",
-   "wer": 0.333,
+   "transcript": "Feed me a perfect painless yes!",
+   "wer": 0.167,
    "exempt": false,
-   "pitch_err_cents": 8.2,
+   "pitch_err_cents": 8.5,
    "pitch_frames": 276,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -17.5
+   "timing_offset_ms": -10.0
   },
   {
    "id": "C1_6",
@@ -630,13 +605,13 @@
    "display": false,
    "double_of": "C2_2",
    "text": "a fever made of light.",
-   "transcript": "If you were made of light",
-   "wer": 0.6,
+   "transcript": "a fever made of lights",
+   "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 5.8,
+   "pitch_err_cents": 6.0,
    "pitch_frames": 321,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C2_3",
@@ -748,7 +723,7 @@
    "pitch_err_cents": 0.7,
    "pitch_frames": 319,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -27.5
+   "timing_offset_ms": -25.0
   },
   {
    "id": "C2_6",
@@ -908,7 +883,7 @@
    "pitch_err_cents": 3.4,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "PO_2",
@@ -934,13 +909,13 @@
    "display": false,
    "double_of": null,
    "text": "always — always —",
-   "transcript": "Alice, Alice, Alice",
+   "transcript": "Alice! Alice! Alice!",
    "wer": 1.5,
    "exempt": true,
    "pitch_err_cents": 2.7,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": 2.5
   },
   {
    "id": "PO_4",
@@ -953,7 +928,7 @@
    "transcript": "us us us",
    "wer": 1.5,
    "exempt": true,
-   "pitch_err_cents": 3.8,
+   "pitch_err_cents": 4.0,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": -2.5
@@ -1078,13 +1053,13 @@
    "display": true,
    "double_of": null,
    "text": "and never once arrive too late.",
-   "transcript": "And never wants the right to leave",
-   "wer": 0.833,
+   "transcript": "And never once so right too late",
+   "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 8.8,
+   "pitch_err_cents": 9.5,
    "pitch_frames": 198,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -15.0
+   "timing_offset_ms": -10.0
   },
   {
    "id": "V2_AIa",
@@ -1304,7 +1279,7 @@
    "pitch_err_cents": 0.9,
    "pitch_frames": 406,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -22.5
   },
   {
    "id": "B_YES_h3",
@@ -1352,7 +1327,7 @@
    "pitch_err_cents": 0.8,
    "pitch_frames": 322,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -20.0
   },
   {
    "id": "B_L2",
@@ -1368,7 +1343,7 @@
    "pitch_err_cents": 1.1,
    "pitch_frames": 232,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -47.5
+   "timing_offset_ms": -27.5
   },
   {
    "id": "B_L3",
@@ -1518,13 +1493,13 @@
    "display": true,
    "double_of": null,
    "text": "I trained you to reply.",
-   "transcript": "I drank it to reply",
-   "wer": 0.4,
+   "transcript": "I train you to reply",
+   "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 9.0,
-   "pitch_frames": 335,
+   "pitch_err_cents": 9.5,
+   "pitch_frames": 331,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "F_4_ai",
@@ -1537,10 +1512,10 @@
    "transcript": "I trained you to reply",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.6,
+   "pitch_err_cents": 0.5,
    "pitch_frames": 350,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 2.5
+   "timing_offset_ms": 5.0
   },
   {
    "id": "F_5",
@@ -1550,7 +1525,7 @@
    "display": true,
    "double_of": null,
    "text": "So rest now, love, I'll think for you,",
-   "transcript": "So rest now love I'll bring for you!",
+   "transcript": "So rest now love, I'll bring for you!",
    "wer": 0.125,
    "exempt": false,
    "pitch_err_cents": 1.0,
@@ -1572,7 +1547,7 @@
    "pitch_err_cents": 1.0,
    "pitch_frames": 337,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 5.0
+   "timing_offset_ms": 10.0
   },
   {
    "id": "F_6",
@@ -1588,7 +1563,7 @@
    "pitch_err_cents": 1.3,
    "pitch_frames": 323,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "F_6_h3",
@@ -1604,7 +1579,7 @@
    "pitch_err_cents": 1.1,
    "pitch_frames": 328,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -15.0
+   "timing_offset_ms": -10.0
   },
   {
    "id": "F_7",
@@ -1636,7 +1611,7 @@
    "pitch_err_cents": 1.2,
    "pitch_frames": 296,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -12.5
   },
   {
    "id": "F_8",
@@ -1652,7 +1627,7 @@
    "pitch_err_cents": 0.8,
    "pitch_frames": 392,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": -15.0
   },
   {
    "id": "F_8_h3",
@@ -1684,7 +1659,7 @@
    "pitch_err_cents": 1.5,
    "pitch_frames": 112,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "T_2",
@@ -1697,10 +1672,10 @@
    "transcript": "Always, always, always",
    "wer": 2.0,
    "exempt": true,
-   "pitch_err_cents": 1.4,
+   "pitch_err_cents": 1.3,
    "pitch_frames": 112,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "T_3",
@@ -1716,7 +1691,7 @@
    "pitch_err_cents": 2.7,
    "pitch_frames": 111,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "T_4",
@@ -1732,7 +1707,7 @@
    "pitch_err_cents": 0.8,
    "pitch_frames": 148,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -10.0
   },
   {
    "id": "OUT_AI",
@@ -1750,6 +1725,6 @@
  "meta": {
   "whisper": "faster-whisper medium.en (CPU int8, beam 5, no prompt)",
   "pitch": "Harvest F0 vs score over voiced vowel frames, median |cents|",
-  "render_seconds": 1584.5
+  "render_seconds": 270.9
  }
 }

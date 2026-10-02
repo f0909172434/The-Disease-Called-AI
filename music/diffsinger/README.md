@@ -126,6 +126,9 @@ a whole batch — two parallel processes were slower on 4 cores (RTF 4.9 vs 4.4)
   TIGER V1_1 0 / 8.1 c, C1_2 0.8 ("If we were made of life") / 5.8 c, C1_4 0 / 7.6 c,
   F_1 0 / 10.1 c, cracks 0–2.4 %; Hanami (as cast, blends included) pitch 0.5–3.8 c,
   cracks: Nectar 0–0.9 %, Root ≤ 5.1 %, Fragrance ≤ 8.6 % → Nectar is the default.
+* Whole song (vocal_qa.json, 2026-10-02): sung leads mean WER 0.052, doubles 0.052, no line
+  over 0.35 (Kokoro: 0.128 / 0.166, 5 failing); pitch median AI 1.0 c, human 7.7 c, choir
+  4.5 c; timing offset 9.7 ms mean.
 
 ## Tests
 

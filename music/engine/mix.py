@@ -135,7 +135,9 @@ VOCAL_STYLES = {
     # hp, mud cut, de-ess band, comp ratio, presence @3.5k, air @10k, exciter, doubler (dB or None)
     # de-ess split at 5 kHz for his DiffSinger voice (TIGER): -0.7 dB on the sibilant peaks
     "human": dict(hp=80, mud=-2.0, deess=5000, ratio=3.5, presence=2.0, air=2.5, excite=-17.0, double=None),
-    "ai": dict(hp=110, mud=-2.5, deess=5500, ratio=4.0, presence=3.0, air=4.0, excite=-13.0, double=-9.0),
+    # DiffSinger Hanami is brighter than the 24 kHz Kokoro/WORLD voice this was tuned on (real air
+    # to 16 kHz): presence 3 -> 2, air 4 -> 2.5, exciter -13 -> -16 (sibilant peaks -0.5 dB)
+    "ai": dict(hp=110, mud=-2.5, deess=5500, ratio=4.0, presence=2.0, air=2.5, excite=-16.0, double=-9.0),
     "bg": dict(hp=150, mud=-3.0, deess=5500, ratio=4.0, presence=1.0, air=3.0, excite=-16.0, double=-6.0),
     "spoken_human": dict(hp=80, mud=-1.5, deess=5500, ratio=3.0, presence=1.5, air=1.5, excite=-20.0, double=None),
     "spoken_ai": dict(hp=110, mud=-2.0, deess=5500, ratio=3.5, presence=2.5, air=3.5, excite=-14.0, double=-12.0),
