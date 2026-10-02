@@ -15,6 +15,8 @@ table (Markdown + JSON next to the MP3):
   subharm    % of vowel frames with energy between the harmonics (k+1/2)·F0 within 12 dB of
              the harmonics (cracks, fry, period doubling)
   dropout    % of vowel frames the tracker finds unvoiced, and runs >= 30 ms (n)
+  mid_crack  % of vowel frames > 60 ms from the vowel's attack and release with any of the
+             three (breathy onsets and phrase-final fry/decay excluded)
   rtf        DiffSinger render seconds per second of audio (when rendered fresh)
 """
 from __future__ import annotations
@@ -76,10 +78,23 @@ def crack_metrics(audio48: np.ndarray, start: float, q: dict) -> dict:
         cur = cur + 1 if not v else 0
         if cur == 6:                                   # 6 frames = 30 ms
             runs += 1
+    # mid-note: away from the attack and the release of every vowel (60 ms each side), where
+    # breath, fry and decays are normal — a crack there is a fault
+    vi = np.where(vow)[0][keep]
+    mid = np.zeros(len(vi), bool)
+    k = 0
+    while k < len(vi):
+        j = k
+        while j + 1 < len(vi) and vi[j + 1] == vi[j] + 1:
+            j += 1
+        mid[k + 12: max(k + 12, j + 1 - 12)] = True
+        k = j + 1
+    def pct(m):
+        return round(100 * float(m[mid].mean()), 2) if mid.any() else 0.0
     return {"octave_pct": round(100 * float(octave.mean()), 2),
             "subharm_pct": round(100 * float(sub.mean()), 2),
             "dropout_pct": round(100 * float((~voiced).mean()), 2), "dropout_runs": runs,
-            "frames": int(len(tt))}
+            "mid_crack_pct": pct(octave | sub | ~voiced), "frames": int(len(tt))}
 
 
 def lufs_normalize(x: np.ndarray, sr: int, target: float = -21.0) -> np.ndarray:
@@ -150,7 +165,7 @@ def main(argv=None):
     with open(base + ".json", "w") as fh:
         json.dump({"meta": meta, "lines": rows}, fh, ensure_ascii=False, indent=1)
     cols = ["id", "voice", "style", "banks", "wer", "pitch_cents", "octave_pct", "subharm_pct",
-            "dropout_pct", "dropout_runs", "timing_ms", "transcript"]
+            "dropout_pct", "dropout_runs", "mid_crack_pct", "timing_ms", "transcript"]
     md = [f"### {a.title or os.path.basename(a.mp3)}", "",
           f"DiffSinger stage: {st}, {t_ds:.1f} s" + (f", RTF {meta['rtf']}" if "rtf" in meta else ""), "",
           "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
