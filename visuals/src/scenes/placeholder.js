@@ -5,9 +5,9 @@ import * as THREE from 'three';
 import { C } from '../core/palette.js';
 import { clamp } from '../core/ease.js';
 
-export function makePlaceholder({ id, title, subtitle = '', kitNote = '', lyricMode = 'karaoke', transitionIn, build, animate, post }) {
+export function makePlaceholder({ id, title, subtitle = '', kitNote = '', lyricMode = 'karaoke', transitionIn, build, animate, post, lyricStyle }) {
   return {
-    id, lyricMode, transitionIn, post,
+    id, lyricMode, transitionIn, post, lyricStyle,
     placeholder: true,
     init(ctx) {
       const { W, H } = ctx;
@@ -16,7 +16,7 @@ export function makePlaceholder({ id, title, subtitle = '', kitNote = '', lyricM
       this.camera.position.set(0, 0, 10);
       this.hud = new THREE.Scene();
       const u = ctx.u;
-      this.titleSprite = ctx.text.sprite(`${id} · ${title}`, { role: 'ui', size: 34, weight: 600, tracking: 0.16, caps: true, color: C.AI_WHITE }, { height: 70 * u, anchor: 'left' });
+      this.titleSprite = ctx.text.sprite(`${id} · ${title}`, { role: 'ui', size: 26, weight: 600, tracking: 0.16, caps: true, color: C.AI_WHITE }, { height: 52 * u, anchor: 'left' });
       this.titleSprite.position.set(-W / 2 + W * 0.06, H / 2 - H * 0.1, 0);
       this.hud.add(this.titleSprite);
       this.subSprite = ctx.text.sprite(subtitle || ' ', { role: 'human', size: 30, color: C.HUMAN_SKIN }, { height: 56 * u, anchor: 'left' });
@@ -51,8 +51,9 @@ export function makePlaceholder({ id, title, subtitle = '', kitNote = '', lyricM
       const bib = audio.beatInBar(t);
       const ph = audio.phase(t, 1);
       this.beats.forEach((m, i) => { m.material.opacity = i + 1 === bib ? 0.35 + 0.65 * Math.exp(-ph * 4) : 0.15; });
-      this.titleSprite.opacity = 0.9;
-      this.subSprite.opacity = 0.75;
+      this.titleSprite.opacity = 0.55;
+      this.subSprite.opacity = 0.45;
+      this.kitSprite.opacity = 0.4;
       if (animate) animate.call(this, t, ctx);
     },
   };

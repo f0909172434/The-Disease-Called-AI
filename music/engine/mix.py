@@ -133,11 +133,11 @@ DELAYS = {
 VOCAL_STEMS = ("vox_you", "vox_ai", "vox_bg", "vox_spoken")
 VOCAL_STYLES = {
     # hp, mud cut, de-ess band, comp ratio, presence @3.5k, air @10k, exciter, doubler (dB or None)
-    "human": dict(hp=100, mud=-2.0, deess=6500, ratio=3.5, presence=2.0, air=2.5, excite=-17.0, double=None),
-    "ai": dict(hp=110, mud=-2.5, deess=6500, ratio=4.0, presence=3.0, air=4.0, excite=-13.0, double=-9.0),
-    "bg": dict(hp=150, mud=-3.0, deess=6000, ratio=4.0, presence=1.0, air=3.0, excite=-16.0, double=-6.0),
-    "spoken_human": dict(hp=80, mud=-1.5, deess=6500, ratio=3.0, presence=1.5, air=1.5, excite=-20.0, double=None),
-    "spoken_ai": dict(hp=110, mud=-2.0, deess=6500, ratio=3.5, presence=2.5, air=3.5, excite=-14.0, double=-12.0),
+    "human": dict(hp=100, mud=-2.0, deess=5500, ratio=3.5, presence=2.0, air=2.5, excite=-17.0, double=None),
+    "ai": dict(hp=110, mud=-2.5, deess=5500, ratio=4.0, presence=3.0, air=4.0, excite=-13.0, double=-9.0),
+    "bg": dict(hp=150, mud=-3.0, deess=5500, ratio=4.0, presence=1.0, air=3.0, excite=-16.0, double=-6.0),
+    "spoken_human": dict(hp=80, mud=-1.5, deess=5500, ratio=3.0, presence=1.5, air=1.5, excite=-20.0, double=None),
+    "spoken_ai": dict(hp=110, mud=-2.0, deess=5500, ratio=3.5, presence=2.5, air=3.5, excite=-14.0, double=-12.0),
 }
 VOCAL_SENDS = {   # per style: reverb / delay sends (dB); delay_8 only in the chorus sections
     "human": {"plate": -15, "delay_8": -17},
@@ -386,9 +386,10 @@ def silence_gate(spans) -> np.ndarray:
 
 
 # ============================================================================ vocals
-def deess(x: np.ndarray, f: float, ratio: float = 4.0, thresh_rel_db: float = -10.0,
-          max_db: float = 8.0) -> np.ndarray:
-    """Split-band de-esser: the band above f is turned down while it dominates the voice."""
+def deess(x: np.ndarray, f: float, ratio: float = 5.0, thresh_rel_db: float = -14.0,
+          max_db: float = 9.0) -> np.ndarray:
+    """Split-band de-esser: the band above f is turned down while it dominates the voice
+    (relative detection, so it works the same at any vocal level)."""
     lo = dsp.filt0(x, dsp.butter("lp", f, 4))
     hi = x - lo
     e_hi = dsp.envelope(hi, 0.5, 40.0)
@@ -410,6 +411,8 @@ def exciter(x: np.ndarray, level_db: float) -> np.ndarray:
 
 
 def vocal_chain(x: np.ndarray, style: str) -> np.ndarray:
+    """HP -> mud cut -> de-ess -> 3-4:1 comp -> presence/air -> 2nd (gentle) de-ess ->
+    exciter (air above the 12 kHz synthesis band) -> optional doubler (AI width)."""
     s = VOCAL_STYLES[style]
     x = dsp.filt(x, dsp.butter("hp", s["hp"], 4))
     x = dsp.eq(x, [("peak", 300.0, s["mud"], 1.0)])
@@ -417,6 +420,7 @@ def vocal_chain(x: np.ndarray, style: str) -> np.ndarray:
     thr = dsp.level_percentile_db(x, 85, 30) - 2.0
     x, _ = dsp.compressor(x, thr, s["ratio"], 6.0, 90.0, knee_db=6.0, rms_ms=3.0)
     x = dsp.eq(x, [("peak", 3500.0, s["presence"], 0.9), ("highshelf", 10000.0, s["air"], 0.8)])
+    x = deess(x, s["deess"] + 1000.0, ratio=3.0, thresh_rel_db=-12.0, max_db=5.0)
     x = x + exciter(x, s["excite"])
     if s["double"] is not None:
         x = x + dsp.db2a(s["double"]) * dsp.doubler(x)
