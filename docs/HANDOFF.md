@@ -24,7 +24,7 @@
 | 樂器與混音引擎 | 已完成 |
 | 盲測分析腳本 | 已完成，但尚未在真實母帶上執行 |
 | 視覺引擎與元件庫 | 大致完成，S00 已實作，但用的是舊的粒子頭像 |
-| 動漫角色骨架 | 進行中，需改造 |
+| 動漫角色骨架 | 只有繪圖底層，兩個角色都還沒畫 |
 | 場景 S01–S13 | **尚未實作** |
 | 全片渲染與最終 MP4 | **尚未開始** |
 
@@ -61,7 +61,7 @@
 | 樂器與混音 | ✅ | `music/engine/render_instruments.py`、`mix.py` | 母帶 −11.01 LUFS、真峰值 −1.32 dBTP；QA 圖在 `music/build/qa/` |
 | 盲測分析 | ✅ 已在合成測試音檔上驗證 | `analysis/analyze.py` | 測試結果：偵測 172.007 BPM，節拍誤差 2.8 ms，小節線命中 100%。用鼓組分軌的「反拍規則」解決 86/172 倍頻歧義。**尚未在真實母帶上跑** |
 | 視覺引擎 | 🟡 | `visuals/`（`index.html`、`src/core`、`src/kit`、`src/scenes`、`render.mjs`、`contact_sheet.mjs`、`README_ENGINE.md`） | Three.js r170，以 SwiftShader 做可重現的逐幀渲染，每幀約 1.9 秒（含擷取）。S00 已實作，但用的是舊的粒子 `Silhouette`。待辦：黑位偏灰、介面玻璃厚度 |
-| 動漫角色骨架 | 🟡 | `visuals/src/kit/Heroine.js`、`kit/heroine/*` | 女性動漫骨架，含眨眼、視線、口型、表情、boil、手繪質感、配色模式、粒子取樣。**改造成 AI 鯨魚女孩**，另外新建男性骨架 |
+| 動漫角色骨架 | 🟡 只有底層 | `visuals/src/kit/heroine/{geom,draw,palettes}.js`、`STATUS.md` | 已完成繪圖底層：平滑曲線、漸細墨線、髮束形狀、seeded boil、水彩邊緣暗化、配色模式（human/swapped/perfected）。**還沒有任何角色圖**，`Heroine.js` 尚未建立。兩個角色（AI 鯨魚女孩、男主角）都要在新 session 用這套底層畫 |
 | README | 🟡 | `README.md` | 雙語草稿含佔位符 `{{FPS}} {{BPM}} {{BEAT_MAE}} {{DOWNBEAT}} {{VOCAL_QA}} {{VOCAL_QA_EN}} {{STILLS}}`；結尾反思已寫，需配合選角微調（例：「寫的時候是她的台詞」→ 他） |
 | 合成腳本 | ✅ | `tools/assemble.py` | 兩遍編碼，控制在 95 MB 內（GitHub 上限 100 MB），另出一份 CRF 16 的 HQ 版 |
 
@@ -132,8 +132,8 @@
    檢查 `vocal_qa.json`（目標：演唱 WER ≤ 0.35，口白 ≤ 0.15）與響度報告。
 5. **分析**：`python3 analysis/analyze.py` → 產出 `visuals/data/timeline.json` 與 `docs/analysis.png`；把數字填進 README。
 6. **角色**（兩個 agent 並行）：
-   - (a) 把 `Heroine` 改造成 AI 鯨魚女孩，加 Q 版變體
-   - (b) 新建男主角骨架
+   - (a) 用 `kit/heroine/` 的繪圖底層畫 AI 鯨魚女孩（含 Q 版變體）
+   - (b) 用同一套底層畫男主角骨架
    - 產出設計稿後**先給使用者確認**，再整合。
 7. **引擎修補**：黑位壓回深黑、介面玻璃厚度；S00 換成新角色。
 8. **場景**：3–4 個 agent 依段落分工實作 S01–S13（分鏡 v2 加角色骨架）。主 session 只在里程碑看 contact sheet。
