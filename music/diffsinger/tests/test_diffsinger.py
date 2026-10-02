@@ -232,6 +232,45 @@ class Morph(unittest.TestCase):
         self.assertAlmostEqual(peak, 700 * rr ** 0.5, delta=40)
 
 
+def _real_banks() -> bool:
+    import runner
+    try:
+        bk.find("tiger"), bk.find("hanami")
+    except (FileNotFoundError, KeyError):
+        return False
+    return runner.available()
+
+
+@unittest.skipUnless(_real_banks(), "TIGER / Hanami not installed (fetch_voicebanks.sh)")
+class RealBanks(unittest.TestCase):
+    """Bank timing through OpenUtau's DiffSinger English phonemizer + the banks' duration
+    models (phonemize only: seconds, no audio)."""
+
+    def test_bank_timing_maps_back(self):
+        import diffsinger_backend as dsb
+        import planner as pl
+        import runner
+        cases = [("V1_1", "tiger"), ("C2_5_ai", "hanami")]
+        with tempfile.TemporaryDirectory() as d:
+            tracks, parts, lps = [], [], {}
+            for k, (lid, key) in enumerate(cases):
+                b = bk.find(key)
+                tracks.append(su.track_for(b, False))
+                lps[lid] = phm.line_phonemes(LINES[lid])
+                parts.append(su.part_for_line(LINES[lid], lps[lid], b, k))
+            proj = su.write_ustx(os.path.join(d, "t.ustx"), tracks, parts)
+            runner.run("phonemize", proj, os.path.join(d, "out"), log=None)
+            for (lid, key), part in zip(cases, parts):
+                info = runner.load_part(os.path.join(d, "out"), part.name, audio=False)
+                times = dsb.times_from_render(part, info, lps[lid], bk.find(key), False)
+                plan = dsb.plan_from_times(LINES[lid], lps[lid], times, pl.TimingStyle())
+                for s, ps in zip(lps[lid].syllables, plan.syllables):
+                    if s.shares_prev or (len(s.onset) >= 2 and s.onset[-1].arpa in ("w", "y", "l", "r")):
+                        continue          # OpenUtau starts a C-glide-V note on the glide/liquid
+                    self.assertAlmostEqual(ps.vowel_start, ps.notes[0].start, delta=0.002, msg=(lid, s.text))
+                    self.assertLessEqual(ps.start, ps.vowel_start)
+
+
 @unittest.skipUnless(os.environ.get("DIFFSINGER_TEST_VOICEBANKS"), "test bank not configured")
 class Smoke(unittest.TestCase):
     """Real renders through bin/ourender with the opencpopJPN test bank (timed phonemizer)."""
