@@ -151,12 +151,60 @@ def snap_to_onsets(beats, onsets, window=0.06):
 
 
 def downbeat_phase(beat_times, low_env_fn):
-    """Which of the 4 beat phases carries the most low-frequency (kick) energy."""
+    """Which of the 4 beat phases carries the most low-frequency (kick) energy (global, legacy)."""
     scores = []
     for ph in range(4):
         sel = beat_times[ph::4]
         scores.append(float(np.mean([low_env_fn(t) for t in sel])) if len(sel) else 0.0)
     return int(np.argmax(scores)), scores
+
+
+def local_downbeats(beats, kick_on, snare_on, y, window=0.06):
+    """Downbeats per continuous run of beats (a dropped beat or a silence restarts the phase).
+
+    Bar 1 carries a kick, no snare, and the harmonic change; so each phase of a run is scored by
+    kick hits - snare hits (from the dry drum stems) + chord novelty (beat-synchronous chroma
+    distance across the beat). Robust to low vocals and bass pickups that fool a low-band rule."""
+    beats = np.asarray(beats)
+    if len(beats) < 8:
+        return beats[::4], []
+    kick_on, snare_on = np.asarray(kick_on), np.asarray(snare_on)
+
+    def hit(on, t):
+        return 1.0 if len(on) and np.min(np.abs(on - t)) < window else 0.0
+
+    chroma = librosa.feature.chroma_cqt(y=y, sr=SR, hop_length=512)
+    ct = librosa.frames_to_time(np.arange(chroma.shape[1]), sr=SR, hop_length=512)
+    period = float(np.median(np.diff(beats)))
+
+    def mean_chroma(a, b):
+        sel = (ct >= a) & (ct < b)
+        v = chroma[:, sel].mean(axis=1) if sel.any() else np.zeros(chroma.shape[0])
+        return v / (np.linalg.norm(v) + 1e-9)
+
+    novelty = np.array([1.0 - float(mean_chroma(t - 2 * period, t) @ mean_chroma(t, t + 2 * period))
+                        for t in beats])
+    kick = np.array([hit(kick_on, t) for t in beats])
+    snare = np.array([hit(snare_on, t) for t in beats])
+    z = lambda v: (v - v.mean()) / (v.std() + 1e-9)  # noqa: E731
+    feat = z(kick) - z(snare) + z(novelty)
+
+    runs, start = [], 0
+    for i in range(1, len(beats)):
+        if beats[i] - beats[i - 1] > 1.6 * period:
+            runs.append((start, i))
+            start = i
+    runs.append((start, len(beats)))
+    downbeats, info = [], []
+    for a, b in runs:
+        if b - a < 4:
+            continue
+        scores = [float(np.mean(feat[a + ph:b:4])) for ph in range(4)]
+        ph = int(np.argmax(scores))
+        downbeats.extend(beats[a + ph:b:4].tolist())
+        info.append({"from": round(float(beats[a]), 3), "beats": b - a, "phase": ph,
+                     "scores": [round(x, 3) for x in scores]})
+    return np.array(downbeats), info
 
 
 def structure_boundaries(y, n_segments=14):
@@ -270,7 +318,8 @@ def main():
     S_low = band_envelopes(y, 200, int(duration * 200) + 1)["low"]
     low_fn = lambda t: S_low[min(len(S_low) - 1, int(t * 200))]  # noqa: E731
     phase, phase_scores = downbeat_phase(beats, low_fn)
-    downbeats = beats[phase::4]
+    downbeats, downbeat_runs = local_downbeats(beats, stem_onsets(os.path.join(STEMS, "kick.wav")),
+                                               stem_onsets(os.path.join(STEMS, "snare.wav")), y)
 
     # --- compare with the score (ground truth) ---------------------------------------------
     grid_beat = 60.0 / score_bpm
@@ -366,7 +415,7 @@ def main():
         json.dump(timeline, f, ensure_ascii=False, separators=(",", ":"))
     report = {"tempo": tempo, "detected_bpm": bpm, "score_bpm": score_bpm,
               "bpm_error": round(abs(bpm - score_bpm), 3), "beat_mae_ms": beat_mae_ms,
-              "downbeat_phase_scores": phase_scores, "downbeat_hit_rate": downbeat_hit,
+              "downbeat_phase_scores": phase_scores, "downbeat_runs": downbeat_runs, "downbeat_hit_rate": downbeat_hit,
               "n_beats": len(beats), "beat_snap": snap_info, "structure_boundary_error_s": dict(zip([s["name"] for s in arrangement["sections"]][1:], [round(e, 3) for e in bound_err])),
               "onset_counts": {k: len(v) for k, v in onsets.items()}}
     with open(REPORT, "w") as f:
