@@ -27,7 +27,7 @@ const AI_PAL = {
     cream: '#FBF8F3', creamSh: '#D2D8EC', bow: '#79C3F0', bowSh: '#4A8FD0', gem: '#7FE9FF',
     stock: '#F8F6F4', stockSh: '#D4D8EA', shoe: '#1F2551', shoeHi: '#55619C',
     mouth: '#7E2F46', tongue: '#EE8E9A', heart: '#FF7FA8',
-    br: 'inkfine', J: .25, swk: 1, rim: '#7FE9FF', glowK: 0, shadow: '#1F2550'
+    br: 'inkfine', brS: 'ink', J: .25, swk: 1, rim: '#7FE9FF', glowK: 0, shadow: '#1F2550', hatch: '#0A0D2C'
   }
 };
 AI_PAL.glow = { ...AI_PAL.default,
@@ -42,7 +42,7 @@ AI_PAL.amber = {
   cream: '#FFF4E4', creamSh: '#EDCDA8', bow: '#FFB070', bowSh: '#D9813C', gem: '#FFD9A0',
   stock: '#FFF4E8', stockSh: '#EDCFAE', shoe: '#5A2C16', shoeHi: '#9A5C34',
   mouth: '#7A2A1E', tongue: '#F29070', heart: '#FF8A6A',
-  br: 'ink', J: .9, swk: 1.3, rim: '#FFB070', glowK: 0, shadow: '#4A2614'
+  br: 'ink', brS: 'ink', J: .9, swk: 1.3, rim: '#FFB070', glowK: 0, shadow: '#4A2614', hatch: '#3A1A08'
 };
 // Mix two palettes (hex colours blend, the rest switch at the halfway point): the amber swap in the last chorus.
 function aiPalMix(a, b, k) {
@@ -157,6 +157,8 @@ function aiHeartPts(cx, cy, r, n = 22) {
   const p = []; for (let i = 0; i < n; i++) { const a = i / n * TAU; p.push([cx + 16 * Math.pow(Math.sin(a), 3) * r / 16, cy - (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * r / 16]); }
   return p;
 }
+// Light pencil hatching for a shadow shape (scaled to her size): pass as aiPaint's hatch option.
+const aiHatch = (col, ang = .9, k = 1) => ({ d: clamp(AI_S.u * .055, 2.6, 9) * k, a: ang, o: { rand: .2 }, b: 'HB', c: col || AI_S.P.hatch, w: clamp(AI_S.u / 120, .35, .9) });
 // Rotate a point around a pivot.
 const aiRot = (p, c, a) => { const s = Math.sin(a), k = Math.cos(a), dx = p[0] - c[0], dy = p[1] - c[1]; return [c[0] + dx * k - dy * s, c[1] + dx * s + dy * k]; };
 
@@ -244,6 +246,11 @@ function aiEye(H, cx, cy, s, wk, F, e) {
     if (kind === 'heart') aiPaint(map(aiHeartPts(ix, iy, w * .36)), { wash: P.pupil, ink: null });
     else aiPaint(inEye(ix, iy - .02 * h, rx * .4 * pr, ry * .46 * pr, 12), { wash: P.pupil, ink: null });
     if (kind === 'perfect') aiPaint(inEye(ix, iy, rx * .62, ry * .62), { ink: P.iris3, sw: sw * .35 });   // a thin bright ring
+    if (S.k > 20) for (const a of [-.5, 0, .5]) {   // fine streaks radiating down from the pupil
+      const x0 = ix + Math.sin(a) * rx * .32, y0 = iy + Math.cos(a) * ry * .4, x1 = ix + Math.sin(a) * rx * .7, y1 = iy + Math.cos(a) * ry * .78;
+      if (y1 < bot((x1 + w) / (2 * w)) && y0 > top((x0 + w) / (2 * w))) aiLine(map([[x0, y0], [x1, y1]]), sw * .25, mixCol(P.iris1, P.iris3, .5));
+    }
+    aiPaint(ISh, { ink: mixCol(P.iris0, P.lash, .5), sw: sw * .4 });
   }
   // the lid's shadow on the eyeball
   const LS = []; for (let i = 0; i <= N; i++) LS.push([lerpU(i / N), top(i / N)]);
@@ -259,6 +266,7 @@ function aiEye(H, cx, cy, s, wk, F, e) {
     } else {
       aiPaint(inEye(hx, hy, w * .27, h * .2, 10), { wash: P.hi, ink: null });
       aiPaint(inEye(ix + side * .34 * w, iy + .44 * h, w * .12, h * .09, 8), { wash: P.hi, ink: null });
+      aiPaint(inEye(ix - side * .02 * w, iy + .18 * h, w * .05, h * .04, 6), { wash: P.hi, ink: null, op: 200 });
       if (kind === 'wide') aiPaint(inEye(ix + side * .05 * w, iy - .62 * h, w * .07, h * .06, 6), { wash: P.hi, ink: null });
     }
   }
@@ -282,6 +290,7 @@ function aiEye(H, cx, cy, s, wk, F, e) {
   // lower lid: a short soft line, and a double-lid crease above
   const lo = []; for (let i = 4; i <= N - 1; i++) lo.push([lerpU(i / N), bot(i / N) + .03 * h]);
   aiLine(map(lo), sw * .45, mixCol(P.lash, P.skinSh, .35));
+  for (const [u0, dx, dy] of [[.74, .05, .16], [.86, .09, .13]]) { const b0 = [lerpU(u0), bot(u0) + .03 * h]; aiLine(map([b0, [b0[0] + dx * w, b0[1] + dy * h]]), sw * .3, mixCol(P.lash, P.skinSh, .3)); }
   if (c < .5) { const cr = []; for (let i = 3; i <= 11; i++) cr.push([lerpU(i / N) + .04 * w, top0(i / N) - th(i / N) - .2 * h]); aiLine(map(cr), sw * .3, mixCol(P.lash, P.skin, .45)); }
 }
 
@@ -327,6 +336,8 @@ function aiFin(H, ax, ay, s, lift, L, flap = 0) {
   const inn = [[.0, .1], [.3, .1], [.6, .05], [.9, .1, 1], [.74, .16], [.66, .2], [.54, .2], [.44, .27], [.3, .28], [.18, .34], [.04, .3]];
   aiPaint(aiLoop(M(inn), 3), { wash: P.finIn, ink: null });
   aiLine(M([[.1, -.12], [.45, -.14], [.78, -.04]]), sw * .35, mixCol(P.fin, P.finIn, .45));
+  aiLine(M([[.08, .0], [.4, -.02], [.7, .02]]), sw * .28, mixCol(P.fin, P.finIn, .3));
+  aiLine(M([[-.02, -.2], [.3, -.25], [.6, -.18]]), sw * .3, mixCol(P.fin, P.hi, .35));
 }
 
 // ---------- hair ----------
@@ -342,7 +353,12 @@ function aiClump(Pts, Wd, o = {}) {
     const side = hash(b + (o.seed || 0) * 1.7) < .5 ? .3 : .7, apex = [lerp(E.L[ic][0], E.R[ic][0], side), lerp(E.L[ic][1], E.R[ic][1], side)];
     aiPaint([apex].concat(E.L.slice(ie)).concat(E.R.slice(ie).reverse()), { wash: col, ink: null, op: o.op ?? 255 });
   }
-  aiPaint(aiRibPts(E), { ink: C.hairInk, sw: (o.sw ?? S.sw * .75) * .85 });
+  if (o.shade) aiPaint(E.R.slice(Math.round(m * .08), Math.round(m * .7)).concat(E.C.slice(Math.round(m * .08), Math.round(m * .7)).reverse()), { wash: C.hair0, op: 80, ink: null, hatch: S.u > 30 ? aiHatch(C.hair0, .5) : null });
+  aiPaint(aiRibPts(E), { ink: C.hairInk, sw: (o.sw ?? S.sw * .75) * (o.fine ? .85 : .7), br: o.fine ? S.P.br : S.P.brS });
+  if (o.hi !== false && m > 8) {   // a light streak on the lit edge
+    const a = Math.round(m * (o.hiA ?? .14)), b = Math.round(m * (o.hiB ?? .5));
+    aiLine(E.C.slice(a, b).map((p, i) => [lerp(p[0], E.L[a + i][0], .62), lerp(p[1], E.L[a + i][1], .62)]), S.sw * .38, mixCol(C.hair2, C.hair4, .45));
+  }
   if (o.strand !== false) {   // a strand line down the clump's upper part
     const a = Math.round(m * .1), b = Math.round(m * (o.strandTo ?? .6)), f = o.strandSide ?? .3;
     aiLine(E.C.slice(a, b).map((p, i) => [lerp(p[0], E.L[a + i][0], f), lerp(p[1], E.L[a + i][1], f)]), S.sw * .32, mixCol(C.hairInk, C.hair2, .35));
@@ -369,6 +385,15 @@ function aiBackHair(H, Hf, view, sway) {
   const sh = q ? -.12 : 0, wq = s => q ? (s < 0 ? 1.12 : .82) : 1;
   const back = [[-.92, -.3], [-1.02, .6], [-1.12, len * .45], [-.95, len * .7], [.95, len * .7], [1.12, len * .45], [1.02, .6], [.92, -.3], [0, -1.0]];
   aiPaint(aiLoop(back.map(([a, b]) => H(a * wq(a) + sh, b)), 4), { wash: mixCol(C.hair0, C.hair1, .55), ink: null });
+  // under-layer: darker locks between and behind the main ones (depth)
+  for (const s of [-1, 1]) for (let j = 0; j < 4; j++) {
+    const key = 60 + j * 2 + (s > 0 ? 1 : 0), w = wq(s), tipL = len * (.8 + .12 * hash(key));
+    const x1 = (sp - .15 + (j - 1.5) * .22), amp = (.18 + .06 * hash(key + 2)) * (len > 4 ? 1.5 : 1);
+    const pts = aiWave(.85 + .05 * j, -.3 + .12 * j, x1, tipL, 1, amp, j * .7 + 2.1 + (s > 0 ? .5 : 0), 0, 7, .18)
+      .map(([a, b], i) => H(s * (i === 1 ? Math.max(a, .96 + .06 * j) : a) * w + sh + sway * .8 * Math.pow(i / 7, 1.6), b));
+    const wd = .6 * k * (len > 4 ? 1.2 : 1);
+    aiClump(pts, [wd * .3, wd * .7, wd, wd * .95, wd * .8, wd * .6, wd * .34, wd * .04], { sw: AI_S.sw * .6, seed: key, strand: false, hi: false, shade: true, bands: [[0, C.hair0], [.4, mixCol(C.hair1, C.hair0, .3)], [.62, mixCol(C.hair2, C.hair1, .3)], [.83, C.hair3]] });
+  }
   for (const s of [-1, 1]) for (let j = 0; j < 5; j++) {
     const key = j * 2 + (s > 0 ? 1 : 0), tipL = len * (.88 + .14 * hash(key + 3)), w = wq(s);
     const x1 = (sp + (j - 2.4) * .2) * (j === 4 ? 1.06 : 1);
@@ -379,7 +404,7 @@ function aiBackHair(H, Hf, view, sway) {
     aiClump(pts, [wd * .35, wd * .75, wd * 1.02, wd * .95, wd * .82, wd * .62, wd * .36, wd * .04], { sw: AI_S.sw * .7, seed: key, strandTo: .5, bands: [[0, C.hair1], [.45, C.hair2], [.66, C.hair3], [.85, C.hair4]] });
     if (j >= 3) {   // a stray strand peeling off near the tip
       const st = pts.slice(4).map(([a, b], i) => [a + s * (.05 + .04 * i) * k, b + .05 * k * i]);
-      aiClump(st, [wd * .3, wd * .22, wd * .12, wd * .02], { bands: [[0, C.hair2], [.4, C.hair3], [.7, C.hair4]], strand: false, sw: AI_S.sw * .5, seed: key + 40 });
+      aiClump(st, [wd * .3, wd * .22, wd * .12, wd * .02], { bands: [[0, C.hair2], [.4, C.hair3], [.7, C.hair4]], strand: false, hi: false, fine: true, sw: AI_S.sw * .5, seed: key + 40 });
     }
   }
 }
@@ -390,6 +415,8 @@ function aiSideLocks(H, Hf, view, sway, only) {
   for (const s of [-1, 1]) {
     if (only && only !== s) continue;
     const near = !q || s < 0, x0 = q ? (s < 0 ? -.86 : .9) : s * .86, ln = Hf.side * (near ? 1 : .82);
+    const back = aiWave(0, -.05, .22, ln * .9, 1, .14, s > 0 ? 3 : .4, 0, 5, .1).map(([a, b], i) => H(x0 + s * (.12 + a) * (q && s > 0 ? .5 : 1) + sway * Math.pow(i / 5, 1.5), b));
+    aiClump(back, [.16, .24, .22, .18, .1, .02].map(v => v * k), { bands: [[0, C.hair0], [.4, C.hair1], [.64, C.hair2], [.84, C.hair3]], strand: false, hi: false, seed: s + 29 });
     const raw = aiWave(.86, -.12, 1.08, ln, 1, ln > 2.2 ? .22 : .15, s > 0 ? 2.2 : 1.2, 0, 6, .12);
     const pts = raw.map(([a, b], i) => H(x0 + s * (a - .86) * (q && s > 0 ? .5 : 1) + sway * Math.pow(i / 6, 1.5), b));
     const w0 = (near ? .34 : .24) * k;
@@ -434,6 +461,16 @@ function aiCap(H, V, view) {
   const notches = view === 'side' ? [[.88, -.06], [.74, -.04], [.55, -.06]] : AI_BANGS.filter(b => !b[2]).slice(1, -1).filter((b, i) => i % 3 === 0).map(b => [V.bx(b[0]), b[1]]);
   for (const [nx, ny] of notches) aiLine([H(nx, ny), H(nx * .85, ny - .2), H(nx * .62, ny - .4)], sw * .35, C.hair0);
   if (view !== 'side') for (const [l, r, tx, ty] of AI_BANGC) { const mx = V.bx(lerp(l, r, .55)); aiLine([H(mx * .8, -.45), H(lerp(mx, V.bx(tx), .6), ty * .45), H(V.bx(tx), ty - .08)], sw * .3, mixCol(C.hair0, C.hair1, .4)); }
+  if (view !== 'side') {   // a few locks lying over the bangs, for layering
+    for (const [x0, x1, y1, w0] of [[-.5, -.66, .3, .16], [.1, -.02, .44, .13], [.55, .74, .32, .15]]) {
+      const pts = [[x0 * .7, -.62], [lerp(x0, x1, .45), -.15], [lerp(x0, x1, .85), y1 * .7], [x1, y1]].map(([a, b]) => H(V.bx(a), b));
+      aiClump(pts, [w0 * .7, w0, w0 * .7, .01].map(v => v * S.k), { bands: [[0, mixCol(C.hair1, C.hair2, .3)], [.7, C.hair2]], strand: false, hi: false, fine: true, sw: sw * .55, seed: x0 * 10 });
+    }
+  }
+  // flyaways: stray hairs off the silhouette
+  const fly = view === 'side' ? [[[-.3, -1.05], [-.5, -1.2], [-.72, -1.18]], [[-1.0, -.4], [-1.18, -.5], [-1.28, -.42]], [[.6, -.85], [.75, -1.0], [.9, -1.02]]]
+    : [[[-.55, -.86], [-.72, -1.04], [-.92, -1.06]], [[.3, -1.0], [.42, -1.16], [.56, -1.2]], [[-1.04, -.2], [-1.22, -.32], [-1.34, -.26]], [[1.05, .05], [1.24, -.04], [1.32, .04]], [[.96, -.5], [1.1, -.66], [1.2, -.64]]];
+  for (const f of fly) aiLine(f.map(([a, b]) => H(view === 'side' ? a : V.bx(a) * (Math.abs(a) > 1 ? 1 : 1), b)), sw * .3, C.hairInk, S.P.br);
   if (view === 'side') {
     aiPaint([H(.05, -.72), H(.4, -.66), H(.62, -.5), H(.5, -.47), H(.42, -.55), H(.3, -.5), H(.18, -.6), H(.05, -.56)], { wash: C.hairHi, ink: null });
   } else {
@@ -509,16 +546,21 @@ const AI_FORM = {
 };
 
 // A frilled band along a polyline: the scalloped edge sits d to the left of the path direction (d < 0: to the right).
+// Valley creases and fluting lines make it read as a real ruffle; o.double adds a deeper, shaded ruffle behind it.
 function aiFrill(Pts, d, n, o = {}) {
-  const S = AI_S, C = S.P, Cv = aiCurve(Pts, Math.max(4, Math.ceil(n * 7 / (Pts.length - 1)))), m = Cv.length, inner = [], outer = [];
+  const S = AI_S, C = S.P, Cv = aiCurve(Pts, Math.max(4, Math.ceil(n * 7 / (Pts.length - 1)))), m = Cv.length, inner = [], outer = [], outer2 = [];
   for (let i = 0; i < m; i++) {
     const a = Cv[Math.max(0, i - 1)], b = Cv[Math.min(m - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], dd = Math.hypot(dx, dy) || 1;
     const t = i / (m - 1), bump = Math.pow(Math.abs(Math.sin(t * n * Math.PI)), .5), r = d * (.5 + .5 * bump);
-    inner.push(Cv[i]); outer.push([Cv[i][0] - dy / dd * r, Cv[i][1] + dx / dd * r]);
+    const r2 = d * 1.45 * (.55 + .45 * Math.pow(Math.abs(Math.cos(t * n * Math.PI)), .5));
+    inner.push(Cv[i]); outer.push([Cv[i][0] - dy / dd * r, Cv[i][1] + dx / dd * r]); outer2.push([Cv[i][0] - dy / dd * r2, Cv[i][1] + dx / dd * r2]);
   }
-  aiPaint(inner.concat(outer.slice().reverse()), { wash: o.col || C.cream, ink: C.ink, sw: o.sw ?? S.sw * .55 });
-  for (let j = 1; j < n; j++) { const i = Math.round(j / n * (m - 1)); aiLine([inner[i], [lerp(inner[i][0], outer[i][0], .75), lerp(inner[i][1], outer[i][1], .75)]], S.sw * .3, C.creamSh); }
-  if (o.shade) aiPaint(inner.concat(inner.map((p, i) => [lerp(p[0], outer[i][0], .35), lerp(p[1], outer[i][1], .35)]).reverse()), { wash: C.creamSh, op: 110, ink: null });
+  const sw = o.sw ?? S.sw * .55;
+  if (o.double) aiPaint(inner.concat(outer2.slice().reverse()), { wash: mixCol(C.cream, C.creamSh, .45), ink: C.ink, sw: sw * .8 });
+  aiPaint(inner.concat(outer.slice().reverse()), { wash: o.col || C.cream, ink: C.ink, sw });
+  if (o.shade) aiPaint(inner.concat(inner.map((p, i) => [lerp(p[0], outer[i][0], .38), lerp(p[1], outer[i][1], .38)]).reverse()), { wash: C.creamSh, op: 120, ink: null });
+  for (let j = 1; j < n; j++) { const i = Math.round(j / n * (m - 1)); aiLine([inner[i], [lerp(inner[i][0], outer[i][0], .8), lerp(inner[i][1], outer[i][1], .8)]], S.sw * .3, mixCol(C.creamSh, C.ink, .15)); }
+  if (S.u > 25 && o.flute !== false) for (let j = 0; j < n; j++) { const i = Math.round((j + .5) / n * (m - 1)); aiLine([[lerp(inner[i][0], outer[i][0], .25), lerp(inner[i][1], outer[i][1], .25)], [lerp(inner[i][0], outer[i][0], .7), lerp(inner[i][1], outer[i][1], .7)]], S.sw * .22, C.creamSh); }
 }
 
 // A hand at p, pointing along angle a (rad, 0 = +x), length L. kind: relax | open | fist. th = thumb side (+1 / -1).
@@ -552,18 +594,24 @@ function aiArm(G, B, s, a, e, hand, part, dark) {
   if (part !== 'lower') {
     const up = [Sh, [lerp(Sh[0], E[0], .5), lerp(Sh[1], E[1], .5)], E];
     const R = aiRib(up, [Wd[0] * u, Wd[1] * u, Wd[1] * u], 4);
-    aiPaint(aiRibPts(R), { wash: navy, ink: C.ink, sw: sw * .8 });
+    aiPaint(aiRibPts(R), { wash: navy, ink: C.ink, sw: sw * .7, br: C.brS });
     const pc = [Sh[0] + d1[0] * .1 * u, Sh[1] + d1[1] * .1 * u - .04 * u];
-    aiPaint(aiEll(pc[0], pc[1], G.puff[0] * u, G.puff[1] * u, 18, Math.atan2(d1[1], d1[0]) - Math.PI / 2), { wash: navy, ink: C.ink, sw: sw * .8 });
+    const pa = Math.atan2(d1[1], d1[0]) - Math.PI / 2, PR = (x, y) => { const c = Math.cos(pa), n = Math.sin(pa); return [pc[0] + (x * c - y * n) * u, pc[1] + (x * n + y * c) * u]; };
+    aiPaint(aiEll(pc[0], pc[1], G.puff[0] * u, G.puff[1] * u, 18, pa), { wash: navy, ink: C.ink, sw: sw * .7, br: C.brS });
+    aiPaint(aiLoop([PR(-G.puff[0] * .7, -G.puff[1] * .55), PR(-G.puff[0] * .1, -G.puff[1] * .92), PR(G.puff[0] * .5, -G.puff[1] * .7), PR(0, -G.puff[1] * .5)], 3), { wash: dark ? C.navy : C.navyHi, op: 160, ink: null });
+    for (const k of [-.5, 0, .5]) aiLine([PR(k * G.puff[0] * .5, G.puff[1] * .85), PR(k * G.puff[0] * .8, G.puff[1] * .25)], sw * .3, sh);
     aiLine([[pc[0] - s * .1 * u, pc[1] - .1 * u], [pc[0] - s * .02 * u, pc[1] + .02 * u], [pc[0] - s * .08 * u, pc[1] + .14 * u]], sw * .4, dark ? C.navy : C.navyHi);
     aiLine([[pc[0] + s * .06 * u, pc[1] - .12 * u], [pc[0] + s * .1 * u, pc[1] + .08 * u]], sw * .35, sh);
   }
   if (part !== 'upper') {
     const fo = [E, [lerp(E[0], Wr[0], .5), lerp(E[1], Wr[1], .5)], Wr];
     const R = aiRib(fo, [Wd[1] * u, Wd[2] * u, Wd[3] * u], 4);
-    aiPaint(aiRibPts(R), { wash: navy, ink: C.ink, sw: sw * .8 });
+    aiPaint(aiRibPts(R), { wash: navy, ink: C.ink, sw: sw * .7, br: C.brS });
     aiPaint(aiEll(E[0], E[1], Wd[1] * u * .48, Wd[1] * u * .48, 12), { wash: navy, ink: null });
     aiLine([[lerp(E[0], Wr[0], .2) + s * .02 * u, lerp(E[1], Wr[1], .2)], [lerp(E[0], Wr[0], .7), lerp(E[1], Wr[1], .7)]], sw * .35, sh);
+    const nE = [-d2[1], d2[0]];   // elbow creases
+    for (const k of [.08, .18]) aiLine([[E[0] + d2[0] * k * u - nE[0] * .08 * u, E[1] + d2[1] * k * u - nE[1] * .08 * u], [E[0] + d2[0] * (k + .05) * u, E[1] + d2[1] * (k + .05) * u], [E[0] + d2[0] * k * u + nE[0] * .06 * u, E[1] + d2[1] * k * u + nE[1] * .06 * u]], sw * .28, sh);
+    aiLine(R.L.slice(2, R.L.length - 3).map((p, i) => [lerp(p[0], R.C[i + 2][0], .3), lerp(p[1], R.C[i + 2][1], .3)]), sw * .3, dark ? C.navy : C.navyHi);
     // gold cuff band and a small cream frill
     const n = [-d2[1], d2[0]], cw = Wd[3] * u * .62, c0 = [Wr[0] - d2[0] * .12 * u, Wr[1] - d2[1] * .12 * u];
     aiPaint([[c0[0] + n[0] * cw, c0[1] + n[1] * cw], [Wr[0] + n[0] * cw, Wr[1] + n[1] * cw], [Wr[0] - n[0] * cw, Wr[1] - n[1] * cw], [c0[0] - n[0] * cw, c0[1] - n[1] * cw]], { wash: C.gold, ink: C.ink, sw: sw * .4 });
@@ -585,12 +633,14 @@ function aiTail(G, view, sway) {
   const F = (x, y) => { const c = Math.cos(ang), n = Math.sin(ang); return [tip[0] + (x * c - y * n) * fl, tip[1] + (x * n + y * c) * fl]; };
   // flukes behind the stock of the tail
   const fluke = [F(-.25, 0), F(.05, -.3), F(.35, -.78), [...F(.62, -1.0), 1], F(.5, -.55), F(.42, -.15), [...F(.5, 0), 1], F(.42, .15), F(.5, .55), [...F(.62, 1.0), 1], F(.35, .78), F(.05, .3)];
-  aiPaint(aiLoop(fluke, 4), { wash: C.fin, ink: C.ink, sw: sw * .7 });
+  aiPaint(aiLoop(fluke, 4), { wash: C.fin, ink: C.ink, sw: sw * .65, br: C.brS });
   aiPaint(aiLoop([F(.1, .05), F(.4, .2), F(.5, .6), [...F(.58, .9), 1], F(.3, .6), F(.05, .25)], 3), { wash: C.finIn, ink: null, op: 200 });
   aiPaint(aiRibPts(E), { wash: C.fin, ink: null });
   const und = E.R.slice(Math.round(m * .1)).concat(E.C.slice(Math.round(m * .1)).map((p, i) => [lerp(p[0], E.R[Math.round(m * .1) + i][0], .25), lerp(p[1], E.R[Math.round(m * .1) + i][1], .25)]).reverse());
   aiPaint(und, { wash: C.finIn, ink: null });
-  aiPaint(aiRibPts(E), { ink: C.ink, sw: sw * .7 });
+  aiPaint(aiRibPts(E), { ink: C.ink, sw: sw * .65, br: C.brS });
+  aiLine(E.L.slice(Math.round(m * .15), Math.round(m * .85)).map((p, i) => [lerp(p[0], E.C[Math.round(m * .15) + i][0], .3), lerp(p[1], E.C[Math.round(m * .15) + i][1], .3)]), sw * .35, mixCol(C.fin, C.finIn, .55));
+  for (const sd of [-1, 1]) aiLine([F(.1, sd * .12), F(.3, sd * .45), F(.45, sd * .75)], sw * .28, mixCol(C.fin, C.finIn, .4));
   for (let i = 0; i < 3; i++) { const j = Math.round(m * (.3 + i * .18)); aiLine([E.C[j], [lerp(E.C[j][0], E.R[j][0], .7), lerp(E.C[j][1], E.R[j][1], .7)]], sw * .3, mixCol(C.fin, C.finIn, .4)); }
 }
 
@@ -605,7 +655,7 @@ function aiLegs(G, B, view, swing) {
     const Kn = rot([hx + (view === 'side' ? .02 : 0) * u, knee * u]), An = rot([hx + (view === 'side' ? 0 : s * -.02) * u, ank * u]);
     const Ca = [lerp(Kn[0], An[0], .35), lerp(Kn[1], An[1], .35)];
     const R = aiRib([hp, Kn, Ca, An], [w * u, w * .8 * u, w * .88 * u, w * .55 * u], 5);
-    aiPaint(aiRibPts(R), { wash: far ? C.stockSh : C.stock, ink: C.ink, sw: sw * .6 });
+    aiPaint(aiRibPts(R), { wash: far ? C.stockSh : C.stock, ink: C.ink, sw: sw * .55, br: C.brS });
     aiLine(R.R.slice(Math.round(R.R.length * .3)), sw * .35, C.stockSh);
     // shoe: points along the foot direction (front: down and a little out; 3/4 and profile: toward screen-right)
     const ang = (view === 'front' ? Math.PI / 2 - s * .35 : .25) + (swing[s < 0 ? 0 : 1] || 0) * 1.4, L = shoe * u;
@@ -616,6 +666,8 @@ function aiLegs(G, B, view, swing) {
     aiPaint(aiLoop(sh, 4), { wash: far ? mixCol(C.shoe, C.ink, .3) : C.shoe, ink: C.ink, sw: sw * .6 });
     aiLine(fr ? [F(.15, -.4), F(.22, 0), F(.15, .4)] : [F(.05, -.3), F(.15, .0), F(.1, .26)], sw * .45, C.gold);
     aiLine(fr ? [F(.6, -.25), F(.72, .05)] : [F(.6, -.22), F(.9, -.12)], sw * .4, C.shoeHi);
+    if (u > 25) { const bk = fr ? F(.2, s * .22) : F(.12, -.08); aiPaint(aiEll(bk[0], bk[1], .045 * u, .04 * u, 8), { wash: C.gold, ink: C.ink, sw: sw * .25 }); }
+    aiLine(fr ? [F(.82, -.32), F(.95, 0), F(.82, .32)] : [F(-.2, .22), F(.4, .27), F(.95, .16)], sw * .3, mixCol(C.shoe, C.ink, .5));
   }
 }
 
@@ -623,19 +675,28 @@ function aiLegs(G, B, view, swing) {
 function aiSkirt(G, P, view) {
   const S = AI_S, C = S.P, u = S.u, sw = S.sw, [ty, tw, hy, hw] = G.skirt, n = 12;
   const hem = []; for (let i = 0; i <= n; i++) { const f = i / n; hem.push([lerp(-hw, hw, f), hy + .12 * Math.sin(f * Math.PI) + .045 * Math.sin(f * Math.PI * 9)]); }
-  aiFrill(hem.map(([a, b]) => P(a * 1.01, b - .05)), G.petti * u, 15, { shade: true });
+  aiFrill(hem.map(([a, b]) => P(a * 1.01, b - .05)), G.petti * u, 15, { shade: true, double: true });
   const sk = [[-tw, ty], [-tw - .2, ty + .75], [-lerp(tw, hw, .5) - .1, lerp(ty, hy, .5)], [-hw + .04, hy - .6], [hem[0][0], hem[0][1], 1], ...hem.slice(1, -1), [hem[n][0], hem[n][1], 1], [hw - .04, hy - .6], [lerp(tw, hw, .5) + .1, lerp(ty, hy, .5)], [tw + .2, ty + .75], [tw, ty]];
-  aiPaint(aiLoop(sk.map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 4), { wash: C.navy, ink: C.ink, sw });
+  aiPaint(aiLoop(sk.map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 4), { wash: C.navy, ink: C.ink, sw: sw * .85, br: C.brS });
   // shadow side (light from the upper left), folds, a dry highlight
-  aiPaint(aiLoop([[tw * .5, ty + .1], [tw + .17, ty + .75], [lerp(tw, hw, .5) + .07, lerp(ty, hy, .5)], [hw - .07, hy - .6], [hw - .04, hy + .02, 1], [hw * .6, hy + .1, 1], [hw * .46, lerp(ty, hy, .62)], [tw * .55, ty + 1.3]].map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 3), { wash: C.navySh, op: 190, ink: null });
-  for (const f of [.16, .36, .58, .8]) aiLine([P(lerp(-tw, tw, f) * 1.2, ty + 1.1), P(lerp(-hw, hw, f) * .9, lerp(ty, hy, .6)), P(lerp(-hw, hw, f) * .98, hy + .06)], sw * .4, f > .5 ? C.ink : C.navySh);
+  aiPaint(aiLoop([[tw * .5, ty + .1], [tw + .17, ty + .75], [lerp(tw, hw, .5) + .07, lerp(ty, hy, .5)], [hw - .07, hy - .6], [hw - .04, hy + .02, 1], [hw * .6, hy + .1, 1], [hw * .46, lerp(ty, hy, .62)], [tw * .55, ty + 1.3]].map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 3), { wash: C.navySh, op: 190, ink: null, hatch: u > 30 ? aiHatch(C.hatch, .95) : null });
+  for (const [f, y0] of [[.08, .35], [.2, .7], [.33, .25], [.47, .55], [.6, .3], [.73, .62], [.86, .4]]) aiLine([P(lerp(-tw, tw, f) * 1.15, lerp(ty, hy, y0 * .45)), P(lerp(-hw, hw, f) * .92, lerp(ty, hy, .55 + y0 * .2)), P(lerp(-hw, hw, f) * .99, hy + .06)], sw * (.3 + .15 * (f > .5)), f > .5 ? C.ink : C.navySh);
+  aiLine([P(-tw - .16, ty + .8), P(-lerp(tw, hw, .5) - .05, lerp(ty, hy, .5)), P(-hw + .1, hy - .4)], sw * .4, C.navyHi);
   aiPaint(aiLoop([[-tw - .05, ty + .5], [-tw - .14, ty + .9], [-lerp(tw, hw, .5) - .02, lerp(ty, hy, .5)], [-hw * .9, hy - .3], [-hw * .78, hy - .35], [-lerp(tw, hw, .5) + .14, lerp(ty, hy, .5)], [-tw + .05, ty + .9]].map(p => P(p[0], p[1])), 3), { wash: C.navyHi, op: 110, ink: null });
   // embroidery: two gold lines along the hem with little leaf scrolls between them
   for (const off of [.2, .34]) aiLine(hem.map(([a, b]) => P(a * .98, b - off)), sw * .38, C.gold);
-  for (let i = 1; i < G.emb; i++) {
-    const f = i / G.emb, j = f * n, hb = lerp(hem[Math.floor(j)][1], hem[Math.min(n, Math.ceil(j))][1], j % 1), x = lerp(-hw, hw, f) * .98, y = hb - .27, d = i % 2 ? 1 : -1;
-    aiLine([P(x - .07, y + .02 * d), P(x, y - .03 * d), P(x + .07, y + .02 * d)], sw * .35, C.gold);
-    aiLine([P(x + .07, y + .02 * d), P(x + .1, y - .02 * d)], sw * .3, C.gold);
+  const hemY = x => { const j = (x / hw * .5 + .5) * n, a = clamp(Math.floor(j), 0, n), b = clamp(Math.ceil(j), 0, n); return lerp(hem[a][1], hem[b][1], j % 1); };
+  const vine = []; for (let i = 0; i <= 36; i++) { const x = lerp(-hw, hw, i / 36) * .97; vine.push(P(x, hemY(x) - .27 + .035 * Math.sin(i * 1.45))); }
+  aiLine(vine, sw * .3, C.gold);
+  for (let i = 1; i < G.emb * 2; i++) {   // little curls on the vine and gold sprigs above the border
+    const x = lerp(-hw, hw, i / (G.emb * 2)) * .97, y = hemY(x) - .27, d = i % 2 ? 1 : -1;
+    aiLine([P(x, y), P(x + .05 * d, y - .05), P(x + .1 * d, y - .02), P(x + .07 * d, y + .02)], sw * .26, C.gold);
+    if (i % 2 === 0 && u > 25) {
+      const yb = y - .1;
+      aiLine([P(x, yb), P(x + .03, yb - .14), P(x - .01, yb - .28)], sw * .26, C.gold);
+      aiLine([P(x + .02, yb - .1), P(x + .1, yb - .16)], sw * .24, C.gold); aiLine([P(x + .01, yb - .18), P(x - .08, yb - .24)], sw * .24, C.gold);
+      aiPaint(aiEll(...P(x - .01, yb - .31), .025 * u, .025 * u, 6), { wash: C.gold, ink: null });
+    }
   }
   if (C.glowK) aiLine([P(-tw - .1, ty + .6), P(-lerp(tw, hw, .5) - .06, lerp(ty, hy, .5)), P(-hw + .1, hy - .3)], sw * .6, C.rim);
 }
@@ -647,8 +708,10 @@ function aiTorso(G, P, view) {
   aiPaint(aiLoop([P(-nw, nt), P(nw, nt), P(nw * 1.05, nt + .2), P(0, nt + .3), P(-nw * 1.05, nt + .2)], 3), { wash: C.skinSh, ink: null });
   const mw = (G.armW + G.waistW) / 2 + .03, my = (G.armpitY + wy) / 2;
   const bod = [[-.17, nb - .03], [-.46, sy], [-G.shW, sy + .07, 1], [-G.armW, G.armpitY], [-mw, my], [-G.waistW, wy + .03], [G.waistW, wy + .03], [mw, my], [G.armW, G.armpitY], [G.shW, sy + .07, 1], [.46, sy], [.17, nb - .03]];
-  aiPaint(aiLoop(bod.map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 3), { wash: C.navy, ink: C.ink, sw: sw * .85 });
-  aiPaint(aiLoop([[G.armW * .55, G.armpitY + .05], [G.armW, G.armpitY], [mw, my], [G.waistW, wy + .02], [G.waistW * .6, wy], [mw * .7, my]].map(p => P(p[0], p[1])), 3), { wash: C.navySh, op: 170, ink: null });
+  aiPaint(aiLoop(bod.map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1])), 3), { wash: C.navy, ink: C.ink, sw: sw * .75, br: C.brS });
+  aiPaint(aiLoop([[G.armW * .55, G.armpitY + .05], [G.armW, G.armpitY], [mw, my], [G.waistW, wy + .02], [G.waistW * .6, wy], [mw * .7, my]].map(p => P(p[0], p[1])), 3), { wash: C.navySh, op: 170, ink: null, hatch: u > 30 ? aiHatch(C.hatch, 1.1) : null });
+  aiLine([P(-G.shW + .08, sy + .14), P(-G.armW + .06, G.armpitY), P(-mw + .07, my), P(-G.waistW + .06, wy - .02)], sw * .38, C.navyHi);
+  for (const s of [-1, 1]) aiLine([P(s * .3, by + .02), P(s * .27, (by + wy) / 2), P(s * .3, wy)], sw * .3, C.navySh);
   // blouse
   const bl = [[-.15, nb - .04], [.15, nb - .04], [.33, nb + .26], [.37, by], [0, by + .05], [-.37, by], [-.33, nb + .26]];
   aiPaint(aiLoop(bl.map(p => P(p[0], p[1])), 3), { wash: C.cream, ink: C.ink, sw: sw * .55 });
@@ -675,10 +738,12 @@ function aiBowTie(G, P) {
   for (const sd of [-1, 1]) aiPaint(aiLoop(B([[sd * .04, .05], [sd * .1, .2], [sd * .13, .36, 1], [sd * .18, .3], [sd * .23, .35, 1], [sd * .1, .03]]), 3), { wash: C.navySh, ink: C.ink, sw: sw * .4 });
   for (const sd of [-1, 1]) {
     aiPaint(aiLoop(B([[0, 0, 1], [sd * .1, -.11], [sd * .25, -.12], [sd * .29, .02], [sd * .23, .12], [sd * .08, .07]]), 4), { wash: C.navy, ink: C.ink, sw: sw * .45 });
-    aiLine(B([[sd * .07, .0], [sd * .18, -.04]]), sw * .3, C.navyHi);
+    aiLine(B([[sd * .07, -.03], [sd * .17, -.08], [sd * .25, -.07]]), sw * .32, C.navyHi);
+    aiLine(B([[sd * .08, .03], [sd * .17, .05], [sd * .23, .09]]), sw * .28, C.navySh);
   }
   aiPaint(B([[0, -.08], [.06, 0], [0, .08], [-.06, 0]]), { wash: C.gem, ink: C.ink, sw: sw * .35 });
-  aiPaint(B([[-.015, -.04], [.015, -.02], [-.01, .0]]), { wash: '#FFFFFF', op: 200, ink: null });
+  if (u > 25) { aiLine(B([[0, -.08], [0, .08]]), sw * .2, mixCol(C.gem, C.ink, .4)); aiLine(B([[-.06, 0], [.06, 0]]), sw * .2, mixCol(C.gem, C.ink, .4)); }
+  aiPaint(B([[-.02, -.05], [.012, -.025], [-.015, -.005]]), { wash: '#FFFFFF', op: 220, ink: null });
   if (C.glowK && u > 35) glow(c[0], c[1], .35 * z, C.rim, .8 * C.glowK);
 }
 
@@ -686,11 +751,11 @@ function aiBowTie(G, P) {
 function aiApron(G, P, view) {
   const S = AI_S, C = S.P, u = S.u, sw = S.sw, [ty, tw, by, bw, fr] = G.apron, my = lerp(ty, by, .55);
   const Q = pts => pts.map(p => p[2] ? [...P(p[0], p[1]), 1] : P(p[0], p[1]));
-  aiFrill(Q([[-tw * 1.02, ty + .3], [-bw * .9, my], [-bw * 1.01, by - .35], [-bw * .82, by], [0, by + .07], [bw * .82, by], [bw * 1.01, by - .35], [bw * .9, my], [tw * 1.02, ty + .3]]), fr * u, 16, { shade: true });
+  aiFrill(Q([[-tw * 1.02, ty + .3], [-bw * .9, my], [-bw * 1.01, by - .35], [-bw * .82, by], [0, by + .07], [bw * .82, by], [bw * 1.01, by - .35], [bw * .9, my], [tw * 1.02, ty + .3]]), fr * u, 16, { shade: true, double: true });
   const body = [[-tw, ty], [tw, ty], [bw * .88, my], [bw, by - .35], [bw * .82, by - .03], [0, by + .05], [-bw * .82, by - .03], [-bw, by - .35], [-bw * .88, my]];
   aiPaint(aiLoop(Q(body), 4), { wash: C.cream, ink: C.ink, sw: sw * .6 });
-  aiPaint(aiLoop(Q([[tw * .35, ty + .12], [tw * .95, ty + .1], [bw * .86, my], [bw * .97, by - .36], [bw * .75, by - .1], [bw * .55, my]]), 3), { wash: C.creamSh, op: 150, ink: null });
-  for (const f of [-.45, .15]) aiLine(Q([[f * tw, ty + .5], [f * bw * 1.05, lerp(ty, by, .6)], [f * bw * 1.1, by - .2]]), sw * .32, C.creamSh);
+  aiPaint(aiLoop(Q([[tw * .35, ty + .12], [tw * .95, ty + .1], [bw * .86, my], [bw * .97, by - .36], [bw * .75, by - .1], [bw * .55, my]]), 3), { wash: C.creamSh, op: 150, ink: null, hatch: u > 30 ? aiHatch(mixCol(C.creamSh, C.ink, .25), .9, 1.2) : null });
+  for (const [f, y0] of [[-.62, .2], [-.3, .45], [.02, .15], [.32, .4], [.6, .25]]) aiLine(Q([[f * tw, lerp(ty, by, y0 * .5)], [f * bw * 1.02, lerp(ty, by, .5 + y0 * .2)], [f * bw * 1.08, by - .15]]), sw * .3, C.creamSh);
   // the whale: a generic little sperm-ish whale with a spout
   const wc = P(bw * .34, by - .62), z = G.whale * u, W = pts => pts.map(([a, b, k]) => k ? [wc[0] + a * z, wc[1] + b * z, 1] : [wc[0] + a * z, wc[1] + b * z]);
   aiPaint(aiLoop(W([[-.5, .02], [-.44, -.2], [-.15, -.3], [.2, -.22], [.4, -.08], [.5, -.2], [.66, -.3, 1], [.6, -.06], [.72, .06, 1], [.48, .04], [.3, .16], [-.1, .2], [-.42, .16]]), 4), { wash: C.navy, ink: C.ink, sw: sw * .35 });
@@ -700,6 +765,7 @@ function aiApron(G, P, view) {
   // waistband
   const wy = G.waistY, ww = G.waistW + .04;
   aiPaint(Q([[-ww, wy - .07], [ww, wy - .07], [ww, wy + .08], [-ww, wy + .08]]), { wash: C.cream, ink: C.ink, sw: sw * .55 });
+  if (u > 25) aiLine(Q([[-ww + .03, wy + .045], [ww - .03, wy + .045]]), sw * .22, C.creamSh);
 }
 
 // ---------- profile body (full form, view 'side', facing screen-right) ----------
