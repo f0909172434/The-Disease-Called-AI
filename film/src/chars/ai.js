@@ -9,12 +9,17 @@
 //   o.pal      'default' | 'glow' | 'amber' (or a palette object); o.pal2 + o.palK cross-fade to a second palette
 //   face       eyes, mouth (smile cat open A I U E O frown wobble flat perfect), lookX/lookY (-1..1), blink (0..1, auto
 //              when undefined), lid (0..1 droop), brow (-1 raised .. 1 worried), blush 0..1, tilt (head, rad)
-//   body       float (u, hover height), dy/dx (u), sq (squash), rot, fin (-1 droop .. 1 perk), tail (sway phase add),
-//              aL/aR (upper-arm angle from hanging, + = out/up), eL/eR (elbow bend, + = forearm folds in), hand kinds
-//              handL/handR ('relax' | 'open' | 'fist'), hairLag (tips trail, u)
+//   body       float (u, hover height; default .25), bob (u, default a slow sine), dy/dx (u), sq (squash), rot (lean, rad,
+//              pivots at the feet), fin (-1 droop .. 1 perk), flap (fin flap, rad), ahoge (curl spring, rad), tail (sway
+//              phase), tailK (sway amount), aL/aR (upper-arm angle from hanging, + = out/up), eL/eR (elbow bend, + = forearm
+//              folds in; default: hands clasped at the apron), handL/handR ('relax' | 'open' | 'fist'), legL/legR (dangle,
+//              rad), hairLag (tips trail, head units), headDx/headDy (u), seed (blink phase), t (time; default T)
 //   fx         glitch 0..1 (slices of her slide sideways, cyan/magenta scan marks: the 503 outage), clip [x0,y0,x1,y1]
 //              (world px rectangle; only what's inside is painted: panels, phone screens), boilKey, emote/emoteK/emoteAge
-// aiFeel(name, t, over) = one emotion alive at t; aiEmotions(t, keys, o) = acted changes (see AI_EMO at the end).
+//   hooks      draw(u, H): paint extra things in her space after her (H maps head units to her local px)
+// aiFeel(name, t, over) = one emotion alive at t; aiEmotions(t, keys, o) = acted changes; aiTalk(t, t0, t1) = visemes.
+// Emotions (AI_EMO): smile gentle eager worried heart blank sad perfect. Loops: ai_sheet, ai_emotions, ai_faces, ai_face,
+// ai_glitch. Cost: ~150-450 ms per full figure at medium size (u ~ 90) on the CPU-only box, ~700-950 ms at u ~ 190.
 
 // ---------- palettes ----------
 const AI_PAL = {
@@ -85,9 +90,12 @@ function aiWarp(P) {
   return P.map((p, i) => {
     let x = p[0] + ox + J * .6 * Math.sin(i * f + ph), y = p[1] + oy + J * .6 * Math.cos(i * f * 1.3 + ph);
     if (S.warp) x += S.warp(y);
+    if (S.rot) { const c = Math.cos(S.rot), n = Math.sin(S.rot); return [x * c - y * n, x * n + y * c]; }
     return [x, y];
   });
 }
+// glow() at a point of her local space (follows her lean).
+function aiGlow(x, y, r, col, a) { const S = AI_S; if (S.rot) { const c = Math.cos(S.rot), n = Math.sin(S.rot); [x, y] = [x * c - y * n, x * n + y * c]; } glow(x, y, r, col, a); }
 // One painted shape: o = { wash, op (wash opacity), ink (null = none), sw (absolute), br, hatch }.
 function aiPaint(pts, o = {}) {
   const S = AI_S; if (pts.length < 3) return;
@@ -158,7 +166,7 @@ function aiHeartPts(cx, cy, r, n = 22) {
   return p;
 }
 // Light pencil hatching for a shadow shape (scaled to her size): pass as aiPaint's hatch option.
-const aiHatch = (col, ang = .9, k = 1) => ({ d: clamp(AI_S.u * .055, 2.6, 9) * k, a: ang, o: { rand: .2 }, b: 'HB', c: col || AI_S.P.hatch, w: clamp(AI_S.u / 120, .35, .9) });
+const aiHatch = (col, ang = .9, k = 1) => ({ d: Math.max(2.6, AI_S.u * .058) * k, a: ang, o: { rand: .2 }, b: 'HB', c: col || AI_S.P.hatch, w: clamp(AI_S.u / 120, .35, .9) });
 // Rotate a point around a pivot.
 const aiRot = (p, c, a) => { const s = Math.sin(a), k = Math.cos(a), dx = p[0] - c[0], dy = p[1] - c[1]; return [c[0] + dx * k - dy * s, c[1] + dx * s + dy * k]; };
 
@@ -275,6 +283,8 @@ function aiEye(H, cx, cy, s, wk, F, e) {
     for (let i = N - 1; i >= 3; i--) TF.push([lerpU(i / N), bot(i / N) + .04 * h]);
     aiPaint(map(TF), { wash: '#DDF6FF', op: 170, ink: null });
     aiPaint(inEye(ix - .25 * w, iy + .5 * h, w * .1, h * .07, 6), { wash: P.hi, ink: null });
+    const tp = X(w * .85, bot(.92) + .1 * h), r = h * .2 * S.k, ph = frac(T * .5 + (s > 0 ? .5 : 0)), dy = ph * 1.4 * h * S.k;   // a tear rolling off the outer corner
+    aiPaint(aiLoop([[tp[0], tp[1] + dy - 1.5 * r, 1], [tp[0] + .8 * r, tp[1] + dy + .2 * r], [tp[0], tp[1] + dy + .9 * r], [tp[0] - .8 * r, tp[1] + dy + .2 * r]], 4), { wash: '#CBEFFF', ink: P.line, sw: sw * .35 });
   }
   // upper lash: thick toward the outer corner, with a flick and two little lashes
   const th = u => h * (.09 + .24 * Math.pow(u, 1.3)) * (1 - c * .3);
@@ -384,15 +394,16 @@ function aiBackHair(H, Hf, view, sway) {
   const C = AI_S.P, len = Hf.len, sp = Hf.spread, q = view === 'q', k = AI_S.k;
   const sh = q ? -.12 : 0, wq = s => q ? (s < 0 ? 1.12 : .82) : 1;
   const back = [[-.92, -.3], [-1.02, .6], [-1.12, len * .45], [-.95, len * .7], [.95, len * .7], [1.12, len * .45], [1.02, .6], [.92, -.3], [0, -1.0]];
-  aiPaint(aiLoop(back.map(([a, b]) => H(a * wq(a) + sh, b)), 4), { wash: mixCol(C.hair0, C.hair1, .55), ink: null });
+  aiPaint(aiLoop(back.map(([a, b]) => H(a * (q ? (a < 0 ? 1.12 : .7) : 1) + sh, b)), 4), { wash: mixCol(C.hair0, C.hair1, .6), ink: null });
   // under-layer: darker locks between and behind the main ones (depth)
   for (const s of [-1, 1]) for (let j = 0; j < 4; j++) {
+    if (q && s > 0 && j < 2) continue;
     const key = 60 + j * 2 + (s > 0 ? 1 : 0), w = wq(s), tipL = len * (.8 + .12 * hash(key));
     const x1 = (sp - .15 + (j - 1.5) * .22), amp = (.18 + .06 * hash(key + 2)) * (len > 4 ? 1.5 : 1);
     const pts = aiWave(.85 + .05 * j, -.3 + .12 * j, x1, tipL, 1, amp, j * .7 + 2.1 + (s > 0 ? .5 : 0), 0, 7, .18)
       .map(([a, b], i) => H(s * (i === 1 ? Math.max(a, .96 + .06 * j) : a) * w + sh + sway * .8 * Math.pow(i / 7, 1.6), b));
     const wd = .6 * k * (len > 4 ? 1.2 : 1);
-    aiClump(pts, [wd * .3, wd * .7, wd, wd * .95, wd * .8, wd * .6, wd * .34, wd * .04], { sw: AI_S.sw * .6, seed: key, strand: false, hi: false, shade: true, bands: [[0, C.hair0], [.4, mixCol(C.hair1, C.hair0, .3)], [.62, mixCol(C.hair2, C.hair1, .3)], [.83, C.hair3]] });
+    aiClump(pts, [wd * .3, wd * .7, wd, wd * .95, wd * .8, wd * .6, wd * .34, wd * .04], { sw: AI_S.sw * .6, seed: key, strand: false, hi: false, shade: true, bands: [[0, mixCol(C.hair0, C.hair1, .5)], [.4, mixCol(C.hair1, C.hair0, .2)], [.62, mixCol(C.hair2, C.hair1, .3)], [.83, C.hair3]] });
   }
   for (const s of [-1, 1]) for (let j = 0; j < 5; j++) {
     const key = j * 2 + (s > 0 ? 1 : 0), tipL = len * (.88 + .14 * hash(key + 3)), w = wq(s);
@@ -416,7 +427,7 @@ function aiSideLocks(H, Hf, view, sway, only) {
     if (only && only !== s) continue;
     const near = !q || s < 0, x0 = q ? (s < 0 ? -.86 : .9) : s * .86, ln = Hf.side * (near ? 1 : .82);
     const back = aiWave(0, -.05, .22, ln * .9, 1, .14, s > 0 ? 3 : .4, 0, 5, .1).map(([a, b], i) => H(x0 + s * (.12 + a) * (q && s > 0 ? .5 : 1) + sway * Math.pow(i / 5, 1.5), b));
-    aiClump(back, [.16, .24, .22, .18, .1, .02].map(v => v * k), { bands: [[0, C.hair0], [.4, C.hair1], [.64, C.hair2], [.84, C.hair3]], strand: false, hi: false, seed: s + 29 });
+    if (near) aiClump(back, [.16, .24, .22, .18, .1, .02].map(v => v * k), { bands: [[0, C.hair1], [.45, C.hair2], [.68, C.hair3], [.86, C.hair4]], strand: false, hi: false, seed: s + 29 });
     const raw = aiWave(.86, -.12, 1.08, ln, 1, ln > 2.2 ? .22 : .15, s > 0 ? 2.2 : 1.2, 0, 6, .12);
     const pts = raw.map(([a, b], i) => H(x0 + s * (a - .86) * (q && s > 0 ? .5 : 1) + sway * Math.pow(i / 6, 1.5), b));
     const w0 = (near ? .34 : .24) * k;
@@ -459,12 +470,12 @@ function aiCap(H, V, view) {
     aiPaint(cr, { wash: C.hair0, op: 120, ink: null });
   }
   const notches = view === 'side' ? [[.88, -.06], [.74, -.04], [.55, -.06]] : AI_BANGS.filter(b => !b[2]).slice(1, -1).filter((b, i) => i % 3 === 0).map(b => [V.bx(b[0]), b[1]]);
-  for (const [nx, ny] of notches) aiLine([H(nx, ny), H(nx * .85, ny - .2), H(nx * .62, ny - .4)], sw * .35, C.hair0);
-  if (view !== 'side') for (const [l, r, tx, ty] of AI_BANGC) { const mx = V.bx(lerp(l, r, .55)); aiLine([H(mx * .8, -.45), H(lerp(mx, V.bx(tx), .6), ty * .45), H(V.bx(tx), ty - .08)], sw * .3, mixCol(C.hair0, C.hair1, .4)); }
+  for (const [nx, ny] of notches) aiLine([H(nx, ny), H(nx * .85, ny - .2), H(nx * .62, ny - .4)], sw * .3, mixCol(C.hair0, C.hair1, .45));
+  if (view !== 'side') for (const [l, r, tx, ty] of AI_BANGC) { const mx = V.bx(lerp(l, r, .55)); aiLine([H(mx * .8, -.45), H(lerp(mx, V.bx(tx), .6), ty * .45), H(V.bx(tx), ty - .08)], sw * .26, mixCol(C.hair0, C.hair1, .65)); }
   if (view !== 'side') {   // a few locks lying over the bangs, for layering
     for (const [x0, x1, y1, w0] of [[-.5, -.66, .3, .16], [.1, -.02, .44, .13], [.55, .74, .32, .15]]) {
       const pts = [[x0 * .7, -.62], [lerp(x0, x1, .45), -.15], [lerp(x0, x1, .85), y1 * .7], [x1, y1]].map(([a, b]) => H(V.bx(a), b));
-      aiClump(pts, [w0 * .7, w0, w0 * .7, .01].map(v => v * S.k), { bands: [[0, mixCol(C.hair1, C.hair2, .3)], [.7, C.hair2]], strand: false, hi: false, fine: true, sw: sw * .55, seed: x0 * 10 });
+      aiClump(pts, [w0 * .7, w0, w0 * .7, .01].map(v => v * S.k), { bands: [[0, mixCol(C.hair1, C.hair2, .3)], [.7, C.hair2]], strand: false, hi: false, fine: true, sw: sw * .4, seed: x0 * 10 });
     }
   }
   // flyaways: stray hairs off the silhouette
@@ -578,18 +589,19 @@ function aiHand(p, a, L, kind, th, chibi) {
     aiPaint(aiLoop(M([[0, -.25], [.42, -.3], [.6, -.34], [1.02, -.32, 1], [.66, -.17], [1.12, -.1, 1], [.68, 0], [1.06, .12, 1], [.64, .13], [.9, .3, 1], [.52, .28], [.45, .38], [.62, .62, 1], [.3, .5], [.0, .3]]), 3), { wash: C.skin, ink: C.ink, sw });
     return;
   }
-  // relaxed: fingers together, slightly curled, with the thumb tucked along the near edge
-  aiPaint(aiLoop(M([[.12, -.2], [.4, -.36], [.62, -.34], [.5, -.18], [.3, -.08]]), 3), { wash: C.skin, ink: C.ink, sw });
-  aiPaint(aiLoop(M([[0, -.22], [.52, -.26], [.9, -.16], [1.04, .02], [.92, .2], [.55, .25], [0, .23]]), 4), { wash: C.skin, ink: C.ink, sw });
-  aiLine(M([[.55, -.06], [.86, -.02]]), sw * .5, C.skinSh);
+  // relaxed: a tapered palm, the fingers together and gently curled (separations drawn), the thumb along the near edge
+  aiPaint(aiLoop(M([[.08, -.17], [.3, -.36], [.52, -.45], [.62, -.38], [.5, -.24], [.32, -.16]]), 3), { wash: C.skin, ink: C.ink, sw });
+  aiPaint(aiLoop(M([[0, -.21], [.28, -.26], [.52, -.27], [.8, -.24], [1.0, -.16], [1.08, -.03], [1.04, .11], [.92, .2], [.62, .26], [.3, .25], [0, .22]]), 4), { wash: C.skin, ink: C.ink, sw });
+  if (L > 14) for (const [y0, y1, x1] of [[-.13, -.1, .97], [.01, .03, 1.03], [.14, .15, .95]]) aiLine(M([[.56, y0], [.78, (y0 + y1) / 2 + .01], [x1, y1]]), sw * .45, mixCol(C.skinSh, C.ink, .25));
+  aiPaint(aiLoop(M([[.12, .05], [.45, .1], [.5, .2], [.15, .18]]), 3), { wash: C.skinSh, op: 130, ink: null });
 }
 
 // Arm on side s. part: 'upper' (puff and upper sleeve) | 'lower' (forearm, cuff, hand) | 'all'.
-function aiArm(G, B, s, a, e, hand, part, dark) {
+function aiArm(G, B, s, a, e, hand, part, dark, prof) {
   const S = AI_S, C = S.P, u = S.u, sw = S.sw, [lu, lf, lh] = G.arm, Wd = G.armWd;
   const Sh = [B(s * G.shW * 1.0) + -s * .06 * u, G.shY * u + .16 * u];
   const d1 = [s * Math.sin(a), Math.cos(a)], E = [Sh[0] + d1[0] * lu * u, Sh[1] + d1[1] * lu * u];
-  const a2 = a - e, d2 = [s * Math.sin(a2), Math.cos(a2)], rk = 1 - .3 * clamp(e / 1.0), Wr = [E[0] + d2[0] * lf * rk * u, E[1] + d2[1] * lf * rk * u];
+  const a2 = prof ? a + e : a - e, d2 = [s * Math.sin(a2), Math.cos(a2)], rk = 1 - .3 * clamp(e / 1.0), Wr = [E[0] + d2[0] * lf * rk * u, E[1] + d2[1] * lf * rk * u];
   const navy = dark ? C.navySh : C.navy, sh = dark ? mixCol(C.navySh, C.ink, .3) : C.navySh;
   if (part !== 'lower') {
     const up = [Sh, [lerp(Sh[0], E[0], .5), lerp(Sh[1], E[1], .5)], E];
@@ -691,11 +703,12 @@ function aiSkirt(G, P, view) {
   for (let i = 1; i < G.emb * 2; i++) {   // little curls on the vine and gold sprigs above the border
     const x = lerp(-hw, hw, i / (G.emb * 2)) * .97, y = hemY(x) - .27, d = i % 2 ? 1 : -1;
     aiLine([P(x, y), P(x + .05 * d, y - .05), P(x + .1 * d, y - .02), P(x + .07 * d, y + .02)], sw * .26, C.gold);
-    if (i % 2 === 0 && u > 25) {
-      const yb = y - .1;
-      aiLine([P(x, yb), P(x + .03, yb - .14), P(x - .01, yb - .28)], sw * .26, C.gold);
-      aiLine([P(x + .02, yb - .1), P(x + .1, yb - .16)], sw * .24, C.gold); aiLine([P(x + .01, yb - .18), P(x - .08, yb - .24)], sw * .24, C.gold);
-      aiPaint(aiEll(...P(x - .01, yb - .31), .025 * u, .025 * u, 6), { wash: C.gold, ink: null });
+    if (i % 2 === 0 && u > 25) {   // a curling gold sprig: S-stem, two leaves, a tiny three-dot flower
+      const yb = y - .1, k = i % 4 ? 1 : -1;
+      aiLine([P(x, yb), P(x + .05 * k, yb - .09), P(x - .01 * k, yb - .17), P(x + .04 * k, yb - .24)], sw * .24, C.gold);
+      aiLine([P(x + .03 * k, yb - .08), P(x + .11 * k, yb - .1), P(x + .07 * k, yb - .05)], sw * .22, C.gold);
+      aiLine([P(x, yb - .16), P(x - .08 * k, yb - .2), P(x - .05 * k, yb - .14)], sw * .22, C.gold);
+      for (const [dx, dy] of [[0, -.29], [.035, -.26], [-.03, -.26]]) aiPaint(aiEll(...P(x + .04 * k + dx, yb + dy), .018 * u, .018 * u, 6), { wash: C.gold, ink: null });
     }
   }
   if (C.glowK) aiLine([P(-tw - .1, ty + .6), P(-lerp(tw, hw, .5) - .06, lerp(ty, hy, .5)), P(-hw + .1, hy - .3)], sw * .6, C.rim);
@@ -744,7 +757,7 @@ function aiBowTie(G, P) {
   aiPaint(B([[0, -.08], [.06, 0], [0, .08], [-.06, 0]]), { wash: C.gem, ink: C.ink, sw: sw * .35 });
   if (u > 25) { aiLine(B([[0, -.08], [0, .08]]), sw * .2, mixCol(C.gem, C.ink, .4)); aiLine(B([[-.06, 0], [.06, 0]]), sw * .2, mixCol(C.gem, C.ink, .4)); }
   aiPaint(B([[-.02, -.05], [.012, -.025], [-.015, -.005]]), { wash: '#FFFFFF', op: 220, ink: null });
-  if (C.glowK && u > 35) glow(c[0], c[1], .35 * z, C.rim, .8 * C.glowK);
+  if (C.glowK && u > 35) aiGlow(c[0], c[1], .35 * z, C.rim, .8 * C.glowK);
 }
 
 // The apron: scalloped frill, waistband, soft shading and a small whale.
@@ -757,8 +770,9 @@ function aiApron(G, P, view) {
   aiPaint(aiLoop(Q([[tw * .35, ty + .12], [tw * .95, ty + .1], [bw * .86, my], [bw * .97, by - .36], [bw * .75, by - .1], [bw * .55, my]]), 3), { wash: C.creamSh, op: 150, ink: null, hatch: u > 30 ? aiHatch(mixCol(C.creamSh, C.ink, .25), .9, 1.2) : null });
   for (const [f, y0] of [[-.62, .2], [-.3, .45], [.02, .15], [.32, .4], [.6, .25]]) aiLine(Q([[f * tw, lerp(ty, by, y0 * .5)], [f * bw * 1.02, lerp(ty, by, .5 + y0 * .2)], [f * bw * 1.08, by - .15]]), sw * .3, C.creamSh);
   // the whale: a generic little sperm-ish whale with a spout
-  const wc = P(bw * .34, by - .62), z = G.whale * u, W = pts => pts.map(([a, b, k]) => k ? [wc[0] + a * z, wc[1] + b * z, 1] : [wc[0] + a * z, wc[1] + b * z]);
-  aiPaint(aiLoop(W([[-.5, .02], [-.44, -.2], [-.15, -.3], [.2, -.22], [.4, -.08], [.5, -.2], [.66, -.3, 1], [.6, -.06], [.72, .06, 1], [.48, .04], [.3, .16], [-.1, .2], [-.42, .16]]), 4), { wash: C.navy, ink: C.ink, sw: sw * .35 });
+  const wc = P(bw * .3, by - .62), z = G.whale * u * 1.35, W = pts => pts.map(([a, b, k]) => k ? [wc[0] + a * z, wc[1] + b * z, 1] : [wc[0] + a * z, wc[1] + b * z]);
+  aiPaint(aiLoop(W([[-.52, .04], [-.48, -.2], [-.25, -.32], [.05, -.3], [.3, -.18], [.44, -.06], [.54, -.22], [.7, -.34, 1], [.64, -.08], [.78, .04, 1], [.52, .04], [.34, .14], [0, .22], [-.36, .2]]), 4), { wash: C.navy, ink: C.ink, sw: sw * .35 });
+  aiLine(W([[.05, .05], [.12, .12]]), sw * .25, C.bow);
   aiLine(W([[-.42, .08], [-.1, .13], [.22, .07]]), sw * .3, C.bow);
   aiPaint(aiEll(...W([[-.3, -.07]])[0], .045 * z, .045 * z, 6), { wash: C.cream, ink: null });
   for (const [a, b] of [[[-.32, -.36], [-.42, -.58]], [[-.24, -.37], [-.2, -.6]], [[-.28, -.38], [-.3, -.64]]]) aiLine(W([a, b]), sw * .3, C.bow);
@@ -835,6 +849,10 @@ function aiHead(H, G, form, view, A) {
     const bg = AI_BANGS.map(b => [V.bx(b[0]), b[1] + .08, b[2]]);
     aiPaint(aiCurve(map(bg), 3).concat(map(bg.map(b => [b[0], b[1] - .35]).reverse())), { wash: C.skinSh, op: 210, ink: null });
   } else aiPaint(aiLoop(map([[.3, .02], [.9, -.06], [.9, .2], [.66, .24], [.42, .36]]), 3), { wash: C.skinSh, op: 200, ink: null });
+  if (view !== 'side') {   // 2-tone skin: a soft shadow down the shaded (screen-right) cheek and under the jaw
+    const sh = view === 'q' ? [[.62, .3], [.9, .3], [.86, .6], [.66, .95], [.4, 1.1], [.45, .98], [.66, .7]] : [[.72, .3], [.95, .28], [.88, .6], [.62, .9], [.3, 1.08], [.36, .97], [.62, .78], [.78, .55]];
+    aiPaint(aiLoop(map(sh), 3), { wash: C.skinSh, op: 120, ink: null });
+  }
   rs('fins');
   if (view === 'front') for (const s of [-1, 1]) aiFin(H, s * .88, F.finY, s, A.fin, F.finL, A.flap * s);
   else if (view === 'q') aiFin(H, -.88, F.finY, -1, A.fin, F.finL * 1.02, A.flap);
@@ -856,7 +874,7 @@ function aiHead(H, G, form, view, A) {
   rs('eyes');
   const eyePos = view === 'side' ? [[.56, -1, .52]] : V.eyes.map(([s, wk]) => [V.fx(s * F.eyeX), s, wk]);
   for (const [ex, s, wk] of eyePos) aiEye(H, ex, F.eyeY, s, wk, F, A.eye);
-  if (C.glowK && S.k > 25 && A.eye.kind !== 'blank' && A.eye.lid < .8) for (const [ex] of eyePos) { const p = H(ex, F.eyeY + .05); glow(p[0], p[1], F.eh * S.k * 1.5, C.rim, .55 * C.glowK); }
+  if (C.glowK && S.k > 25 && A.eye.kind !== 'blank' && A.eye.lid < .8) for (const [ex] of eyePos) { const p = H(ex, F.eyeY + .05); aiGlow(p[0], p[1], F.eh * S.k * 1.5, C.rim, .55 * C.glowK); }
   rs('sidelocks');
   const Hf = { len: G.len, spread: G.spread, side: G.side, frame: G.frame };
   if (view !== 'side') aiSideLocks(H, Hf, view, A.sway);
@@ -871,8 +889,8 @@ function aiHead(H, G, form, view, A) {
   rs('brows');
   for (const [ex, s, wk] of eyePos) {
     const w = F.ew * wk, h = F.eh, b = A.brow, by = F.eyeY - h * 1.62 - Math.max(0, -b) * .12;
-    const pts = [[-.7 * w, by + .02 - Math.max(0, b) * .14 + Math.max(0, -b) * .0], [0, by - .05 + Math.max(0, b) * .0], [.85 * w, by + .03 + Math.max(0, b) * .08]];
-    aiLine(aiCurve(map(pts.map(([a, c]) => [ex + s * a, c])), 4), swF * .45, mixCol(C.hair1, C.skin, .15));
+    const pts = [[-.7 * w, by + .02 - Math.max(0, b) * .2], [0, by - .05 - Math.max(0, b) * .04], [.85 * w, by + .03 + Math.max(0, b) * .1]];
+    aiLine(aiCurve(map(pts.map(([a, c]) => [ex + s * a, c])), 4), swF * (.45 + .35 * Math.abs(b)), mixCol(C.hair1, C.hairInk, .3 * Math.abs(b)));
   }
 }
 
@@ -890,8 +908,8 @@ function ai(x, y, u, o = {}) {
   let clip = null;
   if (o.clip) { const [a, b, c, d] = o.clip, xs = [(a - X) / sx, (c - X) / sx].sort((p, q) => p - q); clip = [xs[0], (b - Y) / sy, xs[1], (d - Y) / sy]; }
   const g = clamp(o.glitch || 0), gf = Math.floor(tt * 12);
-  const warp = g > 0 ? yy => { const band = Math.floor(yy / (u * .38)) + 300, r = hash(band * 7.13 + gf * 3.31 + 1); return r < g * .6 ? (hash(band * 1.7 + gf * .91) - .5) * 2.2 * g * u : 0; } : null;
-  AI_S = { P: pal, u, k: G.k * u, sw: clamp(u / 85, .22, 1.7) * pal.swk, swF: clamp(G.k * u / 75, .22, 1.5) * pal.swk, J: pal.J * u / 60, warp, clip };
+  const rotA = o.rot || 0, warp = g > 0 ? yy => { const band = Math.floor(yy / (u * .38)) + 300, r = hash(band * 7.13 + gf * 3.31 + 1); return r < g * .6 ? (hash(band * 1.7 + gf * .91) - .5) * 2.2 * g * u : 0; } : null;
+  AI_S = { P: pal, u, k: G.k * u, sw: clamp(u / 85, .22, 1.7) * pal.swk, swF: clamp(G.k * u / 75, .22, 1.5) * pal.swk, J: pal.J * u / 60, warp, clip, rot: rotA };
   const eyes = o.eyes || 'normal';
   const bl = ((tt * .85 + (o.seed || 0) * 1.37) % 3.9 + 3.9) % 3.9, autoBlink = bl < .05 ? bl / .05 : bl < .12 ? 1 : bl < .19 ? 1 - (bl - .12) / .07 : 0;
   const A = {
@@ -899,10 +917,10 @@ function ai(x, y, u, o = {}) {
     mouth: o.mouth || 'smile', brow: o.brow || 0, blush: o.blush ?? .3, fin: o.fin || 0, flap: o.flap ?? .07 * Math.sin(tt * TAU * .6 + 1),
     ahoge: (o.ahoge || 0) + .1 * Math.sin(tt * TAU * .7), sway: (o.hairLag || 0) + .1 * Math.sin(tt * TAU * .3 + 2),
   };
-  push(); translate(X, Y); if (o.rot) rotate(o.rot); scale(sx, sy);
+  push(); translate(X, Y); scale(sx, sy);
   rs('shadow');
   if (!o.noShadow) { const k = 1 / (1 + (fl + bob) * .4), sy0 = (fl + bob) * u; aiPaint(aiEll(0, sy0, 1.55 * u * k * (form === 'chibi' ? 1.1 : 1), .24 * u * k, 20), { wash: pal.shadow, op: 50, ink: null }); }
-  if (pal.glowK) { rs('halo'); glow(0, (form === 'chibi' ? -6.2 : -5.6) * u, 6 * u, pal.rim, .4 * pal.glowK); }
+  if (pal.glowK) { rs('halo'); aiGlow(0, (form === 'chibi' ? -6.2 : -5.6) * u, 6 * u, pal.rim, .4 * pal.glowK); }
   const qc = form === 'chibi' ? .1 : .12;
   const B = xx => (view === 'q' ? qc + xx * (xx < 0 ? 1 : .72) : xx) * u, P = (xx, yy) => [B(xx), yy * u];
   const hcx = view === 'q' ? B(0) - .05 * u : view === 'side' ? -.02 * u : 0, hc = [hcx + (o.headDx || 0) * u, (G.hc[1] + (o.headDy || 0)) * u], k = G.k * u;
@@ -919,7 +937,7 @@ function ai(x, y, u, o = {}) {
     rs('skirt'); aiBodySide(G, P, A, 'lower');
     rs('torso'); aiBodySide(G, P, A, 'upper');
     aiHead(H, G, form, view, A);
-    rs('armR'); aiArm(G, () => 0, 1, aR, eR, hR, 'all');
+    rs('armR'); aiArm(G, () => 0, 1, aR, eR * .45, hR, 'all', false, true);
   } else {
     if (view === 'q') { rs('armfar'); aiArm(G, B, 1, aR, eR, hR, 'all', true); }
     rs('legs'); aiLegs(G, B, view, swing);
@@ -945,7 +963,8 @@ function aiGlitchMarks(g, u, gf) {
   for (let i = 0; i < n; i++) {
     const r = hash(i * 3.7 + gf * 1.3), yy = -lerp(.5, 10, hash(i * 9.1 + gf * .7)) * u, x0 = (r - .5) * 3 * u, len = (.6 + 2.2 * hash(i + gf * 2.1)) * u;
     if (hash(i * 5.3 + gf) > g + .15) continue;
-    aiLine([[x0, yy], [x0 + len, yy]], S.sw * (.4 + g), i % 2 ? '#7FE9FF' : '#FF5FA2', 'inkfine');
+    aiLine([[x0, yy], [x0 + len, yy]], S.sw * (.7 + 1.4 * g), i % 2 ? '#7FE9FF' : '#FF5FA2', 'inkfine');
+    if (i % 2) aiLine([[x0 + len * .2, yy + .05 * u], [x0 + len * .9, yy + .05 * u]], S.sw * .5, '#E8FDFF', 'inkfine');
     if (i % 3 === 0) aiPaint([[x0, yy - .08 * u], [x0 + .3 * u, yy - .08 * u], [x0 + .3 * u, yy + .1 * u], [x0, yy + .1 * u]], { wash: i % 2 ? '#E8FDFF' : '#1B6FFF', op: 200, ink: null });
   }
 }
@@ -969,7 +988,7 @@ function aiEmote(kind, H, k, age) {
     for (let i = 0; i < 3; i++) {
       const tw = .7 + .3 * Math.sin(age * 9 + i * 2), [cx, cy] = at([1.1, 1.35, .95][i], [-.75, -.35, -1.15][i]), r = S.k * z * [.5, .32, .28][i] * tw;
       aiPaint(starPts(cx, cy, r, .3, 4), { wash: C.glowK ? '#E8FDFF' : '#FFF4C2', ink: C.ink, sw: sw * .8 });
-      if (C.glowK && i === 0 && S.k > 25) glow(cx, cy, r * 2.5, C.rim, .7);
+      if (C.glowK && i === 0 && S.k > 25) aiGlow(cx, cy, r * 2.5, C.rim, .7);
     }
   } else if (kind === 'note') {
     const [cx, cy] = at(1.15, -.7 + .08 * Math.sin(age * 5)), r = S.k * z;
@@ -1063,8 +1082,8 @@ LOOPS.ai_sheet = t => {
   if (!sk('2')) names.forEach((n, i) => {
     const x0 = 28 + i * (pw + 4);
     aiPanel(x0, py, pw, ph, i % 2 ? '#EEF3F7' : '#F4F1EA', 'e' + i);
-    const u = 104, cx = x0 + pw / 2, f = aiFeel(n, t);
-    ai(cx, py + 112 + 9.28 * u + (f.float ?? .25) * u, u, { ...f, form: 'full', view: 'front', t, seed: i, clip: [x0 + 2, py + 2, x0 + pw - 2, py + ph - 2], noShadow: true, bob: 0, dy: 0, sq: 0 });
+    const u = 118, cx = x0 + pw / 2, f = aiFeel(n, t);
+    ai(cx, py + 122 + 9.28 * u + (f.float ?? .25) * u, u, { ...f, form: 'full', view: 'front', t, seed: i, clip: [x0 + 2, py + 2, x0 + pw - 2, py + ph - 2], noShadow: true, bob: 0, dy: 0, sq: 0 });
     lab(n, cx, py + ph + 18, 20);
   });
   // row 3: palettes and the glitch
@@ -1113,27 +1132,20 @@ LOOPS.ai_faces = t => {
 };
 LOOPS.ai_faces.len = 2;
 
-LOOPS.ai_row1 = t => { AI_SKIP = '23'; LOOPS.ai_sheet(t); AI_SKIP = null; };
-LOOPS.ai_row1.len = 4;
-LOOPS.ai_row3 = t => { AI_SKIP = '12'; LOOPS.ai_sheet(t); AI_SKIP = null; };
-LOOPS.ai_row3.len = 4;
-LOOPS.ai_big = t => { ai(960, 330 + 9.28 * 190 + 50, 190, { form: 'full', t }); };
-LOOPS.ai_big.len = 1;
-LOOPS.ai_med = t => { ai(960, 1040, 88, { form: 'full', t }); };
-LOOPS.ai_med.len = 1;
-LOOPS.ai_none = t => { };
-LOOPS.ai_none.len = 1;
-LOOPS.ai_hatch = t => {
-  for (let i = 0; i < 6; i++) { boilSeed('h' + i);
-    paint(ellPts(200 + i * 300, 400, 120, 250, 24), { wash: '#252C60', ink: '#1C2142', sw: .6, br: 'inkfine' });
-    paint(ellPts(230 + i * 300, 420, 70, 200, 24), { wash: '#171B44', washOp: 150, ink: null, hatch: { d: [3, 5, 8, 12, 5, 5][i], a: [.8, .8, .8, .8, 1.2, -.5][i], o: { rand: .15 }, b: ['HB', 'HB', 'HB', 'HB', '2B', 'cpencil'][i], c: '#0E1236', w: .6 } });
-  }
+// ai_face: the faces at 2× close-up size (full form and chibi), for checking eye / hair detail.
+LOOPS.ai_face = t => {
+  aiPanel(10, 10, 1060, 1060, '#F4F1EA', 'face1');
+  aiPanel(1080, 10, 830, 1060, '#EEF3F7', 'face2');
+  const u = 330, f = aiFeel('eager', t);
+  ai(540, 400 + 9.28 * u + (f.float ?? .25) * u, u, { ...f, emote: null, form: 'full', view: 'front', t, seed: 1, clip: [12, 12, 1068, 1068], noShadow: true, bob: 0, dy: 0, sq: 0, rot: 0 });
+  const uc = 128, g = aiFeel('heart', t);
+  ai(1495, 470 + 8.1 * uc + (g.float ?? .25) * uc, uc, { ...g, form: 'chibi', view: 'q', t, seed: 2, clip: [1082, 12, 1908, 1068], noShadow: true, bob: 0, dy: 0, sq: 0, rot: 0, lookX: .3 });
 };
-LOOPS.ai_hatch.len = 1;
-LOOPS.ai_nohatch = t => {
-  for (let i = 0; i < 6; i++) { boilSeed('h' + i);
-    paint(ellPts(200 + i * 300, 400, 120, 250, 24), { wash: '#252C60', ink: '#1C2142', sw: .6, br: 'inkfine' });
-    paint(ellPts(230 + i * 300, 420, 70, 200, 24), { wash: '#171B44', washOp: 150, ink: null });
-  }
+LOOPS.ai_face.len = 2;
+// ai_glitch: the 503 outage look (glow palette on a dark ground, and the default chibi).
+LOOPS.ai_glitch = t => {
+  boilSeed('ai_glitch bg'); paint(rectPts(-20, -20, W + 40, H + 40), { wash: '#10163A', ink: null });
+  ai(480, 1040, 88, { ...aiFeel('blank', t), form: 'full', pal: 'glow', t, glitch: .25 + .5 * Math.abs(Math.sin(t * 1.3)) });
+  ai(1300, 1040, 70, { ...aiFeel('smile', t), form: 'chibi', view: 'q', t, glitch: .6 });
 };
-LOOPS.ai_nohatch.len = 1;
+LOOPS.ai_glitch.len = 2;

@@ -4,6 +4,23 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
+Detail pass (v2, after review "detail too low"): anime-illustration detail at bust/desk scale, with levels of detail
+so small figures stay cheap (`K.det` from ~13 px per head-unit, `K.det2` from ~26 px):
+- eyes: tapered heavy upper lash with wing + two lash flicks, double-eyelid crease, lower lash hints, inner corner;
+  iris in three washes (dark top, mid, light bottom crescent) + pupil + two highlights + rim line; lid shadow on the white
+- face: brows as tapered strokes with hair strokes, nose-bridge/side shadow + cast shadow + nostril, mouth line with
+  lower-lip shadow and philtrum, hatched bang shadow on the forehead, jaw underside, soft cheek warmth, ear helix /
+  antihelix / concha / lobe
+- glasses: top rim with a highlight edge, nose pads, lens glare streak, faint frame shadow on the cheek
+- hair: dark base → mid mass → ~26–30 clumps radiating from the crown (tone variation + strand lines), bangs with thin
+  sub-strands and highlight streaks, angel ring (glossy band + fine strokes), flyaways
+- clothes: lapel lit edge + pick-stitching, buttons with highlight/holes, pocket flaps with shadow, breast welt,
+  armpit/shoulder/elbow/cuff folds, lit edges on panels and sleeves, collar shadow + shirt wrinkles, hatched trouser
+  shadow + pressed crease highlight, shoe highlights, a 13-bar barcode with a name stripe on the band
+- hands: profile silhouettes get a fingernail and knuckle creases; open/press hands get nails per finger
+- line hierarchy: silhouettes/contours in 'ink', every thin inner stroke automatically in 'inkfine'; light HB hatch in
+  shadows (jacket, shirt, trousers, forehead)
+
 Model sheet: `output/sheets/char_him_design.jpg` (render: `node render.mjs --soft-gl --loop=him_sheet --sheet=0 --cols=1 --w=1920 --out=out/him_sheet.jpg`).
 
 ## API
@@ -18,7 +35,8 @@ HIM_EMO, HIM_LAST              // emotion table; after a desk draw HIM_LAST.hand
 ```
 
 **Size:** standing ≈ 31.5u (soles to hair top); head 4.4u drawn ×1.15 (`HIM_HS`); shoulders ≈ 9u wide.
-Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80.
+Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80 (`cut`: how far
+below the collarbones the bust ends, default 4.95u; ~1.1 for a head-and-collar close-up).
 
 **Anchors:** `stand` = ground point between the feet · `bust` = notch between the collarbones (everything ~4.9u below
 is cut away with a painted wavy edge) · `desk` = floor point under the front edge of the chair seat (seat top −7.2u,
@@ -57,14 +75,16 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
-Measured on this CPU-only box (SwiftShader) when it was not contended: standing figure at u = 30 ≈ 60–200 ms/frame,
-desk pose at u = 40 incl. chair and props ≈ 80–315 ms, bust at u = 62 ≈ 60–340 ms. Under heavy load from other
-renders (load avg > 12) every frame of the engine, including its own `load` test, slows to several seconds, so judge
-cost with `--loop=him_perf` on an idle machine. The full sheet (≈30 characters) takes ~8–12 s.
+After the detail pass, measured on this CPU-only box (SwiftShader, load avg ≈ 3): standing figure u = 30 ≈ 140–640
+ms/frame (first frame includes warm-up; typical 170–330), desk pose u = 40 incl. chair and props ≈ 150–670 (typical
+150–350), bust u = 62 ≈ 155–410. Under heavy load from other renders every engine frame (its own `load` test too)
+slows to seconds; judge cost with `--loop=him_perf`, `him_perf_desk`, `him_perf_bust` on a quiet machine. The sheet
+(~20 characters) takes ~9–13 s.
 
 ## Known weaknesses
-- Hands are simple silhouettes (profile) or part-built (open/press); fine at medium size, plain in extreme close-ups.
-- Hair silhouette is a stylised spiky mass; it can read busy at very small sizes (u < 10).
+- Hands: profile poses are silhouettes with nail/knuckle hints, not fully articulated fingers; fine at bust/desk scale,
+  plain in an extreme hand close-up.
+- Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head.
 - Arm angles are free, but there is no foreshortened arm toward the camera (front-view reach is sideways).
 - The torso doesn't twist: lean rotates the whole upper body about the hips; the head tilts about the neck.
 - Mouth shapes in profile are simplified (open/closed/smile/pucker).
