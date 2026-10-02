@@ -5,9 +5,9 @@
 
 Signal flow
 -----------
-  tracks/<t>.wav --loudness-normalise--> channel strip (fader = arrangement gain_db + trim,
+  tracks/<t>.flac --loudness-normalise--> channel strip (fader = arrangement gain_db + trim,
       EQ, pan, kick-sidechain duck) --> drums | bass | music bus      (+ sends)
-  tracks/fx_<type>.wav --> FX channel strip --> fx bus                (+ sends)
+  tracks/fx_<type>.flac --> FX channel strip --> fx bus                (+ sends)
   stems/vox_*.wav --> vocal chains (HP, de-ess, comp, presence/air, exciter, AI doubler),
       measured riding against the band --> vocals bus                (+ sends)
   sends --> room / plate / hall / fx-hall convolution reverbs, tempo delays; every bus
@@ -649,7 +649,7 @@ def mix_channels(bus: str, arr: dict, manifest: dict, secs, sends: Sends, meters
             if not name.startswith("fx_") or m.get("lufs") is None:
                 continue
             ch = FX_CHANNELS.get(name[3:], dict(level=-10.0))
-            x = dsp.eq(read_wav(os.path.join(TRACK_DIR, f"{name}.wav")), ch.get("eq", []))
+            x = dsp.eq(read_wav(os.path.join(STEMS, m["file"])), ch.get("eq", []))
             x *= dsp.db2a(REF_LUFS - m["lufs"] + ch["level"])
             acc += x
             for s_name, db in ch.get("sends", {}).items():
@@ -662,7 +662,7 @@ def mix_channels(bus: str, arr: dict, manifest: dict, secs, sends: Sends, meters
         if routed != bus or not m or m.get("lufs") is None:
             continue
         ch = channel(name, tr["instrument"])
-        x = dsp.eq(read_wav(os.path.join(TRACK_DIR, f"{name}.wav")), ch["eq"])
+        x = dsp.eq(read_wav(os.path.join(STEMS, m["file"])), ch["eq"])
         fader = REF_LUFS - m["lufs"] + float(tr.get("gain_db", 0.0)) + ch["trim"]
         x *= dsp.db2a(fader)
         if name in RIDES:

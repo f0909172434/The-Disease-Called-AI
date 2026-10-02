@@ -128,7 +128,7 @@ def write_wav(path: str, x: np.ndarray, subtype: str = "FLOAT") -> None:
 
 
 def read_wav(path: str, n: int = N_TOTAL) -> np.ndarray:
-    """Read any WAV as float32 stereo at the engine rate, fitted to the programme length."""
+    """Read a WAV or FLAC as float32 stereo at the engine rate, fitted to the programme length."""
     x, sr = sf.read(path, dtype="float32", always_2d=True)
     if sr != SR:
         from scipy.signal import resample_poly

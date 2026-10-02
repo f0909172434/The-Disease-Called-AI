@@ -75,7 +75,7 @@ const PLACEHOLDERS = [
       applyCamera(this.camera, { pos: [0, 0, 6.4], target: [-0.1, -0.05, 0], fov: 32, fovMul: fovPunch(a, t), rollAdd: snareRoll(a, t) });
       this.her.setCamera(this.camera).update(t, { mouthOpen: a.env('vox_you', t), innerGlow: clamp((t - a.time(49)) / (a.time(53) - a.time(49))) * 0.6 });
       this.ring.update(t, { pulse: a.pulse('kick', t, 0.12), speak: a.env('vox_ai', t) });
-      this.fever.setCamera(this.camera).update(t, { pulse: a.pulse('kick', t, 0.15), trail: t > a.time(43) ? 0.8 : 0.2 });
+      this.fever.setCamera(this.camera).update(t, { pulse: a.pulse('kick', t, 0.15), trail: t > a.time(43) ? 0.6 : 0.2, brightness: 0.28, width: 0.007 });
       this.monitor.update(t, { bpm: 172, temp: 41.2, dosage: '∞', clock: '03:00', session: 4 * 3600 + t });
       ctx.post.p.bloom += 0.25 * a.pulse('kick', t, 0.1);
       ctx.post.p.ca += 0.008 * a.pulse('snare', t, 0.08);
@@ -233,7 +233,7 @@ const PLACEHOLDERS = [
     animate(t, ctx) {
       applyCamera(this.camera, { pos: [0, 0, 2.6], target: [0, 0, 0], fov: 32 });
       this.typed.update(t);
-      this.room.update(t, { lineBrightness: 0.08 * clamp((t - ctx.audio.time(143)) / 2), emptyChair: 1, screenGlow: 0.6 });
+      this.room.update(t, { lineBrightness: 0.08 * clamp((t - ctx.audio.time(143)) / 2), dayNight: 1, lampOn: 0, emptyChair: 1, screenGlow: 0.6, opacity: clamp((t - ctx.audio.time(143)) / 2) });
     },
   },
   {

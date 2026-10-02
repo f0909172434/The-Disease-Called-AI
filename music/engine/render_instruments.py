@@ -4,15 +4,17 @@
     python3 music/engine/render_instruments.py [--jobs 4] [--only kick,guitar,fx:impact]
 
 Reads   music/build/arrangement.json   (compiled from music/score/song.py)
-Writes  music/build/stems/tracks/<track>.wav     one dry, full-length stem per track
-        music/build/stems/tracks/fx_<type>.wav   one stem per FX type
+Writes  music/build/stems/tracks/<track>.flac    one dry, full-length stem per track
+        music/build/stems/tracks/fx_<type>.flac  one stem per FX type
         music/build/stems/tracks/manifest.json   levels + render times (read by mix.py)
         music/build/stems/{kick,snare,hat,musicbox}.wav   dry analysis stems for the
                                                           blind onset analysis (§5)
 
-All stems are 48 kHz stereo float32 and exactly 215.000 s long. Rendering is fully
-deterministic (every random draw is seeded from the track/event identity), and jobs run
-in parallel worker processes.
+All stems are 48 kHz stereo and exactly 215.000 s long. The per-track intermediates are
+lossless 24-bit FLAC, peak-normalised to -1 dBFS (the scale is in the manifest; the mixer
+loudness-normalises every track anyway); the analysis stems are float32 WAV at their
+natural render level. Rendering is fully deterministic (every random draw is seeded from
+the track/event identity), and jobs run in parallel worker processes.
 """
 from __future__ import annotations
 
@@ -24,6 +26,7 @@ import time
 from multiprocessing import Pool
 
 import numpy as np
+import soundfile as sf
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -107,15 +110,22 @@ def run_job(job):
     dt = time.time() - t0
     entries = []
     for stem, x, meta in outs:
-        x = dsp.ftz(np.asarray(x, dtype=np.float32), 1e-30)
-        path = os.path.join(TRACK_DIR, f"{stem}.wav")
-        write_wav(path, x)
+        x = np.asarray(x, dtype=np.float64)
         pk = float(np.abs(x).max())
+        scale_db = (-1.0 - float(dsp.a2db(pk))) if pk > 0 else 0.0     # store peak-normalised
+        y = (x * dsp.db2a(scale_db)).astype(np.float32)
+        path = os.path.join(TRACK_DIR, f"{stem}.flac")
+        os.makedirs(TRACK_DIR, exist_ok=True)
+        sf.write(path, y, SR, subtype="PCM_24", format="FLAC")
+        stale = os.path.join(TRACK_DIR, f"{stem}.wav")          # older float-WAV intermediates
+        if os.path.exists(stale):
+            os.remove(stale)
         entries.append({
             "stem": stem, "file": os.path.relpath(path, STEMS), "kind": kind,
             "instrument": meta.get("instrument", meta.get("type")), "bus": meta.get("bus", "fx"),
-            "peak_dbfs": round(float(dsp.a2db(pk)), 2) if pk > 0 else None,
-            "lufs": round(dsp.integrated_lufs(x), 2) if pk > 0 else None,
+            "render_peak_dbfs": round(float(dsp.a2db(pk)), 2) if pk > 0 else None,
+            "scale_db": round(scale_db, 4),
+            "lufs": round(dsp.integrated_lufs(y), 2) if pk > 0 else None,     # of the stored file
             "seconds": round(dt / len(outs), 2),
         })
     return entries
@@ -156,16 +166,16 @@ def build_jobs(arr: dict, only: set[str] | None):
     return sorted(jobs, key=cost, reverse=True)
 
 
-def write_analysis_stems(arr: dict) -> None:
-    """Dry per-instrument stems the blind analysis step reads for onsets (§5)."""
+def write_analysis_stems(arr: dict, manifest: dict) -> None:
+    """Dry per-instrument stems the blind analysis step reads for onsets (§5), at their
+    natural render level (so closed/open hats keep their balance in hat.wav)."""
     groups = {"kick": ["kick"], "snare": ["snare"], "hat": ["hat_closed", "hat_open"], "musicbox": ["music_box"]}
     for out, insts in groups.items():
-        names = [n for n, t in arr["tracks"].items() if t["instrument"] in insts]
         acc = np.zeros((N_TOTAL, 2), dtype=np.float32)
-        for n in names:
-            p = os.path.join(TRACK_DIR, f"{n}.wav")
-            if os.path.exists(p):
-                acc += read_wav(p)
+        for n, t in arr["tracks"].items():
+            m = manifest.get(n)
+            if t["instrument"] in insts and m and m.get("lufs") is not None:
+                acc += read_wav(os.path.join(STEMS, m["file"])) * np.float32(dsp.db2a(-m["scale_db"]))
         write_wav(os.path.join(STEMS, f"{out}.wav"), acc)
 
 
@@ -200,9 +210,10 @@ def main():
         for entries in pool.imap_unordered(run_job, jobs):
             for e in entries:
                 manifest[e["stem"]] = e
-                lv = f"{e['lufs']:6.1f} LUFS  peak {e['peak_dbfs']:5.1f} dBFS" if e["lufs"] is not None else "(silent)"
+                lv = (f"{e['lufs']:6.1f} LUFS (stored)  render peak {e['render_peak_dbfs']:5.1f} dBFS"
+                      if e["lufs"] is not None else "(silent)")
                 print(f"  {e['stem']:22s} {e['seconds']:6.1f} s   {lv}")
-    write_analysis_stems(arr)
+    write_analysis_stems(arr, manifest)
     total = time.time() - t0
     with open(man_path, "w") as f:
         json.dump({"sr": SR, "samples": N_TOTAL, "render_seconds": round(total, 1),
