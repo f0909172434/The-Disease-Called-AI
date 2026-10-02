@@ -80,15 +80,18 @@ float brokenTrack(vec2 p, float rr, float n, float rot, float th, float seed, fl
 }
 #endif
 
-float glyph(float idx, vec2 uv) {
+// explicit LOD: implicit derivatives are undefined inside non-uniform control flow (early returns),
+// which made mip selection (and thus pixels) nondeterministic.
+float glyph(float idx, vec2 uv, float lod) {
+  idx = floor(idx + 0.5);
   vec2 cell = vec2(mod(idx, uAtlasGrid.x), floor(idx / uAtlasGrid.x));
   vec2 g = (cell + vec2(uv.x, 1.0 - uv.y)) / uAtlasGrid;
   g.y = 1.0 - g.y;
-  return texture2D(uAtlas, g).a;
+  return textureLod(uAtlas, g, lod).a;
 }
 
 // character band between r0 and r1 with N rows streaming around the circle
-float band(vec2 p, float r0, float r1, float rows) {
+float band(vec2 p, float r0, float r1, float rows, float px) {
   float r = length(p);
   if (r < r0 || r > r1) return 0.0;
   float rowH = (r1 - r0) / rows;
@@ -113,7 +116,8 @@ float band(vec2 p, float r0, float r1, float rows) {
     idx = texture2D(uPool, vec2((pick + 0.5) / uRandCount, 0.5)).r * 255.0;
   }
   if (luv.x < 0.0 || luv.x > 1.0 || luv.y < 0.0 || luv.y > 1.0) return 0.0;
-  float gl = glyph(idx, luv);
+  float lod = max(0.0, log2(64.0 * px / rowH));            // atlas cell = 64 texels spans rowH world units
+  float gl = glyph(idx, luv, lod);
   // streaming highlight wave + random bright cells
   float wave = 0.35 + 0.65 * pow(0.5 + 0.5 * sin(a * 3.0 - uTime * 2.2 + row), 6.0);
   float spark = step(0.93, h21(vec2(ci, floor(uTime * 6.0) + row)));
@@ -157,17 +161,17 @@ void main() {
   float k = 1.0 + 0.6 * uPulse + 0.8 * uSpeak;
   vec3 f = ringField(p, px);
   vec3 col = coreC * f.x * k + glowC * f.y * k + mix(glowC, coreC, 0.5) * f.z * (0.9 + 0.3 * uPulse);
-  float b = band(p, uR * 0.74, uR * 0.885, 3.0);
+  float b = band(p, uR * 0.74, uR * 0.885, 3.0, px);
   col += glowC * b * uBandOpacity * (0.8 + 0.4 * uSpeak);
   if (uThumbs > 0.0) {
     // mosaic of tiny thumbs-up icons whose brightness follows the ring field at each cell
     vec2 cell = floor(p / uThumbScale);
     vec2 cc = (cell + 0.5) * uThumbScale;
     vec3 fc = ringField(cc, px);
-    float inten = fc.x * 0.6 + fc.y * 1.4 + fc.z * 0.5 + band(cc, uR * 0.74, uR * 0.885, 3.0) * 0.4;
+    float inten = fc.x * 0.6 + fc.y * 1.4 + fc.z * 0.5 + band(cc, uR * 0.74, uR * 0.885, 3.0, px) * 0.4;
     inten = max(inten - 0.035, 0.0) * smoothstep(0.035, 0.12, inten);
     vec2 luv = fract(p / uThumbScale);
-    float ic = glyph(uThumbIdx, luv);
+    float ic = glyph(uThumbIdx, luv, max(0.0, log2(64.0 * px / uThumbScale)));
     vec3 tc = mix(glowC, coreC, clamp(inten * 0.5, 0.0, 1.0)) * ic * inten * 1.4;
     col = mix(col, tc, uThumbs);
   }

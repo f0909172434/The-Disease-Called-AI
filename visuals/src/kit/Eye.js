@@ -73,8 +73,12 @@ ${NOISE}
 float sdRoundRect(vec2 p, vec2 b, float r) { vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
 void main() {
   vec2 p = vP;
+  // ALL derivatives up front, in uniform control flow (derivatives / implicit-LOD sampling inside
+  // per-pixel branches are undefined and made pixels nondeterministic)
+  vec2 dpdx = dFdx(p), dpdy = dFdy(p);
   float px = fwidth(p.x) + 1e-5;
   float r = length(p);
+  float drdx = dFdx(r), drdy = dFdy(r);
   // lids (almond)
   float up = (0.6 * pow(max(0.0, 1.0 - pow(p.x / 1.32, 2.0)), 0.8) + 0.02) * uLid + 0.03 * (1.0 - uLid);
   float lo = -(0.44 * pow(max(0.0, 1.0 - pow(p.x / 1.25, 2.0)), 0.9)) * uLid - 0.02 * (1.0 - uLid);
@@ -105,8 +109,8 @@ void main() {
   if (r < RI + px * 2.0) {
     float rho = clamp((r - rp) / (RI - rp), 0.0, 1.0);
     float ang = atan(p.y, p.x) / 6.2831853 + 0.5;
-    vec2 dudx = vec2((p.x * dFdx(p.y) - p.y * dFdx(p.x)) / max(r * r, 1e-6) / 6.2831853, dFdx(r) / (RI - rp));
-    vec2 dudy = vec2((p.x * dFdy(p.y) - p.y * dFdy(p.x)) / max(r * r, 1e-6) / 6.2831853, dFdy(r) / (RI - rp));
+    vec2 dudx = vec2((p.x * dpdx.y - p.y * dpdx.x) / max(r * r, 1e-6) / 6.2831853, drdx / (RI - rp));
+    vec2 dudy = vec2((p.x * dpdy.y - p.y * dpdy.x) / max(r * r, 1e-6) / 6.2831853, drdy / (RI - rp));
     vec3 iris = textureGrad(uStrip, vec2(ang, rho), dudx, dudy).rgb * 0.42;
     // light through the cornea: brighter on the screen side, shadowed under the lid
     iris *= 0.55 + 0.75 * smoothstep(-0.6, 0.7, dot(p / RI, vec2(0.55, 0.45)));
@@ -141,7 +145,7 @@ void main() {
   vec3 refl = mix(uCyan, uWhite, 0.25) * scr * 0.06;
   if (uHasRefl > 0.5) {
     vec2 ruv = q * vec2(0.5, 0.5) + 0.5;
-    if (ruv.x > 0.0 && ruv.x < 1.0 && ruv.y > 0.0 && ruv.y < 1.0) refl += texture2D(uRefl, ruv).rgb * 0.55;
+    if (ruv.x > 0.0 && ruv.x < 1.0 && ruv.y > 0.0 && ruv.y < 1.0) refl += textureGrad(uRefl, ruv, dpdx / uRefSize * 0.5, dpdy / uRefSize * 0.5).rgb * 0.55;
   }
   float fres = 0.35 + 0.65 * smoothstep(RI * 0.2, RI * 1.0, length(cp - uRefOff));
   col += refl * uRefStr * cornea * inEye * fres * uScreen;
