@@ -223,9 +223,14 @@ namespace Ourender {
             Directory.CreateDirectory(PathManager.Inst.CachePath);
             // vocoder/rhythmizer dependencies (.oudep) are installed next to the voicebanks
             var deps = Path.Combine(banks, "Dependencies");
-            if (Directory.Exists(deps) && !Directory.Exists(PathManager.Inst.DependencyPath)) {
+            if (Directory.Exists(deps)) {
+                var link = new DirectoryInfo(PathManager.Inst.DependencyPath);
                 try {
-                    Directory.CreateSymbolicLink(PathManager.Inst.DependencyPath, deps);
+                    if (link.LinkTarget != null && Path.GetFullPath(link.LinkTarget) != deps) {
+                        link.Delete();                          // data dir reused with other banks
+                        link = new DirectoryInfo(PathManager.Inst.DependencyPath);
+                    }
+                    if (!link.Exists) Directory.CreateSymbolicLink(link.FullName, deps);
                 } catch (IOException) { }                  // a parallel ourender made it first
             }
 
@@ -411,11 +416,13 @@ namespace Ourender {
                 ui.PumpUntil(() => task.IsCompleted, TimeSpan.FromMinutes(30));
                 var res = task.Result;
                 if (res.samples == null) throw new Exception($"{part.name}: phrase at {phrase.position} rendered nothing");
-                double startMs = phrase.positionMs - phrase.leadingMs;
+                // the renderer's own layout (DiffSinger: 8 frames of head padding before the
+                // first phoneme), exactly as OpenUtau's mixer places the phrase
+                double startMs = res.positionMs - res.leadingMs;
                 chunks.Add((startMs, res.samples));
                 phraseInfo.Add(new Dictionary<string, object> {
-                    ["start_ms"] = Math.Round(startMs, 3), ["position_ms"] = Math.Round(phrase.positionMs, 3),
-                    ["leading_ms"] = Math.Round(phrase.leadingMs, 3), ["samples"] = res.samples.Length,
+                    ["start_ms"] = Math.Round(startMs, 3), ["position_ms"] = Math.Round(res.positionMs, 3),
+                    ["leading_ms"] = Math.Round(res.leadingMs, 3), ["samples"] = res.samples.Length,
                     ["render_seconds"] = Math.Round(t.Elapsed.TotalSeconds, 3),
                     ["phonemes"] = string.Join(" ", phrase.phones.Select(p => p.phoneme)),
                 });

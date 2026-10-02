@@ -72,14 +72,14 @@ class Config:
     pitch: str = "score"        # score (our contour as PITD) | bank (pitch model)
     steps: int = 20             # diffusion steps (OpenUtau's "DiffSinger render speedup")
     warp: bool = True           # align formant scales before blending her->him
-    procs: int = 2              # parallel ourender processes
+    procs: int = 1              # parallel ourender processes (ORT already uses every core)
 
 
 def config() -> Config:
     e = os.environ.get
     return Config(timing=e("VOCAL_DS_TIMING", "bank"), pitch=e("VOCAL_DS_PITCH", "score"),
                   steps=int(e("VOCAL_DS_STEPS", "20")), warp=e("VOCAL_DS_WARP", "1") != "0",
-                  procs=max(1, int(e("VOCAL_DS_PROCS", "2"))))
+                  procs=max(1, int(e("VOCAL_DS_PROCS", "1"))))
 
 
 # ----------------------------------------------------------------------------- voices -> banks
