@@ -238,13 +238,14 @@ const AI_PROFILE = [[-.2, -.3], [.55, -.62], [.82, -.3], [.88, .0], [.88, .22], 
 // below); Rs: the same for the face-framing locks; len / side: back and side lock lengths; grad: the depths over which
 // the navy turns light blue; wl: wave length; amp: wave size; wb / ws: back / side lock widths; nb: back locks per side;
 // curl: how far the tips hook outward; zk / zb: how flat the mass is front to back and how far behind the neck it hangs;
-// gradS: the side locks' gradient; wp: how late down a lock its waves grow; crown: the skull hair's [width, height]. Per figure (aiHD's hf): sweepL / sweepR, the
+// gradS: the side locks' gradient; wp: how late down a lock its waves grow; crown: the skull hair's [width, height]; phj: [step, random] of the
+// wave phase from lock to lock (small: the mass waves together). Per figure (aiHD's hf): sweepL / sweepR, the
 // sideways drift of the tips on each side (a pose or the wind), and lenL / lenR, each side's length.
 const AI_HAIR = {
   chibi: { R: [[0, 1.06], [.45, 1.12], [.9, 1.3], [1.4, 1.48], [1.85, 1.5], [2.3, 1.3]], Rs: [[-.5, 1.04], [.3, 1.0], [.8, .97], [1.3, 1.06], [2, 1.16]],
-    len: 2.4, side: 1.55, grad: [.5, 2.1], gradS: [.35, 1.7], wl: 1.05, amp: .24, wb: .42, ws: .3, nb: 8, curl: .26, zk: .62, zb: .3, wp: .8, crown: [1.24, 1.17] },
+    len: 2.4, side: 1.55, grad: [.5, 2.1], gradS: [.35, 1.7], wl: 1.05, amp: .24, wb: .42, ws: .3, nb: 8, curl: .26, zk: .62, zb: .3, wp: .8, crown: [1.24, 1.17], phj: [2.4, 2.2] },
   full:  { R: [[0, 1.08], [.8, 1.34], [1.8, 1.8], [3, 2.12], [4.4, 2.26], [6, 2.0]], Rs: [[-.5, 1.04], [.3, 1.0], [.9, 1.02], [1.6, 1.22], [3, 1.48]],
-    len: 6.1, side: 2.8, grad: [.55, 3.7], gradS: [.45, 2.7], wl: 1.7, amp: .3, wb: .5, ws: .32, nb: 8, curl: .32, zk: .55, zb: .35, wp: 1.0, crown: [1.17, 1.13] },
+    len: 6.1, side: 2.8, grad: [.55, 3.7], gradS: [.45, 2.7], wl: 2.3, amp: .34, wb: .6, ws: .34, nb: 8, curl: .36, zk: .55, zb: .35, wp: 1.0, crown: [1.17, 1.13], phj: [1.1, 1.1] },
 };
 // The bangs, painted in this order: [root x, root y, tip x, tip y, width, bow (outward arc), S-curve], front-view head
 // units. They fan out from a part left of centre (x -.2): a big side-swept lock each way and a second one inside it
@@ -338,7 +339,7 @@ function aiLocks(hd) {
     for (let j = 0; j < HF.nb; j++) {
       const key = j * 2 + (s > 0 ? 1 : 0) + 1, h = i => hash(key * 7.31 + i * 1.97);
       out.push({ id: 'b' + key, s, phi: 1.42 + 1.66 * Math.pow(j / (HF.nb - 1), 1.1), y0: -.62 + .55 * h(1), y1: (s < 0 ? HF.lenL : HF.lenR) * (.72 + .12 * j / (HF.nb - 1) + .16 * h(2)), sp: .8 + .34 * h(3),
-        w: HF.wb * (.75 + .5 * h(4)), amp: HF.amp * (.7 + .6 * h(5)), ph: 2.4 * j + 2.2 * h(6) + (s > 0 ? 2 : 0), curl: HF.curl * (.6 + .7 * h(7)) });
+        w: HF.wb * (.75 + .5 * h(4)), amp: HF.amp * (.7 + .6 * h(5)), ph: HF.phj[0] * j + HF.phj[1] * h(6) + (s > 0 ? 2 : 0), curl: HF.curl * (.6 + .7 * h(7)) });
     }
     // face-framing locks: a slim one along the cheek, then two fuller ones over the front of the shoulder
     out.push({ id: 's0' + s, s, side: 1, phi: 1.2, y0: -.5, y1: HF.side * .64, sp: 1, w: HF.ws * .95, amp: HF.amp * .35, ph: s > 0 ? 1 : 2.4, curl: HF.curl * .45, curlIn: 1, lead: 1 });
