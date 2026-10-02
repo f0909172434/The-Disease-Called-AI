@@ -8,7 +8,7 @@ import { exprOf, lookOf, ellipsePts, heartPath, sparklePath } from './util.js';
 // ------------------------------------------------------------------ geometry
 
 // right half of the face outline, temple -> chin (normal / chibi)
-const HALF_N = [P(97, -70), P(98, -24), P(95, 12), P(87, 44), P(70, 72), P(44, 96), P(0, 111, 0, 0.75)];
+const HALF_N = [P(97, -70), P(98, -24), P(95, 12), P(87, 42), P(68, 70), P(40, 93), P(0, 107, 0, 0.75)];
 const HALF_C = [P(98, -70), P(100, -22), P(99, 14), P(93, 42), P(78, 64), P(48, 82), P(0, 90, 0, 0.9)];
 
 function faceLoop(half) {
@@ -24,12 +24,12 @@ export function headGeo(style = 0, turn = 0) {
   const G = {
     s, turn,
     half: mixPts(HALF_N, HALF_C, s),
-    eyeX: lerp(44, 47, s), eyeY: lerp(0, 10, s), eyeK: lerp(1, 1.25, s),
+    eyeX: lerp(46, 48, s), eyeY: lerp(0, 10, s), eyeK: lerp(1.12, 1.34, s),
     browY: lerp(-44, -41, s),
-    nose: [0, lerp(42, 46, s)],
-    mouth: [0, lerp(70, 64, s)], mouthK: lerp(1, 1.12, s),
+    nose: [0, lerp(41, 46, s)],
+    mouth: [0, lerp(67, 64, s)], mouthK: lerp(1, 1.12, s),
     blush: [lerp(55, 58, s), lerp(36, 48, s)], blushK: lerp(1, 1.15, s),
-    chin: lerp(111, 90, s),
+    chin: lerp(107, 90, s),
     /** yaw warp of a head-local point lying on the front of the head (depth 1) or behind (depth < 0) */
     W(q, depth = 1) {
       if (!turn) return q;

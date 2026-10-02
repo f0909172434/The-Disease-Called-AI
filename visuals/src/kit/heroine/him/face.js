@@ -54,7 +54,7 @@ const M = (pts) => mirrorX(pts, 0); // mirror local x
 // ------------------------------------------------------------------ static geometry (right half / right side, x > 0)
 
 // face silhouette, right half from the crown down to the chin
-const FACE_R = [[0, -228], [70, -218], [122, -188], [142, -140], [148, -75], [149, -12], [146, 42], [138, 86], [119, 124, 0, 0.9], [84, 153], [42, 172], [0, 179]];
+const FACE_R = [[0, -228], [70, -218], [122, -188], [142, -140], [148, -75], [149, -12], [145, 40], [135, 82], [112, 119, 0, 0.85], [76, 150], [36, 169], [0, 176]];
 const FACE = R([...FACE_R, ...M(FACE_R).reverse().slice(1, -1)]);
 
 const EAR_R = R([[141, -16], [156, -26], [170, -19], [176, 6], [172, 38], [161, 62], [146, 76], [137, 70]]);
@@ -112,8 +112,8 @@ export function drawBackHair(pen, p, H) {
   const X = headXf(H);
   const pal = pen.pal;
   const sw = hairSwayFn(p);
-  const back = R([[-148, 96], [-170, 52], [-184, -30], [-182, -120], [-156, -198], [-96, -248], [0, -264], [96, -250], [158, -200],
-    [184, -120], [188, -30], [176, 50], [152, 96], [96, 112], [0, 116], [-96, 112]]);
+  const back = R([[-148, 96], [-168, 52], [-180, -30], [-176, -120], [-150, -196], [-92, -244], [0, -258], [92, -246], [152, -198],
+    [178, -120], [184, -30], [174, 50], [152, 96], [96, 112], [0, 116], [-96, 112]]);
   paint(pen, X.list(back), pal.hairShade, { id: 'bh', pool: 0.5 });
   // nape spikes peeking beside the neck
   for (const [i, s] of [[0, 1], [1, -1]]) {
@@ -374,40 +374,59 @@ function bangs(p) {
   }));
 }
 
-// silhouette tufts (root -> tip)
-const TUFTS = [
-  { sp: [[-112, -208], [-150, -236], [-192, -232]], w: 44 },
-  { sp: [[-48, -240], [-70, -278], [-104, -294]], w: 46 },
-  { sp: [[18, -250], [44, -288], [80, -298]], w: 48 },
-  { sp: [[100, -226], [146, -244], [184, -232]], w: 42 },
-  { sp: [[148, -150], [184, -142], [208, -116]], w: 34 },
-  { sp: [[-150, -136], [-184, -118], [-204, -88]], w: 34 },
-  { sp: [[160, -64], [180, -34], [182, 4]], w: 26 },
-  { sp: [[-160, -64], [-182, -32], [-186, 6]], w: 26 },
+// ---- hair silhouette: sawtooth clumps around an ellipse, flowing away from a part near the top
+const HC = { cx: 0, cy: -92, rx: 184, ry: 176 };
+export function hairPt(aDeg, r) {
+  const a = (aDeg * Math.PI) / 180;
+  return [HC.cx + (HC.rx + r) * Math.sin(a), HC.cy - (HC.ry + r) * Math.cos(a)];
+}
+// [a0, a1, flow (-1 tip ccw / +1 tip cw), tip reach, bulge]
+const SIL = [
+  [-132, -108, -1, 20, 7], [-110, -84, -1, 30, 9], [-86, -60, -1, 34, 10], [-62, -36, -1, 32, 10], [-38, -10, -1, 38, 9],
+  [-12, 14, 1, 46, 8], [12, 40, 1, 38, 10], [38, 64, 1, 34, 10], [62, 88, 1, 32, 10], [86, 110, 1, 28, 9], [108, 132, 1, 18, 7],
 ];
-
-const CAP = R([[-152, 6], [-170, -60], [-176, -122], [-160, -178], [-126, -222], [-74, -252], [-14, -264], [46, -261], [100, -246],
-  [144, -212], [170, -164], [180, -108], [176, -48], [160, 8], [132, -110], [64, -164], [0, -178], [-64, -166], [-134, -112]]);
+function silhouette(sw) {
+  const out = [];
+  SIL.forEach(([a0, a1, flow, tip, bulge], i) => {
+    const d = sw ? sw(40 + i) * 4 : 0;
+    const T = (a, r) => { const q = hairPt(a, r); return q; };
+    const mid = (u) => tip * 0.55 * (1 - u) * (1 - u) + bulge * Math.sin(Math.PI * Math.min(1, u * 1.1));
+    if (flow < 0) {
+      out.push(P(...T(a0 - 8 + d, tip), 1, 0.7));
+      for (const u of [0.3, 0.6, 0.85]) out.push(P(...T(lerp(a0, a1, u), mid(u))));
+      out.push(P(...T(a1, -7), 1, 0.7));
+    } else {
+      out.push(P(...T(a0, -7), 1, 0.7));
+      for (const u of [0.15, 0.4, 0.7]) out.push(P(...T(lerp(a0, a1, u), mid(1 - u))));
+      out.push(P(...T(a1 + 8 + d, tip), 1, 0.7));
+    }
+  });
+  return out;
+}
+const CAP_IN = R([[156, 12], [132, -110], [64, -164], [0, -176], [-64, -166], [-134, -112], [-156, 12]]);
 
 export function drawFrontHair(pen, p, H) {
   const X = headXf(H);
   const pal = pen.pal;
   const s = X.s;
   const sw = hairSwayFn(p);
-  // tufts first (roots hidden under the cap)
-  TUFTS.forEach((t, i) => {
-    const sp = X.list(R(swayList(t.sp, sw, 20 + i, 0.6)));
-    clump(pen, sp, [[0, t.w * s], [0.45, t.w * 0.72 * s], [1, 0]], { id: 'tuft' + i, fill: pal.hair, line: pal.hairLine, lw: 3.4 * s, shadeCol: pal.hairShade, shadeSide: i % 2 ? -1 : 1, rootFade: 0.35 });
-  });
-  // cap
-  const cap = X.list(CAP);
+  const sil = silhouette(p.hairSway ? sw : null);
+  // cap = silhouette + inner hairline (hidden under the bangs)
+  const cap = X.list([...sil, ...CAP_IN]);
   const cp = paint(pen, cap, pal.hair, { id: 'cap', pool: 0.7 });
-  // cap shading: darker toward the sides and lower edge
-  shade(pen, cp, X.list(R([[60, -262], [130, -232], [176, -170], [184, -60], [162, 10], [120, -100], [120, -170]])), pal.hairShade, { id: 'capR', alpha: 0.9 });
-  ink(pen, X.list(R([[-152, 6], [-170, -60], [-176, -122], [-160, -178], [-126, -222], [-74, -252], [-14, -264], [46, -261], [100, -246], [144, -212], [170, -164], [180, -108], [176, -48], [160, 8]])), 4.6 * s, pal.hairLine, { id: 'cap', start: 0.2, end: 0.2 });
-  // inner strand lines on the cap (flow from the crown)
-  const flows = [[[-20, -258], [-60, -232], [-110, -190]], [[30, -255], [70, -232], [120, -196]], [[-90, -238], [-130, -206], [-156, -160]], [[90, -244], [140, -206], [164, -150]]];
-  flows.forEach((f, i) => ink(pen, X.list(R(f)), 2.4 * s, pal.hairLine, { id: 'flow' + i, start: 0.1, end: 0, alpha: 0.8 }));
+  // shading: right side of the mass + a darker underside band near the hairline
+  shade(pen, cp, X.list(R([[40, -300], [150, -270], [230, -170], [230, 40], [150, 30], [140, -100], [110, -180], [60, -230]])), pal.hairShade, { id: 'capR', alpha: 0.85 });
+  shade(pen, cp, X.list(R([[-200, -40], [-150, -130], [-60, -178], [0, -186], [60, -178], [150, -130], [200, -40], [200, 40], [-200, 40]])), pal.hairShade, { id: 'capU', alpha: 0.6 });
+  // clump separation strokes: from each valley back toward the crown
+  SIL.forEach(([a0, a1, flow], i) => {
+    const av = flow < 0 ? a1 : a0;
+    const v = hairPt(av, -7);
+    const inward = hairPt(av - flow * 14, -52);
+    const deeper = hairPt(av - flow * 26, -86);
+    ink(pen, X.list(R([v, inward, deeper])), 2.6 * s, pal.hairLine, { id: 'sep' + i, start: 0.9, end: 0, attack: 0.05, release: 0.6, alpha: 0.9 });
+  });
+  // outline of the silhouette
+  ink(pen, X.list(sil), 4.4 * s, pal.hairLine, { id: 'capO', start: 0.3, end: 0.3, attack: 0.04, release: 0.04 });
   // bangs
   const B = bangs(p);
   const union = new Path2D();
@@ -419,17 +438,21 @@ export function drawFrontHair(pen, p, H) {
     });
     union.addPath(r.path);
   }
-  // sheen: one jagged ring across the crown + per-clump slivers
-  pen.clip(union, () => {
-    const ring = R([[-162, -150], [-120, -200], [-60, -226], [0, -232], [60, -228], [120, -204], [166, -156],
-      [160, -132], [150, -148], [138, -126], [120, -170], [100, -150], [82, -186], [60, -160], [40, -196], [18, -168], [-4, -200], [-24, -170], [-46, -196], [-70, -160], [-90, -188], [-112, -150], [-126, -174], [-144, -128], [-156, -140]]);
-    paint(pen, X.list(ring.map((q) => P(q[0], q[1], 1))), pal.hairSheen, { id: 'sheen', alpha: 0.85, pool: 0.3, tension: 0.4 });
-    for (let i = 0; i < 6; i++) {
-      const x0 = -120 + i * 46;
-      const yy = -212 + Math.abs(x0) * 0.18;
-      ink(pen, X.list(R([[x0 - 10, yy - 4], [x0 + 2, yy + 6], [x0 + 6, yy + 22]])), 3.2 * s, pal.hairSheenHi, { id: 'shi' + i, alpha: 0.75, start: 0.2 });
-    }
-  });
+  // sheen: jagged "angel ring" band across the crown
+  if (!pen.look.vector) {
+    pen.clip(union, () => {
+      const top = [], bot = [];
+      for (let a = -78; a <= 78; a += 6) top.push(P(...hairPt(a, -34 - Math.abs(a) * 0.05)));
+      for (let a = 78, k = 0; a >= -78; a -= 6, k++) {
+        const spike = k % 2 === 0 ? -86 - (k % 4 === 0 ? 14 : 0) : -60;
+        bot.push(P(...hairPt(a + (a > 0 ? 2 : -2) * (k % 2), spike + Math.abs(a) * 0.12), 1, 0.5));
+      }
+      paint(pen, X.list([...top, ...bot]), pal.hairSheen, { id: 'sheen', alpha: 0.8, pool: 0.3 });
+      for (let a = -60; a <= 60; a += 20) {
+        ink(pen, X.list(R([hairPt(a - 3, -40), hairPt(a, -54), hairPt(a + 2, -70)])), 3.4 * s, pal.hairSheenHi, { id: 'shi' + a, alpha: 0.7, start: 0.3 });
+      }
+    });
+  }
 }
 
 /** over the hair: brows seen through the bangs + glasses */

@@ -56,7 +56,7 @@ export function renderToCanvas(doc, viewName, params = {}, scale = 1, { grain = 
     const tile = grainTile(doc);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = 'source-atop';
-    ctx.globalAlpha = 0.22 * g;
+    ctx.globalAlpha = 0.09 * g;
     ctx.fillStyle = ctx.createPattern(tile, 'repeat');
     ctx.fillRect(0, 0, cv.width, cv.height);
     ctx.globalCompositeOperation = 'source-over';

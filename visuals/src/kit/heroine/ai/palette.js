@@ -10,8 +10,8 @@ const BASE = {
   skin: '#FFF1EA', skinShade: '#F6D2C8', skinShade2: '#EDB9AE', skinLight: '#FFFAF7',
   skinLine: '#8C4E4E', skinLineSoft: '#C98F8A', blush: '#FF9A9E', blushLine: '#F07E86',
   // hair: blue-black roots -> light blue tips (ramp sampled by height)
-  hairRoot: '#1A2145', hair: '#233163', hairMid: '#2F4A93', hair2: '#3E6CC0', hairTip: '#68A8EA', hairTipHi: '#A6DCFA',
-  hairShade: '#0E1430', hairInner: '#121838', hairLine: '#0B1029', hairSheen: '#6A8DDA', hairSheenHi: '#C8DEFF',
+  hairRoot: '#1E2A58', hair: '#2A3D7C', hairMid: '#3556A4', hair2: '#4379C8', hairTip: '#6FB2EE', hairTipHi: '#ADE2FC',
+  hairShade: '#121A44', hairInner: '#151E48', hairLine: '#0C1130', hairSheen: '#7196E0', hairSheenHi: '#D2E6FF',
   brow: '#1E2650',
   // whale fins (ears, tail)
   fin: '#22305E', finShade: '#151E42', finLight: '#45599A', finBelly: '#CDD5EE', finBellyShade: '#A2AED3', finLine: '#0B1029',

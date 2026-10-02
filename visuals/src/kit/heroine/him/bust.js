@@ -19,7 +19,7 @@ export function bustXf(p, ox = 500, oy = 400, s = 1) {
 
 // ------------------------------------------------------------------ shared torso pieces (local coords)
 
-const NECK = sym([[-84, 70], [-87, 160], [-97, 226], [-128, 262], [-156, 300], [-60, 360]]).concat([P(0, 440)]);
+const NECK = R([[-84, 70], [-87, 160], [-97, 226], [-128, 262], [-156, 300], [-60, 360], [0, 440], [60, 360], [156, 300], [128, 262], [97, 226], [87, 160], [84, 70]]);
 // sternocleidomastoid + collarbones + throat
 function neckDetail(pen, B, s, deep = 1) {
   const pal = pen.pal;
@@ -59,7 +59,7 @@ function bodyLaunch(pen, p, B) {
   void np;
   neckDetail(pen, B, s, 1);
   // shirt panels (V opening to the 2nd button)
-  const shL = R([[-60, 244], [-36, 318], [0, 398, 1], [10, 610], [-450, 610], [-450, 330], [-150, 250]]);
+  const shL = R([[-60, 244], [-36, 318], [0, 398, 1], [10, 610], [-300, 610], [-300, 330], [-150, 250]]);
   const shR = M(shL);
   for (const [i, sh] of [[0, shL], [1, shR]]) {
     const sp = paint(pen, B.list(sh), pal.shirt, { id: 'shirt' + i });
@@ -96,7 +96,6 @@ function bodyLaunch(pen, p, B) {
     // shading: right half mostly in shadow; both: armpit side, under the pec
     if (side > 0) shade(pen, bp, B.list(R([[150, 380], [250, 300], [400, 300], [470, 400], [470, 620], [60, 620], [120, 520]])), pal.blazerShade, { id: 'bzSR' });
     shade(pen, bp, B.list(R(m([[-330, 460], [-372, 400], [-380, 620], [-300, 620], [-300, 520]]))), pal.blazerShade, { id: 'bzA' + side, alpha: 0.8 });
-    shade(pen, bp, B.list(R(m([[-120, 480], [-200, 470], [-300, 480], [-310, 510], [-200, 520], [-110, 530]]))), pal.blazerShade, { id: 'pec' + side, alpha: 0.7 });
     // sleeve seam (deltoid) + sleeve light on the lit side
     const seam = R(m([[-398, 322], [-376, 400], [-366, 500], [-370, 610]]));
     if (side < 0) shade(pen, bp, B.list(R([[-404, 330], [-432, 392], [-440, 470], [-416, 450], [-398, 380]])), pal.blazerLight, { id: 'slvL', alpha: 0.8 });

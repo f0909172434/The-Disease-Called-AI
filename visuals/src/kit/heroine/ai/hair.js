@@ -45,10 +45,10 @@ export function drawBackHair(pen, p, G, o = {}) {
   // outer clumps, both sides (back to front)
   const defs = [
     // [root, tip, width, amp, phase, bend]
-    [[104, -70], [176 + 40 * spread, bottom - 10], 50, 9, 0.3, 16],
-    [[112, -30], [192 + 44 * spread, bottom - 60], 40, 10, 0.9, 20],
-    [[96, -20], [150 + 34 * spread, bottom + 10], 44, 8, 0.0, 10],
-    [[118, 10], [208 + 46 * spread, bottom - 120], 30, 9, 1.5, 22],
+    [[104, -70], [176 + 40 * spread, bottom - 10], 52, 16, 0.3, 16],
+    [[112, -30], [196 + 44 * spread, bottom - 60], 42, 18, 0.9, 20],
+    [[96, -20], [148 + 34 * spread, bottom + 10], 46, 14, 0.0, 10],
+    [[118, 10], [212 + 46 * spread, bottom - 120], 32, 15, 1.5, 22],
   ];
   let k = 0;
   for (const side of [-1, 1]) {
@@ -118,9 +118,11 @@ export function drawFrill(pen, p, G) {
 // ------------------------------------------------------------------ fins (whale ears)
 
 const FIN = {
-  shape: [P(-6, -15), P(14, -23), P(40, -22), P(64, -12), P(88, 6, 1), P(70, 9), P(46, 13), P(22, 17), P(-2, 17)],
-  belly: [P(4, 7), P(26, 3.5), P(52, 3), P(76, 4.5), P(88, 6, 1), P(70, 9), P(46, 13), P(22, 17), P(-2, 17)],
-  sheen: [P(10, -14), P(34, -17), P(56, -11), P(40, -12.5), P(20, -10)],
+  shape: [P(-6, -17), P(20, -23), P(48, -18), P(72, -5), P(90, 12), P(99, 27, 1), P(80, 23), P(58, 21), P(34, 22), P(10, 22), P(-6, 17)],
+  belly: [P(2, 11), P(28, 10), P(54, 11), P(78, 15), P(99, 27, 1), P(80, 23), P(58, 21), P(34, 22), P(10, 22), P(-6, 17)],
+  bellyShade: [P(4, 17), P(30, 16.5), P(56, 17), P(82, 21), P(99, 27, 1), P(80, 24), P(58, 23), P(34, 24), P(10, 24), P(-6, 20)],
+  sheen: [P(10, -15), P(34, -17), P(58, -9), P(40, -11), P(20, -11)],
+  rib: [P(4, 10), P(28, 9), P(54, 10), P(78, 14), P(96, 25)],
 };
 
 export function drawFins(pen, p, G, o = {}) {
@@ -128,9 +130,9 @@ export function drawFins(pen, p, G, o = {}) {
   const K = o.k ?? lerp(1, 1.12, G.s);
   const flap = Math.sin((p.t || 0) * 2.1) * 0.03 * (p.hairSway ?? 0);
   for (const side of [-1, 1]) {
-    const root = W([side * 92, -4 + G.s * 4], G, -0.3);
+    const root = W([side * 90, 0 + G.s * 4], G, -0.3);
     const far = Math.sign(G.turn) === side ? 1 - Math.abs(Math.sin(G.turn)) * 0.9 : 1;
-    const tf = (list) => xf(list.map((q) => [q[0] * K * far, q[1] * K, q[2] || 0, q[3] ?? 1]), { rot: 0.4 + flap, tx: 0, ty: 0 })
+    const tf = (list) => xf(list.map((q) => [q[0] * K * far, q[1] * K, q[2] || 0, q[3] ?? 1]), { rot: 0.3 + flap, tx: 0, ty: 0 })
       .map((q) => { const r = q.slice(); r[0] = root[0] + side * q[0]; r[1] = root[1] + q[1]; return r; });
     const id = side < 0 ? 'fnL' : 'fnR';
     const shape = pen.curve(tf(FIN.shape), { id, k: 0.5 });
@@ -139,31 +141,30 @@ export function drawFins(pen, p, G, o = {}) {
     const belly = pen.curve(tf(FIN.belly), { id: id + 'b', k: 0.5 });
     pen.clip(shape, () => {
       pen.fill(belly, pal.finBelly);
-      const bs = pen.curve(tf([P(6, 12), P(30, 9), P(56, 8.5), P(80, 7.5), P(70, 12), P(46, 16), P(22, 20), P(0, 20)]), { id: id + 'bs', k: 0.5 });
-      pen.fill(bs, pal.finBellyShade, 0.8);
+      pen.fill(pen.curve(tf(FIN.bellyShade), { id: id + 'bs', k: 0.5 }), pal.finBellyShade, 0.85);
       pen.fill(pen.curve(tf(FIN.sheen), { id: id + 'sh', k: 0.4 }), pal.finLight, 0.7);
     });
     const outl = tf(FIN.shape.concat([FIN.shape[0]]));
     pen.line(outl, [[0, 1.0], [0.4, 2.0], [0.55, 2.2], [0.9, 1.8], [1, 1.0]], pal.finLine, { id: id + 'o', k: 0.5 });
-    pen.line(tf([P(4, 7), P(26, 3.5), P(52, 3), P(76, 4.5), P(86, 6)]), [[0, 0], [0.3, 1.0], [1, 0.3]], pal.finLine, { alpha: 0.55 });
+    pen.line(tf(FIN.rib), [[0, 0], [0.3, 1.1], [1, 0.3]], pal.finLine, { alpha: 0.6 });
   }
 }
 
 // ------------------------------------------------------------------ front hair
 
 const BANGS = [
-  // root, mid points..., tip ; width ; shade side
-  { s: [[-38, -128], [-70, -104], [-90, -62], [-99, -14]], w: 30, sd: 'r' },
-  { s: [[34, -128], [66, -106], [88, -64], [97, -12]], w: 30, sd: 'l' },
-  { s: [[-30, -131], [-52, -102], [-66, -64], [-73, -26]], w: 38, sd: 'r' },
-  { s: [[24, -131], [46, -104], [62, -66], [71, -24]], w: 38, sd: 'l' },
-  { s: [[-20, -133], [-33, -100], [-41, -64], [-45, -32]], w: 32, sd: 'r' },
-  { s: [[10, -134], [24, -100], [38, -64], [47, -30]], w: 34, sd: 'l' },
-  { s: [[-12, -135], [-16, -98], [-19, -58], [-21, -22]], w: 31, sd: 'r' },
-  { s: [[4, -135], [10, -98], [17, -60], [22, -24]], w: 32, sd: 'l' },
-  { s: [[-5, -136], [-3, -96], [-1, -50], [2, 4]], w: 28, sd: 'r' },
+  // spine root -> tip (head-local), width, shade side, lineFrom
+  { s: [[-40, -128], [-74, -100], [-94, -56], [-101, -8]], w: 40, sd: 'r', lf: 0.25 },
+  { s: [[36, -128], [70, -102], [90, -58], [99, -6]], w: 40, sd: 'l', lf: 0.25 },
+  { s: [[-26, -132], [-50, -104], [-66, -68], [-76, -30]], w: 52, sd: 'r', lf: 0.35 },
+  { s: [[22, -133], [44, -106], [60, -70], [66, -22]], w: 52, sd: 'l', lf: 0.35 },
+  { s: [[-22, -122], [-38, -90], [-52, -48], [-58, -10]], w: 16, sd: 'r', lf: 0.3 },
+  { s: [[8, -135], [22, -104], [30, -66], [32, -28]], w: 48, sd: 'l', lf: 0.4 },
+  { s: [[-14, -135], [-28, -104], [-38, -66], [-44, -24]], w: 48, sd: 'r', lf: 0.4 },
+  { s: [[14, -122], [30, -88], [42, -48], [46, -8]], w: 16, sd: 'l', lf: 0.3 },
+  { s: [[-4, -136], [-8, -100], [-8, -50], [-3, 6]], w: 40, sd: 'r', lf: 0.4 },
 ];
-const BANG_W = (w) => [[0, w * 0.8], [0.3, w], [0.65, w * 0.7], [0.88, w * 0.32], [1, 0]];
+const BANG_W = (w) => [[0, w * 0.85], [0.35, w], [0.62, w * 0.72], [0.86, w * 0.32], [1, 0]];
 
 const CAP_OUT = [P(-114, 6), P(-117, -50), P(-102, -102), P(-62, -138), P(0, -153), P(62, -140), P(102, -104), P(118, -50), P(115, 6)];
 const CAP_IN = [P(96, -2), P(91, -52), P(60, -92), P(0, -104), P(-60, -92), P(-91, -52), P(-96, -2)];
@@ -172,25 +173,28 @@ export function capPath(pen, G) {
   return pen.curve(mapW(CAP_OUT.concat(CAP_IN), G, 0.5), { closed: true, id: 'cap', k: 0.6 });
 }
 
-/** angel-ring sheen band drawn into the current clip */
+/** angel-ring sheen: soft band + tapered light streaks along the hair flow, drawn into the current clip */
 function sheenBand(pen, G, alpha = 1) {
   const pal = pen.pal;
-  const a0 = Math.PI + 0.42, a1 = TAU - 0.42;
+  const a0 = Math.PI + 0.36, a1 = TAU - 0.36;
   const top = [], bot = [];
-  const N = 44;
+  const N = 36;
+  const cy = -30;
   for (let i = 0; i <= N; i++) {
     const u = i / N, a = lerp(a0, a1, u);
-    top.push(G.W([Math.cos(a) * 92, -38 + Math.sin(a) * 74], 0.8));
-    const spike = (i % 4 === 2) ? 9 : (i % 4 === 0 ? 0 : 4);
-    bot.push(G.W([Math.cos(a) * 90, -38 + Math.sin(a) * 62 + spike * Math.sin(u * Math.PI)], 0.8));
+    top.push(G.W([Math.cos(a) * 96, cy + Math.sin(a) * 80], 0.8));
+    bot.push(G.W([Math.cos(a) * 92, cy + Math.sin(a) * 64], 0.8));
   }
-  const band = polyPath(top.concat(bot.reverse()));
-  pen.fill(band, pal.hairSheen, 0.62 * alpha);
-  // brighter core streaks
-  for (let k = 0; k < 7; k++) {
-    const u = 0.12 + k * 0.125, a = lerp(a0, a1, u);
-    const c0 = G.W([Math.cos(a) * 91, -38 + Math.sin(a) * 71], 0.8), c1 = G.W([Math.cos(a + 0.03) * 90, -38 + Math.sin(a + 0.03) * 64], 0.8);
-    pen.line([c0, c1], [[0, 0.5], [0.4, 2.6], [1, 0]], pal.hairSheenHi, { alpha: 0.6 * alpha });
+  pen.fill(polyPath(top.concat(bot.reverse())), pal.hairSheen, 0.42 * alpha);
+  // streaks: from slightly above the band down along the radial flow
+  const n = 15;
+  for (let k = 0; k < n; k++) {
+    const u = 0.06 + (k / (n - 1)) * 0.88, a = lerp(a0, a1, u);
+    const l = 0.75 + 0.25 * Math.sin(k * 2.7);
+    const c0 = G.W([Math.cos(a) * 97, cy + Math.sin(a) * 82], 0.8);
+    const c1 = G.W([Math.cos(a) * (96 - 10 * l), cy + Math.sin(a) * (80 - 24 * l)], 0.8);
+    const w = 3.2 + 1.6 * Math.cos(k * 1.9);
+    pen.line([c0, c1], [[0, w * 0.6], [0.3, w], [1, 0]], pal.hairSheenHi, { alpha: 0.55 * alpha });
   }
 }
 
@@ -198,14 +202,13 @@ export function drawFrontLocks(pen, p, G, o = {}) {
   const len = o.len ?? 520, bottom = o.lockBottom ?? 330;
   const pal = pen.pal;
   const defs = [
-    [[104, 6], [150, bottom], 34, 9, 0.2, -10],
-    [[96, 14], [124, bottom + 30], 30, 8, 0.8, -6],
+    [[100, 10], [118, bottom], 30, 13, 0.3, -14],
   ];
   let k = 0;
   for (const side of [-1, 1]) {
     for (const d of defs) {
-      const ph = d[4] + (side < 0 ? 0.4 : 0);
-      let sp = wavy([side * d[0][0], d[0][1]], [side * d[1][0], d[1][1]], { amp: d[3] * side, waves: 1.4, phase: ph, bend: d[5] * side });
+      const ph = d[4] + (side < 0 ? 0.5 : 0);
+      let sp = wavy([side * d[0][0], d[0][1]], [side * d[1][0], d[1][1]], { amp: d[3] * side, waves: 1.5, phase: ph, bend: d[5] * side });
       sp = swaySpine(sp, p, 51 + k, 1).map((q) => G.W(q, -0.2));
       const r = clump(pen, sp, [[0, d[2] * 0.6], [0.2, d[2]], [0.75, d[2] * 0.7], [0.93, d[2] * 0.3], [1, 0]],
         { id: 'fl' + k, len, shade: 0.42, shadeSide: side > 0 ? 'l' : 'r', lw: 1.6, sheen: [0.25, 0.6, 0.18], sheenAlpha: 0.35 });
@@ -243,9 +246,9 @@ export function drawFrontHair(pen, p, G, o = {}) {
   BANGS.forEach((b, i) => {
     let sp = b.s.map((q) => [q[0], q[1]]);
     sp = swaySpine(sp, p, 91 + i, 0.35).map((q) => G.W(q, 0.9));
-    const r = clump(pen, sp, BANG_W(b.w), { id: 'bg' + i, len, shade: 0.34, shadeSide: b.sd, lw: 1.45 });
-    pen.clip(r.path, () => sheenBand(pen, G, 0.9));
-    if (i % 2 === 0) strand(pen, r, b.sd === 'r' ? 0.3 : 0.7, 0.35, 0.92, 0.8, pal.hairShade, 0.5);
+    const r = clump(pen, sp, BANG_W(b.w), { id: 'bg' + i, len, shade: 0.3, shadeSide: b.sd, lw: 1.45, lineFrom: b.lf });
+    pen.clip(r.path, () => sheenBand(pen, G, 1));
+    if (b.w > 30) strand(pen, r, b.sd === 'r' ? 0.32 : 0.68, 0.5, 0.9, 0.8, pal.hairShade, 0.45);
   });
 }
 
@@ -253,9 +256,9 @@ export function drawAhoge(pen, p, G) {
   const pal = pen.pal;
   const t = p.t || 0;
   const bob = Math.sin(t * 2.4) * 3 * (p.hairSway ?? 0);
-  let sp = [[-6, -146], [-8, -170], [-20, -192], [-42, -205 + bob], [-66, -201 + bob], [-80, -186 + bob], [-78, -170 + bob]];
+  let sp = [[-4, -144], [-5, -170], [-16, -194], [-38, -208 + bob], [-62, -205 + bob], [-77, -190 + bob], [-73, -173 + bob]];
   sp = sp.map((q) => G.W(q, 0.6));
-  const r = clump(pen, sp, [[0, 10], [0.35, 9], [0.75, 5.5], [1, 0.6]], { id: 'ah', len: 300, lw: 1.5, shade: 0.4, shadeSide: 'r', sheen: [0.15, 0.5, 0.35], sheenAlpha: 0.5 });
+  const r = clump(pen, sp, [[0, 15], [0.3, 12], [0.75, 6.5], [1, 0.8]], { id: 'ah', len: 300, lw: 1.5, shade: 0.4, shadeSide: 'r', sheen: [0.15, 0.5, 0.35], sheenAlpha: 0.5 });
   return r;
 }
 
@@ -265,8 +268,8 @@ export function drawBand(pen, p, G) {
   const out = [], inn = [];
   for (let i = 0; i <= 40; i++) {
     const a = lerp(a0, a1, i / 40);
-    out.push(G.W(ellPt(a, HD.rx - 3, HD.ry - 3), 0.5));
-    inn.push(G.W(ellPt(a, HD.rx - 13, HD.ry - 12), 0.5));
+    out.push(G.W(ellPt(a, HD.rx - 2, HD.ry - 2), 0.5));
+    inn.push(G.W(ellPt(a, HD.rx - 10, HD.ry - 9.5), 0.5));
   }
   const bp = polyPath(out.concat(inn.slice().reverse()));
   pen.fill(bp, pal.apron);
@@ -275,7 +278,7 @@ export function drawBand(pen, p, G) {
     const s2 = inn.map((q) => q);
     sh.moveTo(s2[0][0], s2[0][1]);
     for (const q of s2) sh.lineTo(q[0], q[1]);
-    pen.c.save(); pen.c.strokeStyle = pal.apronShade; pen.c.lineWidth = 6; pen.c.stroke(sh); pen.c.restore();
+    pen.c.save(); pen.c.strokeStyle = pal.apronShade; pen.c.lineWidth = 5; pen.c.stroke(sh); pen.c.restore();
   });
   pen.line(out, [[0, 0.4], [0.1, 1.2], [0.9, 1.2], [1, 0.4]], pal.apronLine, { step: 2 });
   pen.line(inn, [[0, 0.4], [0.1, 1.3], [0.9, 1.3], [1, 0.4]], pal.apronLine, { step: 2 });

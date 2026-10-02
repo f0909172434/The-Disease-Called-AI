@@ -115,7 +115,8 @@ export function clump(pen, spine, width, o = {}) {
   }
   if (!o.noLine) {
     const lw = (o.lw ?? 1.5);
-    const prof = [[0, 0], [0.12, lw * 0.6], [0.35, lw], [0.85, lw * 0.9], [1, lw * 0.35]];
+    const lf = o.lineFrom ?? 0;
+    const prof = lf ? [[0, 0], [lf, 0], [lf + 0.18, lw * 0.85], [0.85, lw * 0.9], [1, lw * 0.35]] : [[0, 0], [0.12, lw * 0.6], [0.35, lw], [0.85, lw * 0.9], [1, lw * 0.35]];
     const col = o.line || pal.hairLine;
     if (o.sides !== 'r') pen.line(r.left, prof, col, {});
     if (o.sides !== 'l') pen.line(r.right, prof, col, {});

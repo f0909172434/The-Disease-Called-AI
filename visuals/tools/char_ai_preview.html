@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI character sheet</title>
+  <style>html, body { margin: 0; background: #E9EBF0; }</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script type="module">
+    // Design sheet for the AI character (src/kit/heroine/ai). Captured by tools/char_capture.mjs.
+    //   ?mode=sheet (default) | bust | chibi | full | exprs   (single-view modes are for iteration)
+    import { CHARACTER, renderView } from '../src/kit/heroine/ai/index.js';
+
+    const q = new URLSearchParams(location.search);
+    const mode = q.get('mode') || 'sheet';
+    const W = innerWidth || 2400, H = innerHeight || 1500;
+    const cv = document.getElementById('c');
+    cv.width = W; cv.height = H;
+    const c = cv.getContext('2d');
+    const BG = '#E9EBF0', PANEL = '#F4F5F8', INK = '#2A3050', SUB = '#7A8098';
+    c.fillStyle = BG; c.fillRect(0, 0, W, H);
+    const timings = {};
+
+    function panel(x, y, w, h, label, sub = '') {
+      c.fillStyle = PANEL;
+      roundRect(x, y, w, h, 14); c.fill();
+      c.strokeStyle = '#D5D9E3'; c.lineWidth = 1.5; roundRect(x, y, w, h, 14); c.stroke();
+      c.fillStyle = INK; c.font = '600 19px sans-serif'; c.fillText(label, x + 16, y + 30);
+      if (sub) { c.fillStyle = SUB; c.font = '14px sans-serif'; c.fillText(sub, x + 16 + c.measureText(label).width * 1.0 + 12, y + 30); }
+    }
+    function roundRect(x, y, w, h, r) {
+      c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+      c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+    }
+    /** draw view fitted into box; crop = [x0,y0,x1,y1] in view units (default full size) */
+    function drawFit(view, p, bx, by, bw, bh, crop = null, key = view) {
+      const V = CHARACTER.views[view];
+      const cr = crop || [0, 0, V.size[0], V.size[1]];
+      const s = Math.min(bw / (cr[2] - cr[0]), bh / (cr[3] - cr[1]));
+      const ox = bx + (bw - (cr[2] - cr[0]) * s) / 2, oy = by + (bh - (cr[3] - cr[1]) * s) / 2;
+      c.save();
+      c.beginPath(); c.rect(bx, by, bw, bh); c.clip();
+      c.translate(ox - cr[0] * s, oy - cr[1] * s);
+      c.scale(s, s);
+      const r = renderView(c, view, p, { scale: s });
+      c.restore();
+      (timings[key] = timings[key] || []).push(r.ms);
+      return r;
+    }
+
+    const HEADCROP = [190, 10, 810, 640];
+    if (mode === 'bust') {
+      drawFit('bust', { expr: { smile: 0 } }, 0, 0, W, H);
+    } else if (mode === 'face') {
+      drawFit('bust', { expr: { smile: 0 } }, 0, 0, W, H, HEADCROP);
+    } else if (mode === 'exprs') {
+      const ex = [['neutral', {}], ['smile', { expr: { smile: 1 } }], ['gentle', { expr: { gentle: 1 } }], ['worried', { expr: { worried: 1 } }],
+        ['heart', { expr: { heart: 1 } }], ['blank', { expr: { blank: 1 } }], ['blink + O', { blink: 1, mouth: { open: 0.8, vowel: 'O' } }], ['uncanny', { expr: { smile: 1 }, uncanny: 1 }]];
+      const cw = W / 4, ch = H / 2;
+      ex.forEach(([n, p], i) => { const x = (i % 4) * cw, y = Math.floor(i / 4) * ch; panel(x + 6, y + 6, cw - 12, ch - 12, n); drawFit('bust', p, x + 10, y + 40, cw - 20, ch - 50, HEADCROP); });
+    } else if (CHARACTER.views[mode]) {
+      drawFit(mode, {}, 0, 0, W, H);
+    } else {
+      sheet();
+    }
+
+    function sheet() {
+      c.fillStyle = INK; c.font = '700 28px sans-serif';
+      c.fillText('“her” — the AI · whale-maid design sheet', 28, 44);
+      c.fillStyle = SUB; c.font = '16px sans-serif';
+      c.fillText('src/kit/heroine/ai · clean vector line (low boil) · palettes: human / glow / amber', 640, 44);
+      const views = Object.keys(CHARACTER.views);
+      const top = 64, h1 = 790;
+      let x = 20;
+      const cols = [['chibi', 560, 'chibi', '~2.5 heads · verse 1'], ['full', 520, 'full', '~6.8 heads · chorus 1'], ['bust', 820, 'bust', 'neutral · rig-ready']];
+      for (const [v, w, label, sub] of cols) {
+        panel(x, top, w, h1, label, sub);
+        if (CHARACTER.views[v]) drawFit(v, {}, x + 10, top + 44, w - 20, h1 - 54);
+        x += w + 12;
+      }
+      // palette column
+      const pw = W - x - 20;
+      panel(x, top, pw, h1, 'palettes', 'human / glow / amber');
+      const pals = ['human', 'glow', 'amber'];
+      pals.forEach((pn, i) => {
+        const y = top + 44 + i * ((h1 - 54) / 3);
+        drawFit('bust', { palette: pn, expr: { smile: 0.6 } }, x + 10, y, pw - 20, (h1 - 54) / 3 - 6, HEADCROP, 'bust_' + pn);
+        c.fillStyle = SUB; c.font = '600 14px sans-serif'; c.fillText(pn, x + 18, y + 18);
+      });
+      // expressions row
+      const ex = [['smile', { expr: { smile: 1 } }], ['gentle', { expr: { gentle: 1 } }], ['worried', { expr: { worried: 1 } }],
+        ['heart (jackpot)', { expr: { heart: 1 } }], ['blank (glitch)', { expr: { blank: 1 } }], ['blink · mouth O', { blink: 1, mouth: { open: 0.85, vowel: 'O' } }]];
+      const ry = top + h1 + 12, rh = H - ry - 16;
+      const ew = (W - 40 - 12 * (ex.length - 1)) / ex.length;
+      ex.forEach(([n, p], i) => {
+        const ex0 = 20 + i * (ew + 12);
+        panel(ex0, ry, ew, rh, n);
+        drawFit('bust', p, ex0 + 8, ry + 40, ew - 16, rh - 46, HEADCROP, 'expr');
+      });
+    }
+
+    const summary = {};
+    for (const [k, v] of Object.entries(timings)) summary[k] = (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1) + ' ms';
+    console.log('[char_ai] draw ms per view', JSON.stringify(summary));
+    window.__timings = summary;
+    window.__done = true;
+  </script>
+</body>
+</html>
