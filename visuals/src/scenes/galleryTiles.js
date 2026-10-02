@@ -44,7 +44,7 @@ export function buildTiles(ctx) {
   }
   // 02 Silhouette — states cycle: innerGlow -> gridify -> colorSwap -> dissolve
   {
-    const T = tile('Silhouette · glow/grid/swap/dissolve', 30);
+    const T = tile('Silhouette · states', 30);
     const her = new K.Silhouette(ctx);
     T.scene.add(her);
     T.setViewport = (w, h) => { her.viewHeight = h; her.viewWidth = w; };
@@ -145,8 +145,14 @@ export function buildTiles(ctx) {
   {
     const T = tile('HUD · monitor', 30);
     const { W, H } = ctx;
-    T.camera = new THREE.OrthographicCamera(-W / 2, W / 2, H / 2, -H / 2, -10, 10);
+    const u = ctx.u;
+    // compact arrangement framed 2x for the tile (scenes use hud.setLayout() in full-frame HUD space)
+    T.camera = new THREE.OrthographicCamera(-W / 4, W / 4, H / 4, -H / 4, -10, 10);
     const hud = new K.HUD(ctx, { layout: 'monitor' });
+    hud.widgets.ecg.mesh.position.set(-40 * u, -120 * u, 0);
+    hud.widgets.vitals.mesh.position.set(230 * u, 70 * u, 0);
+    hud.widgets.clock.mesh.position.set(-250 * u, 120 * u, 0);
+    hud.widgets.session.mesh.position.set(-210 * u, 50 * u, 0);
     T.scene.add(hud);
     T.update = (t) => {
       hud.update(t + 56, { bpm: 172, temp: 41.2, dosage: '∞', clock: '03:00', session: 3600 * 4 + t * 60 });

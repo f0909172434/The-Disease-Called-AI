@@ -335,7 +335,7 @@ export class Silhouette extends THREE.Group {
         uJitterSeed: { value: 0 }, uRefDist: { value: 3.5 }, uFocus: { value: 3.5 }, uAperture: { value: 0 }, uBustFade: { value: -0.95 },
         uScreenPos: { value: new THREE.Vector3(2.2, -0.15, 0.6) },
         uRim: { value: col('AI_CYAN') }, uWarm: { value: col('HUMAN_SKIN') }, uShadow: { value: col('HUMAN_EMBER') },
-        uHair: { value: col('#6f3d22') }, uCyan: { value: col('AI_CYAN') }, uDeep: { value: col('AI_DEEP') },
+        uHair: { value: col('#5f3925') }, uCyan: { value: col('AI_CYAN') }, uDeep: { value: col('AI_DEEP') },
         uAmber: { value: col('HUMAN_AMBER') },
         uEye: { value: new THREE.Vector3(EYE.cx, EYE.cy, EYE.cz) },
         uHinge: { value: new THREE.Vector2(g.hinge[0], g.hinge[1]) },
