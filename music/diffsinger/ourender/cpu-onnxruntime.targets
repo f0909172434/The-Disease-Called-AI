@@ -1,0 +1,17 @@
+<Project>
+  <!--
+    Imported into every project of the build through CustomAfterMicrosoftCommonTargets
+    (see ../setup.sh). On Linux, OpenUtau.Core references the CUDA build of ONNX Runtime
+    (Microsoft.ML.OnnxRuntime.Gpu.Linux, ~400 MB of CUDA libraries); a headless CPU
+    renderer only needs the plain CPU package. No OpenUtau source file is modified.
+  -->
+  <PropertyGroup>
+    <OurenderOrtVersion Condition="'$(OurenderOrtVersion)' == ''">1.24.4</OurenderOrtVersion>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'OpenUtau.Core'">
+    <PackageReference Remove="Microsoft.ML.OnnxRuntime.Gpu.Linux" />
+    <PackageReference Remove="Microsoft.ML.OnnxRuntime.DirectML" />
+    <PackageReference Remove="Microsoft.ML.OnnxRuntime" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="$(OurenderOrtVersion)" />
+  </ItemGroup>
+</Project>

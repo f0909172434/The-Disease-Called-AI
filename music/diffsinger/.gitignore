@@ -1,0 +1,8 @@
+# local, regenerable or third-party (never commit voicebank files: their terms forbid re-uploading)
+voicebanks/
+vendor/
+oudata/
+downloads/
+bin/
+ourender/bin/
+ourender/obj/
