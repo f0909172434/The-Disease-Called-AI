@@ -17,3 +17,6 @@ output/*.partial.mp4
 # large regenerable audio masters (a compressed master is committed instead)
 music/build/master.wav
 music/build/master.flac
+
+# review contact sheets (regenerable)
+output/sheets/
