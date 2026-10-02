@@ -1,0 +1,10 @@
+{
+  "name": "disease-called-ai-film",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Hand-painted (p5.brush) renderer for 病名為AI / The Disease Called AI. Engine adapted from ClaudeAnimationBase (MIT).",
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "^25.11.0"
+  }
+}
