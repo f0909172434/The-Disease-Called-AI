@@ -242,7 +242,7 @@ const AI_HAIR = {
   chibi: { R: [[0, 1.06], [.45, 1.1], [.9, 1.28], [1.4, 1.46], [1.85, 1.46], [2.3, 1.22]], Rs: [[-.5, 1.04], [.3, 1.0], [.8, .97], [1.3, 1.05], [2, 1.12]],
     len: 2.4, side: 1.55, grad: [.5, 2.1], gradS: [.35, 1.7], wl: 1.3, amp: .17, wb: .56, ws: .33, nb: 7, curl: .21, zk: .62, zb: .3 },
   full:  { R: [[0, 1.08], [.8, 1.22], [1.8, 1.45], [3, 1.62], [4.4, 1.68], [6, 1.45]], Rs: [[-.5, 1.04], [.3, 1.0], [.9, .98], [1.6, 1.1], [3, 1.22]],
-    len: 6.1, side: 2.8, grad: [.75, 4.2], gradS: [.45, 2.7], wl: 1.9, amp: .15, wb: .62, ws: .34, nb: 8, curl: .26, zk: .55, zb: .35, wp: 1.5 },
+    len: 6.1, side: 2.8, grad: [.75, 4.2], gradS: [.45, 2.7], wl: 1.9, amp: .15, wb: .62, ws: .34, nb: 7, curl: .26, zk: .55, zb: .35, wp: 1.5 },
 };
 // The bangs, painted in this order: [root x, root y, tip x, tip y, width, bow (outward arc), S-curve], front-view head
 // units. Two side-swept locks each side (their inner edges frame the forehead), then a central cluster of pointed locks
@@ -370,7 +370,7 @@ function aiPaintLock(hd, L) {
   const big = S.u > 20;
   const outerL = L.s < 0 || hd.view === 'side';   // the edge toward the silhouette gets the full line
   aiLock(C, Wd, washes, { seed: L.id.length * 3 + L.s + L.phi, inkFrom: L.side ? .18 : outerL ? .3 : .55, inkFromR: L.side ? .18 : outerL ? .55 : .3, sw: S.sw * (L.lead ? .62 : .56), root: L.side ? [.22, tone(P.hair0), 100] : null,
-    shade: big ? tone(P.hair0) : null, shadeOp: 120, shadeA: .12, shadeB: .75, shadeL: L.s < 0 && !L.side,
+    shade: big && Math.abs(Math.sin(L.phi + hd.yaw * L.s)) > .6 ? tone(P.hair0) : null, shadeOp: 120, shadeA: .12, shadeB: .75, shadeL: L.s < 0 && !L.side,
     hi: big && L.side ? mixCol(P.hair2, P.hair4, .5) : null, strand: big && L.side ? mixCol(P.hairInk, P.hair1, .45) : null });
 }
 
@@ -386,6 +386,8 @@ function aiHairMass(hd, locks) {
 // Pass 1 (behind her body): the dark mass, then the back locks, back to front.
 function aiHairBack(hd) {
   const S = AI_S, P = S.P, HF = hd.HF, rs = hd.A.rs, locks = aiLocks(hd).filter(L => L.d < .05);
+  // a lock that hangs wholly behind her body (seen from the front: inside |x| < .8 below the chin) is never painted
+  const seen = L => hd.s > .5 || L.p2.some(([x, y]) => Math.abs(x) > (y < .9 ? 1.0 : .8));
   rs('hairmass');
   const M = aiHairMass(hd, locks);
   if (M.length > 5) {
@@ -396,7 +398,7 @@ function aiHairBack(hd) {
       if (lo.length > 2) aiPaint(lo.map(p => hd.Hh(p[0], p[1])), { wash: col, op: 235, ink: null });
     }
   }
-  for (const L of locks) { rs('lock ' + L.id); aiPaintLock(hd, L); }
+  for (const L of locks) if (seen(L)) { rs('lock ' + L.id); aiPaintLock(hd, L); }
 }
 
 // The bangs (and the strands across them) as centrelines in px, in paint order. A bang hangs from the crown over the

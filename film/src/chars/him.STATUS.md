@@ -4,61 +4,36 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
-v6 (round 6: masculine silhouette; v5 hands, shoes and contrapposto kept):
-- hips: male pelvis — hip joints narrowed (front ±1.45u, 3/4 −1.12/+1.3), hip width ≈ the blazer's waist; the trouser
-  leg's outer contour runs almost straight from hip to knee, the quad mass sits on the inner / front side (`HIM_LEG`),
-  a small taper at the knee; jacket skirts and the untucked home shirt hang nearly straight from the waist; the
-  contrapposto keeps the weight shift but only tilts the hips subtly (front .045 rad, shift .22u).
-- neck: ~20 % shorter — the head sits `HIM_NECKDN` (.3u) lower and the neck drawing is compressed to follow it
-  (`himNeckY`); the collar / trapezius line is raised near the neck (`HIM_TRAP` in `himBreath`, fading out toward the
-  shoulder tips) so the head sits on the shoulders; shirt collars raised so their points sit just under the jaw shadow.
-- 3/4 far shoulder: the far arm (joint raised to (3.85, −9.15), deltoid bulk on its outer side) is drawn over the far
-  side of the torso and under the chest / lapel / collar, so its deltoid continues the shoulder line as one form; a far
-  shoulder seam runs on into the sleeve-head seam; its inner contour against the chest is a soft fold (`soft`).
+v7 (round 7, user direction change: SLIM build; the muscular v3–v6 build and its photo reference are retired):
+- proportions: a lean young engineer, ~7 heads with the hair (~7.8 to the skull): `HIM_HS` .92 (was 1.24), longer legs
+  (thigh 7.45u + shin 7.25u), the hair's top volume pressed down to about half (`HIM_HAIRK` in `himHead`, only above
+  the hairline — the face, glasses, bangs and their locks are unchanged). Standing ≈ 31.5u (soles to hair top).
+- torso: shapes are still authored in the old wide frame; `himBreath` now scales x about a centre line by a
+  height-dependent factor (`HIM_SLIM`: average shoulders, a lean chest, a gently suppressed waist, slim hips) instead
+  of the old `HIM_BUILD` widening. Slender neck (`HIM_NECKW`, ~1.9u wide), the head sitting on it (`HIM_NECKDN`), a
+  low trapezius (`HIM_TRAP` .1). Shoulders ≈ 8u across the sleeve heads.
+- blazer fits a little loose: no chest / pec shading, no X of stress folds, no strain lines — one soft pull from the
+  button, long gentle drape folds at the sides and below the button; the home shirt hangs loose with soft drape folds.
+- arms: lean (`HIM_ARM` is a gentle, nearly straight taper; jacket sleeve ≈ 1.9u wide), hanging close to the body;
+  soft folds (sleeve-head seam, drape from the armpit, bunching inside the elbow); in front / 3/4 the outer contour runs
+  over the sleeve head so it continues the shoulder line (`cap`). The 3/4 far arm is still drawn over the far side of
+  the torso and under the chest / lapel / collar (one shoulder form), with a soft inner contour.
+- legs: slim straight trousers (`HIM_LEG`), hem breaking on the shoe; contrapposto kept (subtle hip tilt).
+- hands: the v5 articulated hands at a normal size (`himHand` scale 1.55, was 1.72); dress shoes a touch narrower.
+- kept from earlier rounds: the original anime face, thin rectangular glasses, short black hair with bangs, royal-blue
+  blazer over a white open-collar shirt (no tie), leather shoes, wristband, contrapposto, separated fingers, the
+  watercolour treatment and all views / poses / expressions / palettes.
 
-v5 (art-direction round 5: lower body, hands, shoes; arms/traps/lapels from v4 unchanged):
-- legs: trouser legs from profile tables like the arms (`HIM_LEG`: quad mass widest just below the jacket hem → taper into
-  the knee → a slight calf → narrow ankle), two-bone IK (`himIK`), a pressed crease, folds behind the knee and a break of
-  2–3 folds where the hem lands on the shoe; the hem drapes over the shoe (drawn after it: riding up over the instep in
-  front, dropping toward the heel in profile). Legs ~5% shorter (thigh 6.8u + shin 6.6u; hips ≈ 14.2u above the soles).
-  The jacket skirt / untucked home shirt flare a little so the hips never poke out at the sides.
-- contrapposto in every standing view (`o.contra`, default 1; 0 = the old symmetric stance): weight on his right leg,
-  which slants in so the foot sits under his centre of gravity; hips tilt up on that side and shift over it (front .07
-  rad, 3/4 .06), shoulders counter-tilt; the relaxed left foot goes out to the side and a little forward, heel lifted,
-  the knee bending forward (front/3/4: it drops and turns in slightly; profile: it bends forward).
-- hands: the relaxed hand is built from parts — back of the hand with the webbing, four gently curled fingers (little
-  furthest back and highest, middle longest, index slightly apart), each outlined so ink separates them, a crease at the
-  middle joint, the thumb in front along the index with its nail, nails on the index (and middle at `det2`), knuckles;
-  tendons at `det2`. (Also fixed a double-reversed tube side in `himFinger` that drew a stray diagonal in open hands.)
-- shoes: dark brown-black leather dress shoes with the suit (front, 3/4 and profile drawings: toe box with a shine and a
-  specular spot, toe-cap seam, laces under the hem, slim sole, heel), toes turned out a little in front; longer shoes
-  in profile (~4u); sneakers stay with `home`.
-- head: `HIM_HS` 1.24 (was 1.15). Against the reference at equal head size our shoulders are still narrower than his, so
-  the head reads anime-large rather than small; no further increase.
-- every small panel (side, home, home side, reach, desk) goes through the same arm/leg/hand/shoe code; checked at u ≈ 21–24.
-
-v4 (art-direction pass on anatomy): arms are tapering forms built from a profile table (`HIM_ARM`: deltoid cap →
-widest mid upper arm → narrow elbow → forearm swell → narrow wrist; outer/inner sides asymmetric) with a sleeve-head
-seam, tension folds from the armpit across the bicep, elbow folds, a crescent highlight on the deltoid; the neck is a
-cylinder flaring into sloping traps with sternocleidomastoid lines, jaw shadow and the blazer collar standing around it;
-lapels curve over the pecs with a shadow under the chest and an X of stress folds at the button; hands 1.4× (≈ the
-face's length) with curled fingers behind, knuckles, thumb and nail; thicker thighs; rounder shoes. The single real
-watercolour fill now sits on an interior chest mass (its bleed stayed outside the waist before).
-
-v3 (user reference, 2026-10-02): build, hair, glasses, outfit and colours follow the user's reference image (kept out
-of the repo; comparison in `output/sheets/char_him_vs_ref.jpg`, git-ignored). The face stays our original anime
-construction (only general traits: square jaw, straight thick brows, serious look).
-- build: `HIM_BUILD` widens the torso from the waist up (front ×1.45, 3/4 ×1.42, profile depth ×1.18) → massive
-  deltoids/chest, tapered waist; thick neck (now visible above the open collar), high trapezius; sleeves, forearms,
-  thighs and hands scaled up; strain lines across the biceps, gloss on the shoulder caps
-- palette sampled from the reference: blazer #2B48A3 / #1C3486 / #0F2160, shirt #F6F5F2 with cool #C9CEDD shadows,
-  hair #22212D / #14141C, skin #F2C8B0 / #D99E88
-- hair: heavier, longer pointed bangs over the brows, more volume on top, tighter sides; thinner metal half-rim frames
+History (superseded where v7 differs): v6 masculine hips / shorter neck / one-form 3/4 shoulder; v5 trouser legs from
+profile tables with IK and a hem break, contrapposto, articulated relaxed hand, leather dress shoes; v4 tapering arms
+from profile tables, neck/traps, lapels; v3 palette, hair, glasses and outfit from a user photo (its muscular build and
+the photo comparison sheet are retired in v7):
+- palette: blazer #2B48A3 / #1C3486 / #0F2160, shirt #F6F5F2 with cool #C9CEDD shadows, hair #22212D / #14141C,
+  skin #F2C8B0 / #D99E88; leather shoes #2E211C / #17100D with a #7E625A shine
 - watercolour (`wc` option of the kit's shape()): each big mass gets a second translucent wash offset and shrunk (soft
   wet edge), a pigment-pooling ring inside its edge, a lighter bloom on base washes, fine-pencil granulation in shadow
   masses, blazer blue bleeding onto the shirt along the lapels, and (`HIM_WCFILL`, on by default) a real p5.brush
-  watercolour `fill` on the biggest blazer shadow mass. Fill cost: ≈ +100 ms per figure (front u = 30: 193–323 ms
-  without, 284–477 ms with), so it stays on; the speech/podium pose was dropped at the user's request.
+  watercolour `fill` on one interior blazer mass (≈ +100 ms per figure).
 
 Detail pass (v2, after review "detail too low"): anime-illustration detail at bust/desk scale, with levels of detail
 so small figures stay cheap (`K.det` from ~13 px per head-unit, `K.det2` from ~26 px):
@@ -78,7 +53,7 @@ so small figures stay cheap (`K.det` from ~13 px per head-unit, `K.det2` from ~2
   shadows (jacket, shirt, trousers, forehead)
 
 Model sheet: `output/sheets/char_him_design.jpg` (main panel: standing front and 3/4; then the face at 2×, expressions,
-palettes, small side/home/reach/desk figures). Comparison: `LOOPS.him_vs_ref` / `him_vs_ref_q` at the reference's scale.
+palettes, small side/home/reach/desk figures).
 Old model sheet (render: `node render.mjs --soft-gl --loop=him_sheet --sheet=0 --cols=1 --w=1920 --out=out/him_sheet.jpg`).
 
 ## API
@@ -92,9 +67,9 @@ himPal(name)                   // 'human' | 'drained' | 'swapped' colour sets
 HIM_EMO, HIM_LAST              // emotion table; after a desk draw HIM_LAST.handL/handR = keyboard contact points (screen px)
 ```
 
-**Size:** standing ≈ 32.7u (soles to hair top); head 4.4u drawn ×1.24 (`HIM_HS`); shoulders ≈ 13u wide (deltoids); hips ≈ 14.2u
-above the soles. Standing poses use contrapposto (`contra: 0` for a symmetric stance).
-Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80 (`cut`: how far
+**Size (v7, slim):** standing ≈ 31.5u (soles to hair top), ~7 heads; head 4.4u drawn ×.92 (`HIM_HS`); shoulders ≈ 8u
+across the sleeve heads; hips ≈ 15.6u above the soles. Standing poses use contrapposto (`contra: 0` for a symmetric
+stance). Medium shot u ≈ 18–24, full figure in frame u ≈ 29–32, close-up: `pose: 'bust'` with u ≈ 45–90 (`cut`: how far
 below the collarbones the bust ends, default 4.95u; ~1.1 for a head-and-collar close-up).
 
 **Anchors:** `stand` = ground point between the feet · `bust` = notch between the collarbones (everything ~4.9u below
@@ -134,6 +109,8 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
+v7: cheaper than v4 — same box, same load (avg ≈ 8.6), `--bench` standing front u = 30: 2.87 s/frame (v7) vs 3.32 s
+(v4), an empty frame ≈ 0.77 s at that load.
 v5/v6: A/B against v4 on the same (heavily loaded) box with `--bench`: standing front u = 30 2.32 s/frame (v5), 2.07 s
 (v6) vs 2.30 s (v4), with an empty frame costing 0.67–0.73 s at that load — i.e. the new hands, legs, shoes, neck and
 shoulder are cost-neutral; the v4 figures below (measured at normal load) still apply.
@@ -147,8 +124,10 @@ Timing loops: `him_perf` (3/4), `him_perf_front`, `him_perf_fill` (front without
 - Hands: the relaxed hand is articulated (v5); 'type' and 'fist' are still profile silhouettes with nail/knuckle hints
   (fine at desk scale, plain in an extreme close-up); 'open'/'press' fingers are simple tubes.
 - Contrapposto always puts the weight on his right leg (mirror with `flip` for the other side); no walk cycle yet.
-- Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head; the top
-  is spikier than the reference's rounder messy volume.
+- Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head (v7 presses
+  the top volume down, which softens it).
+- The slim torso is the old wide drawing narrowed by `HIM_SLIM`; lapel and pocket proportions follow from that warp
+  rather than being redrawn for a slim cut.
 - Strongly bent arms (desk, reach) reuse the hanging-arm profile; no dedicated foreshortened or flexed-arm drawings.
 - Arm angles are free, but there is no foreshortened arm toward the camera (front-view reach is sideways).
 - The torso doesn't twist: lean rotates the whole upper body about the hips; the head tilts about the neck.
