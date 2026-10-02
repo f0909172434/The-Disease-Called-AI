@@ -7,7 +7,7 @@ const HIM_BASE = {   // hues sampled from the user's reference: royal-blue blaze
   hair: '#22212D', hairSh: '#14141C', hairHi: '#5C6688', hairMid: '#2E2D3B', white: '#FBF6EE', iris: '#56372A', irisLt: '#A0704C', irisDk: '#2A1914', pupil: '#1E1415',
   jacket: '#2B48A3', jacketSh: '#1C3486', jacketDk: '#0F2160', jacketHi: '#5277CF', jacketEdge: '#8AA4E6', stitch: '#6C86CC',
   shirt: '#F6F5F2', shirtSh: '#C9CEDD', pants: '#272A3B', pantsSh: '#1A1C29', pantsHi: '#41455C',
-  shoe: '#F1EADF', shoeSh: '#C2B9AB', sole: '#6A5A54', leather: '#3D2A23', leatherDk: '#241813', leatherHi: '#9A7462', leatherSole: '#1A1210', belt: '#3E2A22', buckle: '#B9B2A6', sock: '#8C8999',
+  shoe: '#F1EADF', shoeSh: '#C2B9AB', sole: '#6A5A54', leather: '#2E211C', leatherDk: '#17100D', leatherHi: '#7E625A', leatherShine: '#E6DAD2', leatherSole: '#100B09', belt: '#3E2A22', buckle: '#B9B2A6', sock: '#8C8999',
   glass: '#C3C8D1', glassDk: '#6E7480', band: '#FCF9F3', bandSh: '#D8D4DE', code: '#2B2233',
   ink: '#241F2C', inkSoft: '#5A4650', lash: '#16141C', glare: '#7FE9FF', tear: '#BFE6F5', cheekLine: '#D9806F', nail: '#F7DCCB'
 };
@@ -587,23 +587,45 @@ function himHand(K, c, kind, at, ang, thumb, skin, sc = 1.72) {
   const H = HIM_HANDS[kind] || HIM_HANDS.relax, ca = Math.cos(-ang), sa = Math.sin(-ang), sk = skin || c.skin;
   const tf = P => P.map(([x, y, k]) => { x *= thumb * sc; y *= sc; return [at[0] + x * ca - y * sa, at[1] + x * sa + y * ca, k]; });
   if (H.parts) {
-    // one silhouette (back of the hand, the curled fingers, the index a little apart, the thumb in front), then the
-    // fingers separated by ink lines, the thumb's contour and nail, and the knuckles
-    const out = [[-.32, -.05], [-.42, .4], [-.46, .85], [-.45, 1.0], [-.41, 1.3], [-.33, 1.47], [-.25, 1.5, 1], [-.2, 1.62], [-.06, 1.73], [.08, 1.78], [.18, 1.7], [.13, 1.58],
-                 [.09, 1.52, 1], [.17, 1.58], [.29, 1.66], [.39, 1.6], [.37, 1.45, 1], [.44, 1.4], [.53, 1.27], [.6, 1.06], [.58, .7], [.49, .35], [.37, -.05]];
-    K.shape(tf(out), { wash: sk, sw: .6, n: 3 });
-    K.shape(tf([[-.42, .5], [-.45, .95], [-.38, 1.32], [-.22, 1.6], [-.02, 1.74], [-.12, 1.5], [-.26, 1.2], [-.3, .8]]), { wash: c.skinSh, op: 170, ink: null, n: 3 });   // the back fingers in shadow
-    K.shape(tf([[.3, .45], [.4, .95], [.45, 1.25], [.5, 1.05], [.48, .55]]), { wash: c.skinHi, op: 120, ink: null, n: 3 });   // light on the thumb
-    K.line(tf([[-.3, 1.0], [-.31, 1.28], [-.2, 1.52]]), .34, c.ink, { n: 3 });   // little | ring
-    K.line(tf([[-.15, 1.02], [-.15, 1.3], [-.04, 1.53], [.07, 1.64]]), .36, c.ink, { n: 3 });   // ring | middle
-    K.line(tf([[.01, 1.0], [.03, 1.3], [.1, 1.48]]), .36, c.ink, { n: 3 });   // middle | index
-    K.line(tf([[.15, .95], [.22, 1.25], [.31, 1.42], [.37, 1.45]]), .36, c.ink, { n: 3 });   // the index's top edge
-    K.line(tf([[.27, .45], [.36, .9], [.41, 1.18], [.47, 1.31]]), .4, c.ink, { n: 3 });   // the thumb against the index
+    // hanging and relaxed, seen at ~45° from the thumb side: the back of the hand, four gently curled fingers (the
+    // little finger furthest back and highest, the middle longest, the index a little apart), the thumb in front lying
+    // along the index; ink lines between the fingers, nails on the thumb and the front fingers, knuckles on the back
+    const fin = (base, a0, L, w0, w1, curl, kx = .8) => {   // kx: the curl toward the palm is foreshortened
+      const P = [base]; let a = a0, p = base;
+      L.forEach((l, i) => { a += curl[i]; const q = [p[0] + Math.sin(a) * l * kx, p[1] + Math.cos(a) * l]; if (!i) P.push(himAt(p, q, .45)); P.push(q); p = q; });
+      const W = P.map((_, i) => lerp(w0, w1, i / (P.length - 1))), tb = himTube(P, W), e = P[P.length - 1], d = himDir(P[P.length - 2], e), r = w1 / 2, tip = [];
+      for (let k = 1; k < 6; k++) { const th = k / 6 * Math.PI; tip.push([e[0] - d[1] * r * Math.cos(th) + d[0] * r * Math.sin(th), e[1] + d[0] * r * Math.cos(th) + d[1] * r * Math.sin(th)]); }
+      return { out: tb.L.concat(tip, tb.R.reverse()), e, d, r, P };
+    };
+    const body = [[-.34, -.05], [-.4, .3], [-.44, .62], [-.42, .8], [-.34, 1.0], [-.1, 1.1], [.16, 1.14], [.4, 1.02], [.5, .62], [.53, .38], [.47, .15], [.37, -.05]];   // its lower edge is the webbing between the fingers
+    K.shape(tf(body), { wash: sk, ink: null, n: 3 });
+    K.shape(tf([[-.34, -.05], [-.4, .3], [-.44, .62], [-.42, .8], [-.28, .84], [-.26, .45], [-.18, .05]]), { wash: c.skinSh, op: 150, ink: null, n: 3 });
+    K.line(tf(body.slice(0, 4)), .55, c.ink, { n: 3 });
+    const F = [   // base, angle, phalanges, widths, curl per joint: little, ring, middle, index (a little apart)
+      [[-.3, .74], -.04, [.3, .2, .16], .25, .2, [.14, .38, .3]],
+      [[-.09, .82], -.03, [.37, .24, .18], .28, .22, [.12, .34, .28]],
+      [[.12, .86], -.01, [.41, .26, .19], .29, .23, [.1, .3, .25]],
+      [[.34, .82], .1, [.37, .24, .18], .28, .22, [.06, .24, .22]]
+    ].map(([b, a0, L, w0, w1, cu]) => fin(b, a0, L, w0, w1, cu));
+    F.forEach((f, i) => {
+      const Q = tf(f.out), n = f.out.length;
+      K.shape(Q, { wash: i < 2 ? mixCol(sk, c.skinSh, .7 - i * .3) : sk, ink: null, n: 3 });
+      if (i >= 2) K.shape(tf(f.out.slice(0, 6)), { wash: c.skinSh, op: 80, ink: null, n: 3 });
+      K.line(Q.slice(1, n - 1), i === 3 ? .48 : .42, c.ink, { n: 3 });
+      if (K.det) K.line(tf([himOff(f.P[2], f.d, -f.r * .9), himOff(f.P[2], f.d, -f.r * .2)]), .22, c.skinDk, { raw: true });   // the middle joint's crease
+    });
+    // the thumb, from the ball of the thumb along the index
+    const th = fin([.4, .28], .12, [.42, .34], .36, .26, [-.04, .1], 1), tl = th.P.length;
+    K.shape(tf(th.out), { wash: sk, ink: null, n: 3 });
+    K.shape(tf([[.48, .34], [.55, .6], [.57, .86], [.5, .72], [.45, .5]]), { wash: c.skinHi, op: 130, ink: null, n: 3 });
+    K.line(tf(th.out.slice(2, tl + 3)), .42, c.ink, { n: 3 });   // the inner edge, against the index, and the tip
+    K.line(tf([[.37, -.05], [.47, .15], [.53, .38]].concat(th.out.slice(tl + 2).reverse().slice(1))), .55, c.ink, { n: 3 });   // the ball of the thumb, its outer edge
     if (K.det) {
-      K.shape(tf(ellPts(.5, 1.2, .055, .085, 8, 0, -.3)), { wash: c.nail, ink: c.skinDk, sw: .22, n: 2, j: 0 });   // thumbnail
-      K.shape(tf(ellPts(.33, 1.6, .055, .05, 8, 0, .4)), { wash: c.nail, ink: c.skinDk, sw: .2, n: 2, j: 0 });     // index nail
-      for (const [x, y] of [[-.38, .98], [-.22, .97], [-.06, .97], [.1, .94]]) K.line(tf([[x - .05, y + .02], [x + .05, y - .02]]), .26, c.skinDk, { raw: true });   // knuckles
-      K.line(tf([[-.44, 1.08], [-.38, 1.14]]), .26, c.skinDk, { raw: true });
+      const nail = (f, k, s) => { const q = [f.e[0] - f.d[1] * f.r * .3 * s - f.d[0] * f.r * .45, f.e[1] + f.d[0] * f.r * .3 * s - f.d[1] * f.r * .45];
+        K.shape(tf(ellPts(q[0], q[1], f.r * .44 * k, f.r * .66 * k, 8, 0, -Math.atan2(f.d[0], f.d[1]))), { wash: c.nail, ink: c.skinDk, sw: .22, n: 2, j: 0 }); };
+      nail(th, 1.05, 0); nail(F[3], .9, 1); if (K.det2) nail(F[2], .85, 1);
+      for (const [x, y] of [[-.3, .76], [-.09, .84], [.12, .88], [.34, .84]]) K.line(tf([[x - .07, y], [x, y - .04], [x + .07, y]]), .24, c.skinDk, { n: 2 });   // knuckles
+      if (K.det2) { K.line(tf([[-.12, .15], [-.1, .45], [-.08, .7]]), .2, c.skinDk, { n: 2 }); K.line(tf([[.1, .2], [.12, .5], [.13, .74]]), .2, c.skinDk, { n: 2 }); }   // tendons
     }
     return;
   }
@@ -728,10 +750,10 @@ function himArm(K, c, a) {
 // ('fore'). Quads widest just below the hip, a taper into the knee, the calf, a narrow ankle; the hem breaks on the shoe.
 // Leg lengths: thigh 6.8u, shin 6.6u (hips 14.25u above the soles when standing straight).
 const HIM_LEG = {
-  front: { up: [[0, 2.05, 1.6], [.18, 2.18, 1.82], [.45, 1.92, 1.62], [.75, 1.48, 1.32], [1, 1.2, 1.12]],
-           fore: [[.1, 1.18, 1.1], [.34, 1.32, 1.18], [.6, 1.12, 1.02], [.82, 1.0, .96], [1, 1.08, 1.04]] },
-  side:  { up: [[0, 2.15, 2.0], [.18, 2.25, 2.2], [.45, 1.95, 1.98], [.75, 1.42, 1.5], [1, 1.16, 1.2]],
-           fore: [[.1, 1.25, 1.08], [.34, 1.6, 1.1], [.6, 1.22, .98], [.82, 1.0, .92], [1, 1.06, 1.0]] }
+  front: { up: [[0, 1.82, 1.5], [.2, 2.0, 1.7], [.42, 1.84, 1.52], [.7, 1.46, 1.24], [.9, 1.2, 1.08], [1, 1.16, 1.06]],
+           fore: [[.08, 1.18, 1.06], [.3, 1.28, 1.1], [.55, 1.1, .98], [.78, .94, .86], [.9, .97, .9], [1, 1.02, .94]] },
+  side:  { up: [[0, 2.1, 1.95], [.2, 2.25, 2.12], [.45, 1.98, 1.9], [.72, 1.5, 1.46], [.9, 1.22, 1.24], [1, 1.16, 1.22]],
+           fore: [[.08, 1.22, 1.1], [.3, 1.62, 1.08], [.55, 1.28, .96], [.78, .98, .86], [.9, 1.0, .9], [1, 1.06, .96]] }
 };
 const HIM_THIGH = 6.8, HIM_SHIN = 6.6;
 // Two-bone IK: the knee for a hip H and ankle A (bend = ±1 picks the side the knee goes).
@@ -763,33 +785,45 @@ function himLeg(K, c, H, N, A, prof, o = {}) {
   K.line(L.tb.L.slice(n - 1), .68 * (o.heavy ?? 1), c.ink, { n: 3 }); K.line(L.tb.R.slice(n - 1), .68 / (o.heavy ?? 1), c.ink, { n: 3 });
   return L;
 }
-// Dark leather dress shoes (with the suit): a rounded toe catching a highlight, a slim sole, a low heel.
+// Dark leather dress shoes (with the suit): a rounded toe box catching a highlight, a toe-cap seam, the laces under
+// the trouser hem, a slim sole and a low heel.
 function himDressShoe(K, c, P, view, far) {
   const lea = far ? c.leatherDk : c.leather;
-  if (view === 'front') {
-    K.shape(P([[-.68, -.36], [.68, -.36], [.95, .02], [1.08, .48], [1.02, .78], [-1.02, .78], [-1.08, .48], [-.95, .02]]), { wash: lea, sw: .6, n: 4 });
-    K.shape(P([[-1.08, .66], [1.08, .66], [1.06, .92, 1], [-1.06, .92, 1]]), { wash: c.leatherSole, sw: .35, n: 2 });
-    K.shape(P([[-.4, -.36], [.4, -.36], [.36, .05], [-.36, .05]]), { wash: c.leatherDk, op: 150, ink: null, n: 2 });   // laces/tongue
-    K.line(P([[-.3, -.22], [.3, -.18]]), .22, c.leatherHi, { raw: true }); K.line(P([[-.3, -.08], [.3, -.04]]), .22, c.leatherHi, { raw: true });
-    K.shape(P([[-.7, .5], [-.45, .3], [-.05, .24], [-.35, .4]]), { wash: c.leatherHi, op: 190, ink: null, n: 3 });   // toe highlight
-    K.line(P([[-.95, .1], [-.75, -.15]]), .25, c.leatherHi, { n: 2 });
-    K.line(P([[-.85, .32], [0, .44], [.85, .32]]), .22, c.leatherDk, { n: 3 });   // toe cap seam
+  if (view === 'front') {   // toe toward the viewer (P has already turned it out a little)
+    K.shape(P([[-1.06, .5], [-.92, .9], [0, 1.0], [.92, .9], [1.06, .5]]), { wash: c.leatherSole, sw: .4, n: 3 });   // the sole's edge
+    const up = [[-.74, -.38], [.74, -.38], [.94, .0], [1.08, .4], [1.03, .7], [.78, .86], [0, .92], [-.78, .86], [-1.03, .7], [-1.08, .4], [-.94, .0]];
+    K.shape(P(up), { wash: lea, sw: .6, n: 4 });
+    K.shape(P([[.55, -.3], [.94, .0], [1.08, .4], [1.03, .7], [.78, .86], [.55, .6], [.62, .2]]), { wash: c.leatherDk, op: 150, ink: null, n: 3 });   // the shaded side
+    K.shape(P([[-.38, -.38], [.38, -.38], [.34, .1], [0, .16], [-.34, .1]]), { wash: c.leatherDk, op: 170, ink: null, n: 2 });   // the throat, laces
+    if (K.det) for (let i = 0; i < 2; i++) K.line(P([[-.26, -.24 + i * .16], [.26, -.2 + i * .16]]), .2, c.leatherHi, { raw: true });
+    K.line(P([[-.9, .3], [-.45, .44], [.45, .44], [.9, .3]]), .22, c.leatherDk, { n: 3 });   // toe cap seam
+    K.shape(P([[-.72, .56], [-.42, .5], [-.02, .52], [.12, .6], [-.22, .66], [-.6, .66]]), { wash: c.leatherHi, op: 200, ink: null, n: 3 });   // the shine on the toe
+    if (K.det) K.shape(P([[-.5, .55], [-.3, .53], [-.34, .59], [-.52, .6]]), { wash: c.leatherShine, op: 230, ink: null, n: 2 });
+    K.line(P([[-.98, .1], [-.86, -.16]]), .24, c.leatherHi, { n: 2 });
   } else {
-    const k = view === 'q' ? .74 : 1;
-    K.shape(P([[-.85, -.28], [.2, -.24], [.85 * k, -.02], [1.6 * k, .26], [2.25 * k, .5], [2.38 * k, .7], [2.25 * k, .82], [-.95, .82], [-1.0, .3]]), { wash: lea, sw: .6, n: 4 });
-    K.shape(P([[-1.0, .72], [2.32 * k, .72], [2.25 * k, .9, 1], [-.95, .9, 1]]), { wash: c.leatherSole, sw: .35, n: 2 });
-    K.shape(P([[-1.0, .5], [-.45, .5], [-.45, .9], [-1.0, .9]]), { wash: c.leatherSole, ink: null, n: 1 });   // heel
-    K.line(P([[.0, -.2], [.55 * k, .02], [1.05 * k, .22]]), .26, c.leatherDk, { n: 3 });   // the throat and laces
-    for (let i = 0; i < 3; i++) K.line(P([[(.15 + i * .28) * k, -.16 + i * .08], [(.28 + i * .28) * k, -.02 + i * .08]]), .22, c.leatherHi, { raw: true });
-    K.line(P([[1.45 * k, .2], [1.75 * k, .48], [1.62 * k, .62]]), .22, c.leatherDk, { n: 2 });   // toe cap
-    K.shape(P([[1.75 * k, .3], [2.15 * k, .46], [2.05 * k, .56], [1.7 * k, .44]]), { wash: c.leatherHi, op: 190, ink: null, n: 3 });   // toe highlight
+    const k = view === 'q' ? .74 : 1;   // side: heel counter, a long sloping vamp, a rounded toe that lifts a little
+    K.shape(P([[-1.0, .74], [3.05 * k, .74], [3.12 * k, .82], [2.88 * k, .93, 1], [-.3, .93, 1], [-.32, 1.0], [-1.0, 1.0, 1]]), { wash: c.leatherSole, sw: .38, n: 3 });   // sole and heel
+    const up = [[-.95, -.32], [.1, -.3], [.75 * k, -.1], [1.45 * k, .1], [2.2 * k, .3], [2.85 * k, .46], [3.14 * k, .62], [3.08 * k, .76], [2.8 * k, .8], [-1.02, .8], [-1.06, .3]];
+    K.shape(P(up), { wash: lea, sw: .6, n: 4 });
+    K.shape(P([[-1.02, .5], [2.9 * k, .62], [3.08 * k, .76], [2.8 * k, .8], [-1.02, .8]]), { wash: c.leatherDk, op: 140, ink: null, n: 3 });   // shade along the welt
+    K.line(P([[.0, -.24], [.6 * k, -.04], [1.2 * k, .16]]), .26, c.leatherDk, { n: 3 });   // the throat and laces
+    if (K.det) for (let i = 0; i < 3; i++) K.line(P([[(.18 + i * .3) * k, -.18 + i * .08], [(.32 + i * .3) * k, -.03 + i * .08]]), .2, c.leatherHi, { raw: true });
+    K.line(P([[2.0 * k, .28], [2.3 * k, .55], [2.2 * k, .78]]), .22, c.leatherDk, { n: 2 });   // toe cap
+    K.shape(P([[2.35 * k, .38], [2.95 * k, .52], [2.86 * k, .6], [2.3 * k, .48]]), { wash: c.leatherHi, op: 200, ink: null, n: 3 });   // the shine on the toe
+    K.shape(P([[-.9, -.1], [-.7, -.12], [-.72, .4], [-.92, .4]]), { wash: c.leatherHi, op: 120, ink: null, n: 2 });   // and on the heel counter
   }
 }
-// Sneaker: 'front' (toe toward the viewer), 'side' (toe toward +x) or 'q' (3/4).
-function himShoe(K, c, A, view, far, outfit = 'home') {
-  const [x, y] = A, P = pts => pts.map(([a, b, k]) => [x + a, y + b, k]);
+// Shoes: 'front' (toe toward the viewer; turn ±1 turns the toe out to screen left / right), 'side' (toe toward +x) or
+// 'q' (3/4). lift: the heel raised (a relaxed foot), rotating the shoe about its toe. Sneakers with the home outfit.
+function himShoe(K, c, A, view, far, outfit = 'home', turn = 0, lift = 0) {
+  const [x, y] = A, ks = view === 'front' ? 1 : 1.2, la = view === 'front' ? 0 : -lift * .5, toe = [(outfit === 'launch' ? 3.0 : 2.75) * (view === 'q' ? .74 : 1), .95];   // ks: sneakers lengthened in side views
+  const P = pts => pts.map(([a, b, k]) => {
+    if (view === 'front') return [x + a + turn * .3 * clamp((b + .38) / 1.3) * (1 - .15 * a * turn), y + b, k];   // shear: the toe turns out
+    const dx = a - toe[0], dy = b - toe[1], ca = Math.cos(la), sa = Math.sin(la);
+    return [x + toe[0] + dx * ca - dy * sa, y + toe[1] + dx * sa + dy * ca, k];
+  });
   if (outfit === 'launch') return himDressShoe(K, c, P, view, far);
-  const body = far ? c.shoeSh : c.shoe;
+  const body = far ? c.shoeSh : c.shoe, Ps = view === 'front' ? P : pts => P(pts.map(([a, b, k]) => [a < 0 ? a * 1.1 : a * ks, b, k]));
   if (view === 'front') {   // toe toward the viewer: a rounded toe box over a thick sole, laces up the tongue
     K.shape(P([[-.72, -.42], [.72, -.42], [1.02, -.05], [1.22, .42], [1.25, .76], [-1.25, .76], [-1.22, .42], [-1.02, -.05]]), { wash: body, sw: .6, n: 4 });
     K.shape(P([[-1.28, .62], [1.28, .62], [1.3, .98, 1], [-1.3, .98, 1]]), { wash: c.sole, sw: .4, n: 2 });
@@ -799,12 +833,12 @@ function himShoe(K, c, A, view, far, outfit = 'home') {
     if (K.det) K.line(P([[-.85, .1], [-.55, -.05]]), .3, c.white, { n: 2 });
   } else {
     const k = view === 'q' ? .72 : 1;   // side: heel counter, a curved vamp and a toe that lifts a little
-    K.shape(P([[-.82, -.32], [.15, -.3], [.8 * k, -.05], [1.55 * k, .2], [2.12 * k, .42], [2.32 * k, .66], [2.2 * k, .82], [-1.0, .82], [-1.08, .3]]), { wash: body, sw: .6, n: 4 });
-    K.shape(P([[-1.08, .64], [2.26 * k, .64], [2.18 * k, .97, 1], [-.98, .97, 1]]), { wash: c.sole, sw: .4, n: 2 });
-    K.line(P([[.0, -.22], [.55 * k, .02], [1.05 * k, .22]]), .3, c.shoeSh, { n: 3 });
-    for (let i = 0; i < 3; i++) K.line(P([[(.15 + i * .3) * k, -.18 + i * .1], [(.3 + i * .3) * k, -.02 + i * .1]]), .24, c.shoeSh, { raw: true });
-    K.line(P([[1.55 * k, .3], [1.85 * k, .58], [1.7 * k, .64]]), .24, c.shoeSh, { n: 2 });
-    if (K.det) K.line(P([[1.0 * k, .1], [1.6 * k, .32]]), .3, c.white, { n: 2 });
+    K.shape(Ps([[-.82, -.32], [.15, -.3], [.8 * k, -.05], [1.55 * k, .2], [2.12 * k, .42], [2.32 * k, .66], [2.2 * k, .82], [-1.0, .82], [-1.08, .3]]), { wash: body, sw: .6, n: 4 });
+    K.shape(Ps([[-1.08, .64], [2.26 * k, .64], [2.18 * k, .97, 1], [-.98, .97, 1]]), { wash: c.sole, sw: .4, n: 2 });
+    K.line(Ps([[.0, -.22], [.55 * k, .02], [1.05 * k, .22]]), .3, c.shoeSh, { n: 3 });
+    for (let i = 0; i < 3; i++) K.line(Ps([[(.15 + i * .3) * k, -.18 + i * .1], [(.3 + i * .3) * k, -.02 + i * .1]]), .24, c.shoeSh, { raw: true });
+    K.line(Ps([[1.55 * k, .3], [1.85 * k, .58], [1.7 * k, .64]]), .24, c.shoeSh, { n: 2 });
+    if (K.det) K.line(Ps([[1.0 * k, .1], [1.6 * k, .32]]), .3, c.white, { n: 2 });
   }
 }
 
@@ -831,8 +865,8 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
 const HIM_HS = 1.24;   // the head is drawn 15% larger than the body unit (anime proportions)
 const HIM_RIG = {
-  front: { neck: [0, -12.2], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.78, 0], L: [1.78, 0] } },
-  q:     { neck: [.1, -12.2], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.65, -8.3] }, hip: { R: [-1.4, 0], L: [1.65, 0] } },
+  front: { neck: [0, -12.2], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.68, 0], L: [1.68, 0] } },
+  q:     { neck: [.1, -12.2], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.65, -8.3] }, hip: { R: [-1.32, 0], L: [1.55, 0] } },
   side:  { neck: [.1, -12.15], head: [.12, -1.4], sh: { R: [.1, -8.35], L: [-.3, -8.35] }, hip: { R: [.15, 0], L: [-.15, 0] } }
 };
 const HIM_TX = { front: .9, q: .9, side: .95 };
@@ -1138,21 +1172,32 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
     const hand = rk > .5 ? 'open' : (side === 'L' ? o.handL : o.handR) || 'relax';
     himArm(K, c, { S, E, W, outfit, hand, thumb: view === 'front' ? (side === 'R' ? 1 : -1) : 1, band: band === side, far, outer: view === 'front' ? (side === 'R' ? -1 : 1) : -1 });
   };
-  // legs with contrapposto: the weight on his right leg (straight), the left one relaxed with a bent knee; the hips tilt
-  // and shift over the standing foot, the shoulders counter-tilt. o.contra (0..1, default 1) scales it.
-  const ct = bust ? 0 : (o.contra ?? 1), ht = view === 'side' ? 0 : .055 * ct, dxh = (view === 'front' ? -.32 : view === 'q' ? -.22 : -.05) * ct;
+  // legs with contrapposto: the weight on his right leg, straight and slanting in so that the foot is under his
+  // centre of gravity; the hips tilt up on that side and shift over it, the shoulders counter-tilt. The left leg is
+  // relaxed: its foot out to the side and a little forward (lower on screen), the heel lifted, the knee bent forward
+  // (seen from the front only as a knee that drops and turns in a little). o.contra (0..1, default 1) scales it.
+  const ct = bust ? 0 : (o.contra ?? 1), ht = (view === 'side' ? 0 : view === 'q' ? .06 : .07) * ct, dxh = (view === 'front' ? -.55 : view === 'q' ? -.4 : -.05) * ct;
   const legProf = view === 'side' ? HIM_LEG.side : HIM_LEG.front, foot = view === 'front' ? 'front' : view;
   const hipJ = side => { const [x, y] = R.hip[side]; return [x * Math.cos(ht) - y * Math.sin(ht), x * Math.sin(ht) + y * Math.cos(ht)]; };
   const Hw = hipJ('R'), Lsum = HIM_THIGH + HIM_SHIN;
-  const feet = view === 'front' ? { R: -2.1, L: 2.75 } : view === 'q' ? { R: -1.45, L: 2.2 } : { R: .05, L: 1.15 };
+  // feet (world x, relative to the anchor): the standing foot near the centre line, the relaxed one out to the side
+  const feet = view === 'front' ? { R: lerp(-2.0, -.85, ct), L: 2.55 } : view === 'q' ? { R: lerp(-1.4, -.55, ct), L: 2.3 } : { R: .05, L: lerp(1.15, 1.5, ct) };
   const wx = feet.R - dxh, ankleY = Hw[1] + Math.sqrt(Lsum * Lsum * .997 - (wx - Hw[0]) ** 2);   // the standing leg sets the ground
   const legH = ankleY + .95;   // hips above the soles
   const leg = (side, far) => {
     rs('leg' + side);
-    const H = hipJ(side), A = [feet[side] - dxh, ankleY - (side === 'L' ? (view === 'front' ? .05 : .12) * ct : 0)];
-    const N = himIK(H, A, HIM_THIGH, HIM_SHIN, view === 'front' ? (side === 'L' ? -1 : 1) : -1);   // the relaxed knee breaks outward / forward
+    const relax = side === 'L' && ct > 0, H = hipJ(side);
+    // the relaxed foot: forward (drawn lower on screen) with the heel lifted (the ankle a little higher)
+    const fwd = relax ? (view === 'side' ? 0 : .28 * ct) : 0, lift = relax ? .22 * ct : 0;
+    const A = [feet[side] - dxh, ankleY - lift];
+    let N;
+    if (view === 'side') N = himIK(H, A, HIM_THIGH, HIM_SHIN, -1);   // in profile the bent knee goes forward (+x)
+    else {   // front / 3/4: the knee bends toward the camera; only a little of the bend shows, turned in toward the other leg
+      const N0 = himIK(H, A, HIM_THIGH, HIM_SHIN, side === 'L' ? 1 : -1), d = himDir(H, A), pr = (N0[0] - H[0]) * d[0] + (N0[1] - H[1]) * d[1], B = [H[0] + d[0] * pr, H[1] + d[1] * pr];
+      N = [B[0] + (N0[0] - B[0]) * .32, B[1] + (N0[1] - B[1]) * .32 + (relax ? .12 : 0)];
+    }
     himLeg(K, c, H, N, A, legProf, { far, outer: view === 'front' ? (side === 'R' ? -1 : 1) : -1, heavy: view === 'front' ? (side === 'R' ? 1.2 : .85) : 1 });
-    rs('shoe' + side); himShoe(K, c, [A[0], A[1] + .05], foot, far, outfit);
+    rs('shoe' + side); himShoe(K, c, [A[0], A[1] + lift + fwd + .05], foot, far, outfit, view === 'front' ? (side === 'R' ? -1 : 1) * (relax ? .9 : .45) : 0, lift);
   };
   push(); translate(dxh * u, (bust ? hipY : -legH) * u);
   // legs: seat of the trousers first
