@@ -11,7 +11,12 @@ Reads music/build/vocals.json (compiled from music/score/song.py) and writes
     music/build/vocal_qa.json                      Whisper WER + pitch accuracy per line
     music/build/qa_vocal/*.png                     spectrogram + F0 diagnostics
 
-Method (details in each module):
+Sung lines are rendered by DiffSinger by default (diffsinger_backend.py: him = TIGER v106,
+her = Hoshino Hanami ~AI❤dol~ in Nectar mode, her->him blends; music/diffsinger/README.md).
+`--sung-backend kokoro` (or VOCAL_SUNG_BACKEND=kokoro) selects the Kokoro singer below.
+Spoken and whispered lines always use Kokoro.
+
+Method (Kokoro path; details in each module):
   1. phonology/planner  misaki G2P per word (+ sung pronunciation overrides), onset-maximal
                         syllabification matched to the score's syllables, and a time map:
                         vowels land on the beat, onsets anticipate it, codas sit at the end
@@ -184,10 +189,10 @@ def main():
     ap.add_argument("--qa-model", default="medium.en")
     ap.add_argument("--plots", default=",".join(PLOT_LINES))
     ap.add_argument("--wav-dir", help="also write each line as a WAV here (auditions)")
-    ap.add_argument("--sung-backend", choices=["kokoro", "diffsinger"],
-                    default=os.environ.get("VOCAL_SUNG_BACKEND", "kokoro"),
-                    help="sung lines: Kokoro forced singing (default) or DiffSinger banks "
-                         "(music/diffsinger, see diffsinger_backend.py)")
+    ap.add_argument("--sung-backend", choices=["diffsinger", "kokoro"],
+                    default=os.environ.get("VOCAL_SUNG_BACKEND", "diffsinger"),
+                    help="sung lines: DiffSinger banks (default; music/diffsinger, see "
+                         "diffsinger_backend.py) or Kokoro forced singing (fallback)")
     args = ap.parse_args()
 
     import cache

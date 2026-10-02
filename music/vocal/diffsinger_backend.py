@@ -254,8 +254,9 @@ def _run_batch(command: str, tracks, parts, work: str, tag: str, cfg: Config, pi
         proj = su.write_ustx(os.path.join(work, f"{tag}_{k}.ustx"), tracks, ps, name=tag)
         jobs.append((proj, os.path.join(work, f"{tag}_{k}"), ps))
     with cf.ThreadPoolExecutor(len(jobs)) as ex:
+        # a whole song is ~6 min of audio at ~5x real time on 4 cores: allow for it
         futs = [ex.submit(runner.run, command, proj, out, pitch=pitch, steps=cfg.steps,
-                          voicebanks=bk.VOICEBANKS, log=log) for proj, out, _ in jobs]
+                          voicebanks=bk.VOICEBANKS, timeout_min=240, log=log) for proj, out, _ in jobs]
         summaries = [f.result() for f in futs]
     out = {}
     for (proj, d, ps), _ in zip(jobs, summaries):

@@ -62,7 +62,7 @@ PROFILES = {
         "Hoshino Hanami voicebank by Lotte V (Team L❤VE)",
         "Team L❤VE voicebank / character licences (lottev.moe); terms forbid re-uploading",
         "https://lottev.moe/2024/09/hoshino-hanami-ai%e2%9d%a4dol-for-diffsinger-v1-0-is-out/",
-        "her", (55.0, 81.0), color="root",
+        "her", (55.0, 81.0), color="nectar",          # soft mode: cleanest in the line tests
         # her English data has no [dx] and only German [ax] (readme): use the English ones
         phoneme_map={"ax": "ah", "dx": "d"}),
 }
