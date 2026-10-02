@@ -79,15 +79,16 @@ function aiArmsFull(G, B, view, o, sit) {
 // (local u) or o.reachLW / o.reachRW (world px) the arm is a rig: the puffed sleeve is the upper arm, a short sleeve, the
 // gold-ringed cuff and a hand (o.handL / o.handR: fist | open | flat | point), and it may stretch up to 1.7x (chibi arms
 // are short). An arm raised above the shoulder is painted over the hair and the face-framing locks.
-const AI_CHIBI_ARM = { sh: [1.2, -4.32], lu: .62, lf: .5, hl: .42 };
+const AI_CHIBI_ARM = { sh: [1.2, -4.32], lu: .62, lf: .55, hl: .56 };
 function aiChibiRig(o, q, u) {
   const A = AI_CHIBI_ARM, out = [null, null];
   [[-1, 'L'], [1, 'R']].forEach(([s, k], i) => {
     const tW = o['reach' + k + 'W'], tU = o['reach' + k];
     if (!tW && !tU) return;
     const bodyX = x => q ? .16 + x * (x < 0 ? 1 : .8) : x;
-    const Sh = [bodyX(s * A.sh[0]) * u, A.sh[1] * u], T = tW ? aiFromW(tW) : [tU[0] * u, tU[1] * u];
-    const D = Math.hypot(T[0] - Sh[0], T[1] - Sh[1]), reach = (A.lu + A.lf + A.hl * .55) * u, st = clamp(D / reach, 1, 1.7);
+    const T = tW ? aiFromW(tW) : [tU[0] * u, tU[1] * u], Sh = [bodyX(s * A.sh[0]) * u, A.sh[1] * u];
+    Sh[1] -= .3 * u * clamp((Sh[1] - T[1]) / (2 * u));   // the shoulder lifts for a high reach
+    const D = Math.hypot(T[0] - Sh[0], T[1] - Sh[1]), reach = (A.lu + A.lf + A.hl * .55) * u, st = clamp(D / reach, 1, 1.9);
     const r = aiIK(Sh, T, A.lu * u * st, A.lf * u * st, s, A.hl * .55 * u, false, 0);
     out[i] = { s, Sh, a: r.a, e: r.e, st, hand: o['hand' + k] || 'fist', prop: o['prop' + k], hang: o['handA' + k], up: T[1] < Sh[1] - .25 * u || Math.abs(T[0]) > 2.1 * u, key: k };
   });
@@ -108,11 +109,11 @@ function aiChibiArm(R, part) {
   if (part === 'puff') return Wr;
   // the forearm sleeve from inside the puff to the cuff
   const E0 = [R.Sh[0] + d1[0] * .45 * u, R.Sh[1] + d1[1] * .45 * u];
-  const fa = aiRib([E0, E, Wr], [.34 * u, .33 * u, .3 * u], 4);
+  const fa = aiRib([E0, E, Wr], [.4 * u, .38 * u, .32 * u], 4);
   if (Math.hypot(Wr[0] - E0[0], Wr[1] - E0[1]) > .12 * u) { aiPaint(aiRibPts(fa), { wash: C.navy, ink: C.ink, sw: sw * .6 }); aiLine(fa.L.slice(1, -1).map((p, i) => [lerp(p[0], fa.C[i + 1][0], .35), lerp(p[1], fa.C[i + 1][1], .35)]), sw * .3, C.navyHi); }
   const ca = Math.atan2(d2[1], d2[0]);
-  aiPaint(aiEll(Wr[0], Wr[1], .17 * u, .23 * u, 18, ca), { wash: mixCol(C.navy, C.ink, .15), ink: C.ink, sw: sw * .55 });
-  aiPaint(aiEll(Wr[0], Wr[1], .14 * u, .19 * u, 16, ca), { ink: C.gold, sw: sw * .35 });
+  aiPaint(aiEll(Wr[0], Wr[1], .19 * u, .26 * u, 18, ca), { wash: mixCol(C.navy, C.ink, .15), ink: C.ink, sw: sw * .55 });
+  aiPaint(aiEll(Wr[0], Wr[1], .155 * u, .21 * u, 16, ca), { ink: C.gold, sw: sw * .35 });
   const ha = R.hang ?? ca, hp = [Wr[0] + d2[0] * .1 * u, Wr[1] + d2[1] * .1 * u], L = A.hl * u, grip = [hp[0] + Math.cos(ha) * L * .5, hp[1] + Math.sin(ha) * L * .5];
   S.pts['hand' + R.key] = grip; S.pts['wrist' + R.key] = Wr;
   const th = s * (Math.cos(ha) < 0 ? 1 : -1);
@@ -127,20 +128,22 @@ function aiChibiHand(p, a, L, kind, th) {
   const R = (x, y) => { const c = Math.cos(a), n = Math.sin(a); return [p[0] + (x * c - y * th * n) * L, p[1] + (x * n + y * th * c) * L]; };
   const M = pts => pts.map(q => q[2] ? [...R(q[0], q[1]), 1] : R(q[0], q[1]));
   const wc = pts => aiWC(aiLoop(M(pts), 3), C.skin, { dark: C.skinSh, glaze: 50, sw, br: C.br, pool: .6 });
-  if (kind === 'open') {   // palm out, four short fingers fanned, the thumb out to the side
-    wc([[-.05, -.28], [.3, -.36], [.62, -.46], [.86, -.44, 1], [.74, -.26], [.98, -.24, 1], [.82, -.08], [1.02, .02, 1], [.82, .1], [.94, .22, 1], [.66, .2], [.56, .3], [.7, .56, 1], [.42, .44], [.2, .32], [-.05, .26]]);
-    aiLine(M([[.32, -.05], [.5, .04], [.42, .16]]), sw * .6, mixCol(C.skinSh, C.ink, .3));
+  const crease = mixCol(C.skinSh, C.ink, .3);
+  if (kind === 'open') {   // a soft palm out, four short round fingers a little apart, the thumb out to the side
+    wc([[-.04, -.3], [.3, -.36], [.5, -.38], [.66, -.46], [.82, -.44], [.84, -.32], [.92, -.26], [1.02, -.18], [1.0, -.08], [.9, -.04], [1.04, .03], [1.02, .14], [.9, .14], [.94, .24], [.86, .32], [.7, .26], [.6, .3], [.66, .48], [.58, .58], [.44, .5], [.3, .36], [-.04, .28]]);
+    aiLine(M([[.66, -.32], [.8, -.25]]), sw * .5, crease); aiLine(M([[.72, -.08], [.86, -.05]]), sw * .5, crease); aiLine(M([[.72, .1], [.82, .14]]), sw * .5, crease);
+    aiLine(M([[.28, -.06], [.44, .04], [.4, .16]]), sw * .5, crease);
     return;
   }
-  if (kind === 'flat') {   // fingers together, straight (a salute, a palm on glass, a hand on the chest)
-    wc([[-.05, -.26], [.35, -.3], [.8, -.3], [1.02, -.2], [1.08, -.04], [1.0, .1], [.62, .2], [.6, .38], [.48, .44], [.28, .32], [-.05, .26]]);
-    for (const y of [-.12, .02]) aiLine(M([[.62, y], [.95, y]]), sw * .5, mixCol(C.skinSh, C.ink, .3));
+  if (kind === 'flat') {   // fingers together and straight (a salute, a palm on glass, a hand pressed to the chest)
+    wc([[-.04, -.28], [.35, -.32], [.7, -.32], [.95, -.27], [1.08, -.16], [1.1, -.02], [1.02, .1], [.7, .18], [.58, .22], [.62, .4], [.5, .48], [.32, .36], [-.04, .28]]);
+    for (const y of [-.14, .0]) aiLine(M([[.66, y], [.98, y + .01]]), sw * .5, crease);
     return;
   }
   // fist (and the point's fist): a round little fist with knuckle bumps, the thumb across
-  wc([[-.05, -.36], [.32, -.42], [.6, -.38], [.78, -.26], [.86, -.06], [.8, .16], [.66, .32], [.36, .4], [-.05, .3]]);
-  for (const k of [-.2, 0, .18]) aiLine(M([[.6, k - .05], [.75, k], [.8, k + .04]]), sw * .5, mixCol(C.skinSh, C.ink, .3));
-  if (kind === 'point') aiWC(aiLoop(M([[.5, -.34], [.9, -.4], [1.22, -.36], [1.3, -.28], [1.24, -.2], [.9, -.16], [.6, -.14]]), 3), C.skin, { glaze: 0, sw, br: C.br, pool: 0 });
+  wc([[-.04, -.36], [.3, -.42], [.58, -.4], [.78, -.28], [.86, -.06], [.8, .16], [.64, .32], [.34, .4], [-.04, .3]]);
+  for (const k of [-.2, 0, .18]) aiLine(M([[.6, k - .05], [.75, k], [.8, k + .04]]), sw * .5, crease);
+  if (kind === 'point') aiWC(aiLoop(M([[.5, -.36], [.9, -.42], [1.24, -.38], [1.34, -.29], [1.26, -.2], [.9, -.17], [.6, -.15]]), 3), C.skin, { glaze: 0, sw, br: C.br, pool: 0 });
 }
 
 // ---------- pose 'sit' (full form, front / q): on a bed edge or a chair ----------
@@ -224,7 +227,7 @@ function aiAct(name, t, t0 = 0, o = {}) {
   const restL = full ? [-.25, -6.75] : [-.55, -3.55], restR = full ? [.25, -6.75] : [.55, -3.55];
   switch (name) {
     case 'wave': {
-      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : [2.2, -5.35];
+      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : [2.75, -5.75];
       const p = [up[0] + .22 * sw * k, up[1] - .1 * Math.abs(sw) * k];
       return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .55 * sw * k + .15, reachL: mix(restL, full ? [-.05, -7.75] : [-.3, -4.15]), handL: 'flat', handAL: full ? -.2 : -.35,
         tilt: .06 * k + .02 * sw, rot: -.02 * k, lookX: .25 };
@@ -252,7 +255,7 @@ function aiAct(name, t, t0 = 0, o = {}) {
       const h = Math.exp(-frac(b) * 7), g = full ? .07 + .22 * (1 - h) : .06 + .32 * (1 - h), y = full ? -7.4 : -4.25;
       return { reachL: mix(restL, [-g, y]), reachR: mix(restR, [g, y]), handL: 'flat', handR: 'flat', handAL: -Math.PI / 2 + .35, handAR: -Math.PI / 2 - .35, sq: .03 * h, ahoge: .2 * h };
     }
-    case 'salute': return { reachR: mix(restR, full ? [.62, -9.55] : [1.75, -6.35]), handR: 'flat', handAR: -2.45, reachL: restL, sq: -.03 * k, tilt: -.04 * k, rot: -.015 * k };
+    case 'salute': return { reachR: mix(restR, full ? [.62, -9.55] : [2.3, -6.75]), handR: 'flat', handAR: -2.25, reachL: restL, sq: -.03 * k, tilt: -.04 * k, rot: -.015 * k };
     case 'stetho': {
       const p = o.at || [1.45, -2.9];
       return { reachR: mix(restR, p), handR: 'fist', propR: { kind: 'stetho', ...(o.prop || {}) }, reachL: mix(restL, [-.45, -4.0]), handL: 'flat', handAL: -.6, rot: .07 * k, tilt: .12 * k, lookX: .3, lookY: .5 };

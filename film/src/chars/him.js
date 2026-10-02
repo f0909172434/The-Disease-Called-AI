@@ -659,6 +659,7 @@ function himFinger(base, a0, L, w0, w1, curl) {
 function himHand(K, c, kind, at, ang, thumb, skin, sc = 1.55) {
   const H = HIM_HANDS[kind] || HIM_HANDS.relax, ca = Math.cos(-ang), sa = Math.sin(-ang), sk = skin || c.skin;
   const tf = P => P.map(([x, y, k]) => { x *= thumb * sc; y *= sc; return [at[0] + x * ca - y * sa, at[1] + x * sa + y * ca, k]; });
+  if (H.draw) return H.draw(K, c, tf, sk, H, thumb);   // the round-8 hands (him_prop.js)
   if (H.parts) {
     // hanging and relaxed, seen at ~45° from the thumb side: the back of the hand, four gently curled fingers (the
     // little finger furthest back and highest, the middle longest, the index a little apart), the thumb in front lying

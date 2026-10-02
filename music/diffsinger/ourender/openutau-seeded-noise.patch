@@ -1,0 +1,120 @@
+diff --git a/OpenUtau.Core/DiffSinger/DiffSingerNoise.cs b/OpenUtau.Core/DiffSinger/DiffSingerNoise.cs
+new file mode 100644
+index 00000000..5d955836
+--- /dev/null
++++ b/OpenUtau.Core/DiffSinger/DiffSingerNoise.cs
+@@ -0,0 +1,70 @@
++using System;
++using System.Collections.Concurrent;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using K4os.Hash.xxHash;
++using Microsoft.ML.OnnxRuntime;
++using Microsoft.ML.OnnxRuntime.Tensors;
++using OpenUtau.Core.Render;
++
++namespace OpenUtau.Core.DiffSinger {
++    /// <summary>
++    /// Seeded noise for DiffSinger models whose random ops were turned into inputs
++    /// (ourender's seed_models.py): an input named "ourender_{normal|uniform}_{k}__{t|f}{n}"
++    /// gets n values per frame ("t", frames = the largest dim 1 of the other inputs) or n values
++    /// ("f") of standard normal / uniform [0, 1) noise from xoshiro256** seeded by
++    /// XXH64(key|model|input). The key is registered per phrase (Keys, by phrase hash, e.g. line
++    /// id + take); unregistered phrases use the phrase hash itself. Models without such inputs
++    /// are untouched.
++    /// </summary>
++    public static class DiffSingerNoise {
++        public static readonly ConcurrentDictionary<ulong, string> Keys = new ConcurrentDictionary<ulong, string>();
++
++        public static void AddInputs(InferenceSession session, List<NamedOnnxValue> inputs, RenderPhrase phrase, string model) {
++            var names = session.InputNames.Where(n => n.StartsWith("ourender_")).ToArray();
++            if (names.Length == 0) return;
++            int frames = 1;
++            foreach (var v in inputs) {
++                if (v.Value is Tensor<float> tf && tf.Dimensions.Length >= 2) frames = Math.Max(frames, tf.Dimensions[1]);
++                else if (v.Value is Tensor<long> tl && tl.Dimensions.Length >= 2) frames = Math.Max(frames, tl.Dimensions[1]);
++                else if (v.Value is Tensor<bool> tb && tb.Dimensions.Length >= 2) frames = Math.Max(frames, tb.Dimensions[1]);
++            }
++            string key = Keys.TryGetValue(phrase.hash, out var k) ? k : phrase.hash.ToString("x16");
++            foreach (var name in names) {
++                var spec = name.Substring(name.LastIndexOf("__", StringComparison.Ordinal) + 2);
++                long count = long.Parse(spec.Substring(1)) * (spec[0] == 't' ? frames : 1);
++                bool normal = name.StartsWith("ourender_normal_");
++                var rng = new Xoshiro(XXH64.DigestOf(Encoding.UTF8.GetBytes($"{key}|{model}|{name}")));
++                var data = new float[count];
++                if (normal) {
++                    for (long i = 0; i < count; i += 2) {
++                        double u1 = 1.0 - rng.NextDouble(), u2 = rng.NextDouble();
++                        double r = Math.Sqrt(-2.0 * Math.Log(u1));
++                        data[i] = (float)(r * Math.Cos(2.0 * Math.PI * u2));
++                        if (i + 1 < count) data[i + 1] = (float)(r * Math.Sin(2.0 * Math.PI * u2));
++                    }
++                } else {
++                    for (long i = 0; i < count; i++) data[i] = (float)rng.NextDouble();
++                }
++                inputs.Add(NamedOnnxValue.CreateFromTensor(name, new DenseTensor<float>(data, new[] { (int)count })));
++            }
++        }
++
++        sealed class Xoshiro {
++            ulong s0, s1, s2, s3;
++            public Xoshiro(ulong seed) {
++                ulong z = seed;
++                ulong Next() { z += 0x9E3779B97F4A7C15UL; ulong x = z; x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9UL; x = (x ^ (x >> 27)) * 0x94D049BB133111EBUL; return x ^ (x >> 31); }
++                s0 = Next(); s1 = Next(); s2 = Next(); s3 = Next();
++            }
++            static ulong Rotl(ulong x, int k) => (x << k) | (x >> (64 - k));
++            public double NextDouble() {
++                ulong result = Rotl(s1 * 5, 7) * 9;
++                ulong t = s1 << 17;
++                s2 ^= s0; s3 ^= s1; s1 ^= s2; s0 ^= s3; s2 ^= t; s3 = Rotl(s3, 45);
++                return (result >> 11) * (1.0 / (1UL << 53));
++            }
++        }
++    }
++}
+diff --git a/OpenUtau.Core/DiffSinger/DiffSingerPitch.cs b/OpenUtau.Core/DiffSinger/DiffSingerPitch.cs
+index ca51f7c8..befb7b6d 100644
+--- a/OpenUtau.Core/DiffSinger/DiffSingerPitch.cs
++++ b/OpenUtau.Core/DiffSinger/DiffSingerPitch.cs
+@@ -321,6 +321,7 @@ public DsPitch(string rootPath)
+                 .Reshape(new int[] { 1, note_rest.Count })));
+             }
+ 
++            DiffSingerNoise.AddInputs(pitchModel, pitchInputs, phrase, "pitch");
+             Onnx.VerifyInputNames(pitchModel, pitchInputs);
+             var pitchOutputs = pitchModel.Run(pitchInputs);
+             var pitch_out = pitchOutputs.First().AsTensor<float>().ToArray();
+diff --git a/OpenUtau.Core/DiffSinger/DiffSingerRenderer.cs b/OpenUtau.Core/DiffSinger/DiffSingerRenderer.cs
+index dc52e306..799dc6b5 100644
+--- a/OpenUtau.Core/DiffSinger/DiffSingerRenderer.cs
++++ b/OpenUtau.Core/DiffSinger/DiffSingerRenderer.cs
+@@ -458,6 +458,7 @@ public class DiffSingerRenderer : IRenderer {
+                         .Reshape(new int[] { 1, tension.Length })));
+                 }
+             }
++            DiffSingerNoise.AddInputs(acousticModel, acousticInputs, phrase, "acoustic");
+             Onnx.VerifyInputNames(acousticModel, acousticInputs);
+             var acousticCache = Preferences.Default.DiffSingerTensorCache
+                 ? new DiffSingerCache(singer.acousticHash, acousticInputs)
+@@ -499,6 +500,7 @@ public class DiffSingerRenderer : IRenderer {
+             var vocoderInputs = new List<NamedOnnxValue>();
+             vocoderInputs.Add(NamedOnnxValue.CreateFromTensor("mel", mel));
+             vocoderInputs.Add(NamedOnnxValue.CreateFromTensor("f0",f0Tensor));
++            DiffSingerNoise.AddInputs(vocoder.session, vocoderInputs, phrase, "vocoder");
+             var vocoderCache = Preferences.Default.DiffSingerTensorCache
+                 ? new DiffSingerCache(vocoder.hash, vocoderInputs)
+                 : null;
+diff --git a/OpenUtau.Core/DiffSinger/DiffSingerVariance.cs b/OpenUtau.Core/DiffSinger/DiffSingerVariance.cs
+index 454c7d85..968e357a 100644
+--- a/OpenUtau.Core/DiffSinger/DiffSingerVariance.cs
++++ b/OpenUtau.Core/DiffSinger/DiffSingerVariance.cs
+@@ -333,6 +333,7 @@ public DsVariance(string rootPath)
+                     new DenseTensor<bool>(retakeTensorValues, new[] { retakeTensorValues.Length }, false)
+                         .Reshape(new[] { 1, totalFrames, numVariances }));
+             }
++            DiffSingerNoise.AddInputs(varianceModel, varianceInputs, phrase, "variance");
+             Onnx.VerifyInputNames(varianceModel, varianceInputs);
+             var varianceOutputs = varianceModel.Run(varianceInputs).Cast<NamedOnnxValue>().ToList();
+             Tensor<float>? energy_pred = dsConfig.predict_energy

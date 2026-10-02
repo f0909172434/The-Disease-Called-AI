@@ -23,12 +23,12 @@ function himArmIK(S, W, bend) {
 // covers: redrawn over them), far (override shading), thumb }.  t = T for the animated ones.
 const HIM_ARMS = {
   // hands resting on the lap (the bed's default)
-  lap: { front: { R: { W: [-2.15, .7], hand: 'rest', handAng: .25, bend: -1 }, L: { W: [2.25, .6], hand: 'rest', handAng: -.25, bend: 1 } },
-         q:     { R: { W: [1.9, .1], hand: 'rest', handAng: -.7, bend: -1 }, L: { W: [3.9, -.3], hand: 'rest', handAng: -.6, bend: 1, lap: true } },
-         side:  { R: { W: [4.1, -.9], hand: 'rest', handAng: -1.2, bend: 1 }, L: { W: [4.6, -1.2], hand: 'rest', handAng: -1.2, bend: 1 } } },
+  lap: { front: { R: { W: [-1.75, -.55], hand: 'rest', handAng: .42, bend: 1, thumb: 1 }, L: { W: [1.85, -.6], hand: 'rest', handAng: -.42, bend: -1, thumb: -1 } },
+         q:     { R: { W: [2.2, -.45], hand: 'rest', handAng: -.95, bend: 1, thumb: -1 }, L: { W: [4.9, -.35], hand: 'rest', handAng: -.85, bend: 1, lap: true, thumb: -1 } },
+         side:  { R: { W: [4.0, -1.55], hand: 'rest', handAng: -1.35, bend: 1, thumb: -1 }, L: { W: [4.5, -1.75], hand: 'rest', handAng: -1.35, bend: 1 } } },
   // both hands holding the phone in front of the chest, looking down at it (the phone: him_prop.js)
-  phone: { front: { R: { W: [-.75, -5.6], hand: 'hold', handAng: 2.6, bend: -1, thumb: 1 }, L: { W: [.75, -5.6], hand: 'hold', handAng: -2.6, bend: 1, thumb: -1 } },
-           q:     { R: { W: [2.35, -5.7], hand: 'hold', handAng: -2.2, bend: -1 }, L: { W: [3.55, -5.9], hand: 'hold', handAng: -2.4, bend: 1 } },
+  phone: { front: { R: { W: [-.75, -5.6], hand: 'hold', handAng: 2.6, bend: 1, thumb: 1 }, L: { W: [.75, -5.6], hand: 'hold', handAng: -2.6, bend: -1, thumb: -1 } },
+           q:     { R: { W: [2.35, -5.7], hand: 'hold', handAng: -2.2, bend: 1 }, L: { W: [3.55, -5.9], hand: 'hold', handAng: -2.4, bend: 1 } },
            side:  { R: { W: [3.75, -5.75], hand: 'hold', handAng: -2.25, bend: 1 }, L: { W: [4.05, -6.05], hand: 'hold', handAng: -2.3, bend: 1 } } },
   // both arms up and forward, hands open (reaching up to her)
   up: { front: { R: { W: [-3.2, -17.2], hand: 'open', handAng: Math.PI + .15, bend: -1, thumb: -1 }, L: { W: [3.2, -17.2], hand: 'open', handAng: Math.PI - .15, bend: 1, thumb: 1 } },
@@ -106,47 +106,51 @@ function himArmSpec(o, view, side, S, mode, u, gait) {
 // o.coverW / o.coverD scale the spread and the depth (default 1), o.coverCol the duvet colour (hospital white), o.knees
 // (0..1) raises the knees under it. Returns the covers' top edge as a function x(px) → y(px) (for clipping arms).
 function himCovers(K, c, o, view, u) {
-  const base = himCol(c, o.coverCol || '#E7EAF2'), sh = mixCol(base, himCol(c, '#7E89A6'), .42), dk = mixCol(base, himCol(c, '#4C5677'), .5), hi = mixCol(base, '#FFFFFF', .55);
-  const sheet = himCol(c, o.sheetCol || '#F4F2EC'), cw = o.coverW ?? 1, cd = o.coverD ?? 1, kn = o.knees ?? 0;
+  const base = himCol(c, o.coverCol || '#E7EAF2'), sh = mixCol(base, himCol(c, '#7E89A6'), .42), dk = mixCol(base, himCol(c, '#4C5677'), .5), hi = mixCol(base, '#FFFFFF', .6);
+  const sheet = himCol(c, o.sheetCol || '#F6F4EE'), cw = o.coverW ?? 1, cd = o.coverD ?? 1, kn = o.knees ?? .25;
   const X = x => x * cw, Y = y => y < 1.3 ? y : 1.3 + (y - 1.3) * cd;
   const pp = P => P.map(([x, y, k]) => [X(x), Y(y), k]);
-  let top, out, shade, folds, mounds, hiL;
-  if (view === 'front') {
-    top = [[-5.7, -.35], [-4.2, -.85], [-2.2, -1.12], [0, -1.2], [2.2, -1.1], [4.2, -.82], [5.7, -.3]];
-    out = [[5.7, -.3], [7.6, .5], [8.5, 1.8], [8.8, 4.0], [8.6, 6.4, 1], [4.0, 6.8], [0, 6.5], [-4.0, 6.85], [-8.6, 6.4, 1], [-8.8, 4.0], [-8.5, 1.8], [-7.6, .45]];
-    mounds = [[-2.0, 3.4 - kn * .8, 2.2, 1.6 + kn * .4], [2.1, 3.3 - kn * .8, 2.2, 1.6 + kn * .4]];
-    shade = [[[-.3, .2], [.3, .2], [.7, 3.0], [.4, 6.5], [-.4, 6.5], [-.7, 3.0]], [[5.0, .0], [7.4, .6], [8.4, 2.0], [8.7, 4.2], [8.5, 6.3], [6.6, 6.5], [7.0, 3.6], [6.0, 1.4]], [[-5.0, .0], [-7.4, .6], [-8.4, 2.0], [-8.7, 4.2], [-8.5, 6.3], [-7.4, 6.4], [-7.6, 3.6], [-6.4, 1.4]]];
-    folds = [[[-.4, .6], [-.6, 2.4], [-.3, 4.4]], [[.5, .7], [.7, 2.6], [.35, 4.6]], [[-4.0, .3], [-5.2, 1.6], [-6.4, 3.4]], [[4.1, .2], [5.3, 1.7], [6.4, 3.3]], [[-3.6, 5.0], [-4.8, 5.8], [-6.0, 6.2]], [[3.6, 5.0], [4.8, 5.7], [5.9, 6.2]], [[-1.9, .1], [-2.6, 1.0]], [[2.0, .05], [2.6, 1.0]]];
-    hiL = [[[-3.0, 2.4], [-2.0, 2.0], [-1.0, 2.5]], [[1.1, 2.4], [2.1, 1.95], [3.1, 2.4]]];
+  let top, out, shade, folds, ridges, hiL;
+  if (view === 'front') {   // the legs run toward the viewer: two ridges down the duvet, a valley between them, the flat
+    // parts beyond, the drape over the bed's sides
+    top = [[-5.4, -.2], [-4.0, -.8], [-2.1, -1.1], [0, -1.18], [2.1, -1.08], [4.0, -.78], [5.4, -.18]];
+    out = [[5.4, -.18], [6.5, .3], [7.8, .55], [8.5, 1.05], [8.75, 3.0], [8.6, 6.4, 1], [4.5, 6.75], [0, 6.55], [-4.5, 6.8], [-8.6, 6.4, 1], [-8.75, 3.0], [-8.5, 1.05], [-7.8, .58], [-6.5, .32]];
+    ridges = [[-2.05, 3.0, 1.2, 2.7, -.04], [2.05, 3.0, 1.2, 2.7, .04]];
+    shade = [[[-.55, .3], [.55, .3], [.95, 3.4], [1.15, 6.6], [-1.15, 6.6], [-.95, 3.4]], [[3.5, .05], [5.4, -.1], [6.6, .4], [8.4, 1.1], [8.6, 6.4], [4.6, 6.75], [4.2, 3.5]], [[-3.5, .05], [-5.4, -.1], [-6.6, .4], [-8.4, 1.1], [-8.6, 6.4], [-4.6, 6.8], [-4.2, 3.5]],
+             [[8.0, .8], [8.75, 1.4], [8.75, 6.3], [8.1, 6.4]], [[-8.0, .8], [-8.75, 1.4], [-8.75, 6.3], [-8.1, 6.4]]];
+    folds = [[[-.35, .7], [-.55, 2.6], [-.3, 4.8]], [[.45, .8], [.65, 2.8], [.35, 5.0]], [[-3.4, .5], [-4.0, 2.4], [-4.3, 4.6]], [[3.5, .45], [4.1, 2.3], [4.3, 4.5]], [[-5.6, .6], [-6.6, 2.0], [-7.2, 3.8]], [[5.6, .55], [6.6, 2.0], [7.2, 3.7]],
+             [[-3.2, 5.4], [-4.6, 6.2]], [[3.2, 5.3], [4.6, 6.2]], [[-1.6, .2], [-2.4, .9]], [[1.7, .15], [2.4, .9]], [[-8.3, 2.0], [-8.4, 4.6]], [[8.3, 2.0], [8.4, 4.6]]];
+    hiL = [[[-2.9, 1.2], [-2.6, 3.0], [-2.75, 5.2]], [[1.35, 1.2], [1.55, 3.0], [1.45, 5.2]]];
   } else if (view === 'q') {   // the legs run toward the viewer and screen right
-    top = [[-4.7, -.25], [-3.0, -.85], [-.8, -1.18], [1.4, -1.25], [3.3, -1.0], [4.4, -.6]];
-    out = [[4.4, -.6], [6.8, -.25], [9.4, .45], [11.6, 1.6], [12.6, 3.4], [12.2, 5.6, 1], [7.0, 6.3], [1.0, 6.0], [-4.2, 5.4], [-7.4, 4.8, 1], [-7.6, 2.6], [-6.6, .9]];
-    mounds = [[4.4, 2.2 - kn * .9, 2.4, 1.5 + kn * .5], [6.6, 1.0 - kn * .9, 2.2, 1.3 + kn * .5], [10.8, 3.2, 1.4, 1.2]];
-    shade = [[[-4.4, .1], [-6.6, 1.0], [-7.5, 2.8], [-7.3, 4.7], [-5.6, 4.9], [-5.6, 2.6]], [[2.4, 3.2], [5.0, 3.9], [8.6, 4.4], [12.0, 4.6], [12.2, 5.6], [7.0, 6.3], [1.6, 5.9], [.6, 4.4]], [[5.2, .4], [7.4, .9], [8.2, 1.6], [6.6, 1.9]]];
-    folds = [[[-3.0, .2], [-4.4, 1.6], [-5.6, 3.6]], [[2.0, .0], [2.7, 1.4], [2.5, 3.0]], [[5.6, 2.6], [7.6, 3.0], [9.8, 2.6]], [[8.6, 1.0], [9.6, 1.9], [10.0, 2.4]], [[-.6, 4.4], [1.6, 5.2], [4.0, 5.4]], [[3.4, -.4], [4.6, .5]]];
-    hiL = [[[3.2, 1.3], [4.4, .95], [5.6, 1.2]], [[5.6, .1], [6.6, -.15], [7.6, .1]]];
-  } else {   // profile: the legs lie along the mattress toward screen right, knees a little up
-    top = [[-3.3, -.35], [-2.6, -.9], [-1.0, -1.25], [.8, -1.4], [2.2, -1.42]];
-    out = [[2.2, -1.42], [4.6, -1.6], [7.4, -1.9 - kn * 2.2], [9.0, -1.75 - kn * 2.4], [11.0, -1.15 - kn * .8], [13.4, -1.0], [14.6, -1.55], [15.6, -.6], [16.0, 1.3, 1], [-4.2, 1.3, 1], [-4.0, .4]];
-    mounds = [[8.2, -1.0 - kn * 2.0, 2.0, .9], [14.4, -.6, .9, .7]];
-    shade = [[[-4.0, .5], [16.0, .5], [16.0, 1.3], [-4.2, 1.3]], [[-3.9, -.1], [-2.6, -.4], [-2.2, 1.3], [-4.2, 1.3]]];
-    folds = [[[4.0, -1.1], [5.6, -.3], [6.4, .9]], [[10.2, -1.1], [11.0, -.2], [11.2, 1.0]], [[12.6, -.8], [13.2, .2]], [[1.0, -.9], [1.6, .2], [1.4, 1.1]]];
-    hiL = [[[6.6, -1.75 - kn * 1.8], [8.0, -2.05 - kn * 2.3], [9.4, -1.75 - kn * 2.2]]];
+    top = [[-4.6, -.15], [-3.0, -.8], [-.8, -1.15], [1.4, -1.22], [3.3, -.98], [4.5, -.55]];
+    out = [[4.5, -.55], [6.6, -.42], [8.8, .1], [11.0, 1.05], [12.5, 2.0], [13.3, 2.8], [13.7, 4.2], [13.4, 6.4, 1], [7.0, 6.6], [0, 6.5], [-5.0, 6.0], [-7.6, 5.6, 1], [-7.85, 3.4], [-7.4, 1.6], [-6.4, .6], [-5.4, .1]];
+    ridges = [[5.6, 2.0, 4.9, 1.15, .27], [7.2, .7, 4.5, 1.0, .22]];
+    shade = [[[.4, 1.6], [5.0, 3.05], [10.0, 4.0], [13.5, 4.4], [13.4, 6.4], [7.0, 6.6], [0, 6.5], [-.8, 4.2]], [[-4.4, .1], [-6.6, .8], [-7.7, 2.8], [-7.6, 5.6], [-5.6, 5.4], [-5.4, 2.6]],
+             [[3.2, 1.0], [6.0, 1.45], [9.0, 2.2], [11.4, 2.6], [9.2, 1.7], [6.2, 1.0]]];
+    folds = [[[-3.0, .3], [-4.5, 1.8], [-5.6, 3.8]], [[1.8, .2], [2.4, 1.6], [2.2, 3.4]], [[4.6, 3.1], [7.2, 3.6], [10.0, 3.6]], [[9.2, .9], [10.4, 1.8], [10.8, 2.6]], [[-.6, 4.6], [1.8, 5.4], [4.4, 5.6]], [[3.6, -.3], [4.8, .4]], [[12.6, 3.2], [13.2, 5.0]]];
+    hiL = [[[2.0, 1.0], [5.2, 1.0], [8.6, 1.9]], [[4.6, -.25], [7.4, -.05], [10.2, .9]]];
+  } else {   // profile: the legs lie along the mattress toward screen right, the knees a little up
+    top = [[-3.2, -.25], [-2.5, -.95], [-1.0, -1.3], [.8, -1.45], [2.2, -1.48]];
+    out = [[2.2, -1.48], [4.6, -1.62], [7.6, -1.95 - kn * 2.2], [9.2, -1.85 - kn * 2.3], [11.2, -1.35 - kn * .8], [13.0, -1.15], [14.3, -1.75], [15.0, -1.5], [15.7, -.45], [17.4, .25], [18.6, .9], [18.9, 1.3, 1], [-4.4, 1.3, 1], [-4.2, .5]];
+    ridges = [[8.4, -1.3 - kn * 2.0, 2.3, .85, -.05], [14.5, -1.05, 1.0, .6, 0]];
+    shade = [[[-4.2, .6], [6.0, .4], [12.0, .5], [18.6, .9], [18.9, 1.3], [-4.4, 1.3]], [[-3.9, -.1], [-2.6, -.4], [-2.2, 1.3], [-4.4, 1.3]], [[9.6, -1.4 - kn * 1.6], [11.2, -.9 - kn * .6], [11.0, .3], [9.8, -.2]]];
+    folds = [[[4.0, -1.2], [5.4, -.3], [6.0, .9]], [[10.4, -1.15 - kn * .5], [11.2, -.2], [11.3, .9]], [[12.6, -.9], [13.2, .2]], [[1.0, -1.0], [1.6, .1], [1.4, 1.1]], [[15.9, -.2], [16.6, .8]], [[6.8, -1.6 - kn * 1.6], [7.4, -.5]]];
+    hiL = [[[5.4, -1.62], [8.2, -2.0 - kn * 2.2], [10.4, -1.6 - kn * 1.2]]];
   }
   const all = pp(top.concat(out.slice(1)));
-  K.shape(all, { wash: base, n: 4, wc: 1.1, sw: .9 });
-  for (const S of shade) K.shape(pp(S), { wash: sh, op: 150, ink: null, n: 3, wc: .8, gran: false });
-  for (const [x, y, rx, ry] of mounds) K.shape(ellPts(X(x), Y(y), rx * cw, ry * cd, 16), { wash: hi, op: 120, ink: null, raw: true, j: 0 });
+  K.shape(all, { wash: base, n: 4, wc: 1.1, sw: .85 });
+  for (const S of shade) K.shape(pp(S), { wash: sh, op: 130, ink: null, n: 3, wc: .8, gran: false });
+  for (const [x, y, rx, ry, a] of ridges) K.shape(ellPts(X(x), Y(y), rx * cw, ry * cd, 18, 0, a), { wash: hi, op: 150, ink: null, raw: true, j: 0 });
   for (const L of hiL) K.line(pp(L), .4, hi, { n: 3 });
-  for (const F of folds) K.line(pp(F), .34, dk, { n: 3 });
-  // the turned-down top: a band of sheet along the top edge, with its lower hem
-  const band = top.map(([x, y]) => [x, y + .62]), bandPts = pp(top.concat(band.slice().reverse()));
-  K.shape(bandPts, { wash: sheet, n: 3, sw: .7 });
-  K.line(pp(band.map(([x, y]) => [x, y - .08])), .28, sh, { n: 3 });
-  if (K.det) for (let i = 1; i < top.length - 1; i += 2) K.line(pp([[top[i][0] - .2, top[i][1] + .1], [top[i][0] + .1, top[i][1] + .55]]), .25, sh, { raw: true });
+  for (const F of folds) K.line(pp(F), .32, dk, { n: 3 });
+  // the turned-down top: a band of sheet along the top edge (tapering at its ends), with its lower hem
+  const n = top.length, band = top.map(([x, y], i) => [x, y + (i === 0 || i === n - 1 ? .2 : .55)]);
+  K.shape(pp(top.concat(band.slice().reverse())), { wash: sheet, n: 3, sw: .6 });
+  K.line(pp(band.slice(1, -1).map(([x, y]) => [x, y - .1])), .26, sh, { n: 3 });
+  if (K.det) for (let i = 1; i < n - 1; i += 2) K.line(pp([[top[i][0] - .2, top[i][1] + .1], [top[i][0] + .1, top[i][1] + .48]]), .22, sh, { raw: true });
   // contact shadow where his waist sinks into the covers
-  K.shape(pp(top.map(([x, y]) => [x * .78, y - .05]).concat(top.slice().reverse().map(([x, y]) => [x * .78, y - .32]))), { wash: dk, op: 70, ink: null, n: 3 });
-  // the top edge as a function x(px) → y(px), for clipping (linear between the band's points)
+  K.shape(pp(top.slice(1, -1).map(([x, y]) => [x * .8, y - .04]).concat(top.slice(1, -1).reverse().map(([x, y]) => [x * .8, y - .3]))), { wash: dk, op: 60, ink: null, n: 3 });
+  // the top edge as a function x(px) → y(px), for clipping (linear between its points)
   const T2 = pp(top).map(([x, y]) => [x * u, y * u]);
   return xp => { if (xp <= T2[0][0]) return T2[0][1]; for (let i = 1; i < T2.length; i++) if (xp <= T2[i][0]) return lerp(T2[i - 1][1], T2[i][1], (xp - T2[i - 1][0]) / (T2[i][0] - T2[i - 1][0])); return T2[T2.length - 1][1]; };
 }
