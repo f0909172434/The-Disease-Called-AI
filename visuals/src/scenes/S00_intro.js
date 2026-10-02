@@ -211,7 +211,7 @@ export default {
     const sentX0 = 0, sentX1 = colR - 0.065 - this.sentW;
     this.sentSprite.position.set(lerp(sentX0, sentX1, sendK), lerp(0, rowY2, sendK) + 0.012, 0);
     this.sentSprite.opacity = t >= this.sendT ? 1 : 0;      // (the opacity setter also sets .visible)
-    this.herBubble.position.set(sentX1 + this.sentW / 2, rowY2 + 0.036, 0);
+    this.herBubble.position.set(sentX1 + this.sentW / 2, rowY2 + 0.026, 0);
     this.herBubble.reveal = clamp((t - this.sendT - 0.08) / 0.35);
     this.herBubble.opacity = t >= this.sendT ? 1 : 0;
     this.herBubble.brightness = 0.55;
