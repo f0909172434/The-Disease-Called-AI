@@ -23,7 +23,7 @@
 | 歌聲引擎 | 已完成，需依新選角重新渲染 |
 | 樂器與混音引擎 | 已完成 |
 | 盲測分析腳本 | 已完成，但尚未在真實母帶上執行 |
-| 視覺引擎與元件庫 | 大致完成，S00 已實作，但用的是舊的粒子頭像 |
+| 視覺引擎與元件庫 | 完成（黑位、玻璃介面已修），S00 已實作但還在用舊的粒子頭像 |
 | 動漫角色骨架 | 只有繪圖底層，兩個角色都還沒畫 |
 | 場景 S01–S13 | **尚未實作** |
 | 全片渲染與最終 MP4 | **尚未開始** |
@@ -60,7 +60,7 @@
 | 歌聲引擎 | ✅ | `music/vocal/*`（`render_vocals.py`） | 流程：Kokoro-82M 唸詞 → WORLD 聲碼器改唱 → Whisper 驗收。QA：主唱平均 WER 0.128（中位數 0），口白 0.0，音準中位誤差 8.9 音分；渲染約 651 秒。最差的是 C1_4/C2_4「you never say goodnight」與 C1_2「a fever made of light」 |
 | 樂器與混音 | ✅ | `music/engine/render_instruments.py`、`mix.py`、`STATUS.md` | 最新母帶已含人聲：−11.02 LUFS、真峰值 −1.32 dBTP、LRA 6.1 LU，長度精確 215.000 s。樂器渲染約 65 秒，混音約 4.5 分鐘（峰值 3.2 GB RAM）。人聲重製後只需再跑 `mix.py`（逐句重新量測音量）。男聲主唱建議把人聲高通從 100 Hz 降到 80 Hz。QA 圖在 `music/build/qa/` |
 | 盲測分析 | ✅ 已在合成測試音檔上驗證 | `analysis/analyze.py` | 測試結果：偵測 172.007 BPM，節拍誤差 2.8 ms，小節線命中 100%。用鼓組分軌的「反拍規則」解決 86/172 倍頻歧義。**尚未在真實母帶上跑** |
-| 視覺引擎 | 🟡 | `visuals/`（`index.html`、`src/core`、`src/kit`、`src/scenes`、`render.mjs`、`contact_sheet.mjs`、`README_ENGINE.md`） | Three.js r170，以 SwiftShader 做可重現的逐幀渲染，每幀約 1.9 秒（含擷取）。S00 已實作，但用的是舊的粒子 `Silhouette`。待辦：黑位偏灰、介面玻璃厚度 |
+| 視覺引擎 | ✅（場景待做） | `visuals/`（`index.html`、`src/core`、`src/kit`、`src/scenes`、`render.mjs`、`contact_sheet.mjs`、`README_ENGINE.md`、`STATUS.md`） | Three.js r170，SwiftShader 可重現的逐幀渲染，可重現性檢查已通過。1080p 每幀 0.74 秒（1 worker）／0.56 秒（2 workers，含編碼）。**黑位已修**（bloom 尾巴不再墊灰）；**介面玻璃厚度已做**（泡泡、三點、輸入框、聊天面板）。S00 已實作但仍用舊的粒子 `Silhouette`，要換成新角色；S01–S13 是佔位場景；時間軸目前用 placeholder |
 | 動漫角色骨架 | 🟡 只有底層 | `visuals/src/kit/heroine/{geom,draw,palettes}.js`、`STATUS.md` | 已完成繪圖底層：平滑曲線、漸細墨線、髮束形狀、seeded boil、水彩邊緣暗化、配色模式（human/swapped/perfected）。**還沒有任何角色圖**，`Heroine.js` 尚未建立。兩個角色（AI 鯨魚女孩、男主角）都要在新 session 用這套底層畫 |
 | README | 🟡 | `README.md` | 雙語草稿含佔位符 `{{FPS}} {{BPM}} {{BEAT_MAE}} {{DOWNBEAT}} {{VOCAL_QA}} {{VOCAL_QA_EN}} {{STILLS}}`；結尾反思已寫，需配合選角微調（例：「寫的時候是她的台詞」→ 他） |
 | 合成腳本 | ✅ | `tools/assemble.py` | 兩遍編碼，控制在 95 MB 內（GitHub 上限 100 MB），另出一份 CRF 16 的 HQ 版 |
@@ -139,7 +139,7 @@
    - 產出設計稿後**先給使用者確認**，再整合。
 7. **引擎修補**：黑位壓回深黑、介面玻璃厚度；S00 換成新角色。
 8. **場景**：3–4 個 agent 依段落分工實作 S01–S13（分鏡 v2 加角色骨架）。主 session 只在里程碑看 contact sheet。
-9. **全片渲染**：1080p30，每幀約 1.9 秒，單 worker 約 3.4 小時，可測試 2 個 workers。接著 `python3 tools/assemble.py`（< 95 MB），擷取劇照給 README。
+9. **全片渲染**：1080p30，約 6450 幀，2 個 workers 每幀約 0.56 秒，全片約 1 小時（實際場景更重，以實測為準）。接著 `python3 tools/assemble.py`（< 95 MB），擷取劇照給 README。
 10. **收尾**：更新文件與 README（佔位符、選角、反思中的人稱），commit、push、開 draft PR 並訂閱。
 
 ---
