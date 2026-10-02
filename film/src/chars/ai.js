@@ -389,8 +389,8 @@ function aiHairBack(hd) {
   const M = aiHairMass(hd, locks);
   if (M.length > 5) {
     const MP = aiLoop(M, 3), G = HF.grad;
-    aiPaint(MP.map(p => hd.Hh(p[0], p[1])), { wash: mixCol(P.hair0, P.hairInk, .2), ink: null });
-    for (const [g, col] of [[.3, mixCol(P.hair1, P.hair0, .45)], [.62, mixCol(P.hair1, P.hair0, .1)]]) {
+    aiPaint(MP.map(p => hd.Hh(p[0], p[1])), { wash: mixCol(P.hair0, P.hairInk, .08), ink: null });
+    for (const [g, col] of [[.22, mixCol(P.hair1, P.hair0, .45)], [.55, mixCol(P.hair1, P.hair2, .3)]]) {
       const lo = aiClipWave(MP, lerp(G[0], G[1], g), .22, 3, 1.3 + g * 4);
       if (lo.length > 2) aiPaint(lo.map(p => hd.Hh(p[0], p[1])), { wash: col, op: 235, ink: null });
     }
@@ -440,7 +440,7 @@ function aiBangs(hd) {
   }
   // then two glazes over the whole fringe, one colour each: the crown's shade above the shine, lighter tips
   hd.A.rs('bangglaze');
-  for (const [E, sd] of Es) aiPaint(aiRootTongue(E, .22, sd), { wash: P.hair0, op: 95, ink: null });
+  for (const [E, sd] of Es) aiPaint(aiRootTongue(E, .22, sd), { wash: P.hair0, op: 60, ink: null });
   for (const [E, sd] of Es) aiPaint(aiTongue(E, .72, 1, sd), { wash: mixCol(P.hair1, P.hair2, .6), op: 140, ink: null });
   hd.A.rs('strands');
   const St = aiBangLocks(hd, AI_STRANDS).map(B => aiRib(B.C, B.C.map((_, j) => B.w * k * (1 - .9 * j / (B.C.length - 1))), 4));

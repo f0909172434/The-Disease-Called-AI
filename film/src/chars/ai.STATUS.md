@@ -26,16 +26,16 @@ The hair and the face are no longer measured silhouettes. One head is shared by 
   - It is inked down both sides but never across the root, so it grows out of the hair above it. The edge toward the silhouette gets the heavier line.
 - **Hanging locks** (`aiHang`, `aiLocks`): `nb` back locks per side, at azimuths from her side round to the back, plus three face-framing locks per side.
   - Their spines follow the hair's width profile `AI_HAIR[form].R` (it hugs the skull, then flares below the ears).
-  - They wave in and out along sinusoids. Neighbours have nearby phases, so the mass waves together.
-  - Tips hook outward. Lengths, widths and spreads vary per lock.
+  - Each is an S-wave: it swings in and out 2–3 times along its length (`wl`, `amp`, growing toward the tip by `wp`) and twists a little sideways, so neighbouring locks overlap and cross. The phase step from lock to lock (`phj`) is larger on the chibi (more crossing) and small on the full form (big coherent waves).
+  - The full form's width profile flares out past the shoulders to the hips. Pointed tips hook outward and up. Lengths, widths and spreads vary per lock.
   - `sweepL` / `sweepR` / `lenL` / `lenR` drift and lengthen one side; the curtsy uses them for the hair flowing to the screen-left.
-- **Bangs** (`AI_BANGS`): eleven pointed locks with an outward bow and a slight S-curve, laid over the sphere of the head:
-  - two side-swept locks per side, whose inner edges frame the forehead windows;
-  - a central cluster, with the longest lock falling between the eyes;
-  - `AI_STRANDS`: thin strands that cross the gaps.
+- **Bangs** (`AI_BANGS`): eight chunky pointed locks that fan out from a part left of centre. Each one bows outward with a slight S-curve over the sphere of the head.
+  - A big side-swept lock each way, with a second lock inside it; their inner edges frame the forehead.
+  - Chunky locks swept away from the part, the longest falling between the eyes.
+  - `AI_STRANDS`: long thin strands between the eyes and across the gaps.
 
-  Each bang is washed and inked in turn. Then the whole fringe gets one root-shade glaze and one tip glaze.
-- **Shine and flyaways**: `AI_SHINE` is a broken band of light strokes across the crown (one big piece). `aiFlyaways` adds a few stray hairs.
+  Each bang is washed, given its piece of the shine band, and inked in turn. Then the whole fringe gets one root-shade glaze and one tip glaze.
+- **Shine and flyaways**: the shine is a bright light-blue band arcing across the crown (`AI_SHINE`). Each bang carries its own piece, inset from its edges, so the locks break the band into segments; the wide central ones get a paler core. `aiFlyaways` adds a few stray hairs. The skull's hair (`aiCap`) is a full, round crown (`crown`: width, height).
 - **The face** (`aiFace`): a real face shape from `AI_FACE[form].fw`, its cross-section down the face, so the jaw swings toward the far side in q.
   - The cheek and chin are outlined, with a soft shadow down the far cheek.
   - The bangs cast a soft shadow, clipped to the face (`aiBangShadow`).
