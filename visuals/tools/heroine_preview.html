@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Heroine preview</title>
+  <style>html, body { margin: 0; background: #05060A; }</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script type="module">
+    // WIP preview of the Heroine rig core: palette modes + ink primitives (tapered lines, hair
+    // ribbons, watercolour pooling, boil). Character views are not drawn yet (see STATUS.md).
+    // Captured by tools/heroine_capture.mjs; sets window.__done when finished.
+    import { Pen } from '../src/kit/heroine/draw.js';
+    import { PALETTES } from '../src/kit/heroine/palettes.js';
+    import { P } from '../src/kit/heroine/geom.js';
+
+    const W = 1800, H = 820;
+    const cv = document.getElementById('c');
+    cv.width = W; cv.height = H;
+    const c = cv.getContext('2d');
+    c.fillStyle = '#05060A';
+    c.fillRect(0, 0, W, H);
+    c.fillStyle = '#E8FDFF';
+    c.font = '600 26px sans-serif';
+    c.fillText('HEROINE RIG — WIP: palette modes + ink primitives (character views not drawn yet)', 40, 52);
+
+    const keys = ['skin', 'skinShade', 'blush', 'underEye', 'hair', 'hairMid', 'hairSheen', 'iris1', 'iris3', 'hood', 'hoodShade', 'string', 'band', 'pin'];
+    let y = 90;
+    for (const [name, pal] of Object.entries(PALETTES)) {
+      c.fillStyle = '#9AA3B8';
+      c.font = '600 18px sans-serif';
+      c.fillText(name.toUpperCase(), 40, y + 32);
+      keys.forEach((k, i) => {
+        c.fillStyle = pal[k];
+        c.fillRect(200 + i * 112, y, 96, 46);
+        c.fillStyle = '#6B7280';
+        c.font = '12px monospace';
+        c.fillText(k, 200 + i * 112, y + 62);
+      });
+      y += 92;
+    }
+
+    function demo(x0, y0, boil, painterly, label) {
+      const pal = PALETTES.human;
+      c.save();
+      c.translate(x0, y0);
+      const pen = new Pen(c, { pal, boil, boilSeed: 3, painterly });
+      for (let i = 0; i < 7; i++) {
+        const sx = 30 + i * 32;
+        const r = pen.ribbon([P(sx, 0), P(sx + 10, 120), P(sx - 6 + i * 4, 250)], [[0, 30], [0.4, 34], [1, 0]], { id: 'cl' + i });
+        pen.wash(r.path, i % 2 ? pal.hair : pal.hairMid);
+        pen.line(r.left, 3, pal.hairLine, { id: 'l' + i });
+      }
+      const ring = [P(330, 30), P(420, 50), P(445, 150), P(385, 235), P(300, 200), P(288, 100)];
+      pen.wash(pen.curve(ring, { id: 'disc' }), pal.skin);
+      pen.line(ring.slice(0, 4), 4, pal.skinLine, { id: 'dl' });
+      c.restore();
+      c.fillStyle = '#9AA3B8';
+      c.font = '600 16px sans-serif';
+      c.fillText(label, x0, y0 + 290);
+    }
+    demo(60, 420, 0, 0, 'clean vector (boil 0, painterly 0)');
+    demo(640, 420, 0, 1, 'painterly 1 (watercolour edge pooling)');
+    demo(1220, 420, 2.5, 1, 'boil 2.5 + painterly 1');
+    window.__done = true;
+  </script>
+</body>
+</html>

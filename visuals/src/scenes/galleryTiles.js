@@ -104,7 +104,7 @@ export function buildTiles(ctx) {
     chat.setScript(chatDemo());
     T.update = (t) => {
       const c = t % 12;
-      applyCamera(T.camera, { pos: [0.75, 0.25, 3.9], target: [0, 0, 0], fov: 32 });
+      applyCamera(T.camera, { pos: [0.85, 0.25, 4.7], target: [0, -0.02, 0], fov: 32 });
       chat.rotation.set(0.05, -0.3 + 0.08 * Math.sin(t * 0.4), 0);
       chat.update(c);
     };
