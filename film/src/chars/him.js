@@ -1388,9 +1388,10 @@ LOOPS.him_vs_ref_q = t => {
 LOOPS.him_vs_ref_q.len = 1;
 LOOPS.him_test = t => {
   HIM_N = 0;
-  him(330, 1060, 29, { ...himFeel('neutral', 0), view: 'front', blink: 0, boilKey: 'a' });
-  him(960, 1060, 29, { ...himFeel('neutral', 0), view: 'q', blink: 0, boilKey: 'b' });
-  him(1600, 1060, 29, { ...himFeel('neutral', 0), view: 'side', blink: 0, boilKey: 'c' });
+  him(200, 1050, 22, { ...himFeel('neutral', 0), view: 'side', boilKey: 'a' });
+  him(600, 1050, 22, { ...himFeel('tired', 0), view: 'front', outfit: 'home', boilKey: 'b' });
+  him(1000, 1050, 22, { ...himFeel('tired', 0), view: 'side', outfit: 'home', boilKey: 'c' });
+  him(1350, 1050, 22, { ...himFeel('anxious', 0), view: 'side', outfit: 'home', reach: 1, boilKey: 'd' });
 };
 LOOPS.him_test.len = 1;
 
