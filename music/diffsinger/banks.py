@@ -49,6 +49,8 @@ class Profile:
     color: str | None = None           # preferred voice colour (subbank), matched by substring
     phonemizer: str = "OpenUtau.Core.DiffSinger.DiffSingerEnglishPhonemizer"
     phoneme_map: dict = field(default_factory=dict)    # ARPAbet -> bank symbol, tried first
+    # in-syllable context rules, 1:1: (ARPAbet, next ARPAbet) -> ARPAbet for the first one
+    context_map: dict = field(default_factory=dict)
 
 
 PROFILES = {
@@ -56,7 +58,9 @@ PROFILES = {
         "tiger", r"tiger", "TIGER (DiffSinger) v106", "TIGER voicebank by tigermeat",
         "CC BY-NC-ND 4.0 + Commons Clause (non-commercial; no redistribution or derivatives "
         "of the models; character usage ToS)",
-        "https://github.com/spicytigermeat/tiger_diffsinger", "him", (43.0, 69.0), color="fresh"),
+        "https://github.com/spicytigermeat/tiger_diffsinger", "him", (43.0, 69.0), color="fresh",
+        # TIGER's phonetic tips: [t r]/[d r] onsets are thin in the data, [ch r]/[jh r] sing better
+        context_map={("t", "r"): "ch", ("d", "r"): "jh"}),
     "hanami": Profile(
         "hanami", r"hanami", "Hoshino Hanami ~AI❤dol~ for DiffSinger v1.0",
         "Hoshino Hanami voicebank by Lotte V (Team L❤VE)",
@@ -107,6 +111,14 @@ class Bank:
                 if self.accepts(name, timed):
                     return name
         raise KeyError(f"{self.name}: no symbol for ARPAbet '{arpa}' (tried {cands})")
+
+    def map_seq(self, arpas: list[str], timed: bool = False) -> list[str]:
+        """A syllable's ARPAbet -> bank symbols, with the profile's context rules (1:1)."""
+        out = []
+        for i, a in enumerate(arpas):
+            nxt = arpas[i + 1] if i + 1 < len(arpas) else None
+            out.append(self.map_phoneme(self.profile.context_map.get((a, nxt), a), timed))
+        return out
 
     def is_vowel(self, sym: str) -> bool:
         t = self.symbols.get(sym)

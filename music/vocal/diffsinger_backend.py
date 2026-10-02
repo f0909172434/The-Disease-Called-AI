@@ -31,6 +31,7 @@ makes a re-render of the same input bit-identical (the diffusion sampler is othe
 from __future__ import annotations
 
 import concurrent.futures as cf
+import json
 import os
 import shutil
 import sys
@@ -62,6 +63,7 @@ DS_SOURCES = ["diffsinger_backend.py", "contour.py", "planner.py", "phonology.py
               "../diffsinger/banks.py", "../diffsinger/runner.py"]
 LINE_SOURCES = DS_SOURCES + ["singer.py", "world_voice.py", "lineaudio.py"]
 DS_VERSION = 1
+TAKES_JSON = os.path.join(DS_DIR, "takes.json")
 FAMILY_BANK = {"her": os.environ.get("DIFFSINGER_HER", "hanami"),
                "him": os.environ.get("DIFFSINGER_HIM", "tiger")}
 
@@ -96,6 +98,21 @@ def bank_weights(blend: dict[str, float]) -> list[tuple[str, float]]:
     return sorted(out, key=lambda x: -x[1])
 
 
+def takes() -> dict[str, int]:
+    """Chosen performances: DiffSinger's diffusion sampler is random, so each line is one
+    "take"; music/diffsinger/takes.json records the take kept for a line (picked by
+    audition.py --retake on Whisper WER), VOCAL_DS_TAKES (JSON) overrides it."""
+    out = {}
+    try:
+        with open(TAKES_JSON) as fh:
+            out.update({k: int(v["take"] if isinstance(v, dict) else v) for k, v in json.load(fh).items()})
+    except (OSError, ValueError):
+        pass
+    if os.environ.get("VOCAL_DS_TAKES"):
+        out.update({k: int(v) for k, v in json.loads(os.environ["VOCAL_DS_TAKES"]).items()})
+    return out
+
+
 def source_line(line: dict) -> dict:
     """What is actually sung: a human double is a second take (jittered landings)."""
     from singer import jitter_line, stable_seed
@@ -111,6 +128,7 @@ def ds_key(line: dict, voices: dict, cfg: Config) -> str:
     stage_cfg = {k: v for k, v in asdict(cfg).items() if k not in ("styling", "warp", "procs")}
     return cache.key("ds", source_line(line), weights, stage_cfg, DS_VERSION, fps,
                      runner.build_id(), style.timing, style.expr, line.get("detune_cents"),
+                     *([("take", takes().get(line["id"], 0))] if takes().get(line["id"]) else []),
                      sources=DS_SOURCES)
 
 
@@ -216,8 +234,8 @@ def times_from_render(part: su.PartSpec, info: dict, lp: phm.LinePhonemes, bank:
                       timed: bool) -> dict[int, list[tuple[float, float]]]:
     """Map ourender's phoneme list (in order) back onto our syllables' phonemes."""
     got = info["phonemes"]
-    exp = [(s, bank.map_phoneme(p.arpa, timed=timed)) for s in lp.syllables if not s.shares_prev
-           for p in s.phones]
+    exp = [(s, sym) for s in lp.syllables if not s.shares_prev
+           for sym in bank.map_seq([p.arpa for p in s.phones], timed=timed)]
     out: dict[int, list[tuple[float, float]]] = {s.index: [] for s in lp.syllables}
     gi = 0
     for s, sym in exp:
@@ -303,6 +321,7 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
         for b, _ in weights:
             banks.setdefault(b, bk.find(b))
         jobs.append({"line": line, "src": src, "key": key, "style": style, "weights": weights,
+                     "take": takes().get(line["id"], 0),
                      "seed": stable_seed(line["id"]), "lp": phm.line_phonemes(src, style.timing)})
     timed = cfg.timing == "ours"
     prim_tracks, prim_index = [], {}
@@ -339,7 +358,7 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
         contour = (j["con"].t, j["con"].target_midi) if cfg.pitch == "score" else None
         j["part2"] = su.part_for_line(j["src"], j["lp"], banks[b], prim_index[b],
                                       times=j["times"] if timed else None, contour=contour,
-                                      name=f"{j['line']['id']}__{b}")
+                                      take=j["take"], name=f"{j['line']['id']}__{b}")
         parts.append(j["part2"])
     infos = _run_batch("render", prim_tracks, parts, work, "primary", cfg,
                        pitch="bank" if cfg.pitch == "bank" else "ustx", log=log)
@@ -446,13 +465,17 @@ def blend_envelopes(sp_a, ap_a, sp_b, ap_b, w: float, voiced: np.ndarray | None 
 
 
 def envelope_filter(x48: np.ndarray, sp_from: np.ndarray, sp_to: np.ndarray,
-                    max_db: float = 24.0) -> np.ndarray:
+                    max_db: float = 24.0, top_hz: float = 10000.0) -> np.ndarray:
     """Re-shape `x48` (48 kHz, sample 0 = WORLD frame 0) so its spectral envelope moves from
     `sp_from` to `sp_to` (WORLD envelopes, 5 ms frames, 0..12 kHz): a time-varying gain on
     the STFT (5 ms hop, frames aligned with WORLD's). Unlike a WORLD re-synthesis this keeps
     DiffSinger's own excitation, noise and phase — measured: WORLD copy-synthesis alone
     turned "every word I say" into "everyone else" and "always" into "Alice" (Whisper),
-    the filter leaves the transcript as the raw render has it."""
+    the filter leaves the transcript as the raw render has it.
+
+    The gain is taken up to `top_hz` and held above it: the 24 kHz analysis ends at 12 kHz
+    where the resampler's roll-off makes the envelopes meaningless (a warped ratio there read
+    +20 dB and lifted 10-16 kHz by 18 dB before this limit)."""
     from scipy.signal import istft, stft
     sr, hop, nfft = 48000, 240, 2048
     n = min(len(sp_from), len(sp_to))
@@ -460,10 +483,11 @@ def envelope_filter(x48: np.ndarray, sp_from: np.ndarray, sp_to: np.ndarray,
     g_db = np.clip(g_db, -max_db, max_db)
     f, _, X = stft(x48, sr, nperseg=nfft, noverlap=nfft - hop, boundary="even", padded=True)
     fa = wv.freq_axis(sp_to)
+    ok = fa <= top_hz
     G = np.empty((len(f), X.shape[1]))
     for j in range(X.shape[1]):
-        gj = g_db[min(j, n - 1)]
-        G[:, j] = np.interp(f, fa, gj, right=gj[-1])
+        gj = g_db[min(j, n - 1)][ok]
+        G[:, j] = np.interp(f, fa[ok], gj, right=gj[-1])
     _, y = istft(X * 10 ** (G / 20.0), sr, nperseg=nfft, noverlap=nfft - hop, boundary=True)
     y = y[:len(x48)]
     return np.pad(y, (0, len(x48) - len(y))).astype(np.float32)

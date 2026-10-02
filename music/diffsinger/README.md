@@ -68,7 +68,8 @@ A generated `.ustx` opens in the OpenUtau GUI as a normal project (timed lyrics 
    syllabifier matched to the score's syllables — converted to ARPAbet per score syllable
    (one vowel per note; DiffSinger starts a note at every vowel). `banks.py` maps them 1:1
    onto each bank's inventory read from its files (Hanami's English has no `dx`/`ax`:
-   → `d`/`ah`), never splitting or dropping, so two banks stay phoneme-aligned.
+   → `d`/`ah`; TIGER's tips: onset `t r`/`d r` → `ch r`/`jh r`), never splitting or
+   dropping, so two banks stay phoneme-aligned.
 2. **ustx** (`score_to_ustx.py`): one part per line at its song time (172 BPM, 480 tpb,
    1.5 beats pre-roll), one note per syllable with `text[ph ph ...]`, `+~` for melismas,
    flat notes plus a PITD curve that makes OpenUtau's pitch equal our contour exactly.
@@ -94,6 +95,13 @@ A generated `.ustx` opens in the OpenUtau GUI as a normal project (timed lyrics 
 7. Gates, levels, inhale, timing entry and QA data: `singer.finish_sung`, then stems/QA
    unchanged.
 
+**Takes.** The diffusion sampler is random, so every render is a performance. For lines
+Whisper mis-hears, `audition.py --retake N --lines A,B` sings takes 0..N-1 (take k = the
+PITD raised by k cents: inaudible, but a new input) and records the best in `takes.json`
+(committed; WER per take in the file). On this machine the tensor cache replays the chosen
+take exactly; on a fresh machine every take is a new sample — re-run the retake for the
+lines in `takes.json`.
+
 **Caches.** `music/build/cache/ds_<line>` (DiffSinger stage: line, bank fingerprints incl.
 voice mode, renderer build, sources) and `dsline_<line>` (finished line). OpenUtau's tensor
 cache lives in `oudata/` (git-ignored).
@@ -108,9 +116,11 @@ a whole batch — two parallel processes were slower on 4 cores (RTF 4.9 vs 4.4)
 
 ## Measured (4-core CPU)
 
-* Render speed, 20 steps (both banks use reflow with max depth 0.6): TIGER ≈ 4.6 s, Hanami
-  ≈ 4.8 s per second of audio; phonemize ≈ 5–11 s per batch; cached re-render ≈ 0.15 s/s.
-  10 steps was not faster end-to-end and cost intelligibility on one line.
+* Render speed, 20 steps (both banks use reflow with max depth 0.6): the whole song (90
+  sung lines, 308 s of audio incl. the her→him second renders) in 768 s = 2.5 s per second
+  of audio in one batch on a shared 4-core box; small batches 4.6–4.8 s/s (model loading);
+  phonemize 11 s for 90 lines; cached re-render ≈ 0.15 s/s. 10 steps was not faster
+  end-to-end and cost intelligibility on one line.
 * Test lines (faster-whisper medium.en WER, median |pitch error| vs score, % of vowel frames
   with octave jumps / sub-harmonics / voicing drop-outs ≥ 60 ms from attack and release):
   TIGER V1_1 0 / 8.1 c, C1_2 0.8 ("If we were made of life") / 5.8 c, C1_4 0 / 7.6 c,

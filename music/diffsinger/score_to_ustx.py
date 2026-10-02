@@ -131,9 +131,11 @@ def part_for_line(line: dict, lp: phm.LinePhonemes, bank: bk.Bank, track: int, *
                   times: dict[int, list[tuple[float, float]]] | None = None,
                   contour: tuple[np.ndarray, np.ndarray] | None = None,
                   transpose: int = 0, pre_roll: float = 1.5, name: str | None = None,
-                  dict_source: str = "ours") -> PartSpec:
+                  dict_source: str = "ours", take: int = 0) -> PartSpec:
     """One line as one part. `times` (song seconds per phoneme, see ours_times) switches the
-    lyrics to the timed form; `contour` = (t seconds, MIDI) becomes the PITD curve."""
+    lyrics to the timed form; `contour` = (t seconds, MIDI) becomes the PITD curve.
+    `take` > 0 raises that curve by `take` cents: inaudible, but a new input for DiffSinger's
+    diffusion sampler, i.e. another performance of the same line (see diffsinger_backend)."""
     timed = times is not None
     sylls = lp.syllables
     if dict_source == "bank" and not timed:
@@ -146,7 +148,7 @@ def part_for_line(line: dict, lp: phm.LinePhonemes, bank: bk.Bank, track: int, *
             tone = int(round(n["p"])) + transpose
             adjacent = prev_end is not None and pos == prev_end
             if k == 0 and not s.shares_prev:
-                syms = [bank.map_phoneme(p.arpa, timed=timed) for p in s.phones]
+                syms = bank.map_seq([p.arpa for p in s.phones], timed=timed)
                 if timed:
                     toks = [f"{sym}@{sec2tick(t0) - pos}" for sym, (t0, _) in zip(syms, times[s.index])]
                 else:
@@ -167,9 +169,10 @@ def part_for_line(line: dict, lp: phm.LinePhonemes, bank: bk.Bank, track: int, *
     position = max(0, first - int(round(pre_roll * TPB)))
     part = PartSpec(name or line["id"], track, position, notes,
                     meta={"line": line["id"], "bank": bank.key, "singer": bank.singer_id,
-                          "timing": "timed" if timed else "bank", "transpose": transpose})
+                          "timing": "timed" if timed else "bank", "transpose": transpose,
+                          "take": take})
     if contour is not None:
-        part.pitd = pitd_curve(part, *contour, transpose=transpose)
+        part.pitd = pitd_curve(part, *contour, transpose=transpose, offset_cents=take)
     return part
 
 
@@ -202,7 +205,8 @@ def _bank_dict_syllables(line: dict, lp: phm.LinePhonemes, bank: bk.Bank) -> lis
     return out
 
 
-def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int = 0):
+def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int = 0,
+               offset_cents: int = 0):
     """PITD (cents relative to the notes, 5-tick grid) so that OpenUtau's pitch curve equals
     `midi` (+ transpose) at song time `t`. OpenUtau's base pitch at tick x is the tone of the
     first note ending after x (flat notes; no pitch points, no vibrato)."""
@@ -212,7 +216,7 @@ def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int =
     idx = np.minimum(np.searchsorted(ends, xs, side="right"), len(tones) - 1)
     base = tones[idx]
     target = np.interp(xs * SEC_PER_TICK, t, midi) + transpose
-    ys = np.clip(np.round((target - base) * 100.0), -1200, 1200).astype(int)
+    ys = np.clip(np.round((target - base) * 100.0) + offset_cents, -1200, 1200).astype(int)
     return xs.tolist(), ys.tolist()
 
 

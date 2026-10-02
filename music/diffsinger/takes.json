@@ -1,0 +1,44 @@
+{
+ "C1_2": {
+  "take": 1,
+  "wer": 0.0,
+  "transcript": "A fever made of light",
+  "takes_tried": 4,
+  "wer_take0": 0.8
+ },
+ "C1_5_dbl": {
+  "take": 1,
+  "wer": 0.167,
+  "transcript": "Feed me a perfect painless yes!",
+  "takes_tried": 4,
+  "wer_take0": 0.333
+ },
+ "C2_2_dbl": {
+  "take": 1,
+  "wer": 0.2,
+  "transcript": "a fever made of lights",
+  "takes_tried": 4,
+  "wer_take0": 0.6
+ },
+ "F_4": {
+  "take": 2,
+  "wer": 0.2,
+  "transcript": "I train you to reply",
+  "takes_tried": 4,
+  "wer_take0": 0.2
+ },
+ "P1_3": {
+  "take": 3,
+  "wer": 0.0,
+  "transcript": "Doctor, doctor, tell me why!",
+  "takes_tried": 4,
+  "wer_take0": 0.4
+ },
+ "V2_8": {
+  "take": 5,
+  "wer": 0.333,
+  "transcript": "And never once so right too late",
+  "takes_tried": 8,
+  "wer_take0": 0.833
+ }
+}
