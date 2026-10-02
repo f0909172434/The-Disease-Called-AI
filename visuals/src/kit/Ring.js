@@ -109,11 +109,11 @@ float band(vec2 p, float r0, float r1, float rows, float px) {
   float idx;
   if (uUseText > 0.5) {
     float k = mod(-ci + row * 37.0 + 4096.0 * uTextLen, uTextLen);   // clockwise reading order
-    idx = texture2D(uText, vec2((k + 0.5) / 256.0, 0.5)).r * 255.0;
+    idx = floor(texelFetch(uText, ivec2(int(k), 0), 0).r * 255.0 + 0.5);
   } else {
     float step_ = floor(uTime * 9.0 + h11(ci + row * 101.0) * 40.0);
     float pick = floor(h21(vec2(ci + row * 57.0, step_)) * uRandCount);
-    idx = texture2D(uPool, vec2((pick + 0.5) / uRandCount, 0.5)).r * 255.0;
+    idx = floor(texelFetch(uPool, ivec2(int(pick), 0), 0).r * 255.0 + 0.5);
   }
   if (luv.x < 0.0 || luv.x > 1.0 || luv.y < 0.0 || luv.y > 1.0) return 0.0;
   float lod = max(0.0, log2(64.0 * px / rowH));            // atlas cell = 64 texels spans rowH world units
