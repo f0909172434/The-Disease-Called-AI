@@ -7,15 +7,15 @@
  "integrated_lufs_pyloudnorm": -11.05,
  "true_peak_dbtp": -1.32,
  "sample_peak_dbfs": -1.45,
- "loudness_range_lu": 5.9,
+ "loudness_range_lu": 5.91,
  "short_term_max_lufs": -8.68,
  "momentary_max_lufs": -7.25,
  "crest_factor_db": 12.19,
  "plr_db": 9.69,
  "stereo_correlation": 0.759,
  "dc_offset": [
-  4.76e-05,
-  4.97e-05
+  4.75e-05,
+  4.96e-05
  ],
  "clipped_samples": 0,
  "bands_db": {
@@ -79,7 +79,7 @@
    "true_peak_dbtp": -1.37,
    "crest_db": 12.67,
    "bands_db": {
-    "sub": -5.5,
+    "sub": -5.6,
     "low": -2.6,
     "mid": -10.1,
     "presence": -16.3,
@@ -143,14 +143,14 @@
    }
   },
   "S05": {
-   "lufs": -10.16,
+   "lufs": -10.17,
    "short_term_max": -9.94,
    "true_peak_dbtp": -1.38,
-   "crest_db": 11.1,
+   "crest_db": 11.11,
    "bands_db": {
     "sub": -8.3,
     "low": -2.8,
-    "mid": -6.7,
+    "mid": -6.8,
     "presence": -12.2,
     "brilliance": -14.0,
     "air": -17.4
@@ -189,10 +189,10 @@
    }
   },
   "S07": {
-   "lufs": -13.42,
+   "lufs": -13.43,
    "short_term_max": -11.67,
    "true_peak_dbtp": -1.37,
-   "crest_db": 13.31,
+   "crest_db": 13.32,
    "bands_db": {
     "sub": -4.0,
     "low": -3.6,
@@ -260,7 +260,7 @@
   "S10": {
    "lufs": -9.23,
    "short_term_max": -8.68,
-   "true_peak_dbtp": -1.37,
+   "true_peak_dbtp": -1.38,
    "crest_db": 10.26,
    "bands_db": {
     "sub": -8.8,
@@ -281,7 +281,7 @@
    }
   },
   "S11": {
-   "lufs": -9.6,
+   "lufs": -9.61,
    "short_term_max": -9.29,
    "true_peak_dbtp": -1.35,
    "crest_db": 10.94,
@@ -290,7 +290,7 @@
     "low": -2.7,
     "mid": -6.4,
     "presence": -11.2,
-    "brilliance": -13.4,
+    "brilliance": -13.5,
     "air": -17.3
    },
    "name": "TAG",
@@ -307,9 +307,9 @@
    "lufs": -17.0,
    "short_term_max": -9.35,
    "true_peak_dbtp": -1.45,
-   "crest_db": 23.05,
+   "crest_db": 23.06,
    "bands_db": {
-    "sub": -14.5,
+    "sub": -14.6,
     "low": -6.6,
     "mid": -2.0,
     "presence": -13.0,
@@ -357,7 +357,7 @@
   "duration_215.000s": true
  },
  "render": {
-  "mix_seconds": 103.0,
+  "mix_seconds": 109.3,
   "transport_fx": [
    "glitch_stutter@316.0",
    "glitch_stutter@317.5",
@@ -373,7 +373,7 @@
  },
  "mix": {
   "master_gain_db": 5.65,
-  "glue_gr_max_db": 2.18,
+  "glue_gr_max_db": 2.17,
   "glue_gr_mean_db": 0.39,
   "limiter_gr_max_db": 2.23,
   "limiter_gr_mean_db": 0.255,
