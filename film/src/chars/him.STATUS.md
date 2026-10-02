@@ -4,6 +4,18 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
+v6 (round 6: masculine silhouette; v5 hands, shoes and contrapposto kept):
+- hips: male pelvis — hip joints narrowed (front ±1.45u, 3/4 −1.12/+1.3), hip width ≈ the blazer's waist; the trouser
+  leg's outer contour runs almost straight from hip to knee, the quad mass sits on the inner / front side (`HIM_LEG`),
+  a small taper at the knee; jacket skirts and the untucked home shirt hang nearly straight from the waist; the
+  contrapposto keeps the weight shift but only tilts the hips subtly (front .045 rad, shift .22u).
+- neck: ~20 % shorter — the head sits `HIM_NECKDN` (.3u) lower and the neck drawing is compressed to follow it
+  (`himNeckY`); the collar / trapezius line is raised near the neck (`HIM_TRAP` in `himBreath`, fading out toward the
+  shoulder tips) so the head sits on the shoulders; shirt collars raised so their points sit just under the jaw shadow.
+- 3/4 far shoulder: the far arm (joint raised to (3.85, −9.15), deltoid bulk on its outer side) is drawn over the far
+  side of the torso and under the chest / lapel / collar, so its deltoid continues the shoulder line as one form; a far
+  shoulder seam runs on into the sleeve-head seam; its inner contour against the chest is a soft fold (`soft`).
+
 v5 (art-direction round 5: lower body, hands, shoes; arms/traps/lapels from v4 unchanged):
 - legs: trouser legs from profile tables like the arms (`HIM_LEG`: quad mass widest just below the jacket hem → taper into
   the knee → a slight calf → narrow ankle), two-bone IK (`himIK`), a pressed crease, folds behind the knee and a break of
@@ -80,7 +92,7 @@ himPal(name)                   // 'human' | 'drained' | 'swapped' colour sets
 HIM_EMO, HIM_LAST              // emotion table; after a desk draw HIM_LAST.handL/handR = keyboard contact points (screen px)
 ```
 
-**Size:** standing ≈ 33u (soles to hair top); head 4.4u drawn ×1.24 (`HIM_HS`); shoulders ≈ 13u wide (deltoids); hips ≈ 14.2u
+**Size:** standing ≈ 32.7u (soles to hair top); head 4.4u drawn ×1.24 (`HIM_HS`); shoulders ≈ 13u wide (deltoids); hips ≈ 14.2u
 above the soles. Standing poses use contrapposto (`contra: 0` for a symmetric stance).
 Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80 (`cut`: how far
 below the collarbones the bust ends, default 4.95u; ~1.1 for a head-and-collar close-up).
@@ -122,9 +134,9 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
-v5: A/B against v4 on the same (heavily loaded) box with `--bench`: standing front u = 30 2.32 s/frame (v5) vs 2.30 s
-(v4), with an empty frame costing 0.73 s at that load — i.e. the new hands, legs and shoes are cost-neutral; the v4
-figures below (measured at normal load) still apply.
+v5/v6: A/B against v4 on the same (heavily loaded) box with `--bench`: standing front u = 30 2.32 s/frame (v5), 2.07 s
+(v6) vs 2.30 s (v4), with an empty frame costing 0.67–0.73 s at that load — i.e. the new hands, legs, shoes, neck and
+shoulder are cost-neutral; the v4 figures below (measured at normal load) still apply.
 v4, measured on this CPU-only box (SwiftShader, load avg ≈ 4–5), excluding the first warm-up frame: standing front
 u = 30 ≈ 460–660 ms/frame (incl. the real fill), 3/4 ≈ 250–520, bust u = 62 ≈ 220–345, desk u = 40 with chair and props
 ≈ 200–345. All under the 800 ms budget. `--stills` at u = 55 reports ~10 s (page warm-up + PNG encoding, not drawing).
