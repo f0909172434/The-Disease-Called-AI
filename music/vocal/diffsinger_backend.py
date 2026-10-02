@@ -500,7 +500,12 @@ def filter_style(x48: np.ndarray, sp_src: np.ndarray, sp_blend: np.ndarray, con,
     from lineaudio import to48k
     sp_t = wv.formant_warp(sp_blend, style.formant)
     if style.tilt_db_oct:
-        sp_t = wv.tilt(sp_t, style.tilt_db_oct, pivot_hz=1000.0, lo_hz=1000.0)
+        # brightness for the voice, not for its noise: sibilants keep their level (with the
+        # tilt on every frame the AI stem had twice his share of harsh 5-10 kHz frames)
+        n = sp_t.shape[0]
+        v = wv.fit(con.voiced.astype(float), n)
+        v = np.convolve(v, np.ones(5) / 5, mode="same")[:, None]       # 25 ms crossfade
+        sp_t = sp_t * (1.0 - v) + wv.tilt(sp_t, style.tilt_db_oct, pivot_hz=1000.0, lo_hz=1000.0) * v
     y = envelope_filter(x48, sp_src, sp_t)
     if style.vocoder_db is not None:
         n = sp_t.shape[0]
