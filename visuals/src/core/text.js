@@ -230,21 +230,46 @@ export class TextSystem {
  * mipmaps; opacity scales rgb and alpha. additive: true -> glow-style ONE/ONE blending.
  * Uniforms: map, color (multiplier), opacity, brightness (rgb gain, may exceed 1 to feed bloom).
  */
-export function canvasMaterial({ map = null, additive = false, color = 0xffffff, opacity = 1, brightness = 1, side = THREE.DoubleSide, depthTest = true } = {}) {
+export function canvasMaterial({ map = null, additive = false, color = 0xffffff, opacity = 1, brightness = 1, side = THREE.DoubleSide, depthTest = true, lcd = 0 } = {}) {
+  // lcd > 0: render through an LCD RGB-subpixel mask of that pitch (world xy), fading to solid when
+  // the pattern gets finer than ~2.5 screen pixels (macro shots of a screen).
   return new THREE.ShaderMaterial({
     uniforms: {
       map: { value: map }, color: { value: new THREE.Color(color) },
-      opacity: { value: opacity }, brightness: { value: brightness },
+      opacity: { value: opacity }, brightness: { value: brightness }, uPitch: { value: lcd || 0.006 },
     },
-    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-    fragmentShader: `uniform sampler2D map; uniform vec3 color; uniform float opacity; uniform float brightness; varying vec2 vUv;
-      void main(){ vec4 t = texture2D(map, vUv); gl_FragColor = vec4(t.rgb * color * opacity * brightness, t.a * opacity); }`,
+    defines: lcd ? { LCD: 1 } : {},
+    vertexShader: `varying vec2 vUv; varying vec2 vW;
+      void main(){ vUv = uv; vW = (modelMatrix * vec4(position, 1.0)).xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform sampler2D map; uniform vec3 color; uniform float opacity; uniform float brightness; uniform float uPitch;
+      varying vec2 vUv; varying vec2 vW;
+      ${LCD_GLSL}
+      void main(){ vec4 t = texture2D(map, vUv);
+        vec3 c = t.rgb * color * opacity * brightness;
+      #ifdef LCD
+        c *= lcdMask(vW, uPitch);
+      #endif
+        gl_FragColor = vec4(c, t.a * opacity); }`,
     transparent: true, depthWrite: false, depthTest, side,
     blending: THREE.CustomBlending, blendEquation: THREE.AddEquation,
     blendSrc: THREE.OneFactor, blendDst: additive ? THREE.OneFactor : THREE.OneMinusSrcAlphaFactor,
     blendSrcAlpha: THREE.OneFactor, blendDstAlpha: THREE.OneMinusSrcAlphaFactor,
   });
 }
+
+/** GLSL: LCD subpixel mask (R|G|B stripes per pixel, dark gaps), anti-aliased by screen frequency */
+export const LCD_GLSL = /* glsl */`
+vec3 lcdMask(vec2 w, float pitch) {
+  vec2 cell = w / pitch;
+  vec2 f = fract(cell);
+  float sx = f.x * 3.0;
+  float sub = floor(sx);
+  float sf = fract(sx);
+  float stripe = smoothstep(0.08, 0.2, sf) * smoothstep(0.92, 0.8, sf) * smoothstep(0.04, 0.12, f.y) * smoothstep(0.96, 0.88, f.y);
+  vec3 m = vec3(sub < 0.5 ? 1.0 : 0.0, (sub > 0.5 && sub < 1.5) ? 1.0 : 0.0, sub > 1.5 ? 1.0 : 0.0) * stripe * 4.5; // mean ~1
+  float fw = max(fwidth(cell.x), fwidth(cell.y));
+  return mix(m, vec3(1.0), smoothstep(0.1, 0.22, fw));
+}`;
 
 /** CanvasTexture configured for the premultiplied pipeline */
 export function canvasTexture(canvas, { mipmaps = true } = {}) {

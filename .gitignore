@@ -13,3 +13,7 @@ output/chunks/
 output/*.partial.mp4
 *.tmp
 .DS_Store
+
+# large regenerable audio masters (a compressed master is committed instead)
+music/build/master.wav
+music/build/master.flac
