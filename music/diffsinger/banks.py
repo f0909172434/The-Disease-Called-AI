@@ -62,7 +62,9 @@ PROFILES = {
         "Hoshino Hanami voicebank by Lotte V (Team L❤VE)",
         "Team L❤VE voicebank / character licences (lottev.moe); terms forbid re-uploading",
         "https://lottev.moe/2024/09/hoshino-hanami-ai%e2%9d%a4dol-for-diffsinger-v1-0-is-out/",
-        "her", (55.0, 81.0)),
+        "her", (55.0, 81.0), color="root",
+        # her English data has no [dx] and only German [ax] (readme): use the English ones
+        phoneme_map={"ax": "ah", "dx": "d"}),
 }
 
 
@@ -113,6 +115,12 @@ class Bank:
         from phonemes import ARPA_VOWELS
         return sym.split("/")[-1] in ARPA_VOWELS
 
+    @property
+    def color(self) -> str | None:
+        """The voice colour to sing with: DIFFSINGER_COLOR_<KEY> (e.g. DIFFSINGER_COLOR_HANAMI=
+        nectar) or the profile's default; matched as a substring of the subbank names."""
+        return os.environ.get(f"DIFFSINGER_COLOR_{self.key.upper()}") or self.profile.color
+
     def color_index(self, want: str | None) -> int | None:
         """Index of the voice colour (CLR expression value) whose name contains `want`."""
         if not want or not self.colors:
@@ -132,7 +140,8 @@ class Bank:
                 return None
         cfg = _yaml(os.path.join(self.location, "dsconfig.yaml")) or {}
         return {"id": self.singer_id, "acoustic": stat(os.path.join(self.location, str(cfg.get("acoustic")))),
-                "dsconfig": stat(os.path.join(self.location, "dsconfig.yaml")), "vocoder": self.vocoder}
+                "dsconfig": stat(os.path.join(self.location, "dsconfig.yaml")), "vocoder": self.vocoder,
+                "color": self.color, "map": self.extra_map}
 
 
 # ----------------------------------------------------------------------------- file readers

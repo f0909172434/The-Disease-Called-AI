@@ -73,13 +73,15 @@ class Config:
     steps: int = 20             # diffusion steps (OpenUtau's "DiffSinger render speedup")
     warp: bool = True           # align formant scales before blending her->him
     procs: int = 1              # parallel ourender processes (ORT already uses every core)
+    styling: str = "filter"     # filter (envelope gain on DiffSinger's audio) | world (resynth)
 
 
 def config() -> Config:
     e = os.environ.get
     return Config(timing=e("VOCAL_DS_TIMING", "bank"), pitch=e("VOCAL_DS_PITCH", "score"),
                   steps=int(e("VOCAL_DS_STEPS", "20")), warp=e("VOCAL_DS_WARP", "1") != "0",
-                  procs=max(1, int(e("VOCAL_DS_PROCS", "1"))))
+                  procs=max(1, int(e("VOCAL_DS_PROCS", "1"))),
+                  styling=e("VOCAL_DS_STYLING", "filter"))
 
 
 # ----------------------------------------------------------------------------- voices -> banks
@@ -106,15 +108,16 @@ def ds_key(line: dict, voices: dict, cfg: Config) -> str:
     weights = bank_weights(voices[line["voice"]]["blend"])
     fps = [bk.find(b).fingerprint() for b, _ in weights]
     style = sung_style(line)
-    return cache.key("ds", source_line(line), weights, asdict(cfg), DS_VERSION, fps,
+    stage_cfg = {k: v for k, v in asdict(cfg).items() if k not in ("styling", "warp", "procs")}
+    return cache.key("ds", source_line(line), weights, stage_cfg, DS_VERSION, fps,
                      runner.build_id(), style.timing, style.expr, line.get("detune_cents"),
                      sources=DS_SOURCES)
 
 
 def line_key(line: dict, voices: dict) -> str:
     cfg = config()
-    return cache.key("dsline", line, voices[line["voice"]], ds_key(line, voices, cfg),
-                     sources=LINE_SOURCES)
+    return cache.key("dsline", line, voices[line["voice"]], ds_key(line, voices, cfg), cfg.styling,
+                     cfg.warp, sources=LINE_SOURCES)
 
 
 def check_ready(lines: list[dict], voices: dict) -> list[str]:
@@ -441,6 +444,52 @@ def blend_envelopes(sp_a, ap_a, sp_b, ap_b, w: float, voiced: np.ndarray | None 
     return sp, ap, r
 
 
+def envelope_filter(x48: np.ndarray, sp_from: np.ndarray, sp_to: np.ndarray,
+                    max_db: float = 24.0) -> np.ndarray:
+    """Re-shape `x48` (48 kHz, sample 0 = WORLD frame 0) so its spectral envelope moves from
+    `sp_from` to `sp_to` (WORLD envelopes, 5 ms frames, 0..12 kHz): a time-varying gain on
+    the STFT (5 ms hop, frames aligned with WORLD's). Unlike a WORLD re-synthesis this keeps
+    DiffSinger's own excitation, noise and phase — measured: WORLD copy-synthesis alone
+    turned "every word I say" into "everyone else" and "always" into "Alice" (Whisper),
+    the filter leaves the transcript as the raw render has it."""
+    from scipy.signal import istft, stft
+    sr, hop, nfft = 48000, 240, 2048
+    n = min(len(sp_from), len(sp_to))
+    g_db = 10.0 * np.log10((sp_to[:n] + 1e-16) / (sp_from[:n] + 1e-16))
+    g_db = np.clip(g_db, -max_db, max_db)
+    f, _, X = stft(x48, sr, nperseg=nfft, noverlap=nfft - hop, boundary="even", padded=True)
+    fa = wv.freq_axis(sp_to)
+    G = np.empty((len(f), X.shape[1]))
+    for j in range(X.shape[1]):
+        gj = g_db[min(j, n - 1)]
+        G[:, j] = np.interp(f, fa, gj, right=gj[-1])
+    _, y = istft(X * 10 ** (G / 20.0), sr, nperseg=nfft, noverlap=nfft - hop, boundary=True)
+    y = y[:len(x48)]
+    return np.pad(y, (0, len(x48) - len(y))).astype(np.float32)
+
+
+def filter_style(x48: np.ndarray, sp_src: np.ndarray, sp_blend: np.ndarray, con, style, seed: int) -> np.ndarray:
+    """The AI styles on DiffSinger's audio without re-synthesising it: formant shift and
+    brightness as an envelope filter (the blend toward him included), the hard-tune is
+    already in the F0 DiffSinger sang, plus the vocoder layer built from the styled envelope."""
+    from lineaudio import to48k
+    sp_t = wv.formant_warp(sp_blend, style.formant)
+    if style.tilt_db_oct:
+        sp_t = wv.tilt(sp_t, style.tilt_db_oct, pivot_hz=1000.0, lo_hz=1000.0)
+    y = envelope_filter(x48, sp_src, sp_t)
+    if style.vocoder_db is not None:
+        n = sp_t.shape[0]
+        f0t = wv.fit(con.target_hz, n)
+        voc = to48k(wv.vocoder_layer(f0t, sp_t, (n - 1) * wv.HOP, seed=seed))
+        voc = np.pad(voc, (0, max(0, len(y) - len(voc))))[:len(y)]
+        rv, ry = np.sqrt(np.mean(voc ** 2) + 1e-12), np.sqrt(np.mean(y ** 2) + 1e-12)
+        y = y + voc * (ry / rv) * 10 ** (style.vocoder_db / 20)
+    if style.lowpass_hz:
+        from scipy.signal import butter, sosfiltfilt
+        y = sosfiltfilt(butter(4, style.lowpass_hz, "lp", fs=48000, output="sos"), y)
+    return y.astype(np.float32)
+
+
 def _segment(r: dict, t0: float, t1: float, sr: int) -> np.ndarray:
     """The render's audio over song time [t0, t1) at `sr`."""
     import soxr
@@ -470,8 +519,8 @@ def render_sung(line: dict, voices: dict) -> "LineRender":
     detune = float(line.get("detune_cents") or 0.0)
     plan, con, renders = e["plan"], e["con"], e["renders"]
     t0, t1 = plan.t0, plan.t0 + (len(con.t) - 1) * ct.FP + ct.FP
-    world = line["style"] != "human" or style.choir_voices > 1 or len(renders) > 1
-    if not world:
+    styled = line["style"] != "human" or style.choir_voices > 1 or len(renders) > 1
+    if not styled:                                  # a human lead / double: DiffSinger as sung
         y = _segment(renders[0], t0, t1, 48000)
     else:
         analyses = []
@@ -486,5 +535,10 @@ def render_sung(line: dict, voices: dict) -> "LineRender":
             n = sp.shape[0]
             sp, ap, _ = blend_envelopes(sp, ap, *analyses[1], renders[1]["weight"],
                                         voiced=wv.fit(con.voiced.astype(float), n) > 0.5, warp=cfg.warp)
-        y = add_air(to48k(world_render(sp, ap, con, plan, style, seed, detune)), seed=seed)
+        # the filter keeps DiffSinger's audio; it needs the sung F0 to be the styled contour
+        # (VOCAL_DS_PITCH=score) and one voice (the choir's extra singers are re-synthesised)
+        if cfg.styling == "filter" and cfg.pitch == "score" and style.choir_voices == 1:
+            y = filter_style(_segment(renders[0], t0, t1, 48000), analyses[0][0], sp, con, style, seed)
+        else:
+            y = add_air(to48k(world_render(sp, ap, con, plan, style, seed, detune)), seed=seed)
     return finish_sung(line, y, plan, con, style, seed, e["phonemes"])

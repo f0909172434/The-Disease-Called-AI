@@ -271,7 +271,7 @@ def write_ustx(path: str, tracks: list[TrackSpec], parts: list[PartSpec], name: 
 def track_for(bank: bk.Bank, timed: bool, name: str | None = None) -> TrackSpec:
     return TrackSpec(name or f"{bank.key}{'-timed' if timed else ''}", bank.singer_id,
                      TIMED_PHONEMIZER if timed else bank.phonemizer, bank.colors,
-                     bank.color_index(bank.profile.color))
+                     bank.color_index(bank.color))
 
 
 # ----------------------------------------------------------------------------- CLI

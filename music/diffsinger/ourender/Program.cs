@@ -88,7 +88,13 @@ namespace Ourender {
             var msg = e.RenderMessage(CultureInfo.InvariantCulture);
             lock (w) w.WriteLine($"{e.Timestamp:O} [{e.Level}] {msg}{(e.Exception != null ? " :: " + e.Exception.Message : "")}");
             if (e.Level >= Serilog.Events.LogEventLevel.Warning && !Noise(msg)) {
-                lock (Sink.Inst.Warnings) Sink.Inst.Warnings.Add(msg + (e.Exception != null ? " :: " + e.Exception.Message : ""));
+                var full = msg + (e.Exception != null ? " :: " + (e.Exception.InnerException?.Message ?? e.Exception.Message) : "");
+                lock (Sink.Inst.Warnings) Sink.Inst.Warnings.Add(full);
+                // a phonemizer that cannot load or process leaves its parts un-phonemized
+                // forever: remember it so the wait stops at once with the reason
+                if (e.Level >= Serilog.Events.LogEventLevel.Error && (msg.Contains("phonemiz") || msg.Contains("Failed to load"))) {
+                    lock (Sink.Inst.Fatal) Sink.Inst.Fatal.Add(full);
+                }
             }
         }
     }
@@ -97,6 +103,7 @@ namespace Ourender {
         public static readonly Sink Inst = new Sink();
         public readonly List<string> Errors = new List<string>();
         public readonly List<string> Warnings = new List<string>();
+        public readonly List<string> Fatal = new List<string>();
         public void OnNext(UCommand cmd, bool isUndo) {
             if (cmd is ErrorMessageNotification err) {
                 var msg = $"{err.message} {err.e?.Message}".Trim();
@@ -304,8 +311,19 @@ namespace Ourender {
         static void WaitReady(UProject project, string stage, double timeoutSec = 600) {
             var parts = project.parts.OfType<UVoicePart>().ToArray();
             var sw = Stopwatch.StartNew();
-            bool ok = ui.PumpUntil(() => parts.All(PartReady), TimeSpan.FromSeconds(timeoutSec));
+            DateTime? fatalAt = null;
+            bool ok = ui.PumpUntil(() => {
+                if (parts.All(PartReady)) return true;
+                lock (Sink.Inst.Fatal) {
+                    if (Sink.Inst.Fatal.Count == 0) return false;
+                }
+                fatalAt ??= DateTime.UtcNow;                 // let the other parts finish briefly
+                return DateTime.UtcNow - fatalAt > TimeSpan.FromSeconds(2);
+            }, TimeSpan.FromSeconds(timeoutSec));
             Console.Error.WriteLine($"ourender: {stage}: {parts.Count(PartReady)}/{parts.Length} parts ready in {sw.Elapsed.TotalSeconds:f1} s");
+            if (Sink.Inst.Fatal.Count > 0 && !parts.All(PartReady)) {
+                throw new Exception($"{stage}: phonemizer failed: {string.Join(" | ", Sink.Inst.Fatal.Distinct())}");
+            }
             if (!ok) throw new TimeoutException($"{stage}: parts not ready after {timeoutSec} s");
         }
 
