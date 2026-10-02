@@ -4,6 +4,14 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
+v4 (art-direction pass on anatomy): arms are tapering forms built from a profile table (`HIM_ARM`: deltoid cap →
+widest mid upper arm → narrow elbow → forearm swell → narrow wrist; outer/inner sides asymmetric) with a sleeve-head
+seam, tension folds from the armpit across the bicep, elbow folds, a crescent highlight on the deltoid; the neck is a
+cylinder flaring into sloping traps with sternocleidomastoid lines, jaw shadow and the blazer collar standing around it;
+lapels curve over the pecs with a shadow under the chest and an X of stress folds at the button; hands 1.4× (≈ the
+face's length) with curled fingers behind, knuckles, thumb and nail; thicker thighs; rounder shoes. The single real
+watercolour fill now sits on an interior chest mass (its bleed stayed outside the waist before).
+
 v3 (user reference, 2026-10-02): build, hair, glasses, outfit and colours follow the user's reference image (kept out
 of the repo; comparison in `output/sheets/char_him_vs_ref.jpg`, git-ignored). The face stays our original anime
 construction (only general traits: square jaw, straight thick brows, serious look).
@@ -92,20 +100,18 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
-v3 with the fill on, measured on this CPU-only box (SwiftShader, load avg ≈ 3–4), excluding the first warm-up frame:
-standing front u = 30 ≈ 280–480 ms/frame, 3/4 ≈ 180–300 (fill off) / ≈ +100 with it, bust u = 62 ≈ 150–440, desk u = 40
-incl. chair and props ≈ 170–360. All under the 800 ms budget. A figure at u = 55 (the comparison scale) ≈ 350 ms;
-`--stills` reports ~10 s there because it includes page warm-up and PNG encoding. Loops for timing: `him_perf`
-(3/4), `him_perf_front`, `him_perf_fill` (front without the fill), `him_perf_bust`, `him_perf_desk`; `him_prof` toggles
-`HIM_PROF.nohatch` / `nowc` to profile. The sheet (~25 characters) takes ~8–14 s.
+v4, measured on this CPU-only box (SwiftShader, load avg ≈ 4–5), excluding the first warm-up frame: standing front
+u = 30 ≈ 460–660 ms/frame (incl. the real fill), 3/4 ≈ 250–520, bust u = 62 ≈ 220–345, desk u = 40 with chair and props
+≈ 200–345. All under the 800 ms budget. `--stills` at u = 55 reports ~10 s (page warm-up + PNG encoding, not drawing).
+Timing loops: `him_perf` (3/4), `him_perf_front`, `him_perf_fill` (front without the fill), `him_perf_bust`,
+`him_perf_desk`; `him_prof` toggles `HIM_PROF.nohatch` / `nowc`. The sheet (~25 characters) takes ~9–13 s.
 
 ## Known weaknesses
 - Hands: profile poses are silhouettes with nail/knuckle hints, not fully articulated fingers; fine at bust/desk scale,
   plain in an extreme hand close-up.
 - Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head; the top
   is spikier than the reference's rounder messy volume.
-- The arms are big uniform tubes (no separate bicep/forearm muscle silhouettes); the reference's gesture pose is not built.
-- The fill's bleed can leave a faint pale halo where the waist meets the background.
+- Strongly bent arms (desk, reach) reuse the hanging-arm profile; no dedicated foreshortened or flexed-arm drawings.
 - Arm angles are free, but there is no foreshortened arm toward the camera (front-view reach is sideways).
 - The torso doesn't twist: lean rotates the whole upper body about the hips; the head tilts about the neck.
 - Mouth shapes in profile are simplified (open/closed/smile/pucker).
