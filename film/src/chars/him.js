@@ -625,7 +625,7 @@ function himHand(K, c, kind, at, ang, thumb, skin, sc = 1.72) {
         K.shape(tf(ellPts(q[0], q[1], f.r * .44 * k, f.r * .66 * k, 8, 0, -Math.atan2(f.d[0], f.d[1]))), { wash: c.nail, ink: c.skinDk, sw: .22, n: 2, j: 0 }); };
       nail(th, 1.05, 0); nail(F[3], .9, 1); if (K.det2) nail(F[2], .85, 1);
       for (const [x, y] of [[-.3, .76], [-.09, .84], [.12, .88], [.34, .84]]) K.line(tf([[x - .07, y], [x, y - .04], [x + .07, y]]), .24, c.skinDk, { n: 2 });   // knuckles
-      if (K.det2) { K.line(tf([[-.12, .15], [-.1, .45], [-.08, .7]]), .2, c.skinDk, { n: 2 }); K.line(tf([[.1, .2], [.12, .5], [.13, .74]]), .2, c.skinDk, { n: 2 }); }   // tendons
+      if (K.det2) { K.line(tf([[-.12, .3], [-.1, .52], [-.08, .7]]), .2, c.skinSh, { n: 2 }); K.line(tf([[.1, .34], [.12, .56], [.13, .74]]), .2, c.skinSh, { n: 2 }); }   // tendons
     }
     return;
   }
@@ -883,7 +883,7 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // ---------- torsos ----------
 // Torso-local units: origin = hip centre, y up is negative. Each view gives: neck pivot (for the head), the head origin
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
-const HIM_HS = 1.24;   // the head is drawn 15% larger than the body unit (anime proportions)
+const HIM_HS = 1.24;   // the head is drawn 24% larger than the body unit (anime proportions; v5: up from 1.15)
 const HIM_RIG = {
   front: { neck: [0, -12.2], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.74, 0], L: [1.74, 0] } },
   q:     { neck: [.1, -12.2], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.65, -8.3] }, hip: { R: [-1.32, 0], L: [1.55, 0] } },
@@ -1099,8 +1099,9 @@ function himTorsoSide(K, c, o, outfit) {
 }
 
 // ---------- the character ----------
-// him(x, y, u, o): u is the size unit. Standing he is ~31.5u tall (soles to the top of the hair), the head 4.4u, the
-// shoulders ~10.5u wide. Medium shot u ≈ 14–20, close-up 40–80 (use pose 'bust').
+// him(x, y, u, o): u is the size unit. Standing he is ~33u tall (soles to the top of the hair), the head 4.4u × HIM_HS,
+// the shoulders ~13u wide. Medium shot u ≈ 14–20, close-up 40–80 (use pose 'bust'). Standing poses use contrapposto
+// (weight on his right leg) unless o.contra = 0.
 // Anchors: stand = the ground point between the feet; bust = the notch between the collarbones; desk = the floor point
 // under the front edge of the chair seat (the chair is drawn too, unless chair: false).
 // Options: view front|q|side, flip, pose stand|bust|desk, outfit launch|home, pal human|drained|swapped,
@@ -1174,7 +1175,7 @@ function himHeadFx(K, c, f, view) {
 }
 
 // ---------- poses ----------
-// stand (and bust, which is the stand's upper body cut at the chest). Hips at y = -15u.
+// stand (and bust, which is the stand's upper body cut at the chest). Hips ≈ 14.2u above the soles.
 function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
   const R = HIM_RIG[view] || HIM_RIG.front, lean = o.lean || 0, br = o.breath || 0;
   const band = view === 'front' ? 'L' : (o.flip ? 'R' : 'L');   // the hospital band is on his left wrist

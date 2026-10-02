@@ -4,6 +4,27 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
+v5 (art-direction round 5: lower body, hands, shoes; arms/traps/lapels from v4 unchanged):
+- legs: trouser legs from profile tables like the arms (`HIM_LEG`: quad mass widest just below the jacket hem → taper into
+  the knee → a slight calf → narrow ankle), two-bone IK (`himIK`), a pressed crease, folds behind the knee and a break of
+  2–3 folds where the hem lands on the shoe; the hem drapes over the shoe (drawn after it: riding up over the instep in
+  front, dropping toward the heel in profile). Legs ~5% shorter (thigh 6.8u + shin 6.6u; hips ≈ 14.2u above the soles).
+  The jacket skirt / untucked home shirt flare a little so the hips never poke out at the sides.
+- contrapposto in every standing view (`o.contra`, default 1; 0 = the old symmetric stance): weight on his right leg,
+  which slants in so the foot sits under his centre of gravity; hips tilt up on that side and shift over it (front .07
+  rad, 3/4 .06), shoulders counter-tilt; the relaxed left foot goes out to the side and a little forward, heel lifted,
+  the knee bending forward (front/3/4: it drops and turns in slightly; profile: it bends forward).
+- hands: the relaxed hand is built from parts — back of the hand with the webbing, four gently curled fingers (little
+  furthest back and highest, middle longest, index slightly apart), each outlined so ink separates them, a crease at the
+  middle joint, the thumb in front along the index with its nail, nails on the index (and middle at `det2`), knuckles;
+  tendons at `det2`. (Also fixed a double-reversed tube side in `himFinger` that drew a stray diagonal in open hands.)
+- shoes: dark brown-black leather dress shoes with the suit (front, 3/4 and profile drawings: toe box with a shine and a
+  specular spot, toe-cap seam, laces under the hem, slim sole, heel), toes turned out a little in front; longer shoes
+  in profile (~4u); sneakers stay with `home`.
+- head: `HIM_HS` 1.24 (was 1.15). Against the reference at equal head size our shoulders are still narrower than his, so
+  the head reads anime-large rather than small; no further increase.
+- every small panel (side, home, home side, reach, desk) goes through the same arm/leg/hand/shoe code; checked at u ≈ 21–24.
+
 v4 (art-direction pass on anatomy): arms are tapering forms built from a profile table (`HIM_ARM`: deltoid cap →
 widest mid upper arm → narrow elbow → forearm swell → narrow wrist; outer/inner sides asymmetric) with a sleeve-head
 seam, tension folds from the armpit across the bicep, elbow folds, a crescent highlight on the deltoid; the neck is a
@@ -59,7 +80,8 @@ himPal(name)                   // 'human' | 'drained' | 'swapped' colour sets
 HIM_EMO, HIM_LAST              // emotion table; after a desk draw HIM_LAST.handL/handR = keyboard contact points (screen px)
 ```
 
-**Size:** standing ≈ 33u (soles to hair top); head 4.4u drawn ×1.15 (`HIM_HS`); shoulders ≈ 13u wide (deltoids).
+**Size:** standing ≈ 33u (soles to hair top); head 4.4u drawn ×1.24 (`HIM_HS`); shoulders ≈ 13u wide (deltoids); hips ≈ 14.2u
+above the soles. Standing poses use contrapposto (`contra: 0` for a symmetric stance).
 Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80 (`cut`: how far
 below the collarbones the bust ends, default 4.95u; ~1.1 for a head-and-collar close-up).
 
@@ -72,7 +94,7 @@ hips (−1.6, −8.5)u, keyboard top ≈ (7.8, −11.2)u).
 face: `eye` (normal|happy|squeeze), `lid`, `low`, `browIn` (+ frown / − worried), `browOut`, `browY`, `irisK`, `dull`,
 `mouth` (closed|A|I|U|E|O|smile|grin|frown|flat|tight|gasp|laugh|wail), `blush`, `circles`, `gloom`, `glare` (cyan on
 the lenses), `tears`, `sweat`, `lookX/lookY`, `blink` (auto from T when omitted), `squint`, `seed` (blink phase),
-body: `dx/dy` (u), `sq`, `lean`, `tilt`, `nod`, `breath`, `aL/aR` (his left/right arm swing), `handL/handR`
+body: `dx/dy` (u), `sq`, `lean`, `tilt`, `nod`, `breath`, `contra` (0..1 weight shift, default 1), `aL/aR` (his left/right arm swing), `handL/handR`
 (relax|type|fist|open|press), `reach` 0..1 (raises his right arm, opens the hand), `screen` (monitor rim light),
 desk: `type` (finger tapping), `chair: false`; `boilKey` (stable id when characters come and go).
 
@@ -100,6 +122,9 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
+v5: A/B against v4 on the same (heavily loaded) box with `--bench`: standing front u = 30 2.32 s/frame (v5) vs 2.30 s
+(v4), with an empty frame costing 0.73 s at that load — i.e. the new hands, legs and shoes are cost-neutral; the v4
+figures below (measured at normal load) still apply.
 v4, measured on this CPU-only box (SwiftShader, load avg ≈ 4–5), excluding the first warm-up frame: standing front
 u = 30 ≈ 460–660 ms/frame (incl. the real fill), 3/4 ≈ 250–520, bust u = 62 ≈ 220–345, desk u = 40 with chair and props
 ≈ 200–345. All under the 800 ms budget. `--stills` at u = 55 reports ~10 s (page warm-up + PNG encoding, not drawing).
@@ -107,8 +132,9 @@ Timing loops: `him_perf` (3/4), `him_perf_front`, `him_perf_fill` (front without
 `him_perf_desk`; `him_prof` toggles `HIM_PROF.nohatch` / `nowc`. The sheet (~25 characters) takes ~9–13 s.
 
 ## Known weaknesses
-- Hands: profile poses are silhouettes with nail/knuckle hints, not fully articulated fingers; fine at bust/desk scale,
-  plain in an extreme hand close-up.
+- Hands: the relaxed hand is articulated (v5); 'type' and 'fist' are still profile silhouettes with nail/knuckle hints
+  (fine at desk scale, plain in an extreme close-up); 'open'/'press' fingers are simple tubes.
+- Contrapposto always puts the weight on his right leg (mirror with `flip` for the other side); no walk cycle yet.
 - Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head; the top
   is spikier than the reference's rounder messy volume.
 - Strongly bent arms (desk, reach) reuse the hanging-arm profile; no dedicated foreshortened or flexed-arm drawings.

@@ -240,7 +240,7 @@ const AI_PROFILE = [[-.2, -.3], [.55, -.62], [.82, -.3], [.88, .0], [.88, .22], 
 // sweepL / sweepR: sideways drift of the tips on each side (a pose or the wind).
 const AI_HAIR = {
   chibi: { R: [[0, 1.08], [.45, 1.12], [.9, 1.3], [1.4, 1.5], [1.85, 1.56], [2.3, 1.42]], Rs: [[-.5, 1.04], [.3, 1.0], [.8, .97], [1.3, 1.05], [2, 1.12]],
-    len: 2.35, side: 1.55, grad: [.35, 1.95], wl: .95, amp: .15, wb: .56, ws: .33, nb: 7, curl: .15, zk: .62, zb: .3 },
+    len: 2.35, side: 1.55, grad: [.35, 1.95], wl: 1.1, amp: .19, wb: .56, ws: .33, nb: 7, curl: .15, zk: .62, zb: .3 },
   full:  { R: [[0, 1.08], [.8, 1.22], [1.8, 1.45], [3, 1.62], [4.2, 1.66], [5, 1.5]], Rs: [[-.5, 1.04], [.3, 1.0], [.9, .98], [1.6, 1.1], [3, 1.22]],
     len: 5.0, side: 2.8, grad: [.75, 3.7], wl: 1.55, amp: .2, wb: .62, ws: .34, nb: 8, curl: .24, zk: .55, zb: .35 },
 };
@@ -252,7 +252,7 @@ const AI_BANGS = [
   [-.3, -1.0, -.72, -.05, .34, .05, -.02], [.24, -1.0, .78, -.1, .32, .05, .02],
   [-.32, -1.0, -.5, .1, .3, -.04, .03], [.26, -1.0, .27, .12, .28, -.03, -.03],
   [-.2, -1.03, -.37, .34, .3, -.02, .03], [.14, -1.03, .16, .32, .28, -.02, -.02],
-  [-.1, -1.04, -.21, .45, .3, -.01, .04], [.03, -1.04, .03, .36, .27, 0, -.03], [-.04, -1.04, -.08, .26, .22, 0, .02],
+  [-.1, -1.04, -.21, .45, .34, -.01, .04], [.04, -1.04, .05, .36, .3, 0, -.03],
 ];
 const AI_STRANDS = [[-.36, -.55, -.82, .02, .05, .06, .02], [.3, -.5, .68, -.02, .05, .05, -.02], [-.12, -.3, -.12, .5, .06, .02, .05], [.02, -.35, .1, .44, .045, .02, -.04]];
 // The shine band across the crown: [x, half width, half height] pieces along the line y = -.5 (broken, one big piece).
@@ -327,8 +327,8 @@ function aiHang(hd, L) {
   let r = 0, y = 0, tw = 0;
   for (let i = 0; i <= n; i++) {
     const v = i / n; y = lerp(L.y0, L.y1, v);
-    r = (y < 0 && back ? Math.sqrt(Math.max(0, 1.13 * 1.13 - y * y * .85)) : aiAt(T, y)) * lerp(1, L.sp, clamp(y / .8));
-    const wv = Math.pow(v, .5) * L.amp, ph = TAU * y / HF.wl + L.ph; r += wv * Math.sin(ph); tw = .35 * wv * Math.sin(ph + 1.2);
+    r = (y < .25 && back ? Math.min(aiAt(T, y), Math.sqrt(Math.max(0, 1.13 * 1.13 - y * y * .85)) * lerp(.84, 1, clamp(y / .25 + 1))) : aiAt(T, y)) * lerp(1, L.sp, clamp(y / .8));
+    const wv = Math.pow(v, .7) * L.amp * 1.2, ph = TAU * y / HF.wl + L.ph; r += wv * Math.sin(ph); tw = .35 * wv * Math.sin(ph + 1.2);
     pts.push(radial(r, y, tw));
   }
   const cu = L.curl * (L.curlIn ? -1 : 1);   // the curl
@@ -342,8 +342,8 @@ function aiLocks(hd) {
   for (const s of [-1, 1]) {
     for (let j = 0; j < HF.nb; j++) {
       const key = j * 2 + (s > 0 ? 1 : 0) + 1, h = i => hash(key * 7.31 + i * 1.97);
-      out.push({ id: 'b' + key, s, phi: 1.42 + 1.66 * Math.pow(j / (HF.nb - 1), 1.1), y0: -.62 + .55 * h(1), y1: (s < 0 ? HF.lenL : HF.lenR) * (.8 + .2 * h(2)), sp: .84 + .24 * h(3),
-        w: HF.wb * (.8 + .4 * h(4)), amp: HF.amp * (.75 + .5 * h(5)), ph: 1.1 * j + .9 * h(6) + (s > 0 ? 2 : 0), curl: HF.curl * (.6 + .7 * h(7)) });
+      out.push({ id: 'b' + key, s, phi: 1.42 + 1.66 * Math.pow(j / (HF.nb - 1), 1.1), y0: -.62 + .55 * h(1), y1: (s < 0 ? HF.lenL : HF.lenR) * (.8 + .2 * h(2)), sp: .8 + .34 * h(3),
+        w: HF.wb * (.7 + .6 * h(4)), amp: HF.amp * (.75 + .5 * h(5)), ph: 2.1 * j + 1.2 * h(6) + (s > 0 ? 2 : 0), curl: HF.curl * (.6 + .7 * h(7)) });
     }
     // face-framing locks: a slim one along the cheek, then two fuller ones over the front of the shoulder
     out.push({ id: 's0' + s, s, side: 1, phi: 1.2, y0: -.5, y1: HF.side * .64, sp: 1, w: HF.ws * .95, amp: HF.amp * .35, ph: s > 0 ? 1 : 2.4, curl: HF.curl * .45, curlIn: 1, lead: 1 });
@@ -361,7 +361,7 @@ function aiLocks(hd) {
 function aiPaintLock(hd, L) {
   const S = AI_S, P = S.P, HF = hd.HF, k = hd.k;
   const C = L.p2.map(p => hd.Hh(p[0], p[1])), n = C.length;
-  const Wd = C.map((_, i) => { const v = i / (n - 1); return L.w * k * (v < .14 ? .5 + 3.5 * v : 1 - .97 * Math.pow(Math.max(0, (v - .5) / .5), 1.5)); });
+  const v0 = L.side ? .14 : .32, Wd = C.map((_, i) => { const v = i / (n - 1); return L.w * k * (v < v0 ? .35 + .65 * v / v0 : 1 - .97 * Math.pow(Math.max(0, (v - .5) / .5), 1.5)); });
   const dk = clamp(-L.d * .5) * .22 + (L.side ? 0 : .06), tone = c => mixCol(c, P.hair0, dk);
   const ya = L.y0, yb = L.y1, G = HF.grad, washes = [[0, tone(mixCol(P.hair1, P.hair0, .25))]];
   for (const g of [.08, .36, .64]) {
@@ -369,8 +369,8 @@ function aiPaintLock(hd, L) {
     if (f > .06 && f < .9) washes.push([f, tone(aiHairAt(HF, yt + (G[1] - G[0]) * .26))]);
   }
   const big = S.u > 20;
-  aiLock(C, Wd, washes, { seed: L.id.length * 3 + L.s + L.phi, inkFrom: L.side ? .18 : .3, sw: S.sw * (L.lead ? .55 : .42), root: [L.side ? .22 : .3, tone(P.hair0), 100],
-    shade: big ? tone(P.hair0) : null, shadeOp: 95, shadeA: .12, shadeB: .7, shadeL: L.s < 0 && !L.side,
+  aiLock(C, Wd, washes, { seed: L.id.length * 3 + L.s + L.phi, inkFrom: L.side ? .18 : .3, sw: S.sw * (L.lead ? .62 : .52), root: [L.side ? .22 : .3, tone(P.hair0), 100],
+    shade: big ? tone(P.hair0) : null, shadeOp: 120, shadeA: .12, shadeB: .75, shadeL: L.s < 0 && !L.side,
     hi: big && L.side ? mixCol(P.hair2, P.hair4, .5) : null, strand: big && L.side ? mixCol(P.hairInk, P.hair1, .45) : null });
 }
 
@@ -391,7 +391,7 @@ function aiHairBack(hd) {
   if (M.length > 5) {
     const MP = aiLoop(M, 3), G = HF.grad;
     aiPaint(MP.map(p => hd.Hh(p[0], p[1])), { wash: mixCol(P.hair0, P.hairInk, .35), ink: null });
-    for (const [g, col] of [[.3, mixCol(P.hair1, P.hair0, .3)], [.62, mixCol(P.hair1, P.hair2, .5)]]) {
+    for (const [g, col] of [[.3, mixCol(P.hair1, P.hair0, .45)], [.62, mixCol(P.hair1, P.hair0, .1)]]) {
       const lo = aiClipWave(MP, lerp(G[0], G[1], g), .22, 3, 1.3 + g * 4);
       if (lo.length > 2) aiPaint(lo.map(p => hd.Hh(p[0], p[1])), { wash: col, op: 235, ink: null });
     }
@@ -438,13 +438,13 @@ function aiBangShadow(hd) {
 // The skull's hair: a disk a little bigger than the cranium (its lower half tucks behind the face), darker at the crown.
 function aiCap(hd) {
   const S = AI_S, P = S.P, H = hd.H, cap = [];
-  for (let i = 0; i < 30; i++) { const a = i / 30 * TAU, sn = Math.sin(a); cap.push(H(Math.cos(a) * 1.1 * (1 + .02 * Math.sin(i * 2.3)), -.02 + sn * (sn < 0 ? 1.11 : .78))); }
+  for (let i = 0; i < 30; i++) { const a = i / 30 * TAU, sn = Math.sin(a); cap.push(H(Math.cos(a) * 1.14 * (1 + .02 * Math.sin(i * 2.3)), -.02 + sn * (sn < 0 ? 1.11 : .78))); }
   aiPaint(cap, { wash: mixCol(P.hair1, P.hair0, .3), ink: null });
   const cr = [];   // the crown's shade: a crescent along the top
   for (let i = 0; i <= 12; i++) { const a = Math.PI * (1.08 + .84 * i / 12); cr.push(H(Math.cos(a) * 1.09, -.02 + Math.sin(a) * 1.07)); }
   for (let i = 12; i >= 0; i--) { const a = Math.PI * (1.08 + .84 * i / 12); cr.push(H(Math.cos(a) * .95, .06 + Math.sin(a) * .86)); }
   aiPaint(cr, { wash: P.hair0, op: 140, ink: null });
-  const top = []; for (let i = 0; i <= 16; i++) { const a = Math.PI * (1.02 + .96 * i / 16); top.push(H(Math.cos(a) * 1.1, -.02 + Math.sin(a) * 1.08)); }
+  const top = []; for (let i = 0; i <= 16; i++) { const a = Math.PI * (1.02 + .96 * i / 16); top.push(H(Math.cos(a) * 1.14, -.02 + Math.sin(a) * 1.11)); }
   aiLine(top, S.sw * .75, P.ink, P.brS);
 }
 // The broken shine band across the crown (light strokes), on top of the bangs.
