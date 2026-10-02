@@ -8682,11 +8682,11 @@
    "bus": "spoken",
    "display": true,
    "tb": 416.0,
-   "text": "I care about you. Please — talk to someone real.",
-   "say": "I care about you. Please, talk to someone real.",
-   "zh": "我很在乎你。拜託——去和真實的人說說話。",
+   "text": "I care about you. Talk to someone real.",
+   "say": "I care about you. Talk to someone real.",
+   "zh": "我很在乎你。去和真實的人說說話吧。",
    "cut_tb": null,
-   "speed": 1.0
+   "speed": 1.1
   },
   {
    "id": "B_AI3",

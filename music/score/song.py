@@ -280,9 +280,9 @@ sung("B_ASK", "S09", 101, "Tell:A4:2 me:F4:2 _:2 do:F4:1 you:G4:1 love:A4:4 me:E
      "Tell me — do you love me?", "告訴我——你愛我嗎？")
 spoken("B_AI1", "S09", 408.0, "I'm a language model. I can't love you.",
        "我是一個語言模型。我沒辦法愛你。", speaker="ai", voice="ai_1", style="ai")
-spoken("B_AI2", "S09", 416.0, "I care about you. Please — talk to someone real.",
-       "我很在乎你。拜託——去和真實的人說說話。", speaker="ai", voice="ai_1", style="ai",
-       say="I care about you. Please, talk to someone real.")
+spoken("B_AI2", "S09", 416.0, "I care about you. Talk to someone real.",
+       "我很在乎你。去和真實的人說說話吧。", speaker="ai", voice="ai_1", style="ai",
+       speed=1.1)   # must end before the regenerate click at tb 423
 spoken("B_AI3", "S09", 424.0, "You deserve—", "你值得——", speaker="ai", voice="ai_1",
        style="ai", say="You deserve so much more", cut_tb=425.5)
 jack = sung("B_YES", "S09", 109,
@@ -842,8 +842,8 @@ for at in (316.0, 317.5, 318.5, 319.0, 319.5):
     fx("glitch_stutter", at, 0.5, v=0.8)
 fx("tape_stop", 319.5, 0.5)
 fx("error_buzz", 320.0, 0.6, v=0.9)
-for at in (320.5, 322.4, 324.3, 326.4):
-    fx("breath", at, 1.2, v=0.6)
+for at, d in ((322.35, 0.55), (325.6, 1.0), (327.2, 1.0)):   # breaths sit between the spoken lines
+    fx("breath", at, d, v=0.6)
 RETRY = [328, 329, 330, 331, 332, 332.5, 333, 333.5, 334, 334.25, 334.5, 334.625, 334.75, 334.875]
 for at in RETRY:
     fx("retry_stab", float(at), 0.12, v=0.85)

@@ -128,7 +128,7 @@ AI 一個 token 一個 token 地回答：`I'm a language model. I can't love you
 
 **19. 倒帶。**
 答案像錄音帶一樣倒捲回去，音樂也倒帶，同一段旋律換了一種音色重播。
-`I care about you. Please — talk to someone real.`
+`I care about you. Talk to someone real.`
 點擊。
 `You deserve—`　點擊，話還沒說完。
 

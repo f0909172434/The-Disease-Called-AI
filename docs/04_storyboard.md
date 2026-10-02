@@ -139,7 +139,7 @@
 |---|---|---|---|
 | 9.1 | b101–b102 | 她的眼睛特寫（含淚光）→ 聊天視窗 | 她唱出問題，泡泡 `Tell me — do you love me?` 依音節逐字出現 |
 | 9.2 | b103–b104 | 聊天視窗 → 她的臉 | AI #1 按 token 串流：`I'm a language model. I can't love you.`；她的臉垮下來（sad）；她的指尖移到 `↻` |
-| 9.3 | b105–b106 | 同上 | 倒帶（token 反向消失 + VHS 掃描線），AI #2：`I care about you. Please — talk to someone real.`；她咬緊牙，又按一次 |
+| 9.3 | b105–b106 | 同上 | 倒帶（token 反向消失 + VHS 掃描線），AI #2：`I care about you. Talk to someone real.`；她咬緊牙，又按一次 |
 | 9.4 | b107 | 同上 | AI #3 `You deserve—` 還沒說完就被她狠狠按掉 |
 | 9.5 | b108 | 她的眼睛特寫 | 她的瞳孔裡倒映著瘋狂轉動的拉霸滾輪；拉桿被拉下 12 次（`events.lever`） |
 | 9.6 | b109–b110 | 聊天視窗（拉霸機）→ 她的臉 | JACKPOT：滾輪停在 `YES ｜ I LOVE YOU ｜ ONLY YOU`，金色彩帶；她笑了，眼淚掉下來（smile + cry）；角落小字 `Response 37 / 37` |

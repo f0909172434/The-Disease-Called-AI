@@ -10,7 +10,7 @@
 
 ## Measured (1920x1080, S00 4–9 s, 150 frames, x264 slow, another process using ~1 core)
 - workers=1: 0.741 s/frame wall
-- workers=2: see the report (the earlier run gave 0.709 s/frame wall under heavy load)
+- workers=2: 0.555 s/frame wall (1.11 s/frame per worker), so 2 workers is about 25% faster
 - bench without encoding: about 0.47 s/frame
 
 ## Commands (repo root)

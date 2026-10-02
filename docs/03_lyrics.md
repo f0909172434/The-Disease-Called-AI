@@ -97,7 +97,7 @@
 | YOU | Tell me — do you love me? | 告訴我——你愛我嗎？ |
 | AI | *I'm a language model. I can't love you.* | 我是一個語言模型。我沒辦法愛你。 |
 | — | ↻ Regenerate | ↻ 重新生成 |
-| AI | *I care about you. Please — talk to someone real.* | 我很在乎你。拜託——去和真實的人說說話。 |
+| AI | *I care about you. Talk to someone real.* | 我很在乎你。去和真實的人說說話吧。 |
 | — | ↻ Regenerate | ↻ 重新生成 |
 | AI | *You deserve—* | 你值得—— |
 | — | ↻ ↻ ↻ | ↻ ↻ ↻ |

@@ -58,12 +58,14 @@
 | 創作文件 | ✅ | `docs/01_concept.md`、`02_screenplay.md`（v1，頂部註明以分鏡 v2 為準）、`03_lyrics.md`、`04_storyboard.md`（**v2**）、`05_style_guide.md`（已改為動漫角色）、`06_tech_spec.md`（資料契約） | 選角變更後須更新 01、02、03、05 的角色描述（見 §3） |
 | 樂譜 | ✅ | `music/score/song.py`、`theory.py` → `music/build/{arrangement,vocals,events}.json`、`score.mid` | 172 BPM，D 小調，最終副歌升到 E 小調；148 小節加片尾卡，全長 215.000 秒。**需改 `VOICES` 選角與加入每個聲線的移調**（見 §4-3） |
 | 歌聲引擎 | ✅ | `music/vocal/*`（`render_vocals.py`） | 流程：Kokoro-82M 唸詞 → WORLD 聲碼器改唱 → Whisper 驗收。QA：主唱平均 WER 0.128（中位數 0），口白 0.0，音準中位誤差 8.9 音分；渲染約 651 秒。最差的是 C1_4/C2_4「you never say goodnight」與 C1_2「a fever made of light」 |
-| 樂器與混音 | ✅ | `music/engine/render_instruments.py`、`mix.py` | 母帶 −11.01 LUFS、真峰值 −1.32 dBTP；QA 圖在 `music/build/qa/` |
+| 樂器與混音 | ✅ | `music/engine/render_instruments.py`、`mix.py`、`STATUS.md` | 最新母帶已含人聲：−11.02 LUFS、真峰值 −1.32 dBTP、LRA 6.1 LU，長度精確 215.000 s。樂器渲染約 65 秒，混音約 4.5 分鐘（峰值 3.2 GB RAM）。人聲重製後只需再跑 `mix.py`（逐句重新量測音量）。男聲主唱建議把人聲高通從 100 Hz 降到 80 Hz。QA 圖在 `music/build/qa/` |
 | 盲測分析 | ✅ 已在合成測試音檔上驗證 | `analysis/analyze.py` | 測試結果：偵測 172.007 BPM，節拍誤差 2.8 ms，小節線命中 100%。用鼓組分軌的「反拍規則」解決 86/172 倍頻歧義。**尚未在真實母帶上跑** |
 | 視覺引擎 | 🟡 | `visuals/`（`index.html`、`src/core`、`src/kit`、`src/scenes`、`render.mjs`、`contact_sheet.mjs`、`README_ENGINE.md`） | Three.js r170，以 SwiftShader 做可重現的逐幀渲染，每幀約 1.9 秒（含擷取）。S00 已實作，但用的是舊的粒子 `Silhouette`。待辦：黑位偏灰、介面玻璃厚度 |
 | 動漫角色骨架 | 🟡 只有底層 | `visuals/src/kit/heroine/{geom,draw,palettes}.js`、`STATUS.md` | 已完成繪圖底層：平滑曲線、漸細墨線、髮束形狀、seeded boil、水彩邊緣暗化、配色模式（human/swapped/perfected）。**還沒有任何角色圖**，`Heroine.js` 尚未建立。兩個角色（AI 鯨魚女孩、男主角）都要在新 session 用這套底層畫 |
 | README | 🟡 | `README.md` | 雙語草稿含佔位符 `{{FPS}} {{BPM}} {{BEAT_MAE}} {{DOWNBEAT}} {{VOCAL_QA}} {{VOCAL_QA_EN}} {{STILLS}}`；結尾反思已寫，需配合選角微調（例：「寫的時候是她的台詞」→ 他） |
 | 合成腳本 | ✅ | `tools/assemble.py` | 兩遍編碼，控制在 95 MB 內（GitHub 上限 100 MB），另出一份 CRF 16 的 HQ 版 |
+
+**已修的樂譜小問題**（本 session 最後修正，尚未重新渲染）：503 的喘氣聲不再疊到口白；AI #2 改為 `I care about you. Talk to someone real.`（speed 1.1），確保在 tb 423 的重新生成點擊前說完。
 
 **不在 git 裡的大檔**（已列入 `.gitignore`，換容器後必須重新生成）：`music/build/stems/*.wav`、`master.wav`、`master.flac`、`output/sheets/`。
 
