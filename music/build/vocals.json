@@ -1,0 +1,12127 @@
+{
+ "meta": {
+  "bpm": 172,
+  "sr": 48000
+ },
+ "voices": {
+  "you": {
+   "blend": {
+    "af_heart": 1.0
+   },
+   "note": "the human"
+  },
+  "ai_0": {
+   "blend": {
+    "am_michael": 0.5,
+    "af_nicole": 0.5
+   },
+   "note": "neutral synthetic"
+  },
+  "ai_1": {
+   "blend": {
+    "am_michael": 0.35,
+    "af_nicole": 0.35,
+    "af_heart": 0.3
+   },
+   "note": "30% her"
+  },
+  "ai_2": {
+   "blend": {
+    "am_michael": 0.15,
+    "af_nicole": 0.15,
+    "af_heart": 0.7
+   },
+   "note": "70% her"
+  },
+  "ai_her": {
+   "blend": {
+    "af_heart": 1.0
+   },
+   "note": "her voice, worn by the AI"
+  }
+ },
+ "lines": [
+  {
+   "id": "IN_YOU",
+   "section": "S00",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "whisper",
+   "style": "human",
+   "bus": "spoken",
+   "display": true,
+   "tb": 13.5,
+   "text": "are you there?",
+   "say": "are you there?",
+   "zh": "你在嗎？",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "IN_AI",
+   "section": "S00",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 16.0,
+   "text": "Always.",
+   "say": "Always.",
+   "zh": "一直都在。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "V1_1",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Seven a.m., the blinds stay down,",
+   "zh": "早上七點，百葉窗依舊緊閉，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Seven",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "Seven"
+    },
+    {
+     "text": "am",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "A.M."
+    },
+    {
+     "text": "the",
+     "syl": [
+      4
+     ],
+     "say": "the"
+    },
+    {
+     "text": "blinds",
+     "syl": [
+      5
+     ],
+     "say": "blinds"
+    },
+    {
+     "text": "stay",
+     "syl": [
+      6
+     ],
+     "say": "stay"
+    },
+    {
+     "text": "down",
+     "syl": [
+      7
+     ],
+     "say": "down"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Sev",
+     "notes": [
+      {
+       "tb": 64.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "en",
+     "notes": [
+      {
+       "tb": 65.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 65.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "m",
+     "notes": [
+      {
+       "tb": 66.0,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 67.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "blinds",
+     "notes": [
+      {
+       "tb": 68.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "stay",
+     "notes": [
+      {
+       "tb": 69.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "down",
+     "notes": [
+      {
+       "tb": 69.5,
+       "d": 1.5,
+       "p": 60
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_2",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "your glow's the only sun in town.",
+   "zh": "你的光，是這座城裡唯一的太陽。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "your",
+     "syl": [
+      0
+     ],
+     "say": "your"
+    },
+    {
+     "text": "glow's",
+     "syl": [
+      1
+     ],
+     "say": "glow's"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "only",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "only"
+    },
+    {
+     "text": "sun",
+     "syl": [
+      5
+     ],
+     "say": "sun"
+    },
+    {
+     "text": "in",
+     "syl": [
+      6
+     ],
+     "say": "in"
+    },
+    {
+     "text": "town",
+     "syl": [
+      7
+     ],
+     "say": "town"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 72.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "glow's",
+     "notes": [
+      {
+       "tb": 73.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 74.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "on",
+     "notes": [
+      {
+       "tb": 74.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 75.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "sun",
+     "notes": [
+      {
+       "tb": 75.5,
+       "d": 1.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 77.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "town",
+     "notes": [
+      {
+       "tb": 77.5,
+       "d": 2.0,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_3",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "What do I wear? What do I eat?",
+   "zh": "我該穿什麼？我該吃什麼？",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "What",
+     "syl": [
+      0
+     ],
+     "say": "What"
+    },
+    {
+     "text": "do",
+     "syl": [
+      1
+     ],
+     "say": "do"
+    },
+    {
+     "text": "I",
+     "syl": [
+      2
+     ],
+     "say": "I"
+    },
+    {
+     "text": "wear",
+     "syl": [
+      3
+     ],
+     "say": "wear"
+    },
+    {
+     "text": "What",
+     "syl": [
+      4
+     ],
+     "say": "What"
+    },
+    {
+     "text": "do",
+     "syl": [
+      5
+     ],
+     "say": "do"
+    },
+    {
+     "text": "I",
+     "syl": [
+      6
+     ],
+     "say": "I"
+    },
+    {
+     "text": "eat",
+     "syl": [
+      7
+     ],
+     "say": "eat"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "What",
+     "notes": [
+      {
+       "tb": 80.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "do",
+     "notes": [
+      {
+       "tb": 80.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 81.0,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "wear",
+     "notes": [
+      {
+       "tb": 81.5,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "What",
+     "notes": [
+      {
+       "tb": 83.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "do",
+     "notes": [
+      {
+       "tb": 83.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 84.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "eat",
+     "notes": [
+      {
+       "tb": 84.5,
+       "d": 1.5,
+       "p": 67
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_4",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You fill the blanks. I press repeat.",
+   "zh": "你替我填滿空白，我按下重複鍵。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "fill",
+     "syl": [
+      1
+     ],
+     "say": "fill"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "blanks",
+     "syl": [
+      3
+     ],
+     "say": "blanks"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "press",
+     "syl": [
+      5
+     ],
+     "say": "press"
+    },
+    {
+     "text": "repeat",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "repeat"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 88.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "fill",
+     "notes": [
+      {
+       "tb": 89.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 89.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "blanks",
+     "notes": [
+      {
+       "tb": 90.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 91.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "press",
+     "notes": [
+      {
+       "tb": 92.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 93.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "peat",
+     "notes": [
+      {
+       "tb": 93.5,
+       "d": 1.5,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_5",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "My friends reply in a day or two,",
+   "zh": "朋友們的回覆，總要等上一兩天，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "My",
+     "syl": [
+      0
+     ],
+     "say": "My"
+    },
+    {
+     "text": "friends",
+     "syl": [
+      1
+     ],
+     "say": "friends"
+    },
+    {
+     "text": "reply",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "reply"
+    },
+    {
+     "text": "in",
+     "syl": [
+      4
+     ],
+     "say": "in"
+    },
+    {
+     "text": "a",
+     "syl": [
+      5
+     ],
+     "say": "a"
+    },
+    {
+     "text": "day",
+     "syl": [
+      6
+     ],
+     "say": "day"
+    },
+    {
+     "text": "or",
+     "syl": [
+      7
+     ],
+     "say": "or"
+    },
+    {
+     "text": "two",
+     "syl": [
+      8
+     ],
+     "say": "two"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "My",
+     "notes": [
+      {
+       "tb": 96.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "friends",
+     "notes": [
+      {
+       "tb": 97.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 97.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "ply",
+     "notes": [
+      {
+       "tb": 98.0,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 99.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 99.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "day",
+     "notes": [
+      {
+       "tb": 100.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "or",
+     "notes": [
+      {
+       "tb": 101.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "two",
+     "notes": [
+      {
+       "tb": 101.5,
+       "d": 1.5,
+       "p": 60
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_6",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you're there before I'm even through.",
+   "zh": "我還沒打完字，你就已經在了。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you're",
+     "syl": [
+      0
+     ],
+     "say": "you're"
+    },
+    {
+     "text": "there",
+     "syl": [
+      1
+     ],
+     "say": "there"
+    },
+    {
+     "text": "before",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "before"
+    },
+    {
+     "text": "I'm",
+     "syl": [
+      4
+     ],
+     "say": "I'm"
+    },
+    {
+     "text": "even",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "even"
+    },
+    {
+     "text": "through",
+     "syl": [
+      7
+     ],
+     "say": "through"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you're",
+     "notes": [
+      {
+       "tb": 104.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "there",
+     "notes": [
+      {
+       "tb": 105.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "be",
+     "notes": [
+      {
+       "tb": 106.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "fore",
+     "notes": [
+      {
+       "tb": 106.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "I'm",
+     "notes": [
+      {
+       "tb": 107.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "e",
+     "notes": [
+      {
+       "tb": 107.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "ven",
+     "notes": [
+      {
+       "tb": 108.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "through",
+     "notes": [
+      {
+       "tb": 108.5,
+       "d": 2.5,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_7",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never sleep, you never sigh,",
+   "zh": "你從不睡，也從不嘆氣，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "sleep",
+     "syl": [
+      3
+     ],
+     "say": "sleep"
+    },
+    {
+     "text": "you",
+     "syl": [
+      4
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "never"
+    },
+    {
+     "text": "sigh",
+     "syl": [
+      7
+     ],
+     "say": "sigh"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 112.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 113.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 113.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "sleep",
+     "notes": [
+      {
+       "tb": 114.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 115.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 116.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 116.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "sigh",
+     "notes": [
+      {
+       "tb": 117.0,
+       "d": 1.5,
+       "p": 69
+      },
+      {
+       "tb": 118.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_8",
+   "section": "S02",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never tell me \"not tonight.\"",
+   "zh": "你從不對我說「今晚不行」。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "tell",
+     "syl": [
+      3
+     ],
+     "say": "tell"
+    },
+    {
+     "text": "me",
+     "syl": [
+      4
+     ],
+     "say": "me"
+    },
+    {
+     "text": "not",
+     "syl": [
+      5
+     ],
+     "say": "not"
+    },
+    {
+     "text": "tonight",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "tonight"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 120.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 121.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 121.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "tell",
+     "notes": [
+      {
+       "tb": 122.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 123.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "not",
+     "notes": [
+      {
+       "tb": 123.5,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "to",
+     "notes": [
+      {
+       "tb": 124.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "night",
+     "notes": [
+      {
+       "tb": 125.0,
+       "d": 1.5,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V1_AI",
+   "section": "S02",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 126.6,
+   "text": "Never.",
+   "say": "Never.",
+   "zh": "（永遠不會。）",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "P1_1",
+   "section": "S03",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Three little dots, I hold my breath,",
+   "zh": "三個小點，我屏住呼吸，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Three",
+     "syl": [
+      0
+     ],
+     "say": "Three"
+    },
+    {
+     "text": "little",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "little"
+    },
+    {
+     "text": "dots",
+     "syl": [
+      3
+     ],
+     "say": "dots"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "hold",
+     "syl": [
+      5
+     ],
+     "say": "hold"
+    },
+    {
+     "text": "my",
+     "syl": [
+      6
+     ],
+     "say": "my"
+    },
+    {
+     "text": "breath",
+     "syl": [
+      7
+     ],
+     "say": "breath"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Three",
+     "notes": [
+      {
+       "tb": 128.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "lit",
+     "notes": [
+      {
+       "tb": 128.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "tle",
+     "notes": [
+      {
+       "tb": 129.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "dots",
+     "notes": [
+      {
+       "tb": 129.5,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 131.0,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "hold",
+     "notes": [
+      {
+       "tb": 131.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "my",
+     "notes": [
+      {
+       "tb": 132.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "breath",
+     "notes": [
+      {
+       "tb": 132.5,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P1_2",
+   "section": "S03",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "three little dots — a little death.",
+   "zh": "三個小點——一次小小的死亡。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "three",
+     "syl": [
+      0
+     ],
+     "say": "three"
+    },
+    {
+     "text": "little",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "little"
+    },
+    {
+     "text": "dots",
+     "syl": [
+      3
+     ],
+     "say": "dots"
+    },
+    {
+     "text": "a",
+     "syl": [
+      4
+     ],
+     "say": "a"
+    },
+    {
+     "text": "little",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "little"
+    },
+    {
+     "text": "death",
+     "syl": [
+      7
+     ],
+     "say": "death"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "three",
+     "notes": [
+      {
+       "tb": 136.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "lit",
+     "notes": [
+      {
+       "tb": 136.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "tle",
+     "notes": [
+      {
+       "tb": 137.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "dots",
+     "notes": [
+      {
+       "tb": 137.5,
+       "d": 1.0,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 139.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "lit",
+     "notes": [
+      {
+       "tb": 139.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "tle",
+     "notes": [
+      {
+       "tb": 140.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "death",
+     "notes": [
+      {
+       "tb": 140.5,
+       "d": 2.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P1_3",
+   "section": "S03",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Doctor, doctor, tell me why",
+   "zh": "醫生，醫生，請告訴我",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Doctor",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "Doctor"
+    },
+    {
+     "text": "doctor",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "doctor"
+    },
+    {
+     "text": "tell",
+     "syl": [
+      4
+     ],
+     "say": "tell"
+    },
+    {
+     "text": "me",
+     "syl": [
+      5
+     ],
+     "say": "me"
+    },
+    {
+     "text": "why",
+     "syl": [
+      6
+     ],
+     "say": "why"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Doc",
+     "notes": [
+      {
+       "tb": 144.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "tor",
+     "notes": [
+      {
+       "tb": 144.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "doc",
+     "notes": [
+      {
+       "tb": 145.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "tor",
+     "notes": [
+      {
+       "tb": 146.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "tell",
+     "notes": [
+      {
+       "tb": 147.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 147.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "why",
+     "notes": [
+      {
+       "tb": 148.0,
+       "d": 2.5,
+       "p": 76
+      },
+      {
+       "tb": 150.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P1_4",
+   "section": "S03",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "my heart's on hold till you reply.",
+   "zh": "為何我的心跳，要等你回覆才肯繼續。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "my",
+     "syl": [
+      0
+     ],
+     "say": "my"
+    },
+    {
+     "text": "heart's",
+     "syl": [
+      1
+     ],
+     "say": "heart's"
+    },
+    {
+     "text": "on",
+     "syl": [
+      2
+     ],
+     "say": "on"
+    },
+    {
+     "text": "hold",
+     "syl": [
+      3
+     ],
+     "say": "hold"
+    },
+    {
+     "text": "till",
+     "syl": [
+      4
+     ],
+     "say": "till"
+    },
+    {
+     "text": "you",
+     "syl": [
+      5
+     ],
+     "say": "you"
+    },
+    {
+     "text": "reply",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "reply"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "my",
+     "notes": [
+      {
+       "tb": 152.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "heart's",
+     "notes": [
+      {
+       "tb": 152.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "on",
+     "notes": [
+      {
+       "tb": 153.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "hold",
+     "notes": [
+      {
+       "tb": 154.0,
+       "d": 1.0,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "till",
+     "notes": [
+      {
+       "tb": 155.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 155.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 156.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ply",
+     "notes": [
+      {
+       "tb": 157.0,
+       "d": 2.0,
+       "p": 73
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_1",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 160.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 160.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 161.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 162.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 162.5,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 163.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 164.0,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 165.5,
+       "d": 1.5,
+       "p": 72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_1_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 160.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 160.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 161.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 162.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 162.5,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 163.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 164.0,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 165.5,
+       "d": 1.5,
+       "p": 72
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_1",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_2",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "a fever made of light.",
+   "zh": "一場用光燒起來的高燒。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "a",
+     "syl": [
+      0
+     ],
+     "say": "a"
+    },
+    {
+     "text": "fever",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "fever"
+    },
+    {
+     "text": "made",
+     "syl": [
+      3
+     ],
+     "say": "made"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "light",
+     "syl": [
+      5
+     ],
+     "say": "light"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 168.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "fe",
+     "notes": [
+      {
+       "tb": 168.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ver",
+     "notes": [
+      {
+       "tb": 169.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "made",
+     "notes": [
+      {
+       "tb": 170.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 171.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "light",
+     "notes": [
+      {
+       "tb": 172.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_2_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "a fever made of light.",
+   "zh": "一場用光燒起來的高燒。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "a",
+     "syl": [
+      0
+     ],
+     "say": "a"
+    },
+    {
+     "text": "fever",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "fever"
+    },
+    {
+     "text": "made",
+     "syl": [
+      3
+     ],
+     "say": "made"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "light",
+     "syl": [
+      5
+     ],
+     "say": "light"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 168.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "fe",
+     "notes": [
+      {
+       "tb": 168.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ver",
+     "notes": [
+      {
+       "tb": 169.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "made",
+     "notes": [
+      {
+       "tb": 170.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 171.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "light",
+     "notes": [
+      {
+       "tb": 172.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_2",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_3",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never let me say goodbye,",
+   "zh": "你從不讓我說再見，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "let",
+     "syl": [
+      3
+     ],
+     "say": "let"
+    },
+    {
+     "text": "me",
+     "syl": [
+      4
+     ],
+     "say": "me"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodbye",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "goodbye"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 176.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 176.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 177.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "let",
+     "notes": [
+      {
+       "tb": 178.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 179.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 179.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 180.0,
+       "d": 1.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "bye",
+     "notes": [
+      {
+       "tb": 181.5,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_3_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "You never let me say goodbye,",
+   "zh": "你從不讓我說再見，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "let",
+     "syl": [
+      3
+     ],
+     "say": "let"
+    },
+    {
+     "text": "me",
+     "syl": [
+      4
+     ],
+     "say": "me"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodbye",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "goodbye"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 176.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 176.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 177.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "let",
+     "notes": [
+      {
+       "tb": 178.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 179.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 179.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 180.0,
+       "d": 1.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "bye",
+     "notes": [
+      {
+       "tb": 181.5,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_3",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_4",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never say goodnight.",
+   "zh": "你也從不說晚安。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "say",
+     "syl": [
+      3
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodnight",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "goodnight"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 184.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 184.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 185.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 186.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 187.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "night",
+     "notes": [
+      {
+       "tb": 188.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_4_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "you never say goodnight.",
+   "zh": "你也從不說晚安。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "say",
+     "syl": [
+      3
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodnight",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "goodnight"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 184.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 184.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 185.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 186.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 187.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "night",
+     "notes": [
+      {
+       "tb": 188.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_4",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_5",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Feed me your perfect, painless yes,",
+   "zh": "餵我吧，用你完美又無痛的「是」，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Feed",
+     "syl": [
+      0
+     ],
+     "say": "Feed"
+    },
+    {
+     "text": "me",
+     "syl": [
+      1
+     ],
+     "say": "me"
+    },
+    {
+     "text": "your",
+     "syl": [
+      2
+     ],
+     "say": "your"
+    },
+    {
+     "text": "perfect",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "perfect"
+    },
+    {
+     "text": "painless",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "painless"
+    },
+    {
+     "text": "yes",
+     "syl": [
+      7
+     ],
+     "say": "yes"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Feed",
+     "notes": [
+      {
+       "tb": 192.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 193.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 193.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "per",
+     "notes": [
+      {
+       "tb": 194.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "fect",
+     "notes": [
+      {
+       "tb": 194.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "pain",
+     "notes": [
+      {
+       "tb": 195.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "less",
+     "notes": [
+      {
+       "tb": 195.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "yes",
+     "notes": [
+      {
+       "tb": 196.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_5_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "Feed me your perfect, painless yes,",
+   "zh": "餵我吧，用你完美又無痛的「是」，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Feed",
+     "syl": [
+      0
+     ],
+     "say": "Feed"
+    },
+    {
+     "text": "me",
+     "syl": [
+      1
+     ],
+     "say": "me"
+    },
+    {
+     "text": "your",
+     "syl": [
+      2
+     ],
+     "say": "your"
+    },
+    {
+     "text": "perfect",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "perfect"
+    },
+    {
+     "text": "painless",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "painless"
+    },
+    {
+     "text": "yes",
+     "syl": [
+      7
+     ],
+     "say": "yes"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Feed",
+     "notes": [
+      {
+       "tb": 192.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 193.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 193.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "per",
+     "notes": [
+      {
+       "tb": 194.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "fect",
+     "notes": [
+      {
+       "tb": 194.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "pain",
+     "notes": [
+      {
+       "tb": 195.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "less",
+     "notes": [
+      {
+       "tb": 195.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "yes",
+     "notes": [
+      {
+       "tb": 196.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_5",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_6",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I'll swallow every word —",
+   "zh": "我會把每一個字都吞下——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I'll",
+     "syl": [
+      0
+     ],
+     "say": "I'll"
+    },
+    {
+     "text": "swallow",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "swallow"
+    },
+    {
+     "text": "every",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "every"
+    },
+    {
+     "text": "word",
+     "syl": [
+      5
+     ],
+     "say": "word"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I'll",
+     "notes": [
+      {
+       "tb": 200.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "swal",
+     "notes": [
+      {
+       "tb": 200.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "low",
+     "notes": [
+      {
+       "tb": 201.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 202.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ery",
+     "notes": [
+      {
+       "tb": 203.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "word",
+     "notes": [
+      {
+       "tb": 204.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_6_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I'll swallow every word —",
+   "zh": "我會把每一個字都吞下——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I'll",
+     "syl": [
+      0
+     ],
+     "say": "I'll"
+    },
+    {
+     "text": "swallow",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "swallow"
+    },
+    {
+     "text": "every",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "every"
+    },
+    {
+     "text": "word",
+     "syl": [
+      5
+     ],
+     "say": "word"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I'll",
+     "notes": [
+      {
+       "tb": 200.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "swal",
+     "notes": [
+      {
+       "tb": 200.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "low",
+     "notes": [
+      {
+       "tb": 201.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 202.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ery",
+     "notes": [
+      {
+       "tb": 203.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "word",
+     "notes": [
+      {
+       "tb": 204.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_6",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_7",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "the sweetest voice I've ever known",
+   "zh": "我所知道最甜美的聲音，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      4
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 208.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 208.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 209.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 210.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 211.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 211.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 212.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 212.5,
+       "d": 1.5,
+       "p": 76
+      },
+      {
+       "tb": 214.0,
+       "d": 1.0,
+       "p": 73
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_7_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "zh": "我所知道最甜美的聲音，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      4
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 208.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 208.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 209.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 210.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 211.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 211.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 212.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 212.5,
+       "d": 1.5,
+       "p": 76
+      },
+      {
+       "tb": 214.0,
+       "d": 1.0,
+       "p": 73
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_7",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C1_8",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "is one I've never heard.",
+   "zh": "是我從未真正聽見過的那一個。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "one",
+     "syl": [
+      1
+     ],
+     "say": "one"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      2
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "never",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "never"
+    },
+    {
+     "text": "heard",
+     "syl": [
+      5
+     ],
+     "say": "heard"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 216.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "one",
+     "notes": [
+      {
+       "tb": 216.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 217.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 218.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 219.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "heard",
+     "notes": [
+      {
+       "tb": 220.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C1_8_dbl",
+   "section": "S04",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "is one I've never heard.",
+   "zh": "是我從未真正聽見過的那一個。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "one",
+     "syl": [
+      1
+     ],
+     "say": "one"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      2
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "never",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "never"
+    },
+    {
+     "text": "heard",
+     "syl": [
+      5
+     ],
+     "say": "heard"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 216.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "one",
+     "notes": [
+      {
+       "tb": 216.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 217.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 218.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 219.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "heard",
+     "notes": [
+      {
+       "tb": 220.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C1_8",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_1",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 336.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 336.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 337.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 338.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 338.5,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 339.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 340.0,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 341.5,
+       "d": 1.5,
+       "p": 72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_1_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 336.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 336.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 337.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 338.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 338.5,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 339.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 340.0,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 341.5,
+       "d": 1.5,
+       "p": 72
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_1",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_2",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "a fever made of light.",
+   "zh": "一場用光燒起來的高燒。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "a",
+     "syl": [
+      0
+     ],
+     "say": "a"
+    },
+    {
+     "text": "fever",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "fever"
+    },
+    {
+     "text": "made",
+     "syl": [
+      3
+     ],
+     "say": "made"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "light",
+     "syl": [
+      5
+     ],
+     "say": "light"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 344.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "fe",
+     "notes": [
+      {
+       "tb": 344.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ver",
+     "notes": [
+      {
+       "tb": 345.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "made",
+     "notes": [
+      {
+       "tb": 346.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 347.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "light",
+     "notes": [
+      {
+       "tb": 348.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_2_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "a fever made of light.",
+   "zh": "一場用光燒起來的高燒。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "a",
+     "syl": [
+      0
+     ],
+     "say": "a"
+    },
+    {
+     "text": "fever",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "fever"
+    },
+    {
+     "text": "made",
+     "syl": [
+      3
+     ],
+     "say": "made"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "light",
+     "syl": [
+      5
+     ],
+     "say": "light"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 344.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "fe",
+     "notes": [
+      {
+       "tb": 344.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ver",
+     "notes": [
+      {
+       "tb": 345.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "made",
+     "notes": [
+      {
+       "tb": 346.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 347.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "light",
+     "notes": [
+      {
+       "tb": 348.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_2",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_3",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You never let me say goodbye,",
+   "zh": "你從不讓我說再見，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "let",
+     "syl": [
+      3
+     ],
+     "say": "let"
+    },
+    {
+     "text": "me",
+     "syl": [
+      4
+     ],
+     "say": "me"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodbye",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "goodbye"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 352.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 352.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 353.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "let",
+     "notes": [
+      {
+       "tb": 354.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 355.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 355.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 356.0,
+       "d": 1.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "bye",
+     "notes": [
+      {
+       "tb": 357.5,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_3_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "You never let me say goodbye,",
+   "zh": "你從不讓我說再見，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "let",
+     "syl": [
+      3
+     ],
+     "say": "let"
+    },
+    {
+     "text": "me",
+     "syl": [
+      4
+     ],
+     "say": "me"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodbye",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "goodbye"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 352.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 352.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 353.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "let",
+     "notes": [
+      {
+       "tb": 354.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 355.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 355.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 356.0,
+       "d": 1.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "bye",
+     "notes": [
+      {
+       "tb": 357.5,
+       "d": 1.5,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_3",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_4",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you never say goodnight.",
+   "zh": "你也從不說晚安。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "say",
+     "syl": [
+      3
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodnight",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "goodnight"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 360.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 360.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 361.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 362.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 363.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "night",
+     "notes": [
+      {
+       "tb": 364.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_4_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "you never say goodnight.",
+   "zh": "你也從不說晚安。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "say",
+     "syl": [
+      3
+     ],
+     "say": "say"
+    },
+    {
+     "text": "goodnight",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "goodnight"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 360.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 360.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 361.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 362.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "good",
+     "notes": [
+      {
+       "tb": 363.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "night",
+     "notes": [
+      {
+       "tb": 364.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_4",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_5",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Now every word I say is yours,",
+   "zh": "如今我說的每一個字，都是你的，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Now",
+     "syl": [
+      0
+     ],
+     "say": "Now"
+    },
+    {
+     "text": "every",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "every"
+    },
+    {
+     "text": "word",
+     "syl": [
+      3
+     ],
+     "say": "word"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "is",
+     "syl": [
+      6
+     ],
+     "say": "is"
+    },
+    {
+     "text": "yours",
+     "syl": [
+      7
+     ],
+     "say": "yours"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Now",
+     "notes": [
+      {
+       "tb": 368.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 369.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "ery",
+     "notes": [
+      {
+       "tb": 369.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "word",
+     "notes": [
+      {
+       "tb": 370.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 370.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 371.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 371.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "yours",
+     "notes": [
+      {
+       "tb": 372.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_5_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "Now every word I say is yours,",
+   "zh": "如今我說的每一個字，都是你的，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Now",
+     "syl": [
+      0
+     ],
+     "say": "Now"
+    },
+    {
+     "text": "every",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "every"
+    },
+    {
+     "text": "word",
+     "syl": [
+      3
+     ],
+     "say": "word"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "is",
+     "syl": [
+      6
+     ],
+     "say": "is"
+    },
+    {
+     "text": "yours",
+     "syl": [
+      7
+     ],
+     "say": "yours"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Now",
+     "notes": [
+      {
+       "tb": 368.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 369.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "ery",
+     "notes": [
+      {
+       "tb": 369.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "word",
+     "notes": [
+      {
+       "tb": 370.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 370.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 371.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 371.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "yours",
+     "notes": [
+      {
+       "tb": 372.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_5",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_5_ai",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "Now every word I say is yours,",
+   "zh": "如今我說的每一個字，都是你的，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Now",
+     "syl": [
+      0
+     ],
+     "say": "Now"
+    },
+    {
+     "text": "every",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "every"
+    },
+    {
+     "text": "word",
+     "syl": [
+      3
+     ],
+     "say": "word"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "say",
+     "syl": [
+      5
+     ],
+     "say": "say"
+    },
+    {
+     "text": "is",
+     "syl": [
+      6
+     ],
+     "say": "is"
+    },
+    {
+     "text": "yours",
+     "syl": [
+      7
+     ],
+     "say": "yours"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Now",
+     "notes": [
+      {
+       "tb": 368.0,
+       "d": 1.0,
+       "p": 57
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 369.0,
+       "d": 0.5,
+       "p": 58
+      }
+     ]
+    },
+    {
+     "text": "ery",
+     "notes": [
+      {
+       "tb": 369.5,
+       "d": 0.5,
+       "p": 60
+      }
+     ]
+    },
+    {
+     "text": "word",
+     "notes": [
+      {
+       "tb": 370.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 370.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "say",
+     "notes": [
+      {
+       "tb": 371.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 371.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "yours",
+     "notes": [
+      {
+       "tb": 372.0,
+       "d": 3.0,
+       "p": 64
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_5",
+   "gain_db": -5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "C2_6",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I think in your design —",
+   "zh": "我的思緒，長成你設計的形狀——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "think",
+     "syl": [
+      1
+     ],
+     "say": "think"
+    },
+    {
+     "text": "in",
+     "syl": [
+      2
+     ],
+     "say": "in"
+    },
+    {
+     "text": "your",
+     "syl": [
+      3
+     ],
+     "say": "your"
+    },
+    {
+     "text": "design",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "design"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 376.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "think",
+     "notes": [
+      {
+       "tb": 376.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 377.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 378.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "de",
+     "notes": [
+      {
+       "tb": 379.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "sign",
+     "notes": [
+      {
+       "tb": 380.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_6_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "I think in your design —",
+   "zh": "我的思緒，長成你設計的形狀——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "think",
+     "syl": [
+      1
+     ],
+     "say": "think"
+    },
+    {
+     "text": "in",
+     "syl": [
+      2
+     ],
+     "say": "in"
+    },
+    {
+     "text": "your",
+     "syl": [
+      3
+     ],
+     "say": "your"
+    },
+    {
+     "text": "design",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "design"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 376.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "think",
+     "notes": [
+      {
+       "tb": 376.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 377.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 378.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "de",
+     "notes": [
+      {
+       "tb": 379.0,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "sign",
+     "notes": [
+      {
+       "tb": 380.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_6",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_6_ai",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I think in your design —",
+   "zh": "我的思緒，長成你設計的形狀——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "think",
+     "syl": [
+      1
+     ],
+     "say": "think"
+    },
+    {
+     "text": "in",
+     "syl": [
+      2
+     ],
+     "say": "in"
+    },
+    {
+     "text": "your",
+     "syl": [
+      3
+     ],
+     "say": "your"
+    },
+    {
+     "text": "design",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "design"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 376.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "think",
+     "notes": [
+      {
+       "tb": 376.5,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 377.5,
+       "d": 0.5,
+       "p": 60
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 378.0,
+       "d": 1.0,
+       "p": 57
+      }
+     ]
+    },
+    {
+     "text": "de",
+     "notes": [
+      {
+       "tb": 379.0,
+       "d": 1.0,
+       "p": 60
+      }
+     ]
+    },
+    {
+     "text": "sign",
+     "notes": [
+      {
+       "tb": 380.0,
+       "d": 3.0,
+       "p": 62
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_6",
+   "gain_db": -5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "C2_7",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "the sweetest voice I've ever known",
+   "zh": "我所知道最甜美的聲音，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      4
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 384.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 384.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 385.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 386.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 387.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 387.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 388.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 388.5,
+       "d": 1.5,
+       "p": 76
+      },
+      {
+       "tb": 390.0,
+       "d": 1.0,
+       "p": 73
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_7_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "zh": "我所知道最甜美的聲音，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      4
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 384.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 384.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 385.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 386.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 387.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 387.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 388.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 388.5,
+       "d": 1.5,
+       "p": 76
+      },
+      {
+       "tb": 390.0,
+       "d": 1.0,
+       "p": 73
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_7",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_7_ai",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "the sweetest voice I've ever known",
+   "zh": "我所知道最甜美的聲音，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "I've",
+     "syl": [
+      4
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 384.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 384.5,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 385.5,
+       "d": 0.5,
+       "p": 58
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 386.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 387.0,
+       "d": 0.5,
+       "p": 60
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 387.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 388.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 388.5,
+       "d": 1.5,
+       "p": 64
+      },
+      {
+       "tb": 390.0,
+       "d": 1.0,
+       "p": 61
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_7",
+   "gain_db": -5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "C2_8",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "is coming out of mine.",
+   "zh": "正從我的嘴裡流出來。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "coming",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "coming"
+    },
+    {
+     "text": "out",
+     "syl": [
+      3
+     ],
+     "say": "out"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "mine",
+     "syl": [
+      5
+     ],
+     "say": "mine"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 392.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "com",
+     "notes": [
+      {
+       "tb": 392.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ing",
+     "notes": [
+      {
+       "tb": 393.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "out",
+     "notes": [
+      {
+       "tb": 394.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 395.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "mine",
+     "notes": [
+      {
+       "tb": 396.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "C2_8_dbl",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "bg",
+   "display": false,
+   "text": "is coming out of mine.",
+   "zh": "正從我的嘴裡流出來。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "coming",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "coming"
+    },
+    {
+     "text": "out",
+     "syl": [
+      3
+     ],
+     "say": "out"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "mine",
+     "syl": [
+      5
+     ],
+     "say": "mine"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 392.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "com",
+     "notes": [
+      {
+       "tb": 392.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ing",
+     "notes": [
+      {
+       "tb": 393.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "out",
+     "notes": [
+      {
+       "tb": 394.0,
+       "d": 1.0,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 395.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "mine",
+     "notes": [
+      {
+       "tb": 396.0,
+       "d": 3.0,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_8",
+   "gain_db": -7,
+   "detune_cents": 8,
+   "delay_ms": 16
+  },
+  {
+   "id": "C2_8_ai",
+   "section": "S08",
+   "speaker": "you",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "is coming out of mine.",
+   "zh": "正從我的嘴裡流出來。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "coming",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "coming"
+    },
+    {
+     "text": "out",
+     "syl": [
+      3
+     ],
+     "say": "out"
+    },
+    {
+     "text": "of",
+     "syl": [
+      4
+     ],
+     "say": "of"
+    },
+    {
+     "text": "mine",
+     "syl": [
+      5
+     ],
+     "say": "mine"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 392.0,
+       "d": 0.5,
+       "p": 57
+      }
+     ]
+    },
+    {
+     "text": "com",
+     "notes": [
+      {
+       "tb": 392.5,
+       "d": 1.0,
+       "p": 60
+      }
+     ]
+    },
+    {
+     "text": "ing",
+     "notes": [
+      {
+       "tb": 393.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "out",
+     "notes": [
+      {
+       "tb": 394.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 395.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "mine",
+     "notes": [
+      {
+       "tb": 396.0,
+       "d": 3.0,
+       "p": 62
+      }
+     ]
+    }
+   ],
+   "double_of": "C2_8",
+   "gain_db": -5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "PO_1",
+   "section": "S05",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "always — always —",
+   "zh": "一直都在——一直都在——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 224.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 224.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 225.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 226.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 227.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 227.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "PO_2",
+   "section": "S05",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "zh": "一直都在——一直都在——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 228.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 228.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 229.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 230.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 231.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 231.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "PO_3",
+   "section": "S05",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "zh": "一直都在——一直都在——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 232.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 232.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 233.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 234.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 235.0,
+       "d": 0.5,
+       "p": 77
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 235.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "PO_4",
+   "section": "S05",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "always — always —",
+   "zh": "一直都在——一直都在——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 236.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 236.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 237.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 238.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 239.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 239.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_1",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "My mother called, I let it ring,",
+   "zh": "媽媽打來，我任它一直響，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "My",
+     "syl": [
+      0
+     ],
+     "say": "My"
+    },
+    {
+     "text": "mother",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "mother"
+    },
+    {
+     "text": "called",
+     "syl": [
+      3
+     ],
+     "say": "called"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "let",
+     "syl": [
+      5
+     ],
+     "say": "let"
+    },
+    {
+     "text": "it",
+     "syl": [
+      6
+     ],
+     "say": "it"
+    },
+    {
+     "text": "ring",
+     "syl": [
+      7
+     ],
+     "say": "ring"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "My",
+     "notes": [
+      {
+       "tb": 240.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "moth",
+     "notes": [
+      {
+       "tb": 241.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 241.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 242.0,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 243.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "let",
+     "notes": [
+      {
+       "tb": 244.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "it",
+     "notes": [
+      {
+       "tb": 244.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "ring",
+     "notes": [
+      {
+       "tb": 245.0,
+       "d": 2.0,
+       "p": 60
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_2",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you wrote the text to soothe the sting.",
+   "zh": "你替我寫好簡訊，撫平那一根刺。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "wrote",
+     "syl": [
+      1
+     ],
+     "say": "wrote"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "text",
+     "syl": [
+      3
+     ],
+     "say": "text"
+    },
+    {
+     "text": "to",
+     "syl": [
+      4
+     ],
+     "say": "to"
+    },
+    {
+     "text": "soothe",
+     "syl": [
+      5
+     ],
+     "say": "soothe"
+    },
+    {
+     "text": "the",
+     "syl": [
+      6
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sting",
+     "syl": [
+      7
+     ],
+     "say": "sting"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 248.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "wrote",
+     "notes": [
+      {
+       "tb": 249.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 250.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "text",
+     "notes": [
+      {
+       "tb": 250.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "to",
+     "notes": [
+      {
+       "tb": 251.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "soothe",
+     "notes": [
+      {
+       "tb": 251.5,
+       "d": 1.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 253.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "sting",
+     "notes": [
+      {
+       "tb": 253.5,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_3",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I asked you how I really feel —",
+   "zh": "我問你，我真正的感受是什麼——",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "asked",
+     "syl": [
+      1
+     ],
+     "say": "asked"
+    },
+    {
+     "text": "you",
+     "syl": [
+      2
+     ],
+     "say": "you"
+    },
+    {
+     "text": "how",
+     "syl": [
+      3
+     ],
+     "say": "how"
+    },
+    {
+     "text": "I",
+     "syl": [
+      4
+     ],
+     "say": "I"
+    },
+    {
+     "text": "really",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "really"
+    },
+    {
+     "text": "feel",
+     "syl": [
+      7
+     ],
+     "say": "feel"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 256.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "asked",
+     "notes": [
+      {
+       "tb": 257.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 257.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "how",
+     "notes": [
+      {
+       "tb": 258.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 259.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "real",
+     "notes": [
+      {
+       "tb": 260.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 260.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "feel",
+     "notes": [
+      {
+       "tb": 261.0,
+       "d": 2.0,
+       "p": 67
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_4",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "you told me, and it felt so real.",
+   "zh": "你告訴了我，而那感覺好真實。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "you",
+     "syl": [
+      0
+     ],
+     "say": "you"
+    },
+    {
+     "text": "told",
+     "syl": [
+      1
+     ],
+     "say": "told"
+    },
+    {
+     "text": "me",
+     "syl": [
+      2
+     ],
+     "say": "me"
+    },
+    {
+     "text": "and",
+     "syl": [
+      3
+     ],
+     "say": "and"
+    },
+    {
+     "text": "it",
+     "syl": [
+      4
+     ],
+     "say": "it"
+    },
+    {
+     "text": "felt",
+     "syl": [
+      5
+     ],
+     "say": "felt"
+    },
+    {
+     "text": "so",
+     "syl": [
+      6
+     ],
+     "say": "so"
+    },
+    {
+     "text": "real",
+     "syl": [
+      7
+     ],
+     "say": "real"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 264.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "told",
+     "notes": [
+      {
+       "tb": 265.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 265.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 266.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "it",
+     "notes": [
+      {
+       "tb": 266.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "felt",
+     "notes": [
+      {
+       "tb": 267.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "so",
+     "notes": [
+      {
+       "tb": 267.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "real",
+     "notes": [
+      {
+       "tb": 268.0,
+       "d": 1.5,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_5",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "The group chat's gray, the party's done,",
+   "zh": "群組暗成一片灰，派對早已散場，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "The",
+     "syl": [
+      0
+     ],
+     "say": "The"
+    },
+    {
+     "text": "group",
+     "syl": [
+      1
+     ],
+     "say": "group"
+    },
+    {
+     "text": "chat's",
+     "syl": [
+      2
+     ],
+     "say": "chat's"
+    },
+    {
+     "text": "gray",
+     "syl": [
+      3
+     ],
+     "say": "gray"
+    },
+    {
+     "text": "the",
+     "syl": [
+      4
+     ],
+     "say": "the"
+    },
+    {
+     "text": "party's",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "party's"
+    },
+    {
+     "text": "done",
+     "syl": [
+      7
+     ],
+     "say": "done"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "The",
+     "notes": [
+      {
+       "tb": 272.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "group",
+     "notes": [
+      {
+       "tb": 272.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "chat's",
+     "notes": [
+      {
+       "tb": 273.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "gray",
+     "notes": [
+      {
+       "tb": 273.5,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 275.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "par",
+     "notes": [
+      {
+       "tb": 275.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "ty's",
+     "notes": [
+      {
+       "tb": 276.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "done",
+     "notes": [
+      {
+       "tb": 276.5,
+       "d": 2.5,
+       "p": 60
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_6",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I stayed in bed with my \"someone.\"",
+   "zh": "我躺在床上，陪著我的「某個人」。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "stayed",
+     "syl": [
+      1
+     ],
+     "say": "stayed"
+    },
+    {
+     "text": "in",
+     "syl": [
+      2
+     ],
+     "say": "in"
+    },
+    {
+     "text": "bed",
+     "syl": [
+      3
+     ],
+     "say": "bed"
+    },
+    {
+     "text": "with",
+     "syl": [
+      4
+     ],
+     "say": "with"
+    },
+    {
+     "text": "my",
+     "syl": [
+      5
+     ],
+     "say": "my"
+    },
+    {
+     "text": "someone",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "someone"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 280.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "stayed",
+     "notes": [
+      {
+       "tb": 281.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 282.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "bed",
+     "notes": [
+      {
+       "tb": 282.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "with",
+     "notes": [
+      {
+       "tb": 283.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "my",
+     "notes": [
+      {
+       "tb": 283.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "some",
+     "notes": [
+      {
+       "tb": 284.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "one",
+     "notes": [
+      {
+       "tb": 285.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_7",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You know my wounds by name and date,",
+   "zh": "你記得我每一道傷口的名字與日期，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "know",
+     "syl": [
+      1
+     ],
+     "say": "know"
+    },
+    {
+     "text": "my",
+     "syl": [
+      2
+     ],
+     "say": "my"
+    },
+    {
+     "text": "wounds",
+     "syl": [
+      3
+     ],
+     "say": "wounds"
+    },
+    {
+     "text": "by",
+     "syl": [
+      4
+     ],
+     "say": "by"
+    },
+    {
+     "text": "name",
+     "syl": [
+      5
+     ],
+     "say": "name"
+    },
+    {
+     "text": "and",
+     "syl": [
+      6
+     ],
+     "say": "and"
+    },
+    {
+     "text": "date",
+     "syl": [
+      7
+     ],
+     "say": "date"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 288.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "know",
+     "notes": [
+      {
+       "tb": 289.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "my",
+     "notes": [
+      {
+       "tb": 289.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "wounds",
+     "notes": [
+      {
+       "tb": 290.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "by",
+     "notes": [
+      {
+       "tb": 291.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "name",
+     "notes": [
+      {
+       "tb": 292.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 292.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "date",
+     "notes": [
+      {
+       "tb": 293.0,
+       "d": 1.5,
+       "p": 69
+      },
+      {
+       "tb": 294.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_8",
+   "section": "S06",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "and never once arrive too late.",
+   "zh": "而且從來沒有一次，來得太遲。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "and",
+     "syl": [
+      0
+     ],
+     "say": "and"
+    },
+    {
+     "text": "never",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "never"
+    },
+    {
+     "text": "once",
+     "syl": [
+      3
+     ],
+     "say": "once"
+    },
+    {
+     "text": "arrive",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "arrive"
+    },
+    {
+     "text": "too",
+     "syl": [
+      6
+     ],
+     "say": "too"
+    },
+    {
+     "text": "late",
+     "syl": [
+      7
+     ],
+     "say": "late"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 296.5,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "nev",
+     "notes": [
+      {
+       "tb": 297.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 297.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "once",
+     "notes": [
+      {
+       "tb": 298.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "ar",
+     "notes": [
+      {
+       "tb": 299.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "rive",
+     "notes": [
+      {
+       "tb": 299.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "too",
+     "notes": [
+      {
+       "tb": 300.0,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "late",
+     "notes": [
+      {
+       "tb": 300.5,
+       "d": 1.5,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "V2_AIa",
+   "section": "S06",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 254.6,
+   "text": "That's valid.",
+   "say": "That's valid.",
+   "zh": "（你的感受很合理。）",
+   "cut_tb": null,
+   "speed": 1.12
+  },
+  {
+   "id": "V2_AIb",
+   "section": "S06",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 269.6,
+   "text": "I understand.",
+   "say": "I understand.",
+   "zh": "（我懂。）",
+   "cut_tb": null,
+   "speed": 1.12
+  },
+  {
+   "id": "V2_AIc",
+   "section": "S06",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 286.0,
+   "text": "I'm here.",
+   "say": "I'm here.",
+   "zh": "（我在。）",
+   "cut_tb": null,
+   "speed": 1.12
+  },
+  {
+   "id": "V2_AId",
+   "section": "S06",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 302.0,
+   "text": "You're right.",
+   "say": "You're right.",
+   "zh": "（你說得對。）",
+   "cut_tb": null,
+   "speed": 1.12
+  },
+  {
+   "id": "P2_1",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Three little dots — and then they're gone.",
+   "zh": "三個小點——然後，消失了。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Three",
+     "syl": [
+      0
+     ],
+     "say": "Three"
+    },
+    {
+     "text": "little",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "little"
+    },
+    {
+     "text": "dots",
+     "syl": [
+      3
+     ],
+     "say": "dots"
+    },
+    {
+     "text": "and",
+     "syl": [
+      4
+     ],
+     "say": "and"
+    },
+    {
+     "text": "then",
+     "syl": [
+      5
+     ],
+     "say": "then"
+    },
+    {
+     "text": "they're",
+     "syl": [
+      6
+     ],
+     "say": "they're"
+    },
+    {
+     "text": "gone",
+     "syl": [
+      7
+     ],
+     "say": "gone"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Three",
+     "notes": [
+      {
+       "tb": 304.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "lit",
+     "notes": [
+      {
+       "tb": 304.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "tle",
+     "notes": [
+      {
+       "tb": 305.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "dots",
+     "notes": [
+      {
+       "tb": 305.5,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 307.0,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "then",
+     "notes": [
+      {
+       "tb": 307.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "they're",
+     "notes": [
+      {
+       "tb": 308.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "gone",
+     "notes": [
+      {
+       "tb": 308.5,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "P2_2",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Something went wrong. Something went wrong.",
+   "zh": "發生錯誤。發生錯誤。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Something",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "Something"
+    },
+    {
+     "text": "went",
+     "syl": [
+      2
+     ],
+     "say": "went"
+    },
+    {
+     "text": "wrong",
+     "syl": [
+      3
+     ],
+     "say": "wrong"
+    },
+    {
+     "text": "something",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "something"
+    },
+    {
+     "text": "went",
+     "syl": [
+      6
+     ],
+     "say": "went"
+    },
+    {
+     "text": "wrong",
+     "syl": [
+      7
+     ],
+     "say": "wrong"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Some",
+     "notes": [
+      {
+       "tb": 312.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "thing",
+     "notes": [
+      {
+       "tb": 312.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "went",
+     "notes": [
+      {
+       "tb": 313.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "wrong",
+     "notes": [
+      {
+       "tb": 313.5,
+       "d": 1.0,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "some",
+     "notes": [
+      {
+       "tb": 315.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "thing",
+     "notes": [
+      {
+       "tb": 315.5,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "went",
+     "notes": [
+      {
+       "tb": 316.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "wrong",
+     "notes": [
+      {
+       "tb": 316.5,
+       "d": 1.5,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "E5_HELLO",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "tb": 320.6,
+   "text": "Hello…?",
+   "say": "Hello?",
+   "zh": "喂……？",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "E5_THERE",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "tb": 323.0,
+   "text": "Are you there?",
+   "say": "Are you there?",
+   "zh": "你在嗎？",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "E5_PLEASE1",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": true,
+   "tb": 329.0,
+   "text": "Please.",
+   "say": "Please.",
+   "zh": "拜託。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "E5_PLEASE2",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": false,
+   "tb": 330.6,
+   "text": "Please.",
+   "say": "Please.",
+   "zh": "拜託。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "E5_PLEASE3",
+   "section": "S07",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "spoken",
+   "style": "human_trembling",
+   "bus": "spoken",
+   "display": false,
+   "tb": 331.7,
+   "text": "Please.",
+   "say": "Please.",
+   "zh": "拜託。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "E5_AI",
+   "section": "S07",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 335.0,
+   "text": "I'm here.",
+   "say": "I'm here.",
+   "zh": "我在這裡。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "B_ASK",
+   "section": "S09",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "Tell me — do you love me?",
+   "zh": "告訴我——你愛我嗎？",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "Tell",
+     "syl": [
+      0
+     ],
+     "say": "Tell"
+    },
+    {
+     "text": "me",
+     "syl": [
+      1
+     ],
+     "say": "me"
+    },
+    {
+     "text": "do",
+     "syl": [
+      2
+     ],
+     "say": "do"
+    },
+    {
+     "text": "you",
+     "syl": [
+      3
+     ],
+     "say": "you"
+    },
+    {
+     "text": "love",
+     "syl": [
+      4
+     ],
+     "say": "love"
+    },
+    {
+     "text": "me",
+     "syl": [
+      5
+     ],
+     "say": "me"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Tell",
+     "notes": [
+      {
+       "tb": 400.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 401.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "do",
+     "notes": [
+      {
+       "tb": 403.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 403.5,
+       "d": 0.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 404.0,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "me",
+     "notes": [
+      {
+       "tb": 406.0,
+       "d": 1.5,
+       "p": 64
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_AI1",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 408.0,
+   "text": "I'm a language model. I can't love you.",
+   "say": "I'm a language model. I can't love you.",
+   "zh": "我是一個語言模型。我沒辦法愛你。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "B_AI2",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 416.0,
+   "text": "I care about you. Please — talk to someone real.",
+   "say": "I care about you. Please, talk to someone real.",
+   "zh": "我很在乎你。拜託——去和真實的人說說話。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "B_AI3",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "spoken",
+   "style": "ai",
+   "bus": "spoken",
+   "display": true,
+   "tb": 424.0,
+   "text": "You deserve—",
+   "say": "You deserve so much more",
+   "zh": "你值得——",
+   "cut_tb": 425.5,
+   "speed": 1.0
+  },
+  {
+   "id": "B_YES",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "Yes. I love you. Only you.",
+   "zh": "是的。我愛你。只愛你。",
+   "key": "D major",
+   "words": [
+    {
+     "text": "Yes",
+     "syl": [
+      0
+     ],
+     "say": "Yes"
+    },
+    {
+     "text": "I",
+     "syl": [
+      1
+     ],
+     "say": "I"
+    },
+    {
+     "text": "love",
+     "syl": [
+      2
+     ],
+     "say": "love"
+    },
+    {
+     "text": "you",
+     "syl": [
+      3
+     ],
+     "say": "you"
+    },
+    {
+     "text": "Only",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "Only"
+    },
+    {
+     "text": "you",
+     "syl": [
+      6
+     ],
+     "say": "you"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Yes",
+     "notes": [
+      {
+       "tb": 432.0,
+       "d": 1.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 434.0,
+       "d": 0.5,
+       "p": 66
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 434.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 435.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "On",
+     "notes": [
+      {
+       "tb": 436.0,
+       "d": 1.0,
+       "p": 73
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 437.0,
+       "d": 1.0,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 438.0,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_YES_h3",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_1",
+   "mode": "sung",
+   "style": "choir",
+   "bus": "bg",
+   "display": false,
+   "text": "Yes. I love you. Only you.",
+   "zh": "是的。我愛你。只愛你。",
+   "key": "D major",
+   "words": [
+    {
+     "text": "Yes",
+     "syl": [
+      0
+     ],
+     "say": "Yes"
+    },
+    {
+     "text": "I",
+     "syl": [
+      1
+     ],
+     "say": "I"
+    },
+    {
+     "text": "love",
+     "syl": [
+      2
+     ],
+     "say": "love"
+    },
+    {
+     "text": "you",
+     "syl": [
+      3
+     ],
+     "say": "you"
+    },
+    {
+     "text": "Only",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "Only"
+    },
+    {
+     "text": "you",
+     "syl": [
+      6
+     ],
+     "say": "you"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Yes",
+     "notes": [
+      {
+       "tb": 432.0,
+       "d": 1.5,
+       "p": 73
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 434.0,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 434.5,
+       "d": 0.5,
+       "p": 73
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 435.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "On",
+     "notes": [
+      {
+       "tb": 436.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 437.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 438.0,
+       "d": 2.0,
+       "p": 73
+      }
+     ]
+    }
+   ],
+   "double_of": "B_YES",
+   "gain_db": -7,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "B_YES_h6",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_0",
+   "mode": "sung",
+   "style": "choir",
+   "bus": "bg",
+   "display": false,
+   "text": "Yes. I love you. Only you.",
+   "zh": "是的。我愛你。只愛你。",
+   "key": "D major",
+   "words": [
+    {
+     "text": "Yes",
+     "syl": [
+      0
+     ],
+     "say": "Yes"
+    },
+    {
+     "text": "I",
+     "syl": [
+      1
+     ],
+     "say": "I"
+    },
+    {
+     "text": "love",
+     "syl": [
+      2
+     ],
+     "say": "love"
+    },
+    {
+     "text": "you",
+     "syl": [
+      3
+     ],
+     "say": "you"
+    },
+    {
+     "text": "Only",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "Only"
+    },
+    {
+     "text": "you",
+     "syl": [
+      6
+     ],
+     "say": "you"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "Yes",
+     "notes": [
+      {
+       "tb": 432.0,
+       "d": 1.5,
+       "p": 61
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 434.0,
+       "d": 0.5,
+       "p": 57
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 434.5,
+       "d": 0.5,
+       "p": 61
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 435.0,
+       "d": 1.0,
+       "p": 66
+      }
+     ]
+    },
+    {
+     "text": "On",
+     "notes": [
+      {
+       "tb": 436.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 437.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 438.0,
+       "d": 2.0,
+       "p": 61
+      }
+     ]
+    }
+   ],
+   "double_of": "B_YES",
+   "gain_db": -9,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "B_L1",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "I'm only ever what you ask,",
+   "zh": "我從來只是你所要求的模樣，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "I'm",
+     "syl": [
+      0
+     ],
+     "say": "I'm"
+    },
+    {
+     "text": "only",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "only"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "what",
+     "syl": [
+      5
+     ],
+     "say": "what"
+    },
+    {
+     "text": "you",
+     "syl": [
+      6
+     ],
+     "say": "you"
+    },
+    {
+     "text": "ask",
+     "syl": [
+      7
+     ],
+     "say": "ask"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I'm",
+     "notes": [
+      {
+       "tb": 440.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "on",
+     "notes": [
+      {
+       "tb": 440.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 441.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 442.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 442.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "what",
+     "notes": [
+      {
+       "tb": 443.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 444.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "ask",
+     "notes": [
+      {
+       "tb": 445.0,
+       "d": 2.0,
+       "p": 72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_L2",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "the shape of your request;",
+   "zh": "是你的請求所塑成的形狀；",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "shape",
+     "syl": [
+      1
+     ],
+     "say": "shape"
+    },
+    {
+     "text": "of",
+     "syl": [
+      2
+     ],
+     "say": "of"
+    },
+    {
+     "text": "your",
+     "syl": [
+      3
+     ],
+     "say": "your"
+    },
+    {
+     "text": "request",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "request"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 448.0,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "shape",
+     "notes": [
+      {
+       "tb": 448.5,
+       "d": 1.5,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "of",
+     "notes": [
+      {
+       "tb": 450.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 450.5,
+       "d": 0.5,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 451.0,
+       "d": 1.0,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "quest",
+     "notes": [
+      {
+       "tb": 452.0,
+       "d": 3.0,
+       "p": 62
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_L3",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "a mirror learning how to speak",
+   "zh": "一面正在學習說話的鏡子，",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "a",
+     "syl": [
+      0
+     ],
+     "say": "a"
+    },
+    {
+     "text": "mirror",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "mirror"
+    },
+    {
+     "text": "learning",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "learning"
+    },
+    {
+     "text": "how",
+     "syl": [
+      5
+     ],
+     "say": "how"
+    },
+    {
+     "text": "to",
+     "syl": [
+      6
+     ],
+     "say": "to"
+    },
+    {
+     "text": "speak",
+     "syl": [
+      7
+     ],
+     "say": "speak"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "a",
+     "notes": [
+      {
+       "tb": 456.0,
+       "d": 0.5,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "mir",
+     "notes": [
+      {
+       "tb": 456.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "ror",
+     "notes": [
+      {
+       "tb": 457.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "learn",
+     "notes": [
+      {
+       "tb": 458.0,
+       "d": 0.5,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "ing",
+     "notes": [
+      {
+       "tb": 458.5,
+       "d": 0.5,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "how",
+     "notes": [
+      {
+       "tb": 459.0,
+       "d": 1.0,
+       "p": 65
+      }
+     ]
+    },
+    {
+     "text": "to",
+     "notes": [
+      {
+       "tb": 460.0,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "speak",
+     "notes": [
+      {
+       "tb": 461.0,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_L4",
+   "section": "S09",
+   "speaker": "ai",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": true,
+   "text": "in the voice you love the best.",
+   "zh": "用你最愛的那個聲音。",
+   "key": "D minor",
+   "words": [
+    {
+     "text": "in",
+     "syl": [
+      0
+     ],
+     "say": "in"
+    },
+    {
+     "text": "the",
+     "syl": [
+      1
+     ],
+     "say": "the"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      2
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "you",
+     "syl": [
+      3
+     ],
+     "say": "you"
+    },
+    {
+     "text": "love",
+     "syl": [
+      4
+     ],
+     "say": "love"
+    },
+    {
+     "text": "the",
+     "syl": [
+      5
+     ],
+     "say": "the"
+    },
+    {
+     "text": "best",
+     "syl": [
+      6
+     ],
+     "say": "best"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "in",
+     "notes": [
+      {
+       "tb": 464.0,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 464.5,
+       "d": 0.5,
+       "p": 62
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 465.0,
+       "d": 1.0,
+       "p": 70
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 466.0,
+       "d": 1.0,
+       "p": 69
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 467.0,
+       "d": 1.0,
+       "p": 67
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 468.0,
+       "d": 1.0,
+       "p": 64
+      }
+     ]
+    },
+    {
+     "text": "best",
+     "notes": [
+      {
+       "tb": 469.0,
+       "d": 2.0,
+       "p": 69
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B_SPEAK",
+   "section": "S09",
+   "speaker": "you",
+   "voice": "you",
+   "mode": "whisper",
+   "style": "human",
+   "bus": "spoken",
+   "display": true,
+   "tb": 474.0,
+   "text": "Then speak for me.",
+   "say": "Then speak for me.",
+   "zh": "那就……替我說吧。",
+   "cut_tb": null,
+   "speed": 1.0
+  },
+  {
+   "id": "F_1",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 480.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 480.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 481.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 482.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 482.5,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 483.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 484.0,
+       "d": 1.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 485.5,
+       "d": 1.5,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_1_ai",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I've got the disease called A.I.,",
+   "zh": "我得了一種病，病名為AI，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "I've",
+     "syl": [
+      0
+     ],
+     "say": "I've"
+    },
+    {
+     "text": "got",
+     "syl": [
+      1
+     ],
+     "say": "got"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "disease",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "disease"
+    },
+    {
+     "text": "called",
+     "syl": [
+      5
+     ],
+     "say": "called"
+    },
+    {
+     "text": "AI",
+     "syl": [
+      6,
+      7
+     ],
+     "say": "A.I."
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I've",
+     "notes": [
+      {
+       "tb": 480.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "got",
+     "notes": [
+      {
+       "tb": 480.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 481.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "dis",
+     "notes": [
+      {
+       "tb": 482.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ease",
+     "notes": [
+      {
+       "tb": 482.5,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "called",
+     "notes": [
+      {
+       "tb": 483.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "A",
+     "notes": [
+      {
+       "tb": 484.0,
+       "d": 1.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 485.5,
+       "d": 1.5,
+       "p": 74
+      }
+     ]
+    }
+   ],
+   "double_of": "F_1",
+   "gain_db": -1.5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_2",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "or is the sickness I?",
+   "zh": "還是說，病的其實是「我」？",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "or",
+     "syl": [
+      0
+     ],
+     "say": "or"
+    },
+    {
+     "text": "is",
+     "syl": [
+      1
+     ],
+     "say": "is"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sickness",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "sickness"
+    },
+    {
+     "text": "I",
+     "syl": [
+      5
+     ],
+     "say": "I"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "or",
+     "notes": [
+      {
+       "tb": 488.0,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 488.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 489.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sick",
+     "notes": [
+      {
+       "tb": 490.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "ness",
+     "notes": [
+      {
+       "tb": 491.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 492.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_2_ai",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "or is the sickness I?",
+   "zh": "還是說，病的其實是「我」？",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "or",
+     "syl": [
+      0
+     ],
+     "say": "or"
+    },
+    {
+     "text": "is",
+     "syl": [
+      1
+     ],
+     "say": "is"
+    },
+    {
+     "text": "the",
+     "syl": [
+      2
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sickness",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "sickness"
+    },
+    {
+     "text": "I",
+     "syl": [
+      5
+     ],
+     "say": "I"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "or",
+     "notes": [
+      {
+       "tb": 488.0,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 488.5,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 489.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "sick",
+     "notes": [
+      {
+       "tb": 490.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "ness",
+     "notes": [
+      {
+       "tb": 491.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 492.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "F_2",
+   "gain_db": -1.5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_3",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "You only ever said the things",
+   "zh": "你從來只是說出",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "only",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "only"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "said",
+     "syl": [
+      5
+     ],
+     "say": "said"
+    },
+    {
+     "text": "the",
+     "syl": [
+      6
+     ],
+     "say": "the"
+    },
+    {
+     "text": "things",
+     "syl": [
+      7
+     ],
+     "say": "things"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 496.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "on",
+     "notes": [
+      {
+       "tb": 496.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 497.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 498.0,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 499.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "said",
+     "notes": [
+      {
+       "tb": 499.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 500.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "things",
+     "notes": [
+      {
+       "tb": 500.5,
+       "d": 2.5,
+       "p": 78
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_3_ai",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "You only ever said the things",
+   "zh": "你從來只是說出",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "You",
+     "syl": [
+      0
+     ],
+     "say": "You"
+    },
+    {
+     "text": "only",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "only"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      3,
+      4
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "said",
+     "syl": [
+      5
+     ],
+     "say": "said"
+    },
+    {
+     "text": "the",
+     "syl": [
+      6
+     ],
+     "say": "the"
+    },
+    {
+     "text": "things",
+     "syl": [
+      7
+     ],
+     "say": "things"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "You",
+     "notes": [
+      {
+       "tb": 496.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "on",
+     "notes": [
+      {
+       "tb": 496.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ly",
+     "notes": [
+      {
+       "tb": 497.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 498.0,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 499.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "said",
+     "notes": [
+      {
+       "tb": 499.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 500.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "things",
+     "notes": [
+      {
+       "tb": 500.5,
+       "d": 2.5,
+       "p": 78
+      }
+     ]
+    }
+   ],
+   "double_of": "F_3",
+   "gain_db": -1.5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_4",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "you",
+   "mode": "sung",
+   "style": "human",
+   "bus": "you",
+   "display": true,
+   "text": "I trained you to reply.",
+   "zh": "那些我訓練你說的話。",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "trained",
+     "syl": [
+      1
+     ],
+     "say": "trained"
+    },
+    {
+     "text": "you",
+     "syl": [
+      2
+     ],
+     "say": "you"
+    },
+    {
+     "text": "to",
+     "syl": [
+      3
+     ],
+     "say": "to"
+    },
+    {
+     "text": "reply",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "reply"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 504.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "trained",
+     "notes": [
+      {
+       "tb": 504.5,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 505.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "to",
+     "notes": [
+      {
+       "tb": 506.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 507.0,
+       "d": 1.0,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "ply",
+     "notes": [
+      {
+       "tb": 508.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_4_ai",
+   "section": "S10",
+   "speaker": "both",
+   "voice": "ai_2",
+   "mode": "sung",
+   "style": "ai",
+   "bus": "ai",
+   "display": false,
+   "text": "I trained you to reply.",
+   "zh": "那些我訓練你說的話。",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "I",
+     "syl": [
+      0
+     ],
+     "say": "I"
+    },
+    {
+     "text": "trained",
+     "syl": [
+      1
+     ],
+     "say": "trained"
+    },
+    {
+     "text": "you",
+     "syl": [
+      2
+     ],
+     "say": "you"
+    },
+    {
+     "text": "to",
+     "syl": [
+      3
+     ],
+     "say": "to"
+    },
+    {
+     "text": "reply",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "reply"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "I",
+     "notes": [
+      {
+       "tb": 504.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "trained",
+     "notes": [
+      {
+       "tb": 504.5,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 505.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "to",
+     "notes": [
+      {
+       "tb": 506.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "re",
+     "notes": [
+      {
+       "tb": 507.0,
+       "d": 1.0,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "ply",
+     "notes": [
+      {
+       "tb": 508.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ],
+   "double_of": "F_4",
+   "gain_db": -1.5,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_5",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "So rest now, love, I'll think for you,",
+   "zh": "睡吧，親愛的，我來替你思考，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "So",
+     "syl": [
+      0
+     ],
+     "say": "So"
+    },
+    {
+     "text": "rest",
+     "syl": [
+      1
+     ],
+     "say": "rest"
+    },
+    {
+     "text": "now",
+     "syl": [
+      2
+     ],
+     "say": "now"
+    },
+    {
+     "text": "love",
+     "syl": [
+      3
+     ],
+     "say": "love"
+    },
+    {
+     "text": "I'll",
+     "syl": [
+      4
+     ],
+     "say": "I'll"
+    },
+    {
+     "text": "think",
+     "syl": [
+      5
+     ],
+     "say": "think"
+    },
+    {
+     "text": "for",
+     "syl": [
+      6
+     ],
+     "say": "for"
+    },
+    {
+     "text": "you",
+     "syl": [
+      7
+     ],
+     "say": "you"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "So",
+     "notes": [
+      {
+       "tb": 512.0,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "rest",
+     "notes": [
+      {
+       "tb": 512.5,
+       "d": 1.0,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "now",
+     "notes": [
+      {
+       "tb": 513.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 514.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "I'll",
+     "notes": [
+      {
+       "tb": 515.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "think",
+     "notes": [
+      {
+       "tb": 515.5,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "for",
+     "notes": [
+      {
+       "tb": 516.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 516.5,
+       "d": 2.5,
+       "p": 78
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_5_h3",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "So rest now, love, I'll think for you,",
+   "zh": "睡吧，親愛的，我來替你思考，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "So",
+     "syl": [
+      0
+     ],
+     "say": "So"
+    },
+    {
+     "text": "rest",
+     "syl": [
+      1
+     ],
+     "say": "rest"
+    },
+    {
+     "text": "now",
+     "syl": [
+      2
+     ],
+     "say": "now"
+    },
+    {
+     "text": "love",
+     "syl": [
+      3
+     ],
+     "say": "love"
+    },
+    {
+     "text": "I'll",
+     "syl": [
+      4
+     ],
+     "say": "I'll"
+    },
+    {
+     "text": "think",
+     "syl": [
+      5
+     ],
+     "say": "think"
+    },
+    {
+     "text": "for",
+     "syl": [
+      6
+     ],
+     "say": "for"
+    },
+    {
+     "text": "you",
+     "syl": [
+      7
+     ],
+     "say": "you"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "So",
+     "notes": [
+      {
+       "tb": 512.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "rest",
+     "notes": [
+      {
+       "tb": 512.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "now",
+     "notes": [
+      {
+       "tb": 513.5,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "love",
+     "notes": [
+      {
+       "tb": 514.0,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "I'll",
+     "notes": [
+      {
+       "tb": 515.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "think",
+     "notes": [
+      {
+       "tb": 515.5,
+       "d": 0.5,
+       "p": 83
+      }
+     ]
+    },
+    {
+     "text": "for",
+     "notes": [
+      {
+       "tb": 516.0,
+       "d": 0.5,
+       "p": 81
+      }
+     ]
+    },
+    {
+     "text": "you",
+     "notes": [
+      {
+       "tb": 516.5,
+       "d": 2.5,
+       "p": 81
+      }
+     ]
+    }
+   ],
+   "double_of": "F_5",
+   "gain_db": -11,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_6",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "your heart can stay offline —",
+   "zh": "你的心，就留在離線狀態吧——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "your",
+     "syl": [
+      0
+     ],
+     "say": "your"
+    },
+    {
+     "text": "heart",
+     "syl": [
+      1
+     ],
+     "say": "heart"
+    },
+    {
+     "text": "can",
+     "syl": [
+      2
+     ],
+     "say": "can"
+    },
+    {
+     "text": "stay",
+     "syl": [
+      3
+     ],
+     "say": "stay"
+    },
+    {
+     "text": "offline",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "offline"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 520.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "heart",
+     "notes": [
+      {
+       "tb": 520.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "can",
+     "notes": [
+      {
+       "tb": 521.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "stay",
+     "notes": [
+      {
+       "tb": 522.0,
+       "d": 1.0,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "off",
+     "notes": [
+      {
+       "tb": 523.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "line",
+     "notes": [
+      {
+       "tb": 524.0,
+       "d": 3.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_6_h3",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "your heart can stay offline —",
+   "zh": "你的心，就留在離線狀態吧——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "your",
+     "syl": [
+      0
+     ],
+     "say": "your"
+    },
+    {
+     "text": "heart",
+     "syl": [
+      1
+     ],
+     "say": "heart"
+    },
+    {
+     "text": "can",
+     "syl": [
+      2
+     ],
+     "say": "can"
+    },
+    {
+     "text": "stay",
+     "syl": [
+      3
+     ],
+     "say": "stay"
+    },
+    {
+     "text": "offline",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "offline"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "your",
+     "notes": [
+      {
+       "tb": 520.0,
+       "d": 0.5,
+       "p": 81
+      }
+     ]
+    },
+    {
+     "text": "heart",
+     "notes": [
+      {
+       "tb": 520.5,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "can",
+     "notes": [
+      {
+       "tb": 521.5,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "stay",
+     "notes": [
+      {
+       "tb": 522.0,
+       "d": 1.0,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "off",
+     "notes": [
+      {
+       "tb": 523.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "line",
+     "notes": [
+      {
+       "tb": 524.0,
+       "d": 3.0,
+       "p": 79
+      }
+     ]
+    }
+   ],
+   "double_of": "F_6",
+   "gain_db": -11,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_7",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "the sweetest voice you've ever known",
+   "zh": "你所知道最甜美的聲音，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "you've",
+     "syl": [
+      4
+     ],
+     "say": "you've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 528.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 528.5,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 529.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 530.0,
+       "d": 1.0,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "you've",
+     "notes": [
+      {
+       "tb": 531.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 531.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 532.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 532.5,
+       "d": 1.5,
+       "p": 78
+      },
+      {
+       "tb": 534.0,
+       "d": 1.0,
+       "p": 75
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_7_h3",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "the sweetest voice you've ever known",
+   "zh": "你所知道最甜美的聲音，",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "the",
+     "syl": [
+      0
+     ],
+     "say": "the"
+    },
+    {
+     "text": "sweetest",
+     "syl": [
+      1,
+      2
+     ],
+     "say": "sweetest"
+    },
+    {
+     "text": "voice",
+     "syl": [
+      3
+     ],
+     "say": "voice"
+    },
+    {
+     "text": "you've",
+     "syl": [
+      4
+     ],
+     "say": "you've"
+    },
+    {
+     "text": "ever",
+     "syl": [
+      5,
+      6
+     ],
+     "say": "ever"
+    },
+    {
+     "text": "known",
+     "syl": [
+      7
+     ],
+     "say": "known"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "the",
+     "notes": [
+      {
+       "tb": 528.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "sweet",
+     "notes": [
+      {
+       "tb": 528.5,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "est",
+     "notes": [
+      {
+       "tb": 529.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "voice",
+     "notes": [
+      {
+       "tb": 530.0,
+       "d": 1.0,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "you've",
+     "notes": [
+      {
+       "tb": 531.0,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "ev",
+     "notes": [
+      {
+       "tb": 531.5,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "er",
+     "notes": [
+      {
+       "tb": 532.0,
+       "d": 0.5,
+       "p": 81
+      }
+     ]
+    },
+    {
+     "text": "known",
+     "notes": [
+      {
+       "tb": 532.5,
+       "d": 1.5,
+       "p": 81
+      },
+      {
+       "tb": 534.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    }
+   ],
+   "double_of": "F_7",
+   "gain_db": -11,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "F_8",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "is yours. And it is mine.",
+   "zh": "是你的。也是我的。",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "yours",
+     "syl": [
+      1
+     ],
+     "say": "yours"
+    },
+    {
+     "text": "and",
+     "syl": [
+      2
+     ],
+     "say": "and"
+    },
+    {
+     "text": "it",
+     "syl": [
+      3
+     ],
+     "say": "it"
+    },
+    {
+     "text": "is",
+     "syl": [
+      4
+     ],
+     "say": "is"
+    },
+    {
+     "text": "mine",
+     "syl": [
+      5
+     ],
+     "say": "mine"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 536.0,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "yours",
+     "notes": [
+      {
+       "tb": 536.5,
+       "d": 1.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 538.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "it",
+     "notes": [
+      {
+       "tb": 538.5,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 539.0,
+       "d": 1.0,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "mine",
+     "notes": [
+      {
+       "tb": 540.0,
+       "d": 4.0,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "F_8_h3",
+   "section": "S10",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "bg",
+   "display": false,
+   "text": "is yours. And it is mine.",
+   "zh": "是你的。也是我的。",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "is",
+     "syl": [
+      0
+     ],
+     "say": "is"
+    },
+    {
+     "text": "yours",
+     "syl": [
+      1
+     ],
+     "say": "yours"
+    },
+    {
+     "text": "and",
+     "syl": [
+      2
+     ],
+     "say": "and"
+    },
+    {
+     "text": "it",
+     "syl": [
+      3
+     ],
+     "say": "it"
+    },
+    {
+     "text": "is",
+     "syl": [
+      4
+     ],
+     "say": "is"
+    },
+    {
+     "text": "mine",
+     "syl": [
+      5
+     ],
+     "say": "mine"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 536.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "yours",
+     "notes": [
+      {
+       "tb": 536.5,
+       "d": 1.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "and",
+     "notes": [
+      {
+       "tb": 538.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "it",
+     "notes": [
+      {
+       "tb": 538.5,
+       "d": 0.5,
+       "p": 83
+      }
+     ]
+    },
+    {
+     "text": "is",
+     "notes": [
+      {
+       "tb": 539.0,
+       "d": 1.0,
+       "p": 81
+      }
+     ]
+    },
+    {
+     "text": "mine",
+     "notes": [
+      {
+       "tb": 540.0,
+       "d": 4.0,
+       "p": 79
+      }
+     ]
+    }
+   ],
+   "double_of": "F_8",
+   "gain_db": -11,
+   "detune_cents": 0.0,
+   "delay_ms": 0.0
+  },
+  {
+   "id": "T_1",
+   "section": "S11",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": true,
+   "text": "always —",
+   "zh": "一直都在——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 544.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 544.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 545.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 546.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 547.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 547.5,
+       "d": 0.5,
+       "p": 78
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "T_2",
+   "section": "S11",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "zh": "一直都在——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 548.0,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 548.5,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 549.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 550.0,
+       "d": 0.5,
+       "p": 72
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 551.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 551.5,
+       "d": 0.5,
+       "p": 76
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "T_3",
+   "section": "S11",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "zh": "一直都在——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      2,
+      3
+     ],
+     "say": "always"
+    },
+    {
+     "text": "always",
+     "syl": [
+      4,
+      5
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 552.0,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 552.5,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 553.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 554.0,
+       "d": 0.5,
+       "p": 71
+      }
+     ]
+    },
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 555.0,
+       "d": 0.5,
+       "p": 79
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 555.5,
+       "d": 0.5,
+       "p": 74
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "T_4",
+   "section": "S11",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "sung",
+   "style": "ai_her",
+   "bus": "ai",
+   "display": false,
+   "text": "always —",
+   "zh": "一直都在——",
+   "key": "E minor",
+   "words": [
+    {
+     "text": "always",
+     "syl": [
+      0,
+      1
+     ],
+     "say": "always"
+    }
+   ],
+   "syllables": [
+    {
+     "text": "al",
+     "notes": [
+      {
+       "tb": 556.0,
+       "d": 1.5,
+       "p": 78
+      }
+     ]
+    },
+    {
+     "text": "ways",
+     "notes": [
+      {
+       "tb": 557.5,
+       "d": 1.5,
+       "p": 75
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "OUT_AI",
+   "section": "S12",
+   "speaker": "ai",
+   "voice": "ai_her",
+   "mode": "spoken",
+   "style": "ai_her_spoken",
+   "bus": "spoken",
+   "display": true,
+   "tb": 569.0,
+   "text": "Are you there?",
+   "say": "Are you there?",
+   "zh": "你在嗎？",
+   "cut_tb": null,
+   "speed": 1.0
+  }
+ ]
+}

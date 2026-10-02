@@ -1,0 +1,15 @@
+# dependencies & caches
+node_modules/
+__pycache__/
+*.pyc
+.cache/
+
+# regenerable intermediates (large)
+music/build/cache/
+music/build/stems/
+music/build/tmp/
+output/frames/
+output/chunks/
+output/*.partial.mp4
+*.tmp
+.DS_Store
