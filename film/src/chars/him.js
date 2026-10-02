@@ -666,13 +666,13 @@ function himBand(K, c, at, ang, w) {
 // Arm profiles: [t along the segment, outer half-width, inner half-width] — 'up' from the shoulder joint to the elbow,
 // 'fore' from the elbow to the wrist. Deltoid cap → widest at mid upper arm (bicep/tricep) → narrow elbow →
 // forearm swelling just below the elbow → narrow wrist.
-const HIM_ARM = {
-  jacket: { up: [[-.14, .45, .2], [0, 1.25, .8], [.14, 1.42, .98], [.3, 1.24, 1.2], [.5, 1.32, 1.36], [.7, 1.16, 1.14], [.88, .98, .92], [1, .94, .84]],
-            fore: [[.13, 1.0, 1.08], [.3, .96, 1.04], [.5, .86, .9], [.7, .76, .77], [.88, .7, .7], [1, .68, .68]] },
-  far:    { up: [[-.14, .4, .2], [0, 1.15, .75], [.14, 1.32, .92], [.3, 1.16, 1.12], [.5, 1.22, 1.26], [.7, 1.08, 1.06], [.88, .92, .86], [1, .88, .8]],
-            fore: [[.13, .94, 1.0], [.3, .9, .96], [.5, .8, .84], [.7, .72, .72], [.88, .66, .66], [1, .64, .64]] },
-  shirt:  { up: [[-.14, .48, .22], [0, 1.3, .85], [.14, 1.48, 1.04], [.3, 1.3, 1.26], [.5, 1.38, 1.42], [.7, 1.24, 1.22], [.88, 1.12, 1.06], [1, 1.1, 1.02]], fore: [[.08, 1.12, 1.12]] },
-  skin:   { fore: [[0, 1.12, 1.18], [.15, 1.24, 1.3], [.35, 1.14, 1.2], [.55, .98, 1.0], [.78, .8, .8], [1, .64, .64]] }
+const HIM_ARM = {   // v7: lean arms in a slightly loose sleeve — a gentle, nearly straight taper
+  jacket: { up: [[-.14, .3, .12], [0, .92, .55], [.14, .98, .7], [.35, .95, .82], [.6, .9, .82], [.85, .84, .78], [1, .82, .76]],
+            fore: [[.12, .82, .78], [.35, .8, .76], [.6, .76, .73], [.85, .73, .71], [1, .72, .7]] },
+  far:    { up: [[-.14, .28, .12], [0, .88, .52], [.14, .94, .67], [.35, .91, .79], [.6, .86, .79], [.85, .8, .75], [1, .78, .73]],
+            fore: [[.12, .78, .75], [.35, .76, .73], [.6, .73, .7], [.85, .7, .68], [1, .69, .67]] },
+  shirt:  { up: [[-.14, .3, .12], [0, .9, .55], [.14, .95, .68], [.35, .9, .8], [.6, .86, .8], [.85, .82, .78], [1, .8, .76]], fore: [[.08, .8, .78]] },
+  skin:   { fore: [[0, .62, .64], [.15, .66, .68], [.4, .6, .62], [.65, .53, .55], [.85, .5, .5], [1, .56, .56]] }
 };
 function himArmProf(S, E, Wr, prof, outer) {
   const P = [], Wd = [], d1 = himDir(S, E), d2 = himDir(E, Wr);
@@ -697,59 +697,48 @@ function himArm(K, c, a) {
     K.shape(fa.tb.outline, { wash: sk, ink: null, n: 3 });
     K.shape(himTube(fa.P, fa.Wd.map(([l, r]) => [-.1, r])).outline, { wash: c.skinSh, op: 190, ink: null, n: 3 });
     K.line(fa.tb.L, .6); K.line(fa.tb.R, .6);
-    if (K.det) { fold([fa.pt('fore', .2, -si * .2), fa.pt('fore', .5, -si * .05), fa.pt('fore', .8, si * .05)], .22, c.skinDk);   // a vein
-      fold([fa.pt('fore', .1, si * .85), fa.pt('fore', .3, si * .55)], .22, c.skinDk); }
+    if (K.det) fold([fa.pt('fore', .1, si * .8), fa.pt('fore', .3, si * .55)], .2, c.skinDk);
     const sl = himArmProf(S, E, Wr, HIM_ARM.shirt, outer), n = sl.nUp;
     K.shape(sl.tb.outline, { wash: sh, ink: null, n: 3 });
     K.shape(himTube(sl.P, sl.Wd.map(([l, r]) => [-.1, r])).outline, { wash: c.shirtSh, op: 170, ink: null, n: 3 });
     K.line(sl.tb.L.slice(1, n), .7); K.line(sl.tb.R.slice(1, n), .7);
     if (K.det) {
       fold([sl.pt('up', .04, -.95), sl.pt('up', -.03, 0), sl.pt('up', .04, .95)], .25, c.shirtSh);   // sleeve-head seam
-      fold([sl.pt('up', .12, si * .95), sl.pt('up', .3, si * .3), sl.pt('up', .45, -si * .1)], .28, c.shirtSh);   // pulled tight from the armpit
-      fold([sl.pt('up', .22, si * .95), sl.pt('up', .42, si * .4), sl.pt('up', .58, si * .05)], .26, c.shirtSh);
-      fold([sl.pt('up', .55, -si * .9), sl.pt('up', .7, -si * .4)], .24, c.shirtSh);
+      fold([sl.pt('up', .2, si * .9), sl.pt('up', .38, si * .4)], .24, c.shirtSh);   // soft drape from the armpit
+      fold([sl.pt('up', .55, -si * .85), sl.pt('up', .72, -si * .35)], .22, c.shirtSh);
     }
     // the roll above the elbow
     const r0 = himAt(E, Wr, -.03), r1 = himAt(E, Wr, .15);
-    K.shape([himOff(r0, d2, 1.2), himOff(r1, d2, 1.16), himOff(r1, d2, -1.16), himOff(r0, d2, -1.2)], { wash: sh, sw: .5, n: 2 });
-    K.line([himOff(himAt(E, Wr, .06), d2, 1.1), himOff(himAt(E, Wr, .07), d2, -1.1)], .25, c.shirtSh);
+    K.shape([himOff(r0, d2, .94), himOff(r1, d2, .9), himOff(r1, d2, -.9), himOff(r0, d2, -.94)], { wash: sh, sw: .5, n: 2 });
+    K.line([himOff(himAt(E, Wr, .06), d2, .86), himOff(himAt(E, Wr, .07), d2, -.86)], .25, c.shirtSh);
   } else {
     const sl = himArmProf(S, E, Wr, far ? HIM_ARM.far : HIM_ARM.jacket, outer), n = sl.nUp, pt = sl.pt;
     K.shape(sl.tb.outline, { wash: far ? c.jacketSh : c.jacket, ink: null, n: 3, wc: far ? false : 1 });
     // shading: the right half of the arm (light from the upper left), deeper under the deltoid and inside the elbow
     K.shape(himTube(sl.P, sl.Wd.map(([l, r]) => [-.12, r])).outline, { wash: far ? c.jacketDk : c.jacketSh, ink: null, n: 3, wc: far ? false : 1.1, ring: !far });
-    if (!far) {
-      K.shape([pt('up', .3, si * .2), pt('up', .36, si * .95), pt('up', .3, -si * .6), pt('up', .26, -si * .3)], { wash: c.jacketSh, op: 130, ink: null, n: 3 });   // under the deltoid
-      // a crescent of light along the deltoid cap and the top of the bicep
-      K.shape([pt('up', -.04, -.45), pt('up', .07, -.88), pt('up', .2, -.86), pt('up', .26, -.74), pt('up', .14, -.68), pt('up', .04, -.5)], { wash: mixCol(c.jacketHi, c.white, .15), op: 120, ink: null, n: 3 });
-      K.shape([pt('up', .42, -.85), pt('up', .58, -.88), pt('up', .62, -.65), pt('up', .48, -.62)], { wash: c.jacketHi, op: 110, ink: null, n: 3 });
-    }
+    if (!far) K.shape([pt('up', .02, -.72), pt('up', .55, -.82), pt('fore', .1, -.8), pt('up', .55, -.55), pt('up', .06, -.42)], { wash: c.jacketHi, op: 90, ink: null, n: 3 });   // soft light down the sleeve
     if (K.det && far) { fold([pt('up', .07, -.95), pt('up', -.02, 0), pt('up', .07, .95)], .24, c.ink);   // sleeve-head seam
       K.shape([pt('up', -.06, -.4), pt('up', .04, -.8), pt('up', .16, -.75), pt('up', .08, -.45)], { wash: c.jacket, op: 150, ink: null, n: 3 }); }
     if (K.det && !far) {
       fold([pt('up', .04, -.95), pt('up', -.04, 0), pt('up', .04, .95)], .26);   // sleeve-head seam
-      fold([pt('up', .1, si * .95), pt('up', .28, si * .3), pt('up', .44, -si * .15)], .3);   // tension from the armpit across the bicep
-      fold([pt('up', .2, si * .95), pt('up', .4, si * .4), pt('up', .56, si * .02)], .27);
-      fold([pt('up', .5, -si * .95), pt('up', .62, -si * .55)], .24);
-      fold([pt('up', .84, si * .95), pt('up', .94, si * .25), pt('fore', .06, -si * .1)], .28);   // inside the elbow
-      fold([pt('fore', .04, si * .95), pt('fore', .12, si * .2)], .25);
-      fold([pt('up', .9, -si * .9), pt('fore', .04, -si * .6), pt('fore', .1, -si * .1)], .26);   // the bend
-      fold([pt('fore', .22, -si * .35), pt('fore', .5, -si * .12), pt('fore', .66, si * .05)], .22);
-      fold([pt('fore', .45, si * .45), pt('fore', .7, si * .25)], .22);
+      fold([pt('up', .22, si * .9), pt('up', .4, si * .45)], .22);   // the loose sleeve hangs in soft folds
+      fold([pt('up', .84, si * .92), pt('up', .95, si * .35)], .24);   // bunching inside the elbow
+      fold([pt('fore', .04, si * .9), pt('fore', .12, si * .4)], .22);
+      fold([pt('up', .92, -si * .9), pt('fore', .06, -si * .45)], .22);   // the bend
+      fold([pt('fore', .3, -si * .3), pt('fore', .55, -si * .1)], .2);
       fold([pt('up', .06, -.78), pt('up', .45, -.82), pt('up', .82, -.78)], .26, c.jacketEdge);   // lit edge
       fold([pt('fore', .86, -.9), pt('fore', .9, 0), pt('fore', .86, .9)], .25);   // cuff seam
     }
     // a.soft: the arm's inner contour lies against the chest (3/4 far arm) — a thin dark fold instead of a full ink line
     if (a.soft) { const IN = outer > 0 ? sl.tb.L : sl.tb.R.slice().reverse(), OUT = outer > 0 ? sl.tb.R : sl.tb.L;
       K.line(IN.slice(2), .3, c.jacketDk, { n: 4 }); K.line(OUT, .85); }
-    else { K.line(sl.tb.L.slice(1, n), .85); K.line(sl.tb.R.slice(1, n), .85);
-      K.line(sl.tb.L.slice(n - 1), .75); K.line(sl.tb.R.slice(n - 1), .75); }
+    else { K.line(sl.tb.L.slice(1), .78); K.line(sl.tb.R.slice(0, -1), .78); }
     const r0 = himAt(E, Wr, .95), r1 = himAt(E, Wr, 1.06);
-    K.shape([himOff(r0, d2, .72), himOff(r1, d2, .66), himOff(r1, d2, -.66), himOff(r0, d2, -.72)], { wash: sh, sw: .4, n: 2 });
+    K.shape([himOff(r0, d2, .66), himOff(r1, d2, .6), himOff(r1, d2, -.6), himOff(r0, d2, -.66)], { wash: sh, sw: .4, n: 2 });
   }
   const hw = himAt(E, Wr, outfit === 'home' ? 1.0 : 1.07);
   himHand(K, c, a.hand || 'relax', hw, ang, a.thumb || 1, sk);
-  if (a.band) himBand(K, c, himAt(E, Wr, outfit === 'home' ? .93 : 1.13), ang, outfit === 'home' ? 1.24 : 1.3);
+  if (a.band) himBand(K, c, himAt(E, Wr, outfit === 'home' ? .93 : 1.13), ang, outfit === 'home' ? 1.12 : 1.18);
 }
 // Trouser legs from profile tables like the arms: [t, outer half-width, inner half-width] along thigh ('up') and shin
 // ('fore'). Quads widest just below the hip, a taper into the knee, the calf, a narrow ankle; the hem breaks on the shoe.

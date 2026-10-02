@@ -79,7 +79,11 @@ namespace Ourender {
         readonly StreamWriter w;
         // expected on a headless CPU build: no GPU probe, no classic-UTAU builtin plugin dll
         static bool Noise(string m) => m.Contains("[CUDA DETECTOR]") || m.Contains("OpenUtau.Plugin.Builtin.dll");
-        public LogSink(string path) { w = new StreamWriter(path, append: true, Encoding.UTF8) { AutoFlush = true }; }
+        public LogSink(string path) {
+            // several ourender processes may share one data dir: append, never lock
+            var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
+            w = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
+        }
         public void Emit(Serilog.Events.LogEvent e) {
             var msg = e.RenderMessage(CultureInfo.InvariantCulture);
             lock (w) w.WriteLine($"{e.Timestamp:O} [{e.Level}] {msg}{(e.Exception != null ? " :: " + e.Exception.Message : "")}");
@@ -220,7 +224,9 @@ namespace Ourender {
             // vocoder/rhythmizer dependencies (.oudep) are installed next to the voicebanks
             var deps = Path.Combine(banks, "Dependencies");
             if (Directory.Exists(deps) && !Directory.Exists(PathManager.Inst.DependencyPath)) {
-                Directory.CreateSymbolicLink(PathManager.Inst.DependencyPath, deps);
+                try {
+                    Directory.CreateSymbolicLink(PathManager.Inst.DependencyPath, deps);
+                } catch (IOException) { }                  // a parallel ourender made it first
             }
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);

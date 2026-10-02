@@ -251,8 +251,8 @@ def _run_batch(command: str, tracks, parts, work: str, tag: str, cfg: Config, pi
         proj = su.write_ustx(os.path.join(work, f"{tag}_{k}.ustx"), tracks, ps, name=tag)
         jobs.append((proj, os.path.join(work, f"{tag}_{k}"), ps))
     with cf.ThreadPoolExecutor(len(jobs)) as ex:
-        futs = [ex.submit(runner.run, command, proj, out, pitch=pitch, steps=cfg.steps, log=log)
-                for proj, out, _ in jobs]
+        futs = [ex.submit(runner.run, command, proj, out, pitch=pitch, steps=cfg.steps,
+                          voicebanks=bk.VOICEBANKS, log=log) for proj, out, _ in jobs]
         summaries = [f.result() for f in futs]
     out = {}
     for (proj, d, ps), _ in zip(jobs, summaries):

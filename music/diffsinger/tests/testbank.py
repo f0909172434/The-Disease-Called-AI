@@ -29,11 +29,13 @@ ARPA_TO_OPENCPOP = {
     "sh": "sh", "t": "t", "th": "s", "v": "f", "w": "w", "y": "y", "z": "z", "zh": "r", "q": "SP",
 }
 
-PROFILE = bk.Profile("opencpop", r"opencpop", "opencpopJPN (test)", "mitsudate (MIT)", "MIT",
-                     "https://huggingface.co/datasets/mitsudate/DiffSinger_opencpop_JPN",
-                     "her", (50.0, 80.0))
-PROFILE_HIM = bk.Profile("opencpop_him", r"opencpop", "opencpopJPN (test, 'him')", "mitsudate (MIT)",
-                         "MIT", PROFILE.url, "him", (40.0, 64.0))
+URL = "https://huggingface.co/datasets/mitsudate/DiffSinger_opencpop_JPN"
+
+
+def profile(key: str, family: str, rng) -> bk.Profile:
+    return bk.Profile(key, r"opencpop", f"opencpopJPN (test as {key})", "mitsudate (MIT)", "MIT",
+                      URL, family, rng, phonemizer="Ourender.TimedPhonemizer",
+                      phoneme_map=dict(ARPA_TO_OPENCPOP))
 
 
 def available() -> bool:
@@ -41,8 +43,13 @@ def available() -> bool:
 
 
 def bank(key: str = "opencpop") -> bk.Bank:
-    for p in (PROFILE, PROFILE_HIM):
-        bk.register(p)
-    b = bk.find(key, TEST_VOICEBANKS)
-    b.extra_map.update(ARPA_TO_OPENCPOP)
-    return b
+    bk.register(profile("opencpop", "her", (50.0, 80.0)))
+    return bk.find(key, TEST_VOICEBANKS)
+
+
+def stand_in_for_real_banks() -> None:
+    """Make 'hanami' and 'tiger' resolve to the test bank (the engine asks for those keys).
+    'tiger' gets a male-like range so the her->him morph exercises the octave shift."""
+    bk.VOICEBANKS = TEST_VOICEBANKS
+    bk.register(profile("hanami", "her", (55.0, 81.0)))
+    bk.register(profile("tiger", "him", (43.0, 69.0)))

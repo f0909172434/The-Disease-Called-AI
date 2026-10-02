@@ -48,6 +48,7 @@ class Profile:
     range_midi: tuple[float, float]    # comfortable sung range (score MIDI)
     color: str | None = None           # preferred voice colour (subbank), matched by substring
     phonemizer: str = "OpenUtau.Core.DiffSinger.DiffSingerEnglishPhonemizer"
+    phoneme_map: dict = field(default_factory=dict)    # ARPAbet -> bank symbol, tried first
 
 
 PROFILES = {
@@ -230,7 +231,8 @@ def load(prof: Profile, folder: str, root: str = None) -> Bank:
     return Bank(prof, os.path.relpath(folder, root), folder, name, ac, dur, syms, ents, colors,
                 has_dur=bool(dcfg), has_pitch=os.path.exists(os.path.join(folder, "dspitch", "dsconfig.yaml")),
                 has_variance=os.path.exists(os.path.join(folder, "dsvariance", "dsconfig.yaml")),
-                vocoder=cfg.get("vocoder"), phonemizer=prof.phonemizer)
+                vocoder=cfg.get("vocoder"), phonemizer=prof.phonemizer,
+                extra_map=dict(prof.phoneme_map))
 
 
 def register(prof: Profile) -> None:
