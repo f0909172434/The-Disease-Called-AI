@@ -1151,3 +1151,13 @@ LOOPS.ai_glitch = t => {
   ai(1300, 1040, 70, { ...aiFeel('smile', t), form: 'chibi', view: 'q', t, glitch: .6 });
 };
 LOOPS.ai_glitch.len = 2;
+
+LOOPS.ai_wc0 = t => { boilSeed('wc'); paint(ellPts(960, 600, 170, 230, 30), { wash: '#373755', ink: '#1B1318', sw: .6, br: 'inkfine' }); };
+LOOPS.ai_wc0.len = 1;
+LOOPS.ai_wc1 = t => { boilSeed('wc'); paint(ellPts(960, 600, 170, 230, 30), { wash: '#373755', ink: '#1B1318', sw: .6, br: 'inkfine' });
+  boilSeed('wc2'); paint(ellPts(1000, 620, 110, 200, 24), { fill: '#16182A', fillOp: 120, bleed: .12, tex: .5, border: .5, ink: null }); };
+LOOPS.ai_wc1.len = 1;
+LOOPS.ai_wc2 = t => { boilSeed('wc'); paint(ellPts(960, 600, 170, 230, 30), { wash: '#373755', ink: '#1B1318', sw: .6, br: 'inkfine' });
+  boilSeed('wc2'); paint(ellPts(1000, 620, 110, 200, 24), { fill: '#16182A', fillOp: 120, bleed: .12, tex: .5, border: .5, ink: null });
+  boilSeed('wc3'); paint(ellPts(930, 500, 120, 160, 24), { fill: '#556598', fillOp: 110, bleed: .15, tex: .4, border: .5, ink: null }); };
+LOOPS.ai_wc2.len = 1;
