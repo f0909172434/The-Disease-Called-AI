@@ -2,15 +2,14 @@
 // Global-script style (no modules). Everything here is prefixed him / HIM_ so it can share a page with ai.js.
 
 // ---------- palettes ----------
-const HIM_BASE = {
-  skin: '#F5D2B3', skinSh: '#E0A688', skinDk: '#C98568', skinHi: '#FCE6D2', blush: '#EE8E7E', lip: '#C67A6C',
-  hair: '#3D3748', hairSh: '#27222F', hairHi: '#77749A', white: '#FBF5EC', iris: '#5B3A2B', irisLt: '#A0704C', pupil: '#2A1B1C',
-  jacket: '#2F4E98', jacketSh: '#223A74', jacketDk: '#192B58', jacketHi: '#4D6EBC',
-  shirt: '#F7F2EA', shirtSh: '#CFCBD6', pants: '#3A3D50', pantsSh: '#2A2C3B', pantsHi: '#55596F',
-  shoe: '#F1EADF', shoeSh: '#C2B9AB', sole: '#6A5A54', belt: '#4E3529', buckle: '#B9B2A6', sock: '#8C8999',
-  glass: '#B4BAC6', glassDk: '#666C7A', band: '#FCF9F3', bandSh: '#D8D4DE', code: '#2B2233',
-  ink: '#2B2233', inkSoft: '#5A4650', glare: '#7FE9FF', tear: '#BFE6F5', cheekLine: '#D9806F',
-  irisDk: '#2E1B16', lash: '#231A24', hairMid: '#4A4458', jacketEdge: '#7690D2', stitch: '#5E78BC', nail: '#F7DCCB'
+const HIM_BASE = {   // hues sampled from the user's reference: royal-blue blazer, cool white shirt, blue-black hair, rosy tan skin
+  skin: '#F2C8B0', skinSh: '#D99E88', skinDk: '#B47866', skinHi: '#FBE1D3', blush: '#E98C80', lip: '#C67A6C',
+  hair: '#22212D', hairSh: '#14141C', hairHi: '#5C6688', hairMid: '#2E2D3B', white: '#FBF6EE', iris: '#56372A', irisLt: '#A0704C', irisDk: '#2A1914', pupil: '#1E1415',
+  jacket: '#2B48A3', jacketSh: '#1C3486', jacketDk: '#0F2160', jacketHi: '#5277CF', jacketEdge: '#8AA4E6', stitch: '#6C86CC',
+  shirt: '#F6F5F2', shirtSh: '#C9CEDD', pants: '#272A3B', pantsSh: '#1A1C29', pantsHi: '#41455C',
+  shoe: '#F1EADF', shoeSh: '#C2B9AB', sole: '#6A5A54', belt: '#3E2A22', buckle: '#B9B2A6', sock: '#8C8999',
+  glass: '#C3C8D1', glassDk: '#6E7480', band: '#FCF9F3', bandSh: '#D8D4DE', code: '#2B2233',
+  ink: '#241F2C', inkSoft: '#5A4650', lash: '#16141C', glare: '#7FE9FF', tear: '#BFE6F5', cheekLine: '#D9806F', nail: '#F7DCCB'
 };
 const himHex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 const himToHex = (r, g, b) => '#' + [r, g, b].map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('');
@@ -114,8 +113,32 @@ function himKit(u, c, swBase, J, clean) {
   k.shape = (P, o = {}) => {
     let pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, true, o.n || 5, o.j ?? J);
     const G = g(); if (G) { pts = himClipPoly(pts, G); if (pts.length < 3) return pts; }
-    const sw = (o.sw ?? 1) * swBase;
-    paint(pts, { wash: o.wash, washOp: o.op, ink: o.ink === undefined ? c.ink : o.ink, sw, br: o.br || (clean || (o.sw ?? 1) < .5 ? 'inkfine' : 'ink'), hatch: o.hatch && k.det ? o.hatch : null });
+    const sw = (o.sw ?? 1) * swBase, inkC = o.ink === undefined ? c.ink : o.ink;
+    if (HIM_PROF.nohatch) o = { ...o, hatch: null, gran: false };
+    if (o.wc && o.wash && k.det && !clean && !HIM_PROF.nowc) {
+      // watercolour: the wash, a second translucent layer slightly offset and shrunk (a soft wet edge), granulation in
+      // the shadow masses, and pigment pooling as a darker ring just inside the edge
+      const wk = o.wc === true ? 1 : o.wc, dk = mixCol(o.wash, c.ink, .28);
+      paint(pts, { wash: o.wash, washOp: o.op, ink: null });
+      let cx = 0, cy = 0, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      for (const [x, y] of pts) { cx += x; cy += y; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      cx /= pts.length; cy /= pts.length;
+      // a real watercolour fill (bleeding, pigment texture), kept a little inside so its bleed stays on the shape
+      if (o.fill) paint(pts.map(([x, y]) => [cx + (x - cx) * .93, cy + (y - cy) * .95]), { fill: o.fill, fillOp: o.fillOp ?? 100, bleed: .04, tex: .65, border: .6, ink: null });
+      const off = .05 * u * wk, hs = hash(Math.round(x1 - x0) + Math.round(y1 - y0) * 7);
+      paint(pts.map(([x, y]) => [cx + (x - cx) * .965 + off * .7, cy + (y - cy) * .965 + off]), { wash: dk, washOp: 40 * wk, ink: null });
+      if (!o.ring && (x1 - x0) > 2 * u && (y1 - y0) > 2 * u) {   // a soft lighter bloom where the wash dried unevenly
+        const r = Math.min(x1 - x0, y1 - y0) * .26, bx = lerp(x0, x1, .3 + .3 * hs), by = lerp(y0, y1, .25 + .3 * hash(hs * 9));
+        paint(ellPts(bx, by, r * 1.3, r, 14, r * .18, hs * 3), { wash: mixCol(o.wash, c.white, .3), washOp: 38, ink: null });
+      }
+      if (o.ring && o.gran !== false) paint(pts.map(([x, y]) => [cx + (x - cx) * .9, cy + (y - cy) * .9]), { ink: null, hatch: { d: 4.5, a: .3 + hs * 2.4, b: 'HB', c: mixCol(o.wash, c.ink, .22), w: .25, o: { rand: .9 } } });
+      // pigment pooling: a darker ring just inside the edge of the wash
+      inkLine(pts.concat([pts[0]]), (o.ring ? .55 : .4) * swBase, mixCol(o.wash, c.ink, o.ring ? .4 : .22), 'inkfine', 0);
+      if (inkC !== null) paint(pts, { ink: inkC, sw, br: o.br || ((o.sw ?? 1) < .5 ? 'inkfine' : 'ink') });
+      if (o.hatch) paint(pts, { ink: null, hatch: o.hatch });
+      return pts;
+    }
+    paint(pts, { wash: o.wash, washOp: o.op, ink: inkC, sw, br: o.br || (clean || (o.sw ?? 1) < .5 ? 'inkfine' : 'ink'), hatch: o.hatch && k.det ? o.hatch : null, fill: o.fill, fillOp: o.fillOp ?? 110, bleed: .12, tex: .55, border: .5 });
     return pts;
   };
   k.line = (P, w = .5, col = c.ink, o = {}) => {
@@ -226,9 +249,9 @@ function himGlassesFront(K, c, f, s, sw, X = x => s * x, temple = true) {
     if (K.det) K.line([[X(1.36), -.26], [X(1.2), -.02]], .3, c.white, { raw: true });
   }
   // the rimless lower edge of the lens
-  K.line([[X(.25), -.34], [X(.27), .2], [X(.42), .38], [X(1.28), .38], [X(1.42), .2], [X(1.44), -.34]], .3, c.glassDk, { n: 4 });
+  K.line([[X(.25), -.34], [X(.25), .24, 1], [X(.32), .36], [X(1.36), .36], [X(1.43), .24, 1], [X(1.44), -.34]], .3, c.glassDk, { n: 4 });
   // the top rim (half-rim frame) with a highlight along its upper edge, a nose pad
-  K.shape([[X(.2), -.38, 1], [X(.8), -.45], [X(1.48), -.4, 1], [X(1.49), -.3, 1], [X(.8), -.35], [X(.24), -.29, 1]], { wash: c.glass, ink: c.ink, sw: .45, n: 4 });
+  K.shape([[X(.2), -.38, 1], [X(.8), -.44], [X(1.48), -.4, 1], [X(1.49), -.33, 1], [X(.8), -.375], [X(.24), -.32, 1]], { wash: c.glass, ink: c.glassDk, sw: .4, n: 4 });
   if (K.det) { K.line([[X(.3), -.39], [X(.8), -.43], [X(1.35), -.39]], .3, c.white, { n: 3 }); K.shape(ellPts(X(.26), .02, .035, .07, 8), { wash: c.glass, ink: c.glassDk, sw: .3, raw: true, j: 0 }); }
   if (temple) K.line([[X(1.47), -.37], [X(1.76), -.3]], .6, c.glassDk, { raw: true });
 }
@@ -267,7 +290,7 @@ function himMouthFront(K, c, f, sw, mx = 0, mk = 1) {
 // Layered hair: a dark base, a mid-tone inner mass, then clumps radiating from the crown to the silhouette (their tips
 // make the outline), each with a strand line. keep(p) chooses which silhouette points get a clump (not the face side).
 function himHairMass(K, c, sil, crown, keep, n = 26, seed = 0) {
-  K.shape(sil, { wash: c.hairSh, ink: null, n: 4 });
+  K.shape(sil, { wash: c.hairSh, ink: null, n: 4, wc: .8, gran: false });
   K.shape(sil.map(([x, y, k]) => [lerp(crown[0], x, .72), lerp(crown[1], y, .72), k]), { wash: c.hair, ink: null, n: 4 });
   const pts = himS(sil, true, 4), L = [0];
   for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
@@ -336,13 +359,13 @@ function himShine(K, c, x0, x1, y, sag = .3, seed = 0, w = .13) {
   }
 }
 // The head, front view, drawn around its own origin (between the eyes).
-const HIM_BANGS_FRONT = [  // [root, tip, width, bend]: uneven clumps swept toward screen left from a parting at the right
-  [[-1.62, -1.95], [-1.94, .12], .62, -.2], [[-1.15, -2.25], [-1.58, -.52], .8, .2], [[-.6, -2.35], [-1.02, -.28], .82, .16], [[-.05, -2.4], [-.44, -.02], .76, .2],
-  [[.42, -2.38], [.12, -.55], .68, .14], [[.95, -2.3], [1.02, -.78], .6, -.08], [[1.32, -2.15], [1.64, -.52], .6, -.2], [[1.62, -1.9], [1.96, .08], .55, .22]];
+const HIM_BANGS_FRONT = [  // [root, tip, width, bend]: heavy uneven locks swept toward screen left from a parting at the right
+  [[-1.62, -1.95], [-1.92, .22], .62, -.2], [[-1.2, -2.3], [-1.58, -.32], .8, .2], [[-.7, -2.42], [-1.06, -.36], .84, .16], [[-.2, -2.48], [-.44, .16], .8, .2],
+  [[.3, -2.46], [.13, -.12], .74, .12], [[.8, -2.4], [.9, -.42], .68, -.08], [[1.24, -2.25], [1.48, -.36], .64, -.18], [[1.62, -1.95], [1.96, .18], .56, .22]];
 function himHeadFront(K, c, f, u, sw) {
   // hair mass behind the head: rounded volume with a few tufts breaking the silhouette, not a crown
-  const back = [[-1.96, .25, 1], [-2.06, -.7], [-2.1, -1.3], [-2.38, -1.62, 1], [-2.14, -1.95], [-2.18, -2.45], [-2.3, -2.78, 1], [-1.8, -2.88], [-1.35, -3.18], [-.75, -3.36], [-.5, -3.66, 1], [-.12, -3.38],
-                [.5, -3.4], [1.0, -3.55, 1], [1.22, -3.18], [1.72, -2.95], [2.18, -2.86, 1], [2.02, -2.38], [2.15, -1.8], [2.36, -1.52, 1], [2.08, -1.2], [2.06, -.6], [1.98, .25, 1]];
+  const back = [[-1.9, .25, 1], [-1.98, -.7], [-2.04, -1.35], [-2.32, -1.7, 1], [-2.1, -2.05], [-2.18, -2.6], [-2.3, -2.95, 1], [-1.8, -3.1], [-1.35, -3.45], [-.75, -3.62], [-.5, -3.82, 1], [-.12, -3.66],
+                [.5, -3.68], [1.0, -3.75, 1], [1.22, -3.45], [1.72, -3.1], [2.18, -3.0, 1], [2.0, -2.5], [2.1, -1.9], [2.3, -1.62, 1], [2.02, -1.25], [1.98, -.6], [1.9, .25, 1]];
   himHairMass(K, c, back, [.45, -2.7], p => p[1] < -.3, 28, 1);
   // ears
   for (const s of [-1, 1]) {
@@ -355,7 +378,7 @@ function himHeadFront(K, c, f, u, sw) {
   // face
   K.shape(HIM_FACE_FRONT, { wash: c.skin, ink: null, n: 5 });
   // light from the upper left: a shadow down the right side and under the jaw
-  K.shape([[1.42, -1.4], [1.7, -.9], [1.74, -.3], [1.7, .35], [1.6, .85], [1.45, 1.22], [.98, 1.74], [.55, 2.04], [.85, 1.55], [1.2, 1.05], [1.4, .45], [1.48, -.4]], { wash: c.skinSh, op: 160, ink: null, n: 4 });
+  K.shape([[1.42, -1.4], [1.7, -.9], [1.74, -.3], [1.7, .35], [1.6, .85], [1.45, 1.22], [.98, 1.74], [.55, 2.04], [.85, 1.55], [1.2, 1.05], [1.4, .45], [1.48, -.4]], { wash: c.skinSh, op: 160, ink: null, n: 4, wc: .7, ring: true, gran: false });
   // the shadow the bangs cast on the forehead (hatched), soft cheek warmth, the jaw's underside
   K.shape([[-1.58, -1.6], [-1.6, -.6], [-1.3, -.35], [-1.05, -.8], [-.8, -.15], [-.5, -.7], [-.25, .12], [.05, -.65], [.3, -.42], [.62, -.8], [.9, -.2], [1.2, -.9], [1.5, -.55], [1.62, -.45], [1.6, -1.6]], { wash: c.skinSh, op: 150, ink: null, n: 3, hatch: { d: 4, a: -.9, b: 'HB', c: c.skinDk, w: .3, o: { rand: .3 } } });
   for (const s of [-1, 1]) K.shape(ellPts(s * 1.05, .72, .42, .2, 14), { wash: c.blush, op: 42, ink: null, raw: true, j: 0 });
@@ -387,24 +410,24 @@ function himHeadFront(K, c, f, u, sw) {
   K.line([[-.2, -.37], [0, -.45], [.2, -.37]], .6, c.glassDk, { n: 3 });
   for (const s of [-1, 1]) himGlassesFront(K, c, f, s, sw);
   // fringe: a base over the forehead, the bangs with their sub-strands, the angel ring, flyaways, the silhouette
-  K.shape([[-1.78, -1.0], [-1.75, -1.75], [-1.2, -2.3], [0, -2.5], [1.2, -2.3], [1.75, -1.75], [1.78, -1.0], [1.4, -1.45], [.9, -1.3], [.4, -1.55], [-.1, -1.3], [-.6, -1.5], [-1.1, -1.25], [-1.45, -1.5]], { wash: c.hair, ink: null, n: 3 });
+  K.shape([[-1.78, -.9], [-1.75, -1.75], [-1.2, -2.35], [0, -2.6], [1.2, -2.35], [1.75, -1.75], [1.78, -.9], [1.4, -1.3], [.9, -1.15], [.4, -1.4], [-.1, -1.15], [-.6, -1.35], [-1.1, -1.1], [-1.45, -1.35]], { wash: c.hair, ink: null, n: 3 });
   himBangs(K, c, HIM_BANGS_FRONT);
-  himRing(K, c, -1.6, 1.65, -2.55, .38, [.45, -2.9], 1);
-  himFlyaways(K, c, [[-.5, -3.6, 1], [1.0, -3.5, -1], [-2.3, -2.7, 1], [2.3, -1.55, -1]], [.45, -2.4]);
+  himRing(K, c, -1.6, 1.65, -2.72, .38, [.45, -3.05], 1);
+  himFlyaways(K, c, [[-.5, -3.85, 1], [1.0, -3.72, -1], [-2.3, -2.9, 1], [2.28, -1.6, -1]], [.45, -2.4]);
   K.line(back.slice(0, 8), .75, c.ink, { n: 4 }); K.line(back.slice(7, 15), .8, c.ink, { n: 4 }); K.line(back.slice(14), .75, c.ink, { n: 4 });
 }
 
 // The head in 3/4 view, facing screen right. The near eye (his right) sits left of the nose, the far eye is foreshortened.
-const HIM_BANGS_Q = [[[-1.2, -1.9], [-1.46, -.12], .58, -.14], [[-.72, -2.25], [-1.08, -.5], .78, .18], [[-.18, -2.38], [-.5, -.3], .78, .16],
-  [[.36, -2.38], [.12, -.04], .7, .18], [[.86, -2.3], [.92, -.66], .62, -.08], [[1.28, -2.1], [1.56, -.55], .56, -.2]];
+const HIM_BANGS_Q = [[[-1.2, -1.9], [-1.46, -.02], .6, -.14], [[-.72, -2.3], [-1.1, -.36], .8, .18], [[-.18, -2.44], [-.52, -.2], .82, .16],
+  [[.36, -2.46], [.12, .14], .74, .18], [[.86, -2.36], [.94, -.42], .66, -.08], [[1.28, -2.15], [1.56, -.42], .58, -.2]];
 function himHeadQ(K, c, f, u, sw) {
-  const back = [[-1.05, 1.05, 1], [-1.6, .9], [-2.12, .35], [-2.42, .18, 1], [-2.3, -.4], [-2.42, -1.2], [-2.75, -1.52, 1], [-2.45, -1.95], [-2.42, -2.5], [-2.5, -2.82, 1], [-1.95, -2.95], [-1.3, -3.28],
-                [-.85, -3.6, 1], [-.45, -3.33], [.3, -3.38], [.75, -3.52, 1], [.98, -3.12], [1.5, -2.85], [1.95, -2.72, 1], [1.72, -2.2], [1.92, -1.32, 1], [1.45, -1.3], [1.2, -.5], [-1.2, -.3]];
+  const back = [[-1.05, 1.05, 1], [-1.6, .9], [-2.05, .35], [-2.32, .18, 1], [-2.22, -.4], [-2.35, -1.2], [-2.68, -1.55, 1], [-2.4, -2.0], [-2.42, -2.6], [-2.52, -2.98, 1], [-1.95, -3.1], [-1.3, -3.48],
+                [-.85, -3.85, 1], [-.45, -3.55], [.3, -3.6], [.75, -3.76, 1], [.98, -3.3], [1.5, -3.0], [1.95, -2.85, 1], [1.72, -2.25], [1.92, -1.32, 1], [1.45, -1.3], [1.2, -.5], [-1.2, -.3]];
   himHairMass(K, c, back, [-.5, -2.85], p => p[1] < .95 && !(p[0] > 1.15 && p[1] > -1.6), 30, 2);
   const face = [[.1, -2.25], [1.0, -2.0], [1.42, -1.45], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42, 1], [.88, 1.92], [.52, 2.14], [.15, 2.08], [-.55, 1.72], [-1.12, 1.22, 1], [-1.38, .7], [-1.42, -.3], [-1.28, -1.2], [-.85, -1.95]];
   K.shape(face, { wash: c.skin, ink: null, n: 5 });
   // shading: the far cheek, under the cheekbone and along the jaw toward the ear
-  K.shape([[1.2, -1.5], [1.5, -.9], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42], [.88, 1.92], [.62, 2.02], [.95, 1.4], [1.18, .7], [1.26, .1], [1.25, -.7]], { wash: c.skinSh, op: 150, ink: null, n: 4 });
+  K.shape([[1.2, -1.5], [1.5, -.9], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42], [.88, 1.92], [.62, 2.02], [.95, 1.4], [1.18, .7], [1.26, .1], [1.25, -.7]], { wash: c.skinSh, op: 150, ink: null, n: 4, wc: .7, ring: true, gran: false });
   K.shape([[-1.4, .55], [-1.1, 1.15], [-.55, 1.62], [.1, 1.95], [-.4, 1.4], [-.95, .85]], { wash: c.skinSh, op: 120, ink: null, n: 3 });
   K.shape([[-1.25, -1.6], [-1.3, -.55], [-.95, -.4], [-.7, -.82], [-.4, -.25], [-.1, -.7], [.25, -.4], [.52, .02], [.75, -.5], [1.0, -.3], [1.3, -.8], [1.45, -1.6]], { wash: c.skinSh, op: 150, ink: null, n: 3, hatch: { d: 4, a: -.9, b: 'HB', c: c.skinDk, w: .3, o: { rand: .3 } } });
   K.shape(ellPts(-.38, .74, .45, .2, 14), { wash: c.blush, op: 42, ink: null, raw: true, j: 0 }); K.shape(ellPts(1.22, .72, .22, .16, 12), { wash: c.blush, op: 38, ink: null, raw: true, j: 0 });
@@ -449,13 +472,13 @@ function himHeadQ(K, c, f, u, sw) {
   K.shape(side, { wash: c.hair, ink: null, n: 3 });
   K.line(side.slice(1, 5), .4, c.ink, { n: 3 });
   himBangs(K, c, HIM_BANGS_Q);
-  himRing(K, c, -2.05, 1.45, -2.5, .42, [-.5, -2.95], 2);
-  himFlyaways(K, c, [[-.85, -3.55, 1], [.75, -3.45, -1], [-2.7, -1.5, 1], [-2.42, .15, -1]], [-.5, -2.4]);
+  himRing(K, c, -2.05, 1.45, -2.7, .42, [-.5, -3.1], 2);
+  himFlyaways(K, c, [[-.85, -3.8, 1], [.75, -3.7, -1], [-2.65, -1.55, 1], [-2.32, .15, -1]], [-.5, -2.4]);
   K.line(back.slice(0, 10), .8, c.ink, { n: 4 }); K.line(back.slice(9, 17), .8, c.ink, { n: 4 }); K.line(back.slice(16, 21), .75, c.ink, { n: 4 });
 }
 
 // The head in profile, facing screen right.
-const HIM_BANGS_SIDE = [[[.1, -2.35], [.85, -.75], .7, -.12], [[.55, -2.3], [1.32, -.62], .62, .1], [[.95, -2.1], [1.55, -.95], .5, -.12], [[1.1, -1.85], [1.66, -1.25], .4, .15]];
+const HIM_BANGS_SIDE = [[[.1, -2.4], [.85, -.55], .74, -.12], [[.55, -2.36], [1.34, -.42], .66, .1], [[.95, -2.15], [1.58, -.8], .52, -.12], [[1.1, -1.9], [1.7, -1.15], .42, .15]];
 function himHeadSide(K, c, f, u, sw) {
   const face = [[.3, -2.0], [1.05, -1.9], [1.36, -1.3], [1.44, -.6, 1], [1.36, -.22], [1.5, .2], [1.8, .74, 1], [1.5, .94, 1], [1.56, 1.18], [1.44, 1.34], [1.52, 1.5], [1.36, 1.7], [1.45, 1.98], [1.2, 2.2, 1], [.5, 2.04], [-.45, 1.55, 1], [-.85, .9], [-1.05, -.2], [-.85, -1.2], [-.3, -1.8]];
   K.shape(face, { wash: c.skin, ink: null, n: 5 });
@@ -479,8 +502,8 @@ function himHeadSide(K, c, f, u, sw) {
   else if (m === 'U') K.line([[1.6, y0], [1.48, y0 + .03]], .5, c.ink, { raw: true });
   else K.line([[1.47, y0], [1.24, y0 + .04]], .55, c.ink, { raw: true });
   // hair: the mass covers the skull behind a hairline that runs from the forehead to the temple and down to a short sideburn
-  const back = [[1.15, -2.0], [.6, -1.6], [.12, -1.42], [-.02, -.6], [-.06, .3, 1], [-.32, -.1], [-.6, -.48], [-1.0, -.35], [-1.05, .55], [-.72, 1.18, 1], [-1.45, .85], [-2.02, .25], [-2.42, .1, 1], [-2.28, -.45], [-2.45, -1.3],
-    [-2.8, -1.55, 1], [-2.42, -2.05], [-2.25, -2.6], [-2.38, -2.92, 1], [-1.75, -3.0], [-1.0, -3.32], [-.55, -3.62, 1], [-.2, -3.33], [.5, -3.25], [1.0, -3.36, 1], [1.2, -2.8], [1.62, -2.42, 1], [1.45, -1.92], [1.6, -1.3, 1], [1.3, -1.5]];
+  const back = [[1.15, -2.0], [.6, -1.6], [.12, -1.42], [-.02, -.6], [-.06, .3, 1], [-.32, -.1], [-.6, -.48], [-1.0, -.35], [-1.05, .55], [-.72, 1.18, 1], [-1.45, .85], [-1.95, .25], [-2.3, .1, 1], [-2.18, -.45], [-2.38, -1.3],
+    [-2.7, -1.6, 1], [-2.38, -2.1], [-2.25, -2.75], [-2.4, -3.1, 1], [-1.75, -3.2], [-1.0, -3.55], [-.55, -3.85, 1], [-.2, -3.55], [.5, -3.45], [1.0, -3.58, 1], [1.2, -3.0], [1.62, -2.55, 1], [1.45, -1.98], [1.6, -1.3, 1], [1.3, -1.5]];
   himHairMass(K, c, back, [-.9, -2.75], p => p[0] < -.95 || p[1] < -1.95, 30, 3);
   K.line(back.slice(0, 5), .4, c.ink, { n: 3 });
   // ear
@@ -499,8 +522,8 @@ function himHeadSide(K, c, f, u, sw) {
   K.shape([[1.58, -.42, 1], [.95, -.44], [-.45, -.32, 1], [-.45, -.24, 1], [.95, -.35], [1.56, -.34, 1]], { wash: c.glass, ink: c.ink, sw: .35, n: 3 });
   // fringe and sideburn
   himBangs(K, c, HIM_BANGS_SIDE);
-  himRing(K, c, -2.15, 1.1, -2.5, .38, [-.9, -2.9], 3);
-  himFlyaways(K, c, [[-.55, -3.55, 1], [-2.8, -1.55, 1], [1.0, -3.3, -1]], [-.9, -2.4]);
+  himRing(K, c, -2.15, 1.1, -2.68, .38, [-.9, -3.05], 3);
+  himFlyaways(K, c, [[-.55, -3.8, 1], [-2.65, -1.6, 1], [1.0, -3.52, -1]], [-.9, -2.4]);
   K.line(back.slice(9, 20), .8, c.ink, { n: 4 }); K.line(back.slice(19), .8, c.ink, { n: 4 });
 }
 function himEyeSide(K, c, f) {
@@ -561,7 +584,7 @@ function himFinger(base, a0, L, w0, w1, curl) {
   for (let k = 1; k < 6; k++) { const th = -Math.PI / 2 + k / 6 * Math.PI; tip.push([e[0] - n[0] * r * Math.sin(th) * -1 + d[0] * r * Math.cos(th), e[1] - n[1] * r * Math.sin(th) * -1 + d[1] * r * Math.cos(th)]); }
   return tb.L.concat(tip.reverse(), tb.R.reverse());
 }
-function himHand(K, c, kind, at, ang, thumb, skin, sc = 1.06) {
+function himHand(K, c, kind, at, ang, thumb, skin, sc = 1.24) {
   const H = HIM_HANDS[kind] || HIM_HANDS.relax, ca = Math.cos(-ang), sa = Math.sin(-ang), sk = skin || c.skin;
   const tf = P => P.map(([x, y, k]) => { x *= thumb * sc; y *= sc; return [at[0] + x * ca - y * sa, at[1] + x * sa + y * ca, k]; });
   if (H.prof) {
@@ -600,45 +623,48 @@ function himArm(K, c, a) {
   const { S, E, W: Wr, outfit } = a, d1 = himDir(S, E), d2 = himDir(E, Wr), ang = Math.atan2(d2[0], d2[1]), far = a.far;
   const jk = far ? c.jacketSh : c.jacket, sh = far ? c.shirtSh : c.shirt, sk = far ? c.skinSh : c.skin;
   if (outfit === 'home') {
-    const fa = himTube([E, himAt(E, Wr, .28), himAt(E, Wr, .7), Wr], [1.8, 1.88, 1.42, 1.1]);
+    const fa = himTube([E, himAt(E, Wr, .28), himAt(E, Wr, .7), Wr], [2.3, 2.4, 1.8, 1.36]);
     K.shape(fa.outline, { wash: sk, ink: null, n: 3 });
-    K.shape(himTube([E, himAt(E, Wr, .28), himAt(E, Wr, .7), Wr], [[0, .9], [-.2, .94], [-.15, .71], [-.1, .55]]).outline, { wash: c.skinSh, op: 190, ink: null, n: 3 });
+    K.shape(himTube([E, himAt(E, Wr, .28), himAt(E, Wr, .7), Wr], [[0, 1.15], [-.25, 1.2], [-.18, .9], [-.1, .68]]).outline, { wash: c.skinSh, op: 190, ink: null, n: 3 });
     K.line(fa.L, .6); K.line(fa.R, .6);
     K.line([himAt(E, Wr, .3), himAt(E, Wr, .55), himAt(E, Wr, .85)].map((p, i) => himOff(p, d2, .25 - i * .12)), .22, c.skinDk, { n: 3 });   // a vein
     const C = [himAt(S, E, -.15), S, himAt(S, E, .5), E, himAt(E, Wr, .16)];
-    const sl = himTube(C, [.9, 2.3, 2.3, 1.98, 2.02]);
+    const sl = himTube(C, [1.3, 3.15, 3.1, 2.6, 2.6]);
     K.shape(sl.outline, { wash: sh, ink: null, n: 3 });
-    K.shape(himTube(C.slice(1), [[0, 1.15], [-.1, 1.12], [-.1, 1.02], [0, 1.05]]).outline, { wash: c.shirtSh, op: 170, ink: null, n: 3 });
+    K.shape(himTube(C.slice(1), [[0, 1.58], [-.12, 1.55], [-.12, 1.3], [0, 1.3]]).outline, { wash: c.shirtSh, op: 170, ink: null, n: 3 });
     for (const side of [sl.L, sl.R]) { K.line(side.slice(1, 4), .7); K.line(side.slice(3, -1), .6); }
     K.line([himAt(S, E, .45), himAt(S, E, .75), himAt(S, E, .95)].map((p, i) => himOff(p, d1, -.55 + i * .1)), .25, c.shirtSh, { n: 3 });
     K.line([himAt(S, E, .3), himAt(S, E, .5), himAt(S, E, .62)].map((p, i) => himOff(p, d1, .75 - i * .5)), .25, c.shirtSh, { n: 3 });
     // the roll above the elbow
     const r0 = himAt(E, Wr, -.02), r1 = himAt(E, Wr, .17);
-    K.shape([himOff(r0, d2, 1.0), himOff(r1, d2, .96), himOff(r1, d2, -.96), himOff(r0, d2, -1.0)], { wash: sh, sw: .5, n: 2 });
-    K.line([himOff(himAt(E, Wr, .07), d2, .9), himOff(himAt(E, Wr, .08), d2, -.9)], .25, c.shirtSh);
+    K.shape([himOff(r0, d2, 1.32), himOff(r1, d2, 1.28), himOff(r1, d2, -1.28), himOff(r0, d2, -1.32)], { wash: sh, sw: .5, n: 2 });
+    K.line([himOff(himAt(E, Wr, .07), d2, 1.2), himOff(himAt(E, Wr, .08), d2, -1.2)], .25, c.shirtSh);
   } else {
     const C = [himAt(S, E, -.14), S, himAt(S, E, .45), E, himAt(E, Wr, .35), Wr];
-    const sl = himTube(C, [.9, 2.18, 2.16, 1.62, 1.74, 1.34]);
-    K.shape(sl.outline, { wash: jk, ink: null, n: 3 });
+    const sl = himTube(C, [1.3, 3.05, 3.0, 2.25, 2.3, 1.62]);
+    K.shape(sl.outline, { wash: jk, ink: null, n: 3, wc: far ? false : 1 });
     // shadow along the right side of the arm (light from the upper left), a highlight on the shoulder cap
-    K.shape(himTube(C.slice(1), [[0, 1.09], [-.1, 1.08], [-.05, .81], [-.1, .87], [0, .67]]).outline, { wash: far ? c.jacketDk : c.jacketSh, ink: null, n: 3, hatch: far ? null : { d: 5, a: .9, b: 'HB', c: c.jacketDk, w: .45, o: { rand: .2 } } });
+    K.shape(himTube(C.slice(1), [[0, 1.52], [-.15, 1.5], [-.08, 1.12], [-.12, 1.15], [0, .81]]).outline, { wash: far ? c.jacketDk : c.jacketSh, ink: null, n: 3, wc: far ? false : 1.1, ring: !far });
     if (!far) K.shape(himTube([himAt(S, E, -.1), S, himAt(S, E, .3)], [[.4, -.1], [1.0, -.45], [.8, -.5]]).outline, { wash: c.jacketHi, op: 150, ink: null, n: 3 });
     K.line([himAt(S, E, .8), himAt(S, E, .97), himAt(E, Wr, .1)].map((p, i) => himOff(p, d1, .55 - i * .32)), .32, c.jacketDk, { n: 3 });   // elbow creases
     K.line([himAt(S, E, .82), himAt(E, Wr, .05)].map((p, i) => himOff(p, d1, -.3 - i * .2)), .25, c.jacketDk, { n: 3 });
-    K.line([himAt(S, E, .3), himAt(S, E, .55)].map(p => himOff(p, d1, -.62)), .25, c.jacketDk);
+    K.line([himAt(S, E, .3), himAt(S, E, .55)].map(p => himOff(p, d1, -.9)), .25, c.jacketDk);
     if (K.det && !far) {
-      K.line([himAt(S, E, .05), himAt(S, E, .5), himAt(S, E, .85)].map(p => himOff(p, d1, .78)), .28, c.jacketEdge, { n: 3 });   // lit edge
+      K.line([himAt(S, E, .05), himAt(S, E, .5), himAt(S, E, .85)].map(p => himOff(p, d1, 1.1)), .28, c.jacketEdge, { n: 3 });   // lit edge
+      K.line([himAt(S, E, .2), himAt(S, E, .42), himAt(S, E, .6)].map((p, i) => himOff(p, d1, .9 - i * .55)), .26, c.jacketDk, { n: 3 });   // strain across the bicep
+      K.line([himAt(S, E, .45), himAt(S, E, .62)].map((p, i) => himOff(p, d1, 1.0 - i * .6)), .24, c.jacketDk, { n: 2 });
+      K.shape([himOff(himAt(S, E, .03), d1, .35), himOff(himAt(S, E, .13), d1, .95), himOff(himAt(S, E, .32), d1, .92), himOff(himAt(S, E, .17), d1, .4)], { wash: mixCol(c.jacketHi, c.white, .35), op: 120, ink: null, n: 3 });   // gloss
       K.line([himAt(S, E, .9), himAt(E, Wr, .12), himAt(E, Wr, .2)].map((p, i) => himOff(p, d1, -.1 + i * .25)), .25, c.jacketDk, { n: 3 });
       K.line([himAt(E, Wr, .55), himAt(E, Wr, .75)].map((p, i) => himOff(p, d2, .3 - i * .1)), .22, c.jacketDk, { n: 2 });
-      K.line([himAt(E, Wr, .88), himAt(E, Wr, .93)].map((p, i) => himOff(p, d2, (i ? -.62 : .62))), .25, c.jacketDk, { raw: true });   // cuff seam
+      K.line([himAt(E, Wr, .88), himAt(E, Wr, .93)].map((p, i) => himOff(p, d2, (i ? -.78 : .78))), .25, c.jacketDk, { raw: true });   // cuff seam
     }
     for (const side of [sl.L, sl.R]) { K.line(side.slice(1, 4), .85); K.line(side.slice(3), .75); }
     const r0 = himAt(E, Wr, .95), r1 = himAt(E, Wr, 1.06);
-    K.shape([himOff(r0, d2, .6), himOff(r1, d2, .55), himOff(r1, d2, -.55), himOff(r0, d2, -.6)], { wash: sh, sw: .4, n: 2 });
+    K.shape([himOff(r0, d2, .74), himOff(r1, d2, .68), himOff(r1, d2, -.68), himOff(r0, d2, -.74)], { wash: sh, sw: .4, n: 2 });
   }
   const hw = himAt(E, Wr, outfit === 'home' ? 1.0 : 1.07);
   himHand(K, c, a.hand || 'relax', hw, ang, a.thumb || 1, sk);
-  if (a.band) himBand(K, c, himAt(E, Wr, outfit === 'home' ? .93 : 1.13), ang, outfit === 'home' ? 1.14 : 1.08);
+  if (a.band) himBand(K, c, himAt(E, Wr, outfit === 'home' ? .93 : 1.13), ang, outfit === 'home' ? 1.42 : 1.3);
 }
 // Trouser leg from hip H through knee N to ankle A; widths at hip/thigh/knee/calf/hem.
 function himLeg(K, c, H, N, A, w, o = {}) {
@@ -646,7 +672,7 @@ function himLeg(K, c, H, N, A, w, o = {}) {
   if (o.calf) C[3] = himOff(C[3], d, o.calf);
   const tb = himTube(C, w);
   K.shape(tb.outline, { wash: o.far ? c.pantsSh : c.pants, ink: null, n: 3 });
-  if (!o.far) K.shape(himTube(C, w.map(x => [-x * .2, x / 2])).outline, { wash: c.pantsSh, ink: null, n: 3, hatch: { d: 5, a: .9, b: 'HB', c: mixCol(c.pantsSh, c.ink, .4), w: .4, o: { rand: .2 } } });
+  if (!o.far) K.shape(himTube(C, w.map(x => [-x * .2, x / 2])).outline, { wash: c.pantsSh, ink: null, n: 3, wc: 1, ring: true });
   if (!o.far && K.det) K.line([himAt(H, N, .1), himAt(H, N, .7)].map(p => himOff(p, himDir(H, N), w[1] * .32)), .25, c.pantsHi, { n: 2 });
   K.line(tb.L, .7 * (o.heavy ?? 1), c.ink, { n: 3 }); K.line(tb.R, .7 / (o.heavy ?? 1), c.ink, { n: 3 });
   K.line([himAt(N, A, .12), himAt(N, A, .95)].map(p => himOff(p, d, -.12)), .22, o.far ? c.ink : c.pantsHi);   // crease
@@ -696,40 +722,45 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
 const HIM_HS = 1.15;   // the head is drawn 15% larger than the body unit (anime proportions)
 const HIM_RIG = {
-  front: { neck: [0, -11.55], head: [0, -1.5], sh: { R: [-3.9, -8.45], L: [3.9, -8.45] }, hip: { R: [-1.75, 0], L: [1.75, 0] } },
-  q:     { neck: [.1, -11.55], head: [.2, -1.45], sh: { R: [-3.3, -8.45], L: [2.7, -8.55] }, hip: { R: [-1.3, 0], L: [1.55, 0] } },
-  side:  { neck: [.1, -11.5], head: [.12, -1.4], sh: { R: [.05, -8.55], L: [-.25, -8.55] }, hip: { R: [.15, 0], L: [-.15, 0] } }
+  front: { neck: [0, -12.2], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.78, 0], L: [1.78, 0] } },
+  q:     { neck: [.1, -12.2], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.65, -8.3] }, hip: { R: [-1.4, 0], L: [1.65, 0] } },
+  side:  { neck: [.1, -12.15], head: [.12, -1.4], sh: { R: [.1, -8.35], L: [-.3, -8.35] }, hip: { R: [.15, 0], L: [-.15, 0] } }
 };
 const HIM_TX = { front: .9, q: .9, side: .95 };
-function himBreath(o, view = 'front') { const br = o.breath || 0, tx = HIM_TX[view]; return pts => pts.map(([x, y, k]) => [x * tx * (1 + br * .015 * clamp(-y / 10)), y * (1 + br * .012), k]); }
+// The build (from the reference): massive shoulders, chest and neck tapering to a narrow waist. x is widened by a factor
+// that ramps from 1 at the waist (y > -1.8) to HIM_BUILD at the chest and above.
+const HIM_BUILD = { front: 1.45, q: 1.42, side: 1.18 };
+const himWide = (y, view) => lerp(1, HIM_BUILD[view], ease(clamp((-y - 1.8) / 5.2)));
+function himBreath(o, view = 'front') { const br = o.breath || 0, tx = HIM_TX[view]; return pts => pts.map(([x, y, k]) => [x * tx * himWide(y, view) * (1 + br * .015 * clamp(-y / 10)), y * (1 + br * .012), k]); }
 function himNeck(K, c, P, view) {
   if (view === 'front') {
-    K.shape(P([[-1.25, -12.9], [1.25, -12.9], [1.38, -11.3], [1.65, -10.3], [-1.65, -10.3], [-1.38, -11.3]]), { wash: c.skin, ink: null, n: 3 });
-    K.shape(P([[-1.3, -12.6], [1.3, -12.6], [1.38, -11.4], [.6, -11.05], [-.4, -11.3], [-1.32, -11.7]]), { wash: c.skinSh, op: 210, ink: null, n: 3 });
-    K.line(P([[-1.25, -12.7], [-1.38, -11.3], [-1.62, -10.4]]), .6); K.line(P([[1.25, -12.7], [1.4, -11.3], [1.66, -10.4]]), .75);
-    K.line(P([[-.75, -11.0], [-.38, -10.35]]), .25, c.skinDk); K.line(P([[.8, -11.0], [.42, -10.35]]), .25, c.skinDk);
+    K.shape(P([[-1.2, -13.6], [1.2, -13.6], [1.3, -11.9], [1.75, -10.3], [-1.75, -10.3], [-1.3, -11.9]]), { wash: c.skin, ink: null, n: 3 });
+    K.shape(P([[-1.25, -13.3], [1.25, -13.3], [1.32, -12.1], [.6, -11.75], [-.4, -12.0], [-1.28, -12.4]]), { wash: c.skinSh, op: 210, ink: null, n: 3, wc: .6, gran: false });
+    K.shape(P([[.7, -11.9], [1.3, -11.9], [1.75, -10.3], [1.0, -10.5]]), { wash: c.skinSh, op: 120, ink: null, n: 3 });
+    K.line(P([[-1.2, -13.4], [-1.3, -11.9], [-1.72, -10.4]]), .6); K.line(P([[1.2, -13.4], [1.32, -11.9], [1.76, -10.4]]), .75);
+    K.line(P([[-.85, -12.3], [-.5, -11.2], [-.3, -10.5]]), .25, c.skinDk); K.line(P([[.9, -12.3], [.55, -11.2], [.34, -10.5]]), .25, c.skinDk);   // neck muscles
   } else if (view === 'q') {
-    K.shape(P([[-1.25, -12.9], [1.15, -12.9], [1.3, -11.2], [1.55, -10.3], [-1.55, -10.3], [-1.45, -11.4]]), { wash: c.skin, ink: null, n: 3 });
-    K.shape(P([[-1.3, -12.6], [1.15, -12.6], [1.2, -11.5], [.4, -11.1], [-.6, -11.3], [-1.4, -11.6]]), { wash: c.skinSh, op: 210, ink: null, n: 3 });
-    K.line(P([[-1.25, -12.6], [-1.45, -11.4], [-1.6, -10.4]]), .6); K.line(P([[1.15, -12.5], [1.3, -11.2], [1.58, -10.4]]), .75);
-    K.line(P([[.1, -11.1], [.75, -10.35]]), .25, c.skinDk);
+    K.shape(P([[-1.25, -13.6], [1.15, -13.6], [1.25, -11.8], [1.6, -10.3], [-1.65, -10.3], [-1.4, -12.0]]), { wash: c.skin, ink: null, n: 3 });
+    K.shape(P([[-1.3, -13.3], [1.15, -13.3], [1.2, -12.2], [.4, -11.8], [-.6, -12.0], [-1.4, -12.3]]), { wash: c.skinSh, op: 210, ink: null, n: 3, wc: .6, gran: false });
+    K.line(P([[-1.25, -13.3], [-1.4, -12.0], [-1.65, -10.4]]), .6); K.line(P([[1.15, -13.2], [1.25, -11.8], [1.62, -10.4]]), .75);
+    K.line(P([[-.2, -12.2], [.35, -11.2], [.75, -10.45]]), .25, c.skinDk);
   } else {
-    K.shape(P([[-1.0, -12.9], [.75, -12.6], [1.0, -11.3], [1.4, -10.2], [-1.45, -10.4], [-1.35, -11.6]]), { wash: c.skin, ink: null, n: 3 });
-    K.shape(P([[-1.0, -12.6], [.75, -12.3], [.85, -11.6], [0, -11.2], [-1.4, -11.4]]), { wash: c.skinSh, op: 210, ink: null, n: 3 });
-    K.line(P([[.78, -12.4], [1.0, -11.3], [1.42, -10.25]]), .7); K.line(P([[-1.05, -12.5], [-1.35, -11.5], [-1.5, -10.5]]), .6);
-    K.line(P([[.85, -11.7], [.15, -10.6]]), .25, c.skinDk);
+    K.shape(P([[-1.0, -13.6], [.75, -13.3], [.95, -11.9], [1.4, -10.2], [-1.5, -10.4], [-1.4, -12.2]]), { wash: c.skin, ink: null, n: 3 });
+    K.shape(P([[-1.0, -13.3], [.75, -13.0], [.85, -12.3], [0, -11.9], [-1.4, -12.1]]), { wash: c.skinSh, op: 210, ink: null, n: 3, wc: .6, gran: false });
+    K.line(P([[.78, -13.1], [.95, -11.9], [1.42, -10.25]]), .7); K.line(P([[-1.05, -13.2], [-1.4, -12.0], [-1.55, -10.5]]), .6);
+    K.line(P([[.85, -12.4], [.15, -10.6]]), .25, c.skinDk);
   }
 }
 function himTorsoFront(K, c, o, outfit) {
   const P = himBreath(o);
-  himNeck(K, c, pts => pts.map(([x, y, k]) => [x, y, k]), 'front');
-  if (outfit === 'launch') K.shape(P([[-1.95, -10.25], [-1.55, -10.95], [0, -11.2], [1.55, -10.95], [1.95, -10.25], [1.25, -10.1], [-1.25, -10.1]]), { wash: c.jacketDk, sw: .45, n: 3 });
+  if (outfit === 'launch') K.shape(P([[-1.95, -10.55], [-1.5, -11.2], [0, -11.4], [1.5, -11.2], [1.95, -10.55], [1.25, -10.2], [-1.25, -10.2]]), { wash: c.jacketDk, sw: .45, n: 3 });   // back collar, behind the neck
+  himNeck(K, c, P, 'front');
   // shirt
-  K.shape(P([[-1.45, -10.9], [1.45, -10.9], [2.2, -10.2], [3.2, -8.0], [2.9, -4.0], [2.7, -.4], [-2.7, -.4], [-2.9, -4.0], [-3.2, -8.0], [-2.2, -10.2]]), { wash: c.shirt, ink: null, n: 3 });
+  K.shape(P([[-1.2, -10.4], [1.2, -10.4], [2.2, -10.1], [3.2, -8.0], [2.9, -4.0], [2.7, -.4], [-2.7, -.4], [-2.9, -4.0], [-3.2, -8.0], [-2.2, -10.1]]), { wash: c.shirt, ink: null, n: 3 });
   // open neck: a V of skin with a hint of collarbones
   const vd = outfit === 'home' ? -8.2 : -8.75;
-  K.shape(P([[-1.0, -10.7], [1.0, -10.7], [.5, -9.5], [0, vd], [-.5, -9.5]]), { wash: c.skin, ink: null, n: 3 });
-  K.shape(P([[-1.0, -10.7], [1.0, -10.7], [.75, -10.15], [-.75, -10.15]]), { wash: c.skinSh, op: 170, ink: null, n: 3 });
+  K.shape(P([[-1.15, -10.5], [1.15, -10.5], [.5, -9.5], [0, vd], [-.5, -9.5]]), { wash: c.skin, ink: null, n: 3 });
+  K.shape(P([[-1.05, -10.45], [1.05, -10.45], [.7, -10.15], [-.7, -10.15]]), { wash: c.skinSh, op: 90, ink: null, n: 3 });
   K.line(P([[-.9, -10.0], [-.42, -9.85], [-.12, -9.62]]), .25, c.skinDk); K.line(P([[.9, -10.0], [.42, -9.85], [.12, -9.62]]), .25, c.skinDk);
   K.line(P([[0, -9.2], [0, vd + .1]]), .2, c.skinDk);
   K.line(P([[-1.0, -10.7], [-.5, -9.5], [0, vd], [.5, -9.5], [1.0, -10.7]]), .4, c.ink, { n: 3 });
@@ -737,10 +768,10 @@ function himTorsoFront(K, c, o, outfit) {
     K.shape(P([[.55, -9.4], [1.05, -8.8], [.9, -6.0], [.45, -4.5], [.35, -7.0]]), { wash: c.shirtSh, op: 120, ink: null, n: 3 }); }
   if (outfit === 'home') {
     // rumpled white shirt: chest and shoulders show through the pull of the cloth; untucked, two buttons open
-    const body = [[-1.45, -10.9], [-3.1, -10.15], [-4.45, -9.4], [-5.05, -8.4], [-4.8, -6.8], [-4.4, -5.2], [-3.3, -2.6], [-3.45, 0], [-3.6, 1.5, 1], [-1.4, 1.75], [.6, 1.5], [2.2, 1.8], [3.6, 1.5, 1], [3.45, 0], [3.3, -2.6], [4.4, -5.2], [4.8, -6.8], [5.05, -8.4], [4.45, -9.4], [3.1, -10.15], [1.45, -10.9]];
+    const body = [[-1.3, -10.45], [-2.9, -10.4], [-3.9, -9.45], [-4.6, -8.45], [-4.8, -7.0], [-4.4, -5.2], [-3.35, -2.6], [-3.7, 0], [-3.85, 1.5, 1], [-1.4, 1.75], [.6, 1.5], [2.2, 1.8], [3.85, 1.5, 1], [3.7, 0], [3.35, -2.6], [4.4, -5.2], [4.8, -7.0], [4.6, -8.45], [3.9, -9.45], [2.9, -10.4], [1.3, -10.45]];
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[1.0, -10.55], [.5, -9.4], [0, -8.2], [-.5, -9.4], [-1.0, -10.55]].concat([[-1.0, -10.55]])), { wash: c.skin, ink: null, n: 3 });
-    K.shape(P([[3.0, -9.8], [4.4, -9.2], [4.85, -8.2], [4.6, -6.6], [4.1, -5.0], [3.45, -2.6], [3.55, 0], [3.6, 1.45], [2.7, 1.6], [2.9, -.5], [2.9, -2.6], [3.5, -5.0], [3.6, -7.0], [3.4, -8.8]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
+    K.shape(P([[3.0, -9.7], [3.9, -9.2], [4.6, -8.3], [4.6, -6.6], [4.1, -5.0], [3.35, -2.6], [3.6, 0], [3.75, 1.45], [2.8, 1.6], [2.9, -.5], [2.85, -2.6], [3.5, -5.0], [3.6, -7.0], [3.4, -8.8]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
     K.line(P([[-2.6, -6.9], [-1.5, -6.3], [-.5, -6.5]]), .3, c.shirtSh, { n: 3 }); K.line(P([[2.6, -6.9], [1.5, -6.3], [.5, -6.5]]), .3, c.shirtSh, { n: 3 });   // the pecs under the cloth
     for (const [a, b, m] of [[[-3.2, -8.6], [-1.0, -7.6], -.2], [[3.2, -8.6], [1.0, -7.6], -.2], [[-3.5, -4.6], [-1.3, -3.4], .2], [[3.4, -4.8], [1.5, -3.5], .2], [[-3.0, -1.6], [-1.0, -2.2], -.15], [[3.0, -1.4], [1.3, -2.1], -.15], [[-1.6, .4], [-.8, 1.4], 0], [[1.4, .3], [2.0, 1.5], 0]])
       K.line(P([a, himAt(a, b, .5).map((v, i) => v + (i ? m : 0)), b]), .3, c.shirtSh, { n: 3 });
@@ -761,26 +792,28 @@ function himTorsoFront(K, c, o, outfit) {
   K.line(P([[-.02, 0], [0, 1.9]]), .3, c.pantsSh);
   // blazer front panels; the screen-right panel holds the button
   for (const s of [-1, 1]) {
-    const pan = [[1.15, -10.4], [1.95, -10.55], [3.0, -10.05], [4.3, -9.45], [4.95, -8.75], [4.95, -7.4], [4.6, -6.5], [4.45, -5.2], [3.25, -2.4], [3.5, 0], [3.5, 1.9, 1], [2.3, 2.12], [1.2, 2.0, 1], [.55, -.9], [-.1 * s, -3.4, 1], [.45, -6.0], [.95, -9.1]].map(([x, y, k]) => [s * x, y, k]);
-    K.shape(P(pan), { wash: c.jacket, ink: null, n: 4 });
-    if (s > 0) K.shape(P([[3.3, -9.9], [4.3, -9.45], [4.95, -8.75], [4.95, -7.4], [4.5, -6.5], [4.35, -5.0], [3.45, -2.4], [3.65, 0], [3.62, 1.9], [2.9, 2.0], [2.95, -.2], [2.85, -2.6], [3.55, -5.2], [3.7, -7.4], [3.75, -9.0]]), { wash: c.jacketSh, ink: null, n: 3, hatch: { d: 5, a: .9, b: 'HB', c: c.jacketDk, w: .45, o: { rand: .2 } } });
-    else K.shape(P([[-4.35, -5.0], [-3.45, -2.4], [-3.65, 0], [-3.62, 1.9], [-3.15, 2.0], [-3.1, -2.4], [-3.85, -5.0]]), { wash: c.jacketSh, ink: null, n: 3 });
-    K.shape(P([[2.0, -10.4], [3.0, -10.0], [4.2, -9.4], [3.6, -9.2], [2.5, -9.55]].map(([x, y]) => [s * x, y])), { wash: c.jacketHi, op: s < 0 ? 220 : 120, ink: null, n: 3 });
+    const pan = [[1.15, -10.4], [1.95, -10.95], [2.95, -10.25], [3.85, -9.35], [4.55, -8.55], [4.85, -7.4], [4.6, -6.5], [4.45, -5.2], [3.4, -2.4], [3.95, 0], [4.0, 1.9, 1], [2.3, 2.12], [1.2, 2.0, 1], [.55, -.9], [-.1 * s, -3.4, 1], [.45, -6.0], [.95, -9.1]].map(([x, y, k]) => [s * x, y, k]);
+    K.shape(P(pan), { wash: c.jacket, ink: null, n: 4, wc: 1 });
+    if (s > 0) K.shape(P([[3.2, -10.0], [3.85, -9.35], [4.55, -8.55], [4.85, -7.4], [4.6, -6.5], [4.45, -5.2], [3.35, -2.4], [3.75, 0], [3.8, 1.9], [3.05, 2.0], [3.1, -.2], [2.95, -2.6], [3.55, -5.2], [3.7, -7.4], [3.6, -8.9]]), { wash: c.jacketSh, ink: null, n: 3, wc: 1.2, ring: true, fill: HIM_WCFILL ? c.jacketDk : undefined });
+    else K.shape(P([[-4.45, -5.2], [-3.35, -2.4], [-3.75, 0], [-3.8, 1.9], [-3.3, 2.0], [-3.15, -2.4], [-3.9, -5.0]]), { wash: c.jacketSh, ink: null, n: 3, wc: 1, ring: true });
+    K.shape(P([[2.0, -10.8], [2.95, -10.2], [3.8, -9.3], [3.3, -9.15], [2.5, -9.8]].map(([x, y]) => [s * x, y])), { wash: c.jacketHi, op: s < 0 ? 220 : 120, ink: null, n: 3 });
     K.line(P([[.35 * s, -3.65], [1.6 * s, -4.5], [3.2 * s, -5.9]]), .32, c.jacketDk, { n: 3 });   // strain folds from the button
     K.line(P([[.4 * s, -3.2], [1.8 * s, -2.9], [3.0 * s, -2.4]]), .28, c.jacketDk, { n: 3 });
     if (K.det) {
       K.line(P([[4.45 * s, -6.6], [3.6 * s, -6.2], [2.9 * s, -6.3]]), .3, c.jacketDk, { n: 3 });   // armpit folds pulling across the chest
       K.line(P([[4.3 * s, -5.6], [3.5 * s, -5.0]]), .26, c.jacketDk, { n: 2 });
-      K.line(P([[2.3 * s, -10.15], [3.2 * s, -9.85], [3.9 * s, -9.5]]), .26, c.jacketDk, { n: 3 });   // shoulder seam
-      if (s < 0) K.line(P([[-2.2, -10.0], [-3.6, -9.45], [-4.5, -8.6], [-4.55, -7.4]]), .3, c.jacketEdge, { n: 3 });   // lit edge
-      K.line(P([[3.3 * s, -2.2], [3.45 * s, -.2], [3.4 * s, 1.6]]), .25, s < 0 ? c.jacketEdge : c.jacketDk, { n: 3 });
+      K.line(P([[2.3 * s, -10.55], [3.1 * s, -10.0], [3.75 * s, -9.35]]), .26, c.jacketDk, { n: 3 });   // shoulder seam
+      if (s < 0) K.line(P([[-2.2, -10.55], [-3.5, -9.5], [-4.3, -8.5], [-4.55, -7.4]]), .3, c.jacketEdge, { n: 3 });   // lit edge
+      K.line(P([[3.4 * s, -2.2], [3.65 * s, -.2], [3.7 * s, 1.6]]), .25, s < 0 ? c.jacketEdge : c.jacketDk, { n: 3 });
     }
     // hip pocket flap with its shadow
-    K.shape(P([[1.85 * s, -.5], [3.35 * s, -.62], [3.38 * s, .2], [1.9 * s, .3]]), { wash: c.jacket, ink: c.ink, sw: .35, n: 2 });
-    K.line(P([[1.95 * s, .38], [3.3 * s, .28]]), .3, c.jacketDk, { n: 2 });
+    K.shape(P([[2.0 * s, -.5], [3.5 * s, -.62], [3.55 * s, .2], [2.05 * s, .3]]), { wash: c.jacket, ink: c.ink, sw: .35, n: 2 });
+    K.line(P([[2.1 * s, .38], [3.45 * s, .28]]), .3, c.jacketDk, { n: 2 });
     K.line(P(pan.slice(1, 11)), s > 0 ? 1.0 : .85, c.ink, { n: 4 });
     K.line(P(pan.slice(10, 15)), .6, c.ink, { n: 4 });
   }
+  // colour bleeding: a little of the blazer's blue creeps onto the shirt along the lapel roll lines
+  if (K.det) for (const s of [-1, 1]) K.shape(P([[.95 * s, -9.4], [.55 * s, -6.2], [.12 * s, -3.6], [.32 * s, -3.8], [.85 * s, -6.2], [1.15 * s, -9.2]]), { wash: c.jacketHi, op: 45, ink: null, n: 3 });
   // notched lapels, with the shirt collar lying open over them
   for (const s of [-1, 1]) {
     const lap = [[1.12, -10.4], [1.85, -10.5], [2.15, -10.1], [2.3, -8.75, 1], [2.06, -8.5, 1], [2.9, -8.3, 1], [2.25, -6.3], [.75, -4.2], [.1 * s, -3.45, 1], [.5, -6.0], [.92, -9.0]].map(([x, y, k]) => [s * x, y, k]);
@@ -799,16 +832,16 @@ function himTorsoFront(K, c, o, outfit) {
 // 3/4 torso facing screen right: the near side (his right) is screen left, the chest centre line is at x ≈ 1.3.
 function himTorsoQ(K, c, o, outfit) {
   const P = himBreath(o, 'q');
-  himNeck(K, c, P, 'q');
   if (outfit === 'launch') K.shape(P([[-1.8, -10.3], [-1.5, -11.0], [.2, -11.25], [1.5, -11.0], [1.85, -10.4], [1.2, -10.2], [-1.2, -10.15]]), { wash: c.jacketDk, sw: .45, n: 3 });
-  K.shape(P([[-1.35, -10.9], [1.6, -10.9], [2.3, -10.0], [2.9, -8.0], [2.7, -4.0], [2.6, -.4], [-2.6, -.4], [-2.8, -4.0], [-3.0, -8.0], [-2.0, -10.2]]), { wash: c.shirt, ink: null, n: 3 });
+  himNeck(K, c, P, 'q');
+  K.shape(P([[-1.2, -10.4], [1.5, -10.4], [2.3, -10.0], [2.9, -8.0], [2.7, -4.0], [2.6, -.4], [-2.6, -.4], [-2.8, -4.0], [-3.0, -8.0], [-2.0, -10.1]]), { wash: c.shirt, ink: null, n: 3 });
   const vd = outfit === 'home' ? -8.2 : -8.75;
-  K.shape(P([[-.05, -10.75], [1.55, -10.75], [1.2, -9.5], [.95, vd], [.45, -9.5]]), { wash: c.skin, ink: null, n: 3 });
-  K.shape(P([[-.05, -10.75], [1.55, -10.75], [1.3, -10.15], [.1, -10.15]]), { wash: c.skinSh, op: 170, ink: null, n: 3 });
+  K.shape(P([[-.15, -10.5], [1.6, -10.5], [1.2, -9.5], [.95, vd], [.45, -9.5]]), { wash: c.skin, ink: null, n: 3 });
+  K.shape(P([[-.1, -10.45], [1.55, -10.45], [1.3, -10.15], [.1, -10.15]]), { wash: c.skinSh, op: 90, ink: null, n: 3 });
   K.line(P([[.0, -10.0], [.45, -9.8], [.8, -9.6]]), .25, c.skinDk);
   K.line(P([[-.05, -10.75], [.45, -9.5], [.95, vd], [1.2, -9.5], [1.55, -10.75]]), .4, c.ink, { n: 3 });
   if (outfit === 'home') {
-    const body = [[-1.3, -10.9], [-2.6, -10.25], [-3.8, -9.5], [-4.4, -8.4], [-4.2, -6.8], [-3.85, -5.0], [-3.1, -2.6], [-3.2, 0], [-3.3, 1.5, 1], [-1.0, 1.75], [1.0, 1.5], [3.25, 1.6, 1], [3.15, 0], [2.95, -2.5], [3.3, -4.4], [3.62, -6.2], [3.55, -8.0], [3.1, -9.45], [2.2, -10.4], [1.6, -10.9]];
+    const body = [[-1.2, -10.45], [-2.5, -10.2], [-3.4, -9.4], [-3.95, -8.4], [-4.0, -6.8], [-3.85, -5.0], [-3.1, -2.6], [-3.45, 0], [-3.55, 1.5, 1], [-1.0, 1.75], [1.0, 1.5], [3.25, 1.6, 1], [3.15, 0], [2.95, -2.5], [3.3, -4.4], [3.62, -6.2], [3.55, -8.0], [3.1, -9.45], [2.2, -10.4], [1.5, -10.45]];
     K.shape(P(body), { wash: c.shirt, ink: null, n: 4 });
     K.shape(P([[-.05, -10.6], [1.55, -10.6], [1.2, -9.4], [.95, -8.2], [.45, -9.4]]), { wash: c.skin, ink: null, n: 3 });
     K.shape(P([[1.8, -8.6], [3.3, -8.6], [3.62, -6.2], [3.3, -4.4], [2.95, -2.5], [3.15, 0], [3.25, 1.6], [2.4, 1.55], [2.4, -1.0], [2.3, -2.8], [2.9, -5.0], [2.6, -7.0]]), { wash: c.shirtSh, op: 190, ink: null, n: 3, hatch: { d: 6, a: .9, b: 'HB', c: c.shirtSh, w: .4 } });
@@ -824,13 +857,13 @@ function himTorsoQ(K, c, o, outfit) {
   K.shape(P([[-1.0, -.6], [2.9, -.6], [2.9, 0], [-1.0, 0]]), { wash: c.belt, sw: .4, n: 2 });
   K.shape(P([[1.1, -.6], [1.55, -.6], [1.55, 0], [1.1, 0]]), { wash: c.name === 'swapped' ? c.belt : c.buckle, sw: .35, n: 2 });
   // far panel (his left), then the near panel over it
-  const far = [[1.6, -10.5], [2.05, -10.55], [2.85, -10.0], [3.4, -9.35], [3.62, -8.4], [3.55, -6.2], [3.15, -4.3], [2.85, -2.4], [3.1, 0], [3.0, 1.85, 1], [1.95, 2.0], [1.55, 1.9, 1], [1.4, -1.0], [1.3, -3.4, 1], [1.25, -6.0], [1.45, -9.0]];
-  K.shape(P(far), { wash: c.jacket, ink: null, n: 4 });
-  K.shape(P([[2.6, -9.0], [3.4, -9.35], [3.62, -8.4], [3.55, -6.2], [3.15, -4.3], [2.85, -2.4], [3.1, 0], [3.0, 1.85], [2.45, 1.9], [2.4, -1.0], [2.35, -2.6], [2.8, -4.4], [3.0, -6.4], [2.9, -8.0]]), { wash: c.jacketSh, ink: null, n: 3, hatch: { d: 5, a: .9, b: 'HB', c: c.jacketDk, w: .45, o: { rand: .2 } } });
+  const far = [[1.6, -10.5], [2.05, -10.85], [2.7, -10.1], [3.2, -9.3], [3.55, -8.3], [3.55, -6.2], [3.15, -4.3], [2.85, -2.4], [3.1, 0], [3.0, 1.85, 1], [1.95, 2.0], [1.55, 1.9, 1], [1.4, -1.0], [1.3, -3.4, 1], [1.25, -6.0], [1.45, -9.0]];
+  K.shape(P(far), { wash: c.jacket, ink: null, n: 4, wc: 1 });
+  K.shape(P([[2.6, -9.0], [3.4, -9.35], [3.62, -8.4], [3.55, -6.2], [3.15, -4.3], [2.85, -2.4], [3.1, 0], [3.0, 1.85], [2.45, 1.9], [2.4, -1.0], [2.35, -2.6], [2.8, -4.4], [3.0, -6.4], [2.9, -8.0]]), { wash: c.jacketSh, ink: null, n: 3, wc: 1.2, ring: true, fill: HIM_WCFILL ? c.jacketDk : undefined });
   K.line(P(far.slice(2, 11)), 1.0, c.ink, { n: 4 }); K.line(P(far.slice(10, 13)), .55, c.ink, { n: 3 });
-  const near = [[.05, -10.45], [-.7, -10.62], [-2.2, -10.2], [-3.55, -9.55], [-4.2, -8.7], [-4.15, -7.3], [-3.85, -6.5], [-3.75, -5.0], [-3.0, -2.4], [-3.2, 0], [-3.15, 1.9, 1], [.3, 2.1], [1.0, 2.0, 1], [1.12, -1.0], [1.4, -3.4, 1], [.85, -6.0], [.3, -9.0]];
-  K.shape(P(near), { wash: c.jacket, ink: null, n: 4 });
-  K.shape(P([[-1.0, -10.45], [-2.2, -10.1], [-3.4, -9.5], [-2.6, -9.3], [-1.4, -9.7]]), { wash: c.jacketHi, op: 220, ink: null, n: 3 });
+  const near = [[.05, -10.45], [-.7, -10.9], [-2.0, -10.4], [-3.1, -9.5], [-3.75, -8.5], [-4.0, -7.3], [-3.85, -6.5], [-3.75, -5.0], [-3.05, -2.4], [-3.45, 0], [-3.5, 1.9, 1], [.3, 2.1], [1.0, 2.0, 1], [1.12, -1.0], [1.4, -3.4, 1], [.85, -6.0], [.3, -9.0]];
+  K.shape(P(near), { wash: c.jacket, ink: null, n: 4, wc: 1 });
+  K.shape(P([[-1.0, -10.7], [-2.0, -10.3], [-2.85, -9.6], [-2.35, -9.45], [-1.4, -9.95]]), { wash: c.jacketHi, op: 220, ink: null, n: 3 });
   K.shape(P([[.95, -6.0], [1.4, -3.4], [1.12, -1.0], [1.0, 2.0], [.4, 2.0], [.5, -1.2], [.4, -3.4]]), { wash: c.jacketSh, op: 180, ink: null, n: 3 });
   K.line(P([[1.2, -3.6], [-.2, -4.6], [-2.2, -6.0]]), .32, c.jacketDk, { n: 3 }); K.line(P([[1.2, -3.1], [-.3, -2.8], [-2.0, -2.3]]), .28, c.jacketDk, { n: 3 });
   K.shape(P([[-.25, -.5], [-2.2, -.62], [-2.18, .2], [-.3, .3]]), { wash: c.jacket, ink: c.ink, sw: .35, n: 2 });
@@ -867,9 +900,9 @@ function himTorsoSide(K, c, o, outfit) {
     K.line(P(body.slice(0, 11)), .85, c.ink, { n: 4 }); K.line(P(body.slice(10, 12)), .55, c.ink, { n: 2 }); K.line(P(body.slice(11).concat([body[0]])), .9, c.ink, { n: 4 });
     return;
   }
-  const jk = [[1.35, -10.45], [.4, -10.95], [-1.0, -11.05], [-1.9, -10.5], [-2.6, -9.3], [-2.8, -7.6], [-2.5, -5.6], [-2.0, -3.4], [-2.2, -1.0], [-2.5, .6], [-2.45, 1.95, 1], [2.2, 1.85, 1], [2.4, .4], [2.35, -2.2], [2.75, -3.6], [3.35, -5.4], [3.4, -7.0], [3.0, -8.7], [2.2, -9.9]];
-  K.shape(P(jk), { wash: c.jacket, ink: null, n: 4 });
-  K.shape(P([[-1.9, -10.3], [-2.4, -9.3], [-2.65, -7.5], [-2.45, -5.5], [-1.95, -3.2], [-2.15, -1.0], [-2.45, .6], [-2.4, 1.95], [-1.5, 1.95], [-1.4, -1.0], [-1.2, -3.2], [-1.7, -5.5], [-1.9, -7.6], [-1.5, -9.6]]), { wash: c.jacketSh, ink: null, n: 3, hatch: { d: 5, a: .9, b: 'HB', c: c.jacketDk, w: .45, o: { rand: .2 } } });
+  const jk = [[1.35, -10.45], [.4, -11.15], [-1.0, -11.3], [-1.9, -10.7], [-2.6, -9.3], [-2.8, -7.6], [-2.5, -5.6], [-2.0, -3.4], [-2.2, -1.0], [-2.5, .6], [-2.45, 1.95, 1], [2.2, 1.85, 1], [2.4, .4], [2.35, -2.2], [2.75, -3.6], [3.35, -5.4], [3.4, -7.0], [3.0, -8.7], [2.2, -9.9]];
+  K.shape(P(jk), { wash: c.jacket, ink: null, n: 4, wc: 1 });
+  K.shape(P([[-1.9, -10.3], [-2.4, -9.3], [-2.65, -7.5], [-2.45, -5.5], [-1.95, -3.2], [-2.15, -1.0], [-2.45, .6], [-2.4, 1.95], [-1.5, 1.95], [-1.4, -1.0], [-1.2, -3.2], [-1.7, -5.5], [-1.9, -7.6], [-1.5, -9.6]]), { wash: c.jacketSh, ink: null, n: 3, wc: 1.2, ring: true, fill: HIM_WCFILL ? c.jacketDk : undefined });
   K.shape(P([[-.8, -10.8], [.6, -10.7], [1.4, -10.2], [.6, -9.9], [-.6, -10.2]]), { wash: c.jacketHi, op: 200, ink: null, n: 3 });
   K.line(P([[2.5, -3.5], [.8, -3.0], [-.6, -2.6]]), .3, c.jacketDk, { n: 3 }); K.line(P([[3.1, -6.6], [1.2, -5.6]]), .28, c.jacketDk, { n: 3 });
   K.line(P([[-1.95, -.3], [-2.3, 1.9]]), .3, c.jacketDk);   // back vent
@@ -895,7 +928,7 @@ function himTorsoSide(K, c, o, outfit) {
 //   body: dx, dy (in u; -dy = up), sq (squash), lean (torso, radians), tilt (head), nod (head drop, u), breath,
 //         aL / aR (his left / right arm swing, radians), handL / handR (relax|type|open|fist), screen (0..1 monitor light)
 //   boilKey: a stable id for its boil seeds (set it if characters come and go mid-shot).
-let HIM_N = 0;
+let HIM_N = 0, HIM_WCFILL = true, HIM_PROF = {};   // HIM_WCFILL: real watercolour fill on the biggest shadow masses (see STATUS for cost)
 function him(x, y, u, o = {}) {
   const id = o.boilKey ?? ('n' + (++HIM_N)), rs = part => boilSeed(`him ${id} ${part}`);
   const c = himPal(o.pal || 'human'), clean = (o.pal === 'swapped');
@@ -967,7 +1000,7 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
   const hipY = bust ? 10.35 : -15;
   K.cut = bust ? (-10.35 + (o.cut ?? 4.95)) * u : null;   // o.cut: how far below the collarbones the bust ends (u)
   // arm angles per view: [a1 (shoulder), a2 (elbow)] for his right (R) and left (L) arm
-  const A = view === 'front' ? { R: [-.17, .13], L: [.17, -.13] } : view === 'q' ? { R: [-.05, .16], L: [.02, .18] } : { R: [.06, .16], L: [-.02, .1] };
+  const A = view === 'front' ? { R: [-.2, .17], L: [.2, -.17] } : view === 'q' ? { R: [-.05, .16], L: [.02, .18] } : { R: [.06, .16], L: [-.02, .1] };
   const arm = (side, far) => {
     rs('arm' + side);
     // reach (0..1) raises his right arm toward the facing direction (screen left in the front view) and opens the hand
@@ -980,14 +1013,14 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
   const leg = (side, far, a1, a2, foot) => {
     rs('leg' + side);
     const [H, N, Ak] = himChain(R.hip[side], a1, 7.15, a2, 6.95);
-    himLeg(K, c, H, N, Ak, view === 'front' ? [3.3, 3.0, 2.15, 2.28, 1.8] : [3.5, 3.2, 2.2, 2.45, 1.75], { far, calf: view === 'side' ? -.25 : 0, heavy: view === 'front' ? (side === 'R' ? 1.2 : .85) : 1 });
+    himLeg(K, c, H, N, Ak, view === 'front' ? [3.45, 3.2, 2.3, 2.45, 1.88] : [3.9, 3.55, 2.4, 2.7, 1.85], { far, calf: view === 'side' ? -.25 : 0, heavy: view === 'front' ? (side === 'R' ? 1.2 : .85) : 1 });
     rs('shoe' + side); himShoe(K, c, [Ak[0], Ak[1] + .05], foot, far);
   };
   push(); translate(0, hipY * u);
   // legs: seat of the trousers first
   if (!bust) {
     if (view === 'front') {
-      rs('seat'); K.shape([[-2.9, -1.2], [2.9, -1.2], [3.0, .8], [0, 1.9], [-3.0, .8]], { wash: c.pants, ink: null, n: 2 });
+      rs('seat'); K.shape([[-3.0, -1.2], [3.0, -1.2], [3.2, .8], [0, 1.9], [-3.2, .8]], { wash: c.pants, ink: null, n: 2 });
       leg('R', false, -.035, .03, 'front'); leg('L', false, .05, -.03, 'front');
     } else if (view === 'q') { leg('L', true, .05, -.02, 'q'); leg('R', false, -.04, .02, 'q'); }
     else { leg('L', true, -.07, .06, 'side'); leg('R', false, .05, -.04, 'side'); }
@@ -1146,46 +1179,46 @@ function himLabel(txt, x, y, size = 22) { letter(txt, x, y, size, '#5A4650', { i
 LOOPS.him_sheet = t => {
   HIM_N = 0;
   boilSeed('him sheet bg');
-  paint(rectPts(20, 16, W - 40, 458, 3), { wash: '#F6DFC0', washOp: 120, ink: null });
-  paint(rectPts(1040, 24, 864, 442, 3), { wash: '#EFD3B0', washOp: 110, ink: null });
-  paint(rectPts(20, 484, W - 40, 318, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
-  paint(rectPts(20, 812, W - 40, 252, 3), { wash: '#F6DFC0', washOp: 120, ink: null });
-  // row 1: full figures (launch, then home)
-  const g = 455, u1 = 12;
-  [['front', 'launch', 'neutral', 105], ['q', 'launch', 'neutral', 315], ['side', 'launch', 'neutral', 520], ['front', 'home', 'tired', 730], ['side', 'home', 'tired', 935]].forEach(([v, out, e, x], i) => {
-    him(x, g, u1, { ...himFeel(e, t), view: v, outfit: out, boilKey: 'r1' + i, seed: .4 + i * .9 });
-    himLabel((out === 'home' ? 'home ' : '') + (v === 'q' ? '3/4' : v), x, 34, 19);
-  });
-  // row 1, right: the face at 2×, front and 3/4, and the band on his left wrist
-  himLabel('face 2×', 1395, 40, 19);
-  him(1268, 410, 46, { ...himFeel('neutral', t), pose: 'bust', cut: 1.1, view: 'front', blink: 0, boilKey: 'f2a' });
-  him(1600, 410, 46, { ...himFeel('smile', t), pose: 'bust', cut: 1.1, view: 'q', blink: 0, boilKey: 'f2b' });
-  himLabel('left wrist', 1815, 40, 19);
-  { const c = himPal('human'), u = 34, K2 = himKit(u, c, clamp(.28 + u / 100, .32, 1.7), u * .012, false);
-    boilSeed('him detail arm'); push(); translate(1800, 60);
-    K2.keep = p => 10 - p[1] + Math.sin(p[0] / 40) * 4;
+  paint(rectPts(16, 16, 888, 1048, 3), { wash: '#F6DFC0', washOp: 130, ink: null });
+  paint(rectPts(916, 16, 988, 352, 3), { wash: '#EFD3B0', washOp: 110, ink: null });
+  paint(rectPts(916, 380, 988, 256, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
+  paint(rectPts(916, 644, 988, 200, 3), { wash: '#F6DFC0', washOp: 110, ink: null });
+  paint(rectPts(916, 852, 988, 212, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
+  // main panel: standing, launch outfit, front and 3/4
+  him(235, 1048, 29, { ...himFeel('neutral', t), browIn: .3, view: 'front', boilKey: 'mf', seed: .4 });
+  him(665, 1048, 29, { ...himFeel('neutral', t), browIn: .3, view: 'q', boilKey: 'mq', seed: 1.3 });
+  himLabel('launch day · front', 235, 40, 21); himLabel('3/4', 665, 40, 21);
+  // the face at 2×, and the band on his left wrist
+  himLabel('face 2×', 1330, 36, 19);
+  him(1140, 334, 34, { ...himFeel('neutral', t), browIn: .3, pose: 'bust', cut: 1.0, view: 'front', blink: 0, boilKey: 'f2a' });
+  him(1500, 334, 34, { ...himFeel('smile', t), pose: 'bust', cut: 1.0, view: 'q', blink: 0, boilKey: 'f2b' });
+  himLabel('left wrist', 1810, 36, 19);
+  { const c = himPal('human'), u = 28, K2 = himKit(u, c, clamp(.28 + u / 100, .32, 1.7), u * .012, false);
+    boilSeed('him detail arm'); push(); translate(1800, 54);
+    K2.keep = p => 6 - p[1] + Math.sin(p[0] / 40) * 4;
     himArm(K2, c, { S: [-1.0, -4.0], E: [-.4, .8], W: [.75, 5.0], outfit: 'launch', hand: 'relax', thumb: 1, band: true });
     pop(); }
-  // row 2: expressions, large
+  // expressions
   [['focused', 'front', 'launch'], ['smile', 'q', 'launch'], ['tired', 'front', 'home'], ['panic', 'q', 'launch'], ['cry', 'q', 'home']].forEach(([e, v, out], i) => {
-    const x = 192 + i * 384;
-    him(x, 680, 24, { ...himFeel(e, t), pose: 'bust', view: v, outfit: out, boilKey: 'e' + i, seed: .4 + i * .7 });
-    himLabel(e, x, 500, 19);
+    const x = 1012 + i * 198;
+    him(x, 548, 15, { ...himFeel(e, t), pose: 'bust', view: v, outfit: out, boilKey: 'e' + i, seed: .4 + i * .7 });
+    himLabel(e, x, 396, 18);
   });
-  // row 3: the desk pose, more expressions, palettes
-  himDeskProps(140, 1058, 9.6, { part: 'back' });
-  him(140, 1058, 9.6, { ...himFeel('focused', t), pose: 'desk', boilKey: 'desk', type: 1, seed: .5 });
-  himDeskProps(140, 1058, 9.6, { part: 'front' });
-  himLabel('desk', 300, 830, 19);
-  [['anxious', 'front', 'launch'], ['blank', 'q', 'home'], ['laugh', 'q', 'launch']].forEach(([e, v, out], i) => {
-    const x = 540 + i * 230;
-    him(x, 978, 17, { ...himFeel(e, t), pose: 'bust', view: v, outfit: out, boilKey: 'e3' + i, seed: 1.3 + i * .7 });
-    himLabel(e, x, 830, 19);
+  [['anxious', 'front', 'launch', 'human'], ['blank', 'q', 'home', 'human'], ['laugh', 'q', 'launch', 'human'], ['human', 'q', 'launch', 'human'], ['drained', 'q', 'home', 'drained'], ['swapped', 'q', 'launch', 'swapped']].forEach(([e, v, out, pal], i) => {
+    const x = 1000 + i * 165, emo = pal === 'swapped' ? 'blank' : pal === 'drained' ? 'tired' : e === 'human' ? 'smile' : e;
+    him(x, 772, 12.5, { ...himFeel(emo, t), pose: 'bust', view: v, outfit: out, pal, boilKey: 'e2' + i, seed: 1.3 + i * .7 });
+    himLabel(e, x, 660, 18);
   });
-  [['human', 1290, 'smile'], ['drained', 1520, 'tired'], ['swapped', 1750, 'blank']].forEach(([p, x, e], i) => {
-    him(x, 978, 16, { ...himFeel(e, t), pose: 'bust', view: 'q', pal: p, outfit: i === 1 ? 'home' : 'launch', boilKey: 'p' + i, seed: .9 + i });
-    himLabel(p, x, 830, 19);
+  // small figures: profile, home outfit, reaching, the desk pose
+  const g = 1036, u4 = 5.4;
+  [['side', 'launch', 'neutral', 975, {}], ['front', 'home', 'tired', 1090, {}], ['side', 'home', 'tired', 1200, {}], ['side', 'home', 'anxious', 1320, { reach: 1 }]].forEach(([v, out, e, x, ex], i) => {
+    him(x, g, u4, { ...himFeel(e, t), view: v, outfit: out, boilKey: 'r4' + i, seed: .4 + i * .9, ...ex });
+    himLabel(['side', 'home', 'home side', 'reach'][i], x, 1062, 17);
   });
+  himDeskProps(1610, g, 7, { part: 'back' });
+  him(1610, g, 7, { ...himFeel('focused', t), pose: 'desk', boilKey: 'desk', type: 1, seed: .5 });
+  himDeskProps(1610, g, 7, { part: 'front' });
+  himLabel('desk', 1640, 1062, 17);
 };
 LOOPS.him_sheet.len = 4;
 LOOPS.him_emotions = t => {
@@ -1195,11 +1228,27 @@ LOOPS.him_emotions = t => {
   him(960, 760, 62, { ...himEmotions(t, keys), pose: 'bust', view: 'q', boilKey: 'emo' });
 };
 LOOPS.him_emotions.len = 6;
+// The standing views at the reference's scale (head ≈ 375 px from hair top to chin) for the comparison sheet;
+// crop the frame at x = 400..1585 for the front view and 1585.. for the 3/4 view (render with --stills).
+LOOPS.him_vs_ref = t => {
+  HIM_N = 0;
+  const face = { ...himFeel('neutral', 0), browIn: .35, lookX: .35, mouth: 'closed', blink: 0, breath: 0 };
+  him(560, 95 + 4.3 * 55 + 13.93 * 55 + 15 * 55, 55, { ...face, view: 'front', boilKey: 'vf' });
+};
+LOOPS.him_vs_ref.len = 1;
+LOOPS.him_prof = t => { HIM_N = 0; HIM_PROF = [{}, { nohatch: 1 }, { nowc: 1 }, { nohatch: 1, nowc: 1 }][Math.round(t * 10)] || {};
+  him(960, 2000, 55, { ...himFeel('neutral', 0), view: 'front', boilKey: 'vf' }); HIM_PROF = {}; };
+LOOPS.him_prof.len = 1;
+LOOPS.him_vs_ref_q = t => {
+  HIM_N = 0;
+  const face = { ...himFeel('neutral', 0), browIn: .35, lookX: .2, mouth: 'closed', blink: 0, breath: 0 };
+  him(560, 95 + 4.3 * 55 + 13.93 * 55 + 15 * 55, 55, { ...face, view: 'q', boilKey: 'vq' });
+};
+LOOPS.him_vs_ref_q.len = 1;
 LOOPS.him_test = t => {
   HIM_N = 0;
-  him(420, 700, 46, { ...himFeel('neutral', t), pose: 'bust', view: 'front', blink: 0, boilKey: 'a' });
-  him(1180, 700, 46, { ...himFeel('smile', t), pose: 'bust', view: 'q', blink: 0, boilKey: 'b' });
-  him(1700, 1060, 32, { ...himFeel('neutral', t), view: 'side', blink: 0, boilKey: 'c' });
+  him(480, 900, 50, { ...himFeel('neutral', t), pose: 'bust', cut: 7, view: 'front', blink: 0, boilKey: 'a' });
+  him(1400, 900, 50, { ...himFeel('neutral', t), pose: 'bust', cut: 7, view: 'q', blink: 0, boilKey: 'b' });
 };
 LOOPS.him_test.len = 1;
 
@@ -1215,3 +1264,7 @@ LOOPS.him_perf_desk = t => { HIM_N = 0; himDeskProps(700, 1040, 40, { part: 'bac
 LOOPS.him_perf_desk.len = 2;
 LOOPS.him_perf_bust = t => { HIM_N = 0; him(960, 760, 62, { ...himFeel('smile', t), pose: 'bust', view: 'q', boilKey: 'perf' }); };
 LOOPS.him_perf_bust.len = 2;
+LOOPS.him_perf_fill = t => { HIM_N = 0; HIM_WCFILL = false; him(960, 1040, 30, { ...himFeel('smile', t), view: 'front', boilKey: 'perf' }); HIM_WCFILL = true; };   // without the fill, for comparison
+LOOPS.him_perf_fill.len = 2;
+LOOPS.him_perf_front = t => { HIM_N = 0; him(960, 1040, 30, { ...himFeel('smile', t), view: 'front', boilKey: 'perf' }); };
+LOOPS.him_perf_front.len = 2;

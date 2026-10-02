@@ -4,6 +4,21 @@
 `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
+v3 (user reference, 2026-10-02): build, hair, glasses, outfit and colours follow the user's reference image (kept out
+of the repo; comparison in `output/sheets/char_him_vs_ref.jpg`, git-ignored). The face stays our original anime
+construction (only general traits: square jaw, straight thick brows, serious look).
+- build: `HIM_BUILD` widens the torso from the waist up (front ×1.45, 3/4 ×1.42, profile depth ×1.18) → massive
+  deltoids/chest, tapered waist; thick neck (now visible above the open collar), high trapezius; sleeves, forearms,
+  thighs and hands scaled up; strain lines across the biceps, gloss on the shoulder caps
+- palette sampled from the reference: blazer #2B48A3 / #1C3486 / #0F2160, shirt #F6F5F2 with cool #C9CEDD shadows,
+  hair #22212D / #14141C, skin #F2C8B0 / #D99E88
+- hair: heavier, longer pointed bangs over the brows, more volume on top, tighter sides; thinner metal half-rim frames
+- watercolour (`wc` option of the kit's shape()): each big mass gets a second translucent wash offset and shrunk (soft
+  wet edge), a pigment-pooling ring inside its edge, a lighter bloom on base washes, fine-pencil granulation in shadow
+  masses, blazer blue bleeding onto the shirt along the lapels, and (`HIM_WCFILL`, on by default) a real p5.brush
+  watercolour `fill` on the biggest blazer shadow mass. Fill cost: ≈ +100 ms per figure (front u = 30: 193–323 ms
+  without, 284–477 ms with), so it stays on; the speech/podium pose was dropped at the user's request.
+
 Detail pass (v2, after review "detail too low"): anime-illustration detail at bust/desk scale, with levels of detail
 so small figures stay cheap (`K.det` from ~13 px per head-unit, `K.det2` from ~26 px):
 - eyes: tapered heavy upper lash with wing + two lash flicks, double-eyelid crease, lower lash hints, inner corner;
@@ -21,7 +36,9 @@ so small figures stay cheap (`K.det` from ~13 px per head-unit, `K.det2` from ~2
 - line hierarchy: silhouettes/contours in 'ink', every thin inner stroke automatically in 'inkfine'; light HB hatch in
   shadows (jacket, shirt, trousers, forehead)
 
-Model sheet: `output/sheets/char_him_design.jpg` (render: `node render.mjs --soft-gl --loop=him_sheet --sheet=0 --cols=1 --w=1920 --out=out/him_sheet.jpg`).
+Model sheet: `output/sheets/char_him_design.jpg` (main panel: standing front and 3/4; then the face at 2×, expressions,
+palettes, small side/home/reach/desk figures). Comparison: `LOOPS.him_vs_ref` / `him_vs_ref_q` at the reference's scale.
+Old model sheet (render: `node render.mjs --soft-gl --loop=him_sheet --sheet=0 --cols=1 --w=1920 --out=out/him_sheet.jpg`).
 
 ## API
 
@@ -34,7 +51,7 @@ himPal(name)                   // 'human' | 'drained' | 'swapped' colour sets
 HIM_EMO, HIM_LAST              // emotion table; after a desk draw HIM_LAST.handL/handR = keyboard contact points (screen px)
 ```
 
-**Size:** standing ≈ 31.5u (soles to hair top); head 4.4u drawn ×1.15 (`HIM_HS`); shoulders ≈ 9u wide.
+**Size:** standing ≈ 33u (soles to hair top); head 4.4u drawn ×1.15 (`HIM_HS`); shoulders ≈ 13u wide (deltoids).
 Medium shot u ≈ 14–20, full figure in frame u ≈ 28–32, close-up: `pose: 'bust'` with u ≈ 40–80 (`cut`: how far
 below the collarbones the bust ends, default 4.95u; ~1.1 for a head-and-collar close-up).
 
@@ -75,16 +92,20 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 | back / qback views | TODO | | | |
 
 ## Cost
-After the detail pass, measured on this CPU-only box (SwiftShader, load avg ≈ 3): standing figure u = 30 ≈ 140–640
-ms/frame (first frame includes warm-up; typical 170–330), desk pose u = 40 incl. chair and props ≈ 150–670 (typical
-150–350), bust u = 62 ≈ 155–410. Under heavy load from other renders every engine frame (its own `load` test too)
-slows to seconds; judge cost with `--loop=him_perf`, `him_perf_desk`, `him_perf_bust` on a quiet machine. The sheet
-(~20 characters) takes ~9–13 s.
+v3 with the fill on, measured on this CPU-only box (SwiftShader, load avg ≈ 3–4), excluding the first warm-up frame:
+standing front u = 30 ≈ 280–480 ms/frame, 3/4 ≈ 180–300 (fill off) / ≈ +100 with it, bust u = 62 ≈ 150–440, desk u = 40
+incl. chair and props ≈ 170–360. All under the 800 ms budget. A figure at u = 55 (the comparison scale) ≈ 350 ms;
+`--stills` reports ~10 s there because it includes page warm-up and PNG encoding. Loops for timing: `him_perf`
+(3/4), `him_perf_front`, `him_perf_fill` (front without the fill), `him_perf_bust`, `him_perf_desk`; `him_prof` toggles
+`HIM_PROF.nohatch` / `nowc` to profile. The sheet (~25 characters) takes ~8–14 s.
 
 ## Known weaknesses
 - Hands: profile poses are silhouettes with nail/knuckle hints, not fully articulated fingers; fine at bust/desk scale,
   plain in an extreme hand close-up.
-- Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head.
+- Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head; the top
+  is spikier than the reference's rounder messy volume.
+- The arms are big uniform tubes (no separate bicep/forearm muscle silhouettes); the reference's gesture pose is not built.
+- The fill's bleed can leave a faint pale halo where the waist meets the background.
 - Arm angles are free, but there is no foreshortened arm toward the camera (front-view reach is sideways).
 - The torso doesn't twist: lean rotates the whole upper body about the hips; the head tilts about the neck.
 - Mouth shapes in profile are simplified (open/closed/smile/pucker).
