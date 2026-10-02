@@ -44,6 +44,7 @@ class SungStyle:
     vocoder_db: float | None = None   # vocoder layer level vs the voice
     choir_voices: int = 1
     lowpass_hz: float | None = None
+    unvoiced_db: float = 0.0          # gain on unvoiced frames (consonants) after synthesis
     level_dbfs: float = -22.0         # active RMS of a lead line in the stem
 
 
@@ -54,7 +55,8 @@ SUNG = {
                     formant=1.03, tilt_db_oct=1.5, vocoder_db=-12.0),
     "choir": SungStyle(CHOIR, TimingStyle(cons_scale=0.9, release=0.06, release_frac=0.15),
                        vowel_level=8.2, onset_boost=0.0, dynamics="choir", breath=0.65,
-                       breath_from=900.0, tilt_db_oct=-1.5, choir_voices=3, lowpass_hz=7500.0),
+                       breath_from=900.0, tilt_db_oct=-1.5, choir_voices=3, lowpass_hz=7500.0,
+                       unvoiced_db=-9.0),
 }
 SUNG["ai_her"] = SUNG["ai"]
 

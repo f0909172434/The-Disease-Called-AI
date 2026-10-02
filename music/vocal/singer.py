@@ -121,6 +121,12 @@ def world_stage(r: dict, style: SungStyle, seed: int, detune: float) -> np.ndarr
     else:
         y = wv.synthesize(f0t, sp, ap)
 
+    if style.unvoiced_db:
+        # per-sample gain from the planned voicing (5 ms frames), smoothed over ~10 ms
+        g_fr = np.where(wv.fit(con.voiced.astype(float), n) > 0.5, 1.0, 10 ** (style.unvoiced_db / 20))
+        g = np.interp(np.arange(len(y)), np.arange(n) * wv.HOP, g_fr)
+        k = int(0.010 * wv.FS)
+        y = y * np.convolve(g, np.ones(k) / k, mode="same")
     if style.vocoder_db is not None:
         voc = wv.vocoder_layer(f0t, sp, len(y), seed=seed)
         rv, ry = np.sqrt(np.mean(voc ** 2) + 1e-12), np.sqrt(np.mean(y ** 2) + 1e-12)
