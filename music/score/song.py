@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -975,6 +976,46 @@ def write_midi(path):
     mid.save(path)
 
 
+# Whole-song transposition, applied once to the finished score (all pitched tracks, the vocal lines,
+# chord symbols and key names; drums and FX keep their pitches). -2: D minor -> C minor, final chorus
+# E minor -> D minor, so the male lead tops out at F4 and the AI at D#5 (harmonies A5).
+SONG_TRANSPOSE = -2
+UNPITCHED = {"kick", "snare", "clap", "hat_closed", "hat_open", "ride", "crash", "toms"}
+_PC_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+
+
+def _shift_name(name: str, k: int) -> str:
+    """'F#m7' -> transposed root with flat spelling; 'D minor' -> 'C minor'."""
+    m = re.match(r"([A-G])([#b]?)(.*)", name)
+    if not m:
+        return name
+    pc = ("C D EF G A B".index(m.group(1)) + {"#": 1, "b": -1, "": 0}[m.group(2)] + k) % 12
+    return _PC_NAMES[pc] + m.group(3)
+
+
+def apply_transpose(k: int, meta: dict):
+    if not k:
+        return
+    for tr in TRACKS.values():
+        if tr["instrument"] in UNPITCHED:
+            continue
+        for n in tr["notes"]:
+            if "p" in n:
+                n["p"] += k
+            if n.get("chord"):
+                n["chord"] = [q + k for q in n["chord"]]
+    for ln in LINES:
+        for syl in ln.get("syllables", []):
+            for n in syl["notes"]:
+                n["p"] += k
+        if ln.get("key"):
+            ln["key"] = _shift_name(ln["key"], k)
+    for b in list(CHORDS):
+        CHORDS[b] = _shift_name(CHORDS[b], k)
+    meta["key"], meta["final_key"] = _shift_name(meta["key"], k), _shift_name(meta["final_key"], k)
+    meta["transposed_semitones"] = k
+
+
 def main():
     check_lines()
     os.makedirs(BUILD, exist_ok=True)
@@ -985,6 +1026,7 @@ def main():
                      "end_tb": round(END_TB, 4), "start": round(sec(592), 4), "end": END_TIME})
     meta = {"title": "病名為AI / The Disease Called AI", "bpm": BPM, "sr": 48000, "beats_per_bar": 4,
             "grid_end_tb": 592, "end_time": END_TIME, "key": "D minor", "final_key": "E minor"}
+    apply_transpose(SONG_TRANSPOSE, meta)
     for tr in TRACKS.values():
         tr["notes"].sort(key=lambda n: n["tb"])
     arrangement = {"meta": meta, "sections": sections,
