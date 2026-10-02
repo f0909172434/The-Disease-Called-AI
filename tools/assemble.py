@@ -1,6 +1,6 @@
 """Mux the rendered picture with the master and encode the deliverables.
 
-    python3 tools/assemble.py --video output/video_noaudio.mp4 [--audio music/build/master.wav]
+    python3 tools/assemble.py --video output/video.mp4 [--audio music/build/master.wav]
 
 Writes
     output/病名為AI_The_Disease_Called_AI.mp4      two-pass H.264 sized to stay under GitHub's 100 MB limit
@@ -31,7 +31,7 @@ def run(cmd):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--video", default=os.path.join(ROOT, "output", "video_noaudio.mp4"))
+    ap.add_argument("--video", default=os.path.join(ROOT, "output", "video.mp4"))
     ap.add_argument("--audio", default=os.path.join(ROOT, "music", "build", "master.wav"))
     ap.add_argument("--duration", type=float, default=215.0)
     ap.add_argument("--max-mb", type=float, default=95.0)
