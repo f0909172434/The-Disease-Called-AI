@@ -77,11 +77,13 @@ namespace Ourender {
     /// OpenUtau's log (Serilog) to a file; warnings and errors are also kept for the report.
     sealed class LogSink : Serilog.Core.ILogEventSink {
         readonly StreamWriter w;
+        // expected on a headless CPU build: no GPU probe, no classic-UTAU builtin plugin dll
+        static bool Noise(string m) => m.Contains("[CUDA DETECTOR]") || m.Contains("OpenUtau.Plugin.Builtin.dll");
         public LogSink(string path) { w = new StreamWriter(path, append: true, Encoding.UTF8) { AutoFlush = true }; }
         public void Emit(Serilog.Events.LogEvent e) {
             var msg = e.RenderMessage(CultureInfo.InvariantCulture);
             lock (w) w.WriteLine($"{e.Timestamp:O} [{e.Level}] {msg}{(e.Exception != null ? " :: " + e.Exception.Message : "")}");
-            if (e.Level >= Serilog.Events.LogEventLevel.Warning) {
+            if (e.Level >= Serilog.Events.LogEventLevel.Warning && !Noise(msg)) {
                 lock (Sink.Inst.Warnings) Sink.Inst.Warnings.Add(msg + (e.Exception != null ? " :: " + e.Exception.Message : ""));
             }
         }
@@ -392,6 +394,12 @@ namespace Ourender {
                 ?? throw new Exception($"{part.name}: track has no renderer");
             foreach (var phrase in phrases) {
                 var t = Stopwatch.StartNew();
+                // OpenUtau keeps a 16-bit copy of every rendered phrase; reading that back would
+                // make a second render differ (quantised) from the first. The tensor cache below
+                // it holds the exact model outputs, so drop the phrase copy and go through it.
+                foreach (var f in Directory.GetFiles(PathManager.Inst.CachePath, $"ds-{phrase.hash:x16}-*.wav")) {
+                    File.Delete(f);
+                }
                 var task = renderer.Render(phrase, new Progress(phrase.phones.Length), part.trackNo, cts, false);
                 // the renderer runs on the thread pool; keep pumping in case it posts back
                 ui.PumpUntil(() => task.IsCompleted, TimeSpan.FromMinutes(30));

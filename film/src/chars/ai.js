@@ -239,10 +239,10 @@ const AI_PROFILE = [[-.2, -.3], [.55, -.62], [.82, -.3], [.88, .0], [.88, .22], 
 // curl: how far the tips hook outward; zk / zb: how flat the mass is front to back and how far behind the neck it hangs;
 // sweepL / sweepR: sideways drift of the tips on each side (a pose or the wind).
 const AI_HAIR = {
-  chibi: { R: [[0, 1.08], [.45, 1.12], [.9, 1.3], [1.4, 1.5], [1.85, 1.56], [2.3, 1.42]], Rs: [[-.5, 1.04], [.3, 1.0], [.8, .97], [1.3, 1.05], [2, 1.12]],
-    len: 2.35, side: 1.55, grad: [.5, 2.1], wl: 1.3, amp: .17, wb: .56, ws: .33, nb: 7, curl: .15, zk: .62, zb: .3 },
-  full:  { R: [[0, 1.08], [.8, 1.22], [1.8, 1.45], [3, 1.62], [4.2, 1.66], [5, 1.5]], Rs: [[-.5, 1.04], [.3, 1.0], [.9, .98], [1.6, 1.1], [3, 1.22]],
-    len: 5.5, side: 2.8, grad: [.75, 3.9], wl: 1.8, amp: .2, wb: .62, ws: .34, nb: 8, curl: .24, zk: .55, zb: .35, wp: 1.3 },
+  chibi: { R: [[0, 1.06], [.45, 1.1], [.9, 1.28], [1.4, 1.46], [1.85, 1.46], [2.3, 1.22]], Rs: [[-.5, 1.04], [.3, 1.0], [.8, .97], [1.3, 1.05], [2, 1.12]],
+    len: 2.4, side: 1.55, grad: [.5, 2.1], gradS: [.35, 1.7], wl: 1.3, amp: .17, wb: .56, ws: .33, nb: 7, curl: .21, zk: .62, zb: .3 },
+  full:  { R: [[0, 1.08], [.8, 1.22], [1.8, 1.45], [3, 1.62], [4.4, 1.68], [6, 1.45]], Rs: [[-.5, 1.04], [.3, 1.0], [.9, .98], [1.6, 1.1], [3, 1.22]],
+    len: 6.1, side: 2.8, grad: [.75, 4.2], gradS: [.45, 2.7], wl: 1.9, amp: .15, wb: .62, ws: .34, nb: 8, curl: .26, zk: .55, zb: .35, wp: 1.5 },
 };
 // The bangs, painted in this order: [root x, root y, tip x, tip y, width, bow (outward arc), S-curve], front-view head
 // units. Two side-swept locks each side (their inner edges frame the forehead), then a central cluster of pointed locks
@@ -340,7 +340,7 @@ function aiLocks(hd) {
   for (const s of [-1, 1]) {
     for (let j = 0; j < HF.nb; j++) {
       const key = j * 2 + (s > 0 ? 1 : 0) + 1, h = i => hash(key * 7.31 + i * 1.97);
-      out.push({ id: 'b' + key, s, phi: 1.42 + 1.66 * Math.pow(j / (HF.nb - 1), 1.1), y0: -.62 + .55 * h(1), y1: (s < 0 ? HF.lenL : HF.lenR) * (.8 + .2 * h(2)), sp: .8 + .34 * h(3),
+      out.push({ id: 'b' + key, s, phi: 1.42 + 1.66 * Math.pow(j / (HF.nb - 1), 1.1), y0: -.62 + .55 * h(1), y1: (s < 0 ? HF.lenL : HF.lenR) * (.72 + .12 * j / (HF.nb - 1) + .16 * h(2)), sp: .8 + .34 * h(3),
         w: HF.wb * (.7 + .6 * h(4)), amp: HF.amp * (.75 + .5 * h(5)), ph: 1.5 * j + 1.4 * h(6) + (s > 0 ? 2 : 0), curl: HF.curl * (.6 + .7 * h(7)) });
     }
     // face-framing locks: a slim one along the cheek, then two fuller ones over the front of the shoulder
@@ -362,14 +362,14 @@ function aiPaintLock(hd, L) {
   const C = L.p2.map(p => hd.Hh(p[0], p[1])), n = C.length;
   const v0 = L.side ? .14 : .32, Wd = C.map((_, i) => { const v = i / (n - 1); return L.w * k * (v < v0 ? .35 + .65 * v / v0 : 1 - .97 * Math.pow(Math.max(0, (v - .5) / .5), 1.5)); });
   const dk = clamp(-L.d * .5) * .22 + (L.side ? 0 : .06), tone = c => mixCol(c, P.hair0, dk);
-  const ya = L.y0, yb = L.y1, G = HF.grad, washes = [[0, tone(mixCol(P.hair1, P.hair0, .25))]];
+  const ya = L.y0, yb = L.y1, G = L.side ? HF.gradS || HF.grad : HF.grad, washes = [[0, tone(mixCol(P.hair1, P.hair0, .25))]];
   for (const g of [.08, .36, .64]) {
-    const yt = lerp(G[0], G[1], g), f = (yt - ya) / (yb - ya);
-    if (f > .06 && f < .9) washes.push([f, tone(aiHairAt(HF, yt + (G[1] - G[0]) * .26))]);
+    const yt = lerp(G[0], G[1], g), f = (yt - ya) / (yb - ya) + (hash(g * 13 + L.phi * 7 + L.s) - .5) * .12;
+    if (f > .06 && f < .9) washes.push([f, tone(aiHairAt({ grad: G }, yt + (G[1] - G[0]) * .26))]);
   }
   const big = S.u > 20;
   const outerL = L.s < 0 || hd.view === 'side';   // the edge toward the silhouette gets the full line
-  aiLock(C, Wd, washes, { seed: L.id.length * 3 + L.s + L.phi, inkFrom: L.side ? .18 : outerL ? .3 : .55, inkFromR: L.side ? .18 : outerL ? .55 : .3, sw: S.sw * (L.lead ? .62 : .52), root: L.side ? [.22, tone(P.hair0), 100] : null,
+  aiLock(C, Wd, washes, { seed: L.id.length * 3 + L.s + L.phi, inkFrom: L.side ? .18 : outerL ? .3 : .55, inkFromR: L.side ? .18 : outerL ? .55 : .3, sw: S.sw * (L.lead ? .62 : .56), root: L.side ? [.22, tone(P.hair0), 100] : null,
     shade: big ? tone(P.hair0) : null, shadeOp: 120, shadeA: .12, shadeB: .75, shadeL: L.s < 0 && !L.side,
     hi: big && L.side ? mixCol(P.hair2, P.hair4, .5) : null, strand: big && L.side ? mixCol(P.hairInk, P.hair1, .45) : null });
 }
@@ -520,10 +520,11 @@ function aiHeadFront(hd, fins) {
   rs('cap'); aiCap(hd);
   const eyes = aiFace(hd);
   for (const L of front) if (!L.side) { rs('lock ' + L.id); aiPaintLock(hd, L); }
-  rs('fins'); fins('near');
   aiBangs(hd);
   if (hd.onBand) hd.onBand();   // the headdress sits on the crown, its ends tucked under the face-framing locks
-  for (const L of front) if (L.side) { rs('lock ' + L.id); aiPaintLock(hd, L); }
+  for (const L of front) if (L.side && !L.lead) { rs('lock ' + L.id); aiPaintLock(hd, L); }
+  rs('fins'); fins('near');   // the fins sit over the side hair, their roots under the slim locks along the cheeks
+  for (const L of front) if (L.lead) { rs('lock ' + L.id); aiPaintLock(hd, L); }
   rs('shine'); aiShine(hd);
   rs('fly'); if (S.u > 12) aiFlyaways(hd);
   rs('brows');
@@ -1017,8 +1018,9 @@ function aiChibi(o, view, A, tt) {
   const KH = 2.545, HY = -7.19, hdx = (o.headDx || 0) + (q ? .12 : 0), hv = o.headDy || 0;
   const hpt = (a, b, tl) => { const r = aiRot([a * KH + hdx, HY + b * KH + hv], neck, tl); return [r[0] * u, r[1] * u]; };
   const H = (a, b) => hpt(a, b, tilt), hd = aiHD(H, (a, b) => hpt(a, b, tilt * aiHangW(b)), 'chibi', view, A, KH * u);
-  // the measured head pieces (frill, band, bow, fins, ahoge; reference u) through the same yaw, on a sphere of radius zr
-  const HH = (pts, zr = 1.25) => pts.map(p => { const a = p[0] / KH, b = (p[1] - HY) / KH, z = Math.sqrt(Math.max(0, zr * zr - a * a - b * b)), h = H(a * hd.c + z * hd.s, b); return p[2] ? [h[0], h[1], 1] : h; });
+  // the measured head pieces (frill, band, bow, fins, ahoge; reference u) through the same yaw (they sit near the ear
+  // plane: z from a small sphere of radius zr)
+  const HH = (pts, zr = .5) => pts.map(p => { const a = p[0] / KH, b = (p[1] - HY) / KH, z = Math.sqrt(Math.max(0, zr * zr - a * a - b * b)), h = H(a * hd.c + z * hd.s, b); return p[2] ? [h[0], h[1], 1] : h; });
   // tail (behind everything), swaying from its root
   rs('tail');
   const tr = R.p.tailRoot, ts = (o.tailK ?? 1) * .14 * Math.sin(tt * TAU * .45 + (o.tail || 0)), tm = q ? -1 : 1;
