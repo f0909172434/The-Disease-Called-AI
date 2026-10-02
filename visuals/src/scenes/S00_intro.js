@@ -66,13 +66,13 @@ export default {
     this.sentSprite = text.sprite(sent, { role: 'human', size: 120, color: C.HUMAN_AMBER, jitter: 0.6, seed: 7 }, { height: 0.13, anchor: 'left' });
     this.ui.add(this.sentSprite);
     this.sentW = this.sentSprite.textWorldWidth;
-    this.herBubble = new K.BubbleOutline(ctx, { w: this.sentW + 0.13, h: 0.165, r: 0.07, tail: 'br', color: 'HUMAN_AMBER', width: 1.4, glow: 5 });
+    this.herBubble = new K.BubbleOutline(ctx, { w: this.sentW + 0.13, h: 0.165, r: 0.07, tail: 'br', color: 'HUMAN_AMBER', width: 1.4, glow: 5, depth: 0.026, glass: { body: 0.3 } });
     this.ui.add(this.herBubble);
     // "Always." AI bubble
     this.always = text.sprite('Always.', { role: 'ai', size: 100, color: C.AI_CYAN }, { height: 0.115, anchor: 'left' });
     this.ui.add(this.always);
     this.alwaysW = this.always.textWorldWidth;
-    this.aiBubble = new K.BubbleOutline(ctx, { w: this.alwaysW + 0.2, h: 0.165, r: 0.07, tail: 'bl', color: 'AI_CYAN', width: 1.6, glow: 6 });
+    this.aiBubble = new K.BubbleOutline(ctx, { w: this.alwaysW + 0.2, h: 0.165, r: 0.07, tail: 'bl', color: 'AI_CYAN', width: 1.6, glow: 6, depth: 0.026 });
     this.ui.add(this.aiBubble);
     this.aiCaret = new THREE.Mesh(new THREE.PlaneGeometry(0.03, 0.07), new THREE.MeshBasicMaterial({ color: col('AI_CYAN'), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
     this.ui.add(this.aiCaret);
@@ -215,16 +215,18 @@ export default {
     this.herBubble.reveal = clamp((t - this.sendT - 0.08) / 0.35);
     this.herBubble.opacity = t >= this.sendT ? 1 : 0;
     this.herBubble.brightness = 0.55;
+    this.herBubble.updateGlass(t, { brightness: 1 });
     this.always.opacity = spoke ? 1 : 0;
     this.always.position.set(colL + 0.1, rowY1 + 0.012, 0);
     this.always.brightness = 1 + 1.5 * flashK;
     this.aiBubble.opacity = spoke ? 1 : 0;
     this.aiBubble.position.set(colL + (this.alwaysW + 0.2) / 2, rowY1 + 0.036, 0);
     this.aiBubble.brightness = 0.9 + 2 * flashK;
+    this.aiBubble.updateGlass(t, { brightness: 1 + 1.5 * flashK });
     const caretOn = spoke && (Math.floor((t - this.alwaysT) * 2.4) % 2 === 0) && t - this.alwaysT < 2.2;
     this.aiCaret.visible = caretOn;
     this.aiCaret.position.set(colL + 0.1 + this.alwaysW + 0.03, rowY1 + 0.04, 0);
-    this.haze.material.uniforms.k.value = spoke ? 0.05 + 0.18 * flashK * flashK : 0.012 * curB;
+    this.haze.material.uniforms.k.value = spoke ? 0.03 + 0.18 * flashK * flashK : 0.008 * curB;
     this.haze.material.uniforms.k2.value = spoke ? 2.5 * burst : 0;
     this.haze.visible = spoke && t < this.b8 + 0.2;
     this.haze.material.uniforms.c.value.copy(col('AI_CYAN')).lerp(col('AI_WHITE'), Math.pow(flashK, 2));

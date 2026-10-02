@@ -13,3 +13,4 @@ export { HUD, pqrst } from './HUD.js';
 export { DustParticles, FeverStream, TokenConfetti, NotificationSnow } from './Particles.js';
 export { KineticText } from './KineticText.js';
 export { TypedText, ScreenCursor, BubbleOutline, roundRectPoints, bubbleTexture } from './Typing.js';
+export { GlassSlab } from './Glass.js';

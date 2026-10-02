@@ -8,8 +8,11 @@
 //   glow (array of 3 overrides 0..1, or null)   color (THREE.Color glow)   freeze (0..1: stop + tint)
 //   freezeColor (THREE.Color, default FEVER)    vanish ([v0,v1,v2] 0..1: pop + shrink away)
 //   brightness   opacity   fog (0..1 breath fog on the glass: softens + whitens)
+//   slabOpacity (0..1, with the { slab: true } option: the glass pill behind the pearls)
+// Option slab: true adds a thick glass pill (kit/Glass.js) behind the dots, like a 3D chat bubble.
 import * as THREE from 'three';
 import { col } from '../core/palette.js';
+import { GlassSlab } from './Glass.js';
 
 const VERT = /* glsl */`
 attribute vec3 aCenter;
@@ -64,7 +67,7 @@ void main() {
 }`;
 
 export class TypingDots extends THREE.Group {
-  constructor(ctx, { radius = 0.18, spacing = 0.52 } = {}) {
+  constructor(ctx, { radius = 0.18, spacing = 0.52, slab = false } = {}) {
     super();
     this.ctx = ctx;
     const geo = new THREE.InstancedBufferGeometry();
@@ -86,7 +89,13 @@ export class TypingDots extends THREE.Group {
     this.mesh = new THREE.Mesh(geo, this.material);
     this.mesh.frustumCulled = false;
     this.add(this.mesh);
-    Object.assign(this, { phase: 0, glow: null, freeze: 0, vanish: [0, 0, 0], brightness: 1, opacity: 1, fog: 0, radius, spacing });
+    if (slab) {
+      this.slab = new GlassSlab(ctx, { color: 'AI_CYAN', segments: 8 });
+      this.slab.position.z = -radius * 0.9;
+      this.slab.renderOrder = -1;
+      this.add(this.slab);
+    }
+    Object.assign(this, { phase: 0, glow: null, freeze: 0, vanish: [0, 0, 0], brightness: 1, opacity: 1, fog: 0, slabOpacity: 1, radius, spacing });
     this.color = this.material.uniforms.uGlow.value;
     this.freezeColor = this.material.uniforms.uFreezeC.value;
     this._frozenPhase = null;
@@ -101,7 +110,7 @@ export class TypingDots extends THREE.Group {
   }
 
   update(t, states = {}) {
-    Object.assign(this, { phase: 0, glow: null, freeze: 0, vanish: [0, 0, 0], brightness: 1, opacity: 1, fog: 0 }, states);   // per-frame defaults (no carry-over)
+    Object.assign(this, { phase: 0, glow: null, freeze: 0, vanish: [0, 0, 0], brightness: 1, opacity: 1, fog: 0, slabOpacity: 1 }, states);   // per-frame defaults (no carry-over)
     const u = this.material.uniforms;
     const g = this.glow || [0, 1, 2].map((i) => TypingDots.glowAt(this.phase, i));
     u.uG.value.set(g[0], g[1], g[2]);
@@ -115,6 +124,15 @@ export class TypingDots extends THREE.Group {
     u.uBright.value = this.brightness;
     u.uOpacity.value = this.opacity;
     u.uFog.value = this.fog;
+    if (this.slab) {
+      const h = this.radius * 3.2, w = this.spacing * 2 + this.radius * 3.6;
+      const glowSum = (g[0] + g[1] + g[2]) / 3;
+      this.slab.update(t, {
+        width: w, height: h, radius: h / 2, thickness: this.radius * 0.7, bevel: this.radius * 0.28,
+        color: this.freeze > 0.5 ? this.freezeColor : this.color, body: 0.5, edge: 0.55 + 0.35 * glowSum,
+        opacity: this.opacity * this.slabOpacity, brightness: this.brightness,
+      });
+    }
     this.visible = this.opacity > 0.001;
     return this;
   }

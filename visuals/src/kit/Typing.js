@@ -5,13 +5,16 @@
 //                 deletions vanish. caretX(t) gives the caret position for a cursor.
 //   ScreenCursor  the ▍ block cursor rendered through an LCD RGB-subpixel mask, with the faint
 //                 subpixel grid of the screen glowing around it (fades to solid as it gets small).
-//   BubbleOutline rounded-rect chat bubble drawn as glowing antialiased lines (GlowLines).
+//   BubbleOutline rounded-rect chat bubble drawn as glowing antialiased lines (GlowLines); with
+//                 { depth } it also gets a matching glass slab (kit/Glass.js) behind the outline:
+//                 call bubble.updateGlass(t, states?) every frame after setting opacity/reveal.
 import * as THREE from 'three';
 import { GlowLines } from './lines.js';
 import { col } from '../core/palette.js';
 import { clamp, outCubic } from '../core/ease.js';
 import { hash01 } from '../core/rng.js';
 import { LCD_GLSL } from '../core/text.js';
+import { GlassSlab } from './Glass.js';
 
 // ------------------------------------------------------------------------------------ TypedText
 export class TypedText extends THREE.Group {
@@ -168,8 +171,16 @@ export function roundRectPoints(w, h, r, tail = null, n = 10) {
 
 export class BubbleOutline extends GlowLines {
   /** w, h (world), r corner radius, tail: 'bl' (AI, left) | 'br' (human, right) */
-  constructor(ctx, { w = 1, h = 0.3, r = 0.1, tail = 'bl', color = 'AI_CYAN', width = 1.6, glow = 6 } = {}) {
+  constructor(ctx, { w = 1, h = 0.3, r = 0.1, tail = 'bl', color = 'AI_CYAN', width = 1.6, glow = 6, depth = 0, glass = {} } = {}) {
     super({ width, glow, W: ctx.W, H: ctx.H, color });
+    if (depth > 0) {
+      this.slab = new GlassSlab(ctx, { color });
+      this.slab.position.z = -0.0015;
+      this.slab.renderOrder = -1;
+      this.add(this.slab);
+      this.depth = depth;
+      this.glass = glass;
+    }
     this.setShape(w, h, r, tail);
   }
   setShape(w, h, r, tail) {
@@ -178,6 +189,20 @@ export class BubbleOutline extends GlowLines {
     for (let i = 0; i < pts.length - 1; i++) segs.push([...pts[i], ...pts[i + 1]]);
     this.setSegments(segs);
     this.w = w; this.h = h;
+    this._shape = { w, h, r, tail };
+    return this;
+  }
+  /** glass slab state for this frame (depth option): follows opacity, reveal and brightness */
+  updateGlass(t, states = {}) {
+    if (!this.slab) return this;
+    const { w, h, r, tail } = this._shape;
+    const rr = (k) => (tail === k ? r * 0.25 : r);
+    this.slab.update(t, {
+      width: w, height: h, radius: [rr('tl'), rr('tr'), rr('br'), rr('bl')], thickness: this.depth,
+      bevel: Math.min(r * 0.35, this.depth * 0.45), body: 0.45, edge: 0.8,
+      opacity: this.opacity * clamp(this.reveal * 1.4), brightness: Math.min(this.brightness, 2.5),
+      ...this.glass, ...states,
+    });
     return this;
   }
 }

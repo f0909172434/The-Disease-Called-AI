@@ -98,25 +98,25 @@ export function buildTiles(ctx) {
   }
   // 06 ChatUI — panel: bubbles, streaming, seen, regenerate
   {
-    const T = tile('ChatUI', 30);
-    const chat = new K.ChatUI(ctx, { width: 820, height: 980, planeHeight: 2.2, scale: 1 });
+    const T = tile('ChatUI · glass depth', 30);
+    const chat = new K.ChatUI(ctx, { width: 820, height: 980, planeHeight: 2.2, scale: 1, depth: 14 });
     T.scene.add(chat);
     chat.setScript(chatDemo());
     T.update = (t) => {
       const c = t % 12;
-      applyCamera(T.camera, { pos: [0.6, 0.1, 3.9], target: [0, 0, 0], fov: 32 });
-      chat.rotation.y = -0.12;
+      applyCamera(T.camera, { pos: [0.75, 0.25, 3.9], target: [0, 0, 0], fov: 32 });
+      chat.rotation.set(0.05, -0.3 + 0.08 * Math.sin(t * 0.4), 0);
       chat.update(c);
     };
     tiles.push(T);
   }
   // 07 TypingDots
   {
-    const T = tile('TypingDots', 30);
-    const dots = new K.TypingDots(ctx, { radius: 0.2, spacing: 0.56 });
+    const T = tile('TypingDots · glass pill', 30);
+    const dots = new K.TypingDots(ctx, { radius: 0.2, spacing: 0.56, slab: true });
     T.scene.add(dots);
     T.update = (t) => {
-      applyCamera(T.camera, { pos: [0.25, 0.12, 2.6], target: [0, 0, 0], fov: 30 });
+      applyCamera(T.camera, { pos: [0.75 * Math.sin(t * 0.35), 0.35, 2.75], target: [0, 0, -0.05], fov: 30 });
       const c = t % 6;
       dots.update(t, { phase: t * 5.73, freeze: c > 4 ? 1 : 0, glow: c > 4 ? [0.8, 0.8, 0.8] : null, vanish: [0, 0, 0] });
     };

@@ -20,12 +20,17 @@
 //
 // Options: theme 'panel' (window with header) | 'minimal' (no panel, underline input) ; scale (canvas
 // px per logical px) ; mipmaps ; fontScale. chat.mesh is the plane; chat.texture the CanvasTexture.
+// depth (logical px, default 0 = flat): bubbles, the typing-dots bubble, the input field and the panel
+//   become real glass slabs (kit/Glass.js) with that thickness behind the text plane; the canvas then
+//   only draws text/icons. Tilt the chat (chat.rotation.y) or move the camera to see the thickness.
+// glass: { bevel (px, 5), body, edge, sheen } overrides for the slabs.
 import * as THREE from 'three';
 import { C, rgba } from '../core/palette.js';
 import { cssFont } from '../core/fonts.js';
 import { canvasMaterial, canvasTexture } from '../core/text.js';
 import { hash01 } from '../core/rng.js';
 import { clamp, outBack, outCubic } from '../core/ease.js';
+import { GlassSlab } from './Glass.js';
 
 const TOKEN_RE = /\s*[\w'’]+|\s*[^\w\s]|\s+/gu;
 export function tokenize(text) { return text.match(TOKEN_RE) || []; }
@@ -48,7 +53,7 @@ export class ChatUI extends THREE.Group {
     this.ctx = ctx;
     this.o = {
       width: 900, height: 1100, scale: 1.25, planeHeight: 2, theme: 'panel', mipmaps: true, fontScale: 1,
-      bubbleMax: 0.74, ...opts,
+      bubbleMax: 0.74, depth: 0, glass: {}, ...opts,
     };
     const { width, height, scale } = this.o;
     this.canvas = document.createElement('canvas');
@@ -60,6 +65,8 @@ export class ChatUI extends THREE.Group {
     const ph = this.o.planeHeight;
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(ph * width / height, ph), this.material);
     this.add(this.mesh);
+    this.slabs = [];          // glass slab pool (depth > 0)
+    this._rects = [];         // slab rectangles recorded by the last canvas draw (same key => same rects)
     this.script = { messages: [] };
     this._key = null;
     this.opacity = 1;
@@ -181,7 +188,9 @@ export class ChatUI extends THREE.Group {
     c.globalAlpha = alpha;
     const cx = human ? x + w : x, cy = y + h;
     c.translate(cx, cy); c.scale(scale, scale); c.translate(-cx, -cy);
-    if (human) {
+    if (this.o.depth > 0) {
+      this._rects.push({ kind: human ? 'you' : 'ai', x, y, w, h, r: human ? [22, 22, 6, 22] : [22, 22, 22, 6], alpha, scale, ax: cx, ay: cy, clip: true });
+    } else if (human) {
       this._roundRect(x, y, w, h, [22, 22, 6, 22], rgba('HUMAN_AMBER', 0.1), rgba('HUMAN_AMBER', 0.42), 1.4);
     } else {
       this._roundRect(x, y, w, h, [22, 22, 22, 6], rgba('INK', 0.55), rgba('AI_CYAN', 0.75), 1.6);
@@ -233,7 +242,8 @@ export class ChatUI extends THREE.Group {
     const w = 92, h = 50;
     c.save();
     c.globalAlpha = alpha;
-    this._roundRect(x, y, w, h, [22, 22, 22, 6], rgba('INK', 0.55), rgba('AI_CYAN', 0.6), 1.4);
+    if (this.o.depth > 0) this._rects.push({ kind: 'dots', x, y, w, h, r: [22, 22, 22, 6], alpha, scale: 1, ax: x, ay: y + h, clip: true });
+    else this._roundRect(x, y, w, h, [22, 22, 22, 6], rgba('INK', 0.55), rgba('AI_CYAN', 0.6), 1.4);
     const beat = this.ctx.audio ? this.ctx.audio.beatDur : 0.349;
     for (let i = 0; i < 3; i++) {
       const ph = ((t / (beat / 2)) - i) % 3;
@@ -256,6 +266,8 @@ export class ChatUI extends THREE.Group {
     if (minimal) {
       c.fillStyle = rgba(typed ? 'HUMAN_AMBER' : 'AI_CYAN', typed ? 0.45 : 0.35);
       c.fillRect(x, y0 + h - 8, w, 1.5);
+    } else if (this.o.depth > 0) {
+      this._rects.push({ kind: typed ? 'input-typed' : 'input', x, y: y0, w, h, r: [18, 18, 18, 18], alpha: 1, scale: 1, ax: x, ay: y0, clip: false });
     } else {
       this._roundRect(x, y0, w, h, 18, rgba('INK', 0.8), rgba(typed ? 'HUMAN_AMBER' : 'UNREAD', typed ? 0.5 : 0.4), 1.3);
     }
@@ -361,11 +373,51 @@ export class ChatUI extends THREE.Group {
     }
     if (animating) keyParts.push(Math.round(t * 240));
     const key = keyParts.join('#');
-    if (key === this._key) return this;
-    this._key = key;
-    this._draw(t, msgs);
-    this.texture.needsUpdate = true;
+    if (key !== this._key) {
+      this._key = key;
+      this._draw(t, msgs);
+      this.texture.needsUpdate = true;
+    }
+    if (this.o.depth > 0) this._applySlabs(t);
     return this;
+  }
+
+  // glass slabs behind the text plane, from the rectangles recorded by the last draw
+  _applySlabs(t) {
+    const o = this.o, W = o.width, H = o.height, ph = o.planeHeight, pw = ph * W / H, k = ph / H;
+    const g = { bevel: 5, body: null, edge: null, sheen: 1, ...o.glass };
+    const STYLE = {
+      ai: { color: 'AI_CYAN', body: 0.55, edge: 0.85, z: 0 },
+      dots: { color: 'AI_CYAN', body: 0.55, edge: 0.7, z: 0 },
+      you: { color: 'HUMAN_AMBER', body: 0.3, edge: 0.75, z: 0 },
+      input: { color: 'AI_CYAN', body: 0.7, edge: 0.45, z: 0 },
+      'input-typed': { color: 'HUMAN_AMBER', body: 0.7, edge: 0.7, z: 0 },
+      panel: { color: 'AI_CYAN', body: 0.88, edge: 0.3, z: -1.7, thick: 0.7 },
+    };
+    const [cTop, cBot] = this._clipY || [0, H];
+    const yTop = (0.5 - cTop / H) * ph, yBot = (0.5 - cBot / H) * ph;
+    let i = 0;
+    for (const r of this._rects) {
+      const st = STYLE[r.kind];
+      if (!this.slabs[i]) {
+        const slab = new GlassSlab(this.ctx, { color: st.color });
+        slab.renderOrder = this.mesh.renderOrder - 1;
+        this.slabs.push(slab);
+        this.add(slab);
+      }
+      const slab = this.slabs[i++];
+      const sc = r.scale, x0 = r.ax + (r.x - r.ax) * sc, y0 = r.ay + (r.y - r.ay) * sc, w = r.w * sc, h = r.h * sc;
+      const depth = o.depth * k;
+      slab.position.set(((x0 + w / 2) / W - 0.5) * pw, (0.5 - (y0 + h / 2) / H) * ph, st.z * depth - 0.0008 * ph);
+      slab.renderOrder = this.mesh.renderOrder - (r.kind === 'panel' ? 2 : 1);
+      slab.update(t, {
+        width: w * k, height: h * k, radius: r.r.map((v) => v * sc * k), thickness: depth * (st.thick || 1), bevel: g.bevel * k,
+        color: st.color, body: g.body ?? st.body, edge: g.edge ?? st.edge, sheen: g.sheen,
+        opacity: this.opacity * r.alpha, brightness: this.brightness,
+        clip: r.clip ? [yBot - slab.position.y, yTop - slab.position.y] : null,
+      });
+    }
+    for (; i < this.slabs.length; i++) this.slabs[i].update(t, { opacity: 0 });
   }
 
   _draw(t, msgs) {
@@ -376,9 +428,11 @@ export class ChatUI extends THREE.Group {
     c.setTransform(o.scale, 0, 0, o.scale, 0, 0);
     c.textBaseline = 'alphabetic';
     const panel = o.theme === 'panel';
+    this._rects = [];
     let top = 18;
     if (panel) {
-      this._roundRect(1, 1, W - 2, H - 2, 28, rgba('INK', 0.92), rgba('AI_CYAN', 0.16), 1.5);
+      if (o.depth > 0) this._rects.push({ kind: 'panel', x: 1, y: 1, w: W - 2, h: H - 2, r: [28, 28, 28, 28], alpha: 1, scale: 1, ax: 0, ay: 0, clip: false });
+      else this._roundRect(1, 1, W - 2, H - 2, 28, rgba('INK', 0.92), rgba('AI_CYAN', 0.16), 1.5);
       const hd = s.header || { title: 'assistant', status: 'online' };
       const online = hd.status !== 'offline';
       c.fillStyle = online ? C.AI_CYAN : C.UNREAD;
@@ -413,6 +467,7 @@ export class ChatUI extends THREE.Group {
       y -= hh;
       placed.push({ md, y: y + (md.h + gap + extra) * (1 - k) * 0.0, k, age, extra });
     }
+    this._clipY = [top, bottom + 4];
     c.save();
     c.beginPath(); c.rect(0, top, W, bottom - top + 4); c.clip();
     for (const p of placed) {

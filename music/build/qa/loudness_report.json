@@ -3,42 +3,42 @@
  "duration_s": 215.0,
  "samples": 10320000,
  "sample_rate": 48000,
- "integrated_lufs": -11.0,
- "integrated_lufs_pyloudnorm": -11.04,
+ "integrated_lufs": -11.02,
+ "integrated_lufs_pyloudnorm": -11.06,
  "true_peak_dbtp": -1.32,
  "sample_peak_dbfs": -1.44,
- "loudness_range_lu": 5.8,
- "short_term_max_lufs": -8.47,
- "momentary_max_lufs": -6.62,
- "crest_factor_db": 12.6,
- "plr_db": 9.68,
- "stereo_correlation": 0.828,
+ "loudness_range_lu": 6.08,
+ "short_term_max_lufs": -8.4,
+ "momentary_max_lufs": -6.42,
+ "crest_factor_db": 12.68,
+ "plr_db": 9.7,
+ "stereo_correlation": 0.83,
  "dc_offset": [
-  7e-07,
-  1.7e-06
+  -8.4e-06,
+  -7.8e-06
  ],
  "clipped_samples": 0,
  "bands_db": {
-  "sub": -8.6,
-  "low": -4.0,
-  "mid": -4.5,
-  "presence": -11.4,
+  "sub": -8.9,
+  "low": -4.3,
+  "mid": -4.2,
+  "presence": -11.1,
   "brilliance": -15.2,
-  "air": -20.0
+  "air": -20.2
  },
  "sections": {
   "S00": {
-   "lufs": -16.57,
-   "short_term_max": -14.87,
+   "lufs": -16.88,
+   "short_term_max": -15.24,
    "true_peak_dbtp": -1.42,
-   "crest_db": 16.82,
+   "crest_db": 17.18,
    "bands_db": {
     "sub": -4.3,
     "low": -4.0,
     "mid": -7.1,
     "presence": -17.3,
     "brilliance": -19.6,
-    "air": -31.4
+    "air": -31.5
    },
    "name": "INTRO",
    "start_s": 0.0,
@@ -52,10 +52,10 @@
    }
   },
   "S01": {
-   "lufs": -11.11,
-   "short_term_max": -10.9,
+   "lufs": -11.36,
+   "short_term_max": -11.16,
    "true_peak_dbtp": -1.4,
-   "crest_db": 12.22,
+   "crest_db": 12.47,
    "bands_db": {
     "sub": -8.2,
     "low": -2.9,
@@ -72,21 +72,21 @@
     "bass": -22.6,
     "music": -18.6,
     "fx": -23.6,
-    "vocals": -58.0
+    "vocals": -57.0
    }
   },
   "S02": {
-   "lufs": -12.12,
-   "short_term_max": -11.17,
-   "true_peak_dbtp": -1.4,
-   "crest_db": 12.8,
+   "lufs": -12.1,
+   "short_term_max": -11.18,
+   "true_peak_dbtp": -1.41,
+   "crest_db": 12.86,
    "bands_db": {
-    "sub": -7.3,
-    "low": -4.1,
-    "mid": -4.7,
-    "presence": -13.7,
-    "brilliance": -15.5,
-    "air": -18.9
+    "sub": -7.6,
+    "low": -4.4,
+    "mid": -4.2,
+    "presence": -13.4,
+    "brilliance": -15.7,
+    "air": -19.2
    },
    "name": "VERSE1",
    "start_s": 22.326,
@@ -96,21 +96,21 @@
     "bass": -24.3,
     "music": -26.9,
     "fx": -24.8,
-    "vocals": -18.9
+    "vocals": -18.0
    }
   },
   "S03": {
-   "lufs": -10.15,
-   "short_term_max": -9.11,
+   "lufs": -10.12,
+   "short_term_max": -9.13,
    "true_peak_dbtp": -1.38,
-   "crest_db": 11.32,
+   "crest_db": 11.36,
    "bands_db": {
-    "sub": -8.4,
-    "low": -4.7,
-    "mid": -3.8,
-    "presence": -12.2,
-    "brilliance": -15.0,
-    "air": -20.4
+    "sub": -8.7,
+    "low": -5.1,
+    "mid": -3.5,
+    "presence": -12.0,
+    "brilliance": -15.2,
+    "air": -20.7
    },
    "name": "PRE1",
    "start_s": 44.651,
@@ -120,21 +120,21 @@
     "bass": -23.5,
     "music": -20.5,
     "fx": -20.8,
-    "vocals": -16.5
+    "vocals": -15.5
    }
   },
   "S04": {
-   "lufs": -9.74,
-   "short_term_max": -9.09,
+   "lufs": -9.72,
+   "short_term_max": -9.1,
    "true_peak_dbtp": -1.32,
-   "crest_db": 10.96,
+   "crest_db": 10.99,
    "bands_db": {
-    "sub": -9.5,
-    "low": -4.2,
-    "mid": -4.0,
-    "presence": -12.0,
-    "brilliance": -14.8,
-    "air": -19.0
+    "sub": -9.9,
+    "low": -4.5,
+    "mid": -3.6,
+    "presence": -11.8,
+    "brilliance": -15.0,
+    "air": -19.3
    },
    "name": "CHORUS1",
    "start_s": 55.814,
@@ -144,21 +144,21 @@
     "bass": -22.9,
     "music": -20.5,
     "fx": -25.2,
-    "vocals": -15.9
+    "vocals": -14.9
    }
   },
   "S05": {
-   "lufs": -10.11,
-   "short_term_max": -9.93,
-   "true_peak_dbtp": -1.35,
-   "crest_db": 11.53,
+   "lufs": -10.05,
+   "short_term_max": -9.84,
+   "true_peak_dbtp": -1.36,
+   "crest_db": 11.55,
    "bands_db": {
-    "sub": -9.6,
-    "low": -4.0,
-    "mid": -4.9,
-    "presence": -9.6,
-    "brilliance": -13.9,
-    "air": -18.3
+    "sub": -9.9,
+    "low": -4.3,
+    "mid": -4.5,
+    "presence": -9.2,
+    "brilliance": -14.0,
+    "air": -18.5
    },
    "name": "POST",
    "start_s": 78.14,
@@ -168,20 +168,20 @@
     "bass": -22.5,
     "music": -20.8,
     "fx": -25.4,
-    "vocals": -17.1
+    "vocals": -16.1
    }
   },
   "S06": {
-   "lufs": -12.51,
-   "short_term_max": -9.97,
+   "lufs": -12.53,
+   "short_term_max": -9.89,
    "true_peak_dbtp": -1.44,
-   "crest_db": 12.97,
+   "crest_db": 13.08,
    "bands_db": {
-    "sub": -7.6,
-    "low": -3.5,
-    "mid": -4.8,
-    "presence": -13.5,
-    "brilliance": -22.1,
+    "sub": -7.9,
+    "low": -3.8,
+    "mid": -4.4,
+    "presence": -13.2,
+    "brilliance": -22.0,
     "air": -34.0
    },
    "name": "VERSE2",
@@ -192,21 +192,21 @@
     "bass": -24.3,
     "music": -27.3,
     "fx": -24.3,
-    "vocals": -19.5
+    "vocals": -18.8
    }
   },
   "S07": {
-   "lufs": -13.0,
+   "lufs": -13.1,
    "short_term_max": -11.13,
    "true_peak_dbtp": -1.37,
-   "crest_db": 13.41,
+   "crest_db": 13.58,
    "bands_db": {
-    "sub": -5.6,
-    "low": -4.6,
-    "mid": -5.1,
-    "presence": -13.1,
+    "sub": -5.8,
+    "low": -4.8,
+    "mid": -4.8,
+    "presence": -12.9,
     "brilliance": -18.4,
-    "air": -22.4
+    "air": -22.6
    },
    "name": "PRE2_503",
    "start_s": 106.047,
@@ -216,21 +216,21 @@
     "bass": -23.2,
     "music": -24.3,
     "fx": -21.0,
-    "vocals": -19.1
+    "vocals": -18.5
    }
   },
   "S08": {
-   "lufs": -9.71,
-   "short_term_max": -9.09,
-   "true_peak_dbtp": -1.39,
-   "crest_db": 11.07,
+   "lufs": -9.7,
+   "short_term_max": -9.02,
+   "true_peak_dbtp": -1.4,
+   "crest_db": 11.13,
    "bands_db": {
-    "sub": -9.0,
-    "low": -4.0,
-    "mid": -4.5,
-    "presence": -11.0,
-    "brilliance": -14.6,
-    "air": -19.4
+    "sub": -9.3,
+    "low": -4.3,
+    "mid": -4.2,
+    "presence": -10.8,
+    "brilliance": -14.7,
+    "air": -19.7
    },
    "name": "CHORUS2",
    "start_s": 117.209,
@@ -240,21 +240,21 @@
     "bass": -23.0,
     "music": -20.5,
     "fx": -26.2,
-    "vocals": -15.9
+    "vocals": -14.9
    }
   },
   "S09": {
-   "lufs": -12.98,
-   "short_term_max": -10.47,
-   "true_peak_dbtp": -1.38,
-   "crest_db": 14.46,
+   "lufs": -13.04,
+   "short_term_max": -10.41,
+   "true_peak_dbtp": -1.42,
+   "crest_db": 14.59,
    "bands_db": {
-    "sub": -10.7,
-    "low": -4.1,
-    "mid": -4.0,
-    "presence": -9.9,
+    "sub": -11.0,
+    "low": -4.4,
+    "mid": -3.8,
+    "presence": -9.6,
     "brilliance": -15.4,
-    "air": -23.7
+    "air": -23.8
    },
    "name": "BRIDGE",
    "start_s": 139.535,
@@ -264,21 +264,21 @@
     "bass": -24.9,
     "music": -22.8,
     "fx": -21.8,
-    "vocals": -20.1
+    "vocals": -19.3
    }
   },
   "S10": {
-   "lufs": -9.19,
-   "short_term_max": -8.47,
+   "lufs": -9.16,
+   "short_term_max": -8.4,
    "true_peak_dbtp": -1.37,
-   "crest_db": 10.74,
+   "crest_db": 10.79,
    "bands_db": {
-    "sub": -10.1,
-    "low": -4.0,
-    "mid": -4.6,
-    "presence": -9.6,
-    "brilliance": -14.1,
-    "air": -19.8
+    "sub": -10.5,
+    "low": -4.4,
+    "mid": -4.2,
+    "presence": -9.3,
+    "brilliance": -14.0,
+    "air": -20.1
    },
    "name": "FINAL",
    "start_s": 167.442,
@@ -288,21 +288,21 @@
     "bass": -22.7,
     "music": -19.2,
     "fx": -25.6,
-    "vocals": -14.7
+    "vocals": -13.7
    }
   },
   "S11": {
-   "lufs": -9.65,
-   "short_term_max": -9.4,
-   "true_peak_dbtp": -1.36,
-   "crest_db": 11.29,
+   "lufs": -9.62,
+   "short_term_max": -9.38,
+   "true_peak_dbtp": -1.37,
+   "crest_db": 11.31,
    "bands_db": {
-    "sub": -11.3,
-    "low": -4.1,
-    "mid": -4.1,
-    "presence": -10.3,
-    "brilliance": -13.6,
-    "air": -18.4
+    "sub": -11.6,
+    "low": -4.5,
+    "mid": -3.8,
+    "presence": -10.1,
+    "brilliance": -13.7,
+    "air": -18.7
    },
    "name": "TAG",
    "start_s": 189.767,
@@ -312,19 +312,19 @@
     "bass": -22.3,
     "music": -20.1,
     "fx": -20.4,
-    "vocals": -16.4
+    "vocals": -15.4
    }
   },
   "S12": {
-   "lufs": -17.16,
+   "lufs": -17.52,
    "short_term_max": -9.59,
    "true_peak_dbtp": -1.44,
-   "crest_db": 23.44,
+   "crest_db": 23.79,
    "bands_db": {
     "sub": -15.7,
     "low": -5.9,
     "mid": -2.1,
-    "presence": -12.5,
+    "presence": -12.4,
     "brilliance": -13.7,
     "air": -20.8
    },
@@ -340,9 +340,9 @@
    }
   },
   "S13": {
-   "lufs": -28.0,
-   "short_term_max": -30.98,
-   "true_peak_dbtp": -14.14,
+   "lufs": -28.39,
+   "short_term_max": -31.38,
+   "true_peak_dbtp": -14.53,
    "crest_db": 24.29,
    "bands_db": {
     "sub": -23.1,
@@ -371,7 +371,7 @@
   "duration_215.000s": true
  },
  "render": {
-  "mix_seconds": 197.5,
+  "mix_seconds": 209.5,
   "transport_fx": [
    "glitch_stutter@316.0",
    "glitch_stutter@317.5",
@@ -386,12 +386,12 @@
   ]
  },
  "mix": {
-  "master_gain_db": 3.96,
-  "glue_gr_max_db": 2.72,
-  "glue_gr_mean_db": 0.34,
-  "limiter_gr_max_db": 2.11,
-  "limiter_gr_mean_db": 0.241,
-  "limiter_time_over_1db_pct": 5.49
+  "master_gain_db": 3.57,
+  "glue_gr_max_db": 2.85,
+  "glue_gr_mean_db": 0.33,
+  "limiter_gr_max_db": 2.04,
+  "limiter_gr_mean_db": 0.236,
+  "limiter_time_over_1db_pct": 5.47
  },
  "vocals": {
   "vocals": [
@@ -400,8 +400,8 @@
    "vox_spoken",
    "vox_you"
   ],
-  "vox_you_fader_db": 4.65,
-  "vox_ai_fader_db": 4.98,
+  "vox_you_fader_db": 5.65,
+  "vox_ai_fader_db": 5.98,
   "spoken_line_gains_db": {
    "4.69s": 2.1,
    "5.56s": 2.9,
@@ -425,16 +425,16 @@
  },
  "vir_lu": {
   "S00": -5.5,
-  "S02": -1.5,
-  "S03": -1.9,
-  "S04": -1.7,
-  "S05": -1.7,
-  "S06": -0.8,
-  "S07": -0.3,
-  "S08": -2.1,
-  "S09": -1.2,
-  "S10": -1.1,
-  "S11": -2.0,
+  "S02": -0.6,
+  "S03": -0.9,
+  "S04": -0.7,
+  "S05": -0.7,
+  "S06": -0.0,
+  "S07": 0.4,
+  "S08": -1.1,
+  "S09": -0.5,
+  "S10": -0.1,
+  "S11": -1.0,
   "S12": -2.5
  }
 }
