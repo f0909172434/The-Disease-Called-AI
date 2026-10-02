@@ -337,8 +337,8 @@ def tape_stop(bufs: list[np.ndarray], ev: dict, restart: int) -> None:
     amp = speed ** 0.7
     f = int(0.003 * SR)
     for x in bufs:
-        src = x[t0: t0 + n + 4].astype(np.float64)
-        y = np.stack([dsp.read_cubic(np.ascontiguousarray(src[:, c]), pos + 0.0) for c in range(2)], axis=1)
+        src = x[t0 - 2: t0 + n + 4].astype(np.float64)       # 2 samples of history for the cubic stencil
+        y = np.stack([dsp.read_cubic(np.ascontiguousarray(src[:, c]), pos + 2.0) for c in range(2)], axis=1)
         x[t0: t0 + n] = y * amp[:, None]
         e = t0 + n
         if restart > e:
