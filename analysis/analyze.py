@@ -1,4 +1,4 @@
-"""Blind audio analysis → visuals/data/timeline.json
+"""Blind audio analysis → film/data/timeline.json (read by the film engine, film/src/data.js)
 
 The MV is cut to what this script *hears*, not to what the score says. It treats the
 mastered song as an unknown file: it estimates the tempo, tracks beats and downbeats,
@@ -23,7 +23,7 @@ import soundfile as sf
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BUILD = os.path.join(ROOT, "music", "build")
 STEMS = os.path.join(BUILD, "stems")
-OUT = os.path.join(ROOT, "visuals", "data", "timeline.json")
+OUT = os.path.join(ROOT, "film", "data", "timeline.json")
 FIG = os.path.join(ROOT, "docs", "analysis.png")
 REPORT = os.path.join(ROOT, "analysis", "report.json")
 
