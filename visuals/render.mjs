@@ -41,8 +41,13 @@ function ffmpegChunk(file) {
     '-c:v', 'libx264', '-preset', args.preset, '-crf', String(args.crf), '-pix_fmt', 'yuv420p',
     '-r', String(fps), '-fps_mode', 'cfr', '-video_track_timescale', String(Math.round(fps * 1000)),
     '-movflags', '+faststart', '-threads', '2', '-f', 'mp4', file], { stdio: ['pipe', 'inherit', 'inherit'] });
+  let failed = null;
+  ff.stdin.on('error', (e) => { failed = e; });
   const done = new Promise((res, rej) => ff.on('exit', (c) => (c === 0 ? res() : rej(new Error(`ffmpeg exited ${c}`)))));
-  const write = (buf) => new Promise((res, rej) => { if (ff.stdin.write(buf)) res(); else ff.stdin.once('drain', res); ff.stdin.once('error', rej); });
+  const write = (buf) => new Promise((res, rej) => {
+    if (failed) { rej(failed); return; }
+    if (ff.stdin.write(buf)) res(); else ff.stdin.once('drain', res);
+  });
   return { write, end: () => { ff.stdin.end(); return done; } };
 }
 
