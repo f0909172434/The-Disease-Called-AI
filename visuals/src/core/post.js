@@ -12,9 +12,10 @@ import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 
 export const DEFAULT_PARAMS = Object.freeze({
   exposure: 1.0,
-  bloom: 0.8,            // UnrealBloom strength
-  bloomRadius: 0.55,
-  bloomThreshold: 0.12,  // linear luminance
+  bloom: 0.8,            // bloom strength
+  bloomRadius: 0.35,     // 0 = tight halo around bright cores ... 1 = wide atmospheric glow
+  bloomThreshold: 0.2,   // linear luminance where the bright pass starts (soft knee below)
+  bloomToe: 0.012,       // rolls off the low-level tail of the glow so blacks stay at VOID (0 = off)
   ca: 0.001,             // chromatic aberration (fraction of frame width at the corners)
   grain: 0.05,           // film grain amount (display space), seeded by frame
   vignette: 0.4,
@@ -229,6 +230,29 @@ void main() {
   gl_FragColor = vec4(c * (w / max(l, 1e-4)), 1.0);
 }`;
 
+// Bloom composite. Geometric falloff over the 5 blur mips (UnrealBloom's own weights put the most
+// energy in the widest mips, which turns any busy frame into a uniform grey haze), then a toe on the
+// result: after the sRGB encode even 0.003 linear of haze lifts VOID from 5/255 to 15/255, so the
+// far tail of the glow is rolled off and large dark areas stay truly dark.
+const COMPOSITE_FRAG = /* glsl */`
+precision highp float;
+varying vec2 vUv;
+uniform sampler2D blurTexture1, blurTexture2, blurTexture3, blurTexture4, blurTexture5;
+uniform float bloomStrength, bloomRadius, bloomToe;
+void main() {
+  float f = mix(0.3, 0.9, bloomRadius);
+  vec3 b = texture2D(blurTexture1, vUv).rgb;
+  float w = f;
+  b += w * texture2D(blurTexture2, vUv).rgb; w *= f;
+  b += w * texture2D(blurTexture3, vUv).rgb; w *= f;
+  b += w * texture2D(blurTexture4, vUv).rgb; w *= f;
+  b += w * texture2D(blurTexture5, vUv).rgb;
+  b *= bloomStrength;
+  float L = dot(b, vec3(0.2126, 0.7152, 0.0722));
+  b *= L / (L + bloomToe + 1e-9);
+  gl_FragColor = vec4(b, 1.0);
+}`;
+
 /**
  * UnrealBloom (mip chain of separable gaussians + weighted composite, three's UnrealBloomPass
  * shaders) run at quarter resolution from a box-filtered bright pass. The composite is sampled
@@ -247,8 +271,13 @@ class QuarterBloom extends UnrealBloomPass {
     }
     this.brightMat = new THREE.ShaderMaterial({
       vertexShader: QUAD_VERT_SRC, fragmentShader: BRIGHT_FRAG, depthTest: false, depthWrite: false,
-      uniforms: { tSrc: { value: null }, uSrcTexel: { value: new THREE.Vector2(1 / W, 1 / H) }, uThreshold: { value: 0.12 }, uKnee: { value: 0.1 } },
+      uniforms: { tSrc: { value: null }, uSrcTexel: { value: new THREE.Vector2(1 / W, 1 / H) }, uThreshold: { value: 0.2 }, uKnee: { value: 0.1 } },
     });
+    const cu = { bloomStrength: { value: 1 }, bloomRadius: { value: 0.35 }, bloomToe: { value: 0.012 } };
+    for (let i = 0; i < this.nMips; i++) cu['blurTexture' + (i + 1)] = { value: this.renderTargetsVertical[i].texture };
+    this.compositeMaterial.dispose();
+    this.compositeMaterial = new THREE.ShaderMaterial({ vertexShader: QUAD_VERT_SRC, fragmentShader: COMPOSITE_FRAG, uniforms: cu, depthTest: false, depthWrite: false });
+    this.toe = 0.012;
   }
   /** returns the composited bloom texture (quarter res, strength applied) */
   renderBloom(renderer, srcTexture) {
@@ -279,6 +308,7 @@ class QuarterBloom extends UnrealBloomPass {
     this.fsQuad.material = this.compositeMaterial;
     this.compositeMaterial.uniforms.bloomStrength.value = this.strength;
     this.compositeMaterial.uniforms.bloomRadius.value = this.radius;
+    this.compositeMaterial.uniforms.bloomToe.value = this.toe;
     renderer.setRenderTarget(this.renderTargetsHorizontal[0]);
     this.fsQuad.render(renderer);
     renderer.setClearColor(this._oldClearColor, oldAlpha);
@@ -404,6 +434,7 @@ export class Post {
       this.bloom.strength = p.bloom;
       this.bloom.radius = p.bloomRadius;
       this.bloom.threshold = p.bloomThreshold;
+      this.bloom.toe = p.bloomToe;
       u.tBloom.value = this.bloom.renderBloom(r, this.sceneRT.texture);
     }
     u.tScene.value = this.sceneRT.texture;

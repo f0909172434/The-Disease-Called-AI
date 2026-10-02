@@ -149,10 +149,10 @@ VOCAL_SENDS = {   # per style: reverb / delay sends (dB); delay_8 only in the ch
 DELAY_THROW_SECTIONS = {"S04", "S05", "S08", "S10", "S11"}
 # Vocal-to-instrumental loudness targets (LU) for the riding: the *dry lead* line against
 # the un-ducked band in the same window. Backing parts, reverb/delay returns and the 2 dB
-# music duck add roughly +3 LU on top, so the finished vocal bus lands near 0 LU against
-# the band in the choruses and ~+1 LU in the verses (reported per section as "vir_lu").
-VIR_TARGET = {"S02": -1.5, "S03": -2.0, "S04": -2.5, "S05": -3.0, "S06": -1.5, "S07": -2.0, "S08": -3.5,
-              "S09": -1.0, "S10": -3.5, "S11": -3.0}    # S08/S10 carry composed AI doubles / unison
+# music duck add ~1.5 LU on top, so the finished vocal bus lands near -1 LU against the
+# band in the choruses and ~0 LU in the verses (reported per section as "vir_lu").
+VIR_TARGET = {"S02": -0.5, "S03": -1.0, "S04": -1.5, "S05": -2.0, "S06": -0.5, "S07": -1.0, "S08": -2.5,
+              "S09": 0.0, "S10": -2.5, "S11": -2.0}    # S08/S10 carry composed AI doubles / unison
 SPOKEN_OVER_MUSIC_VIR = 0.0     # spoken lines over the band sit clearly on top of it
 SPOKEN_QUIET_LUFS = -21.0       # ... and in near-silence (intro, outage) they lead, ~2-3 LU
 WHISPER_QUIET_LUFS = -23.0      # over the heartbeat (which sits at ~-23 LUFS pre-master there)

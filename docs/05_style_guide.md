@@ -1,5 +1,7 @@
 # 05 · 視覺風格指南 Visual Style Guide — "Clinical Intimacy"
 
+> **修訂**：依委託者意見，人物改為**原創的動漫插畫風**（`Heroine`），以程式繪製的分層 2D 骨架放進 3D 場景，形成前後景深的視差。介面元素（泡泡、輸入框、三個點）做成有厚度的玻璃質感立體物件。分鏡表中所有 `Silhouette` 都改由 `Heroine` 演出。
+
 兩種視覺語言的碰撞：
 
 - **介面（AI）**：冷、完美、向量般精確。細線、等寬字、游標、完美的圓。動作是「計算出來的」：線性、瞬間、步進、對齊網格、token 串流。
@@ -46,7 +48,7 @@
 | 元件 | 外觀 | 可控狀態 |
 |---|---|---|
 | `Ring` | 完美的光環：極細核心線（AI_WHITE）＋外暈（AI_CYAN）＋旋轉的弧段（像載入轉圈）＋內圈環帶上流動的等寬字元。以 SDF shader 繪製，任何尺寸都銳利 | `pulse`（kick）、`speak`（AI 人聲包絡→亮度/漣漪）、`color`（青→琥珀）、`breakSegments`（弧段掉落）、`irisText`、`thumbsMode`（表面由 👍 組成） |
-| `Silhouette` | 她：粒子構成的女性側臉／半身（頭、頸、肩，長髮垂在背後），風格化、優雅，可清楚辨識額頭、鼻子、嘴唇、下巴輪廓。暖色亮部＋暗部，面向螢幕一側有青色輪廓光 | `warmth`、`innerGlow`、`jitter`、`gridify`、`dissolve`/`dissolveTo(target)`、`colorSwap`、`mouthOpen`、`eyeClosed`、`opacity`、`mirror` |
+| `Heroine`（取代早期的粒子 `Silhouette`） | 她：**原創動漫插畫風**角色，以程式碼繪製的分層向量骨架（類似 Live2D）。藍黑及腰長髮（螢幕光下泛青）、琥珀色大眼、淡淡黑眼圈、寬大灰色帽 T（袖子蓋住半隻手）、左手腕醫院病患手環（條碼）、游標「▍」形狀的發光髮夾。乾淨的細線稿＋兩階賽璐璐陰影＋螢幕的青色輪廓光。視角：右側臉（主鏡頭）、3/4、正面（黑鏡倒影）、躺在枕頭上的俯視、眼睛特寫、指尖貼玻璃的手 | `blink`、`gaze`、`mouth`（母音口型，可由人聲包絡驅動）、表情（疲倦／微笑／焦慮／悲傷／閉眼）、`headTilt`、`breath`、`hairSway`、`rimLight`、配色模式 `human`／`swapped`（最終副歌變青色）／`perfected`（AI 穿上她的臉：完美、對稱、發光的琥珀色虹膜，帶一點詭異）、粒子取樣（溶解成粒子） |
 | `Eye` | 程序化虹膜特寫：放射狀纖維、瞳孔、角膜高光，角膜倒影顯示一張貼圖（例如聊天泡泡） | `pupil`（0.2–1.0）、`reflectionTexture`、`irisColor` |
 | `ChatUI` | 聊天視窗：她的泡泡（右、琥珀、襯線斜體）、AI 泡泡（左、青色描邊、等寬）、輸入框＋游標、`• • •`、`↻ Regenerate`、`Response n / N`、`Seen …` 灰字 | token 串流、打字（含錯字/退格）、泡泡彈出、捲動、倒帶、逐字換字型 |
 | `TypingDots` | 三顆光滑 3D 球體（像藥丸／珍珠），依序脈動 | `phase`、`color`、`freeze`、`vanish(i)` |
