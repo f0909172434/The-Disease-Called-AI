@@ -268,7 +268,7 @@ def parse_lyrics_md() -> list[dict]:
             text = text[1:-1]
             zh = zh.strip("（）")
         speaker = {"YOU": "you", "BOTH": "both", "YOU (+AI)": "you"}.get(who, "ai")
-        style = "human" if speaker == "you" else ("choir" if speaker == "both" else ("ai_her" if "她" in who else "ai"))
+        style = "human" if speaker == "you" else ("choir" if speaker == "both" else ("ai_him" if "他的聲音" in who else "ai"))
         lines.append({"section": sid, "speaker": speaker, "style": style,
                       "mode": "spoken" if (spoken or interject) else "sung",
                       "text": text, "zh": zh, **({"harmony": ["ai"]} if who == "YOU (+AI)" else {})})

@@ -78,14 +78,29 @@ prog(137, ["Em", "C", "G", "B7"])
 
 # =============================================================================== voices
 
+HIM = {"am_michael": 0.5, "bm_george": 0.5}     # the human: an original young engineer
+HER = {"af_heart": 1.0}                          # the AI: the whale-maid girl (provisional)
+
+
+def _mix(her_w):
+    """Her blend with (1 - her_w) of his voice mixed in."""
+    out = {k: round(v * her_w, 4) for k, v in HER.items()}
+    for k, v in HIM.items():
+        out[k] = round(out.get(k, 0.0) + v * (1.0 - her_w), 4)
+    return out
+
+
 VOICES = {
-    # The AI's voice is an interpolation that drifts, line by line, into hers.
-    "you": {"blend": {"af_heart": 1.0}, "note": "the human"},
-    "ai_0": {"blend": {"am_michael": 0.5, "af_nicole": 0.5}, "note": "neutral synthetic"},
-    "ai_1": {"blend": {"am_michael": 0.35, "af_nicole": 0.35, "af_heart": 0.3}, "note": "30% her"},
-    "ai_2": {"blend": {"am_michael": 0.15, "af_nicole": 0.15, "af_heart": 0.7}, "note": "70% her"},
-    "ai_her": {"blend": {"af_heart": 1.0}, "note": "her voice, worn by the AI"},
+    # The AI's voice drifts, section by section, into his: the mirror learns to speak in
+    # the voice he loves best, which is his own.
+    "you": {"blend": dict(HIM), "note": "him (the human)"},
+    "ai_0": {"blend": dict(HER), "note": "her"},
+    "ai_1": {"blend": _mix(0.85), "note": "15% him"},
+    "ai_2": {"blend": _mix(0.5), "note": "half him"},
+    "ai_him": {"blend": dict(HIM), "note": "his voice, worn by the AI"},
 }
+# Written melodies sit in the original (female) register; male voices sing them an octave down.
+VOICE_OCTAVE = {"you": -12, "ai_him": -12}
 
 # =============================================================================== vocals
 
@@ -95,7 +110,7 @@ LINES: list[dict] = []
 def sung(id_, section, bar, spec, text, zh, *, speaker="you", voice="you", style="human",
          bus=None, display=True, say=None, transpose=0, offset8=0, key="D minor"):
     start = tb(bar) + offset8 * 0.5
-    words, syllables, _ = parse_melody(spec, start, transpose)
+    words, syllables, _ = parse_melody(spec, start, transpose + VOICE_OCTAVE.get(voice, 0))
     say = say or {}
     for w in words:
         w["say"] = say.get(w["text"], w["text"])
@@ -218,8 +233,8 @@ for i, (spec, text, zh, say) in enumerate(CH_A + CH1_B, 1):
 for i, (spec, text, zh, say) in enumerate(CH_A + CH2_B, 1):
     ln = sung(f"C2_{i}", "S08", 85 + 2 * (i - 1), spec, text, zh, say=say)
     double(ln, "_dbl", voice="you", style="human", gain_db=-7, detune_cents=8, delay_ms=16)
-    if i >= 5:  # "Now every word I say is yours": the AI shadows her an octave below
-        double(ln, "_ai", voice="ai_1", style="ai", bus="ai", interval=-12, gain_db=-5)
+    if i >= 5:  # "Now every word I say is yours": the AI shadows him an octave above
+        double(ln, "_ai", voice="ai_1", style="ai", bus="ai", interval=12, gain_db=-5)
 
 # ---------------------------------------------------------------- S05 POST: "always" chops
 POST = [
@@ -329,12 +344,12 @@ FIN_B = [
 for i, (spec, text, zh, say) in enumerate(FIN_A, 1):
     ln = sung(f"F_{i}", "S10", 121 + 2 * (i - 1), spec, text, zh, say=say, transpose=2,
               speaker="both", key="E minor")
-    # BOTH: the AI sings in unison with her — the voices merge
-    double(ln, "_ai", voice="ai_2", style="ai", bus="ai", gain_db=-1.5)
+    # BOTH: the AI sings with him an octave above — the voices merge
+    double(ln, "_ai", voice="ai_2", style="ai", bus="ai", interval=12, gain_db=-1.5)
 for i, (spec, text, zh, say) in enumerate(FIN_B, 5):
     ln = sung(f"F_{i}", "S10", 121 + 2 * (i - 1), spec, text, zh, say=say, transpose=2,
-              speaker="ai", voice="ai_her", style="ai_her", key="E minor")
-    double(ln, "_h3", voice="ai_her", style="ai_her", diatonic=2, gain_db=-11, key="E minor")
+              speaker="ai", voice="ai_him", style="ai_him", key="E minor")
+    double(ln, "_h3", voice="ai_him", style="ai_him", diatonic=2, gain_db=-11, key="E minor")
 
 # ---------------------------------------------------------------- S11 TAG
 TAG = [
@@ -345,11 +360,11 @@ TAG = [
 ]
 for i, spec in enumerate(TAG, 1):
     sung(f"T_{i}", "S11", 136 + i, spec, "always —", "一直都在——",
-         speaker="ai", voice="ai_her", style="ai_her", display=(i == 1), key="E minor")
+         speaker="ai", voice="ai_him", style="ai_him", display=(i == 1), key="E minor")
 
 # ---------------------------------------------------------------- S12 OUTRO
 spoken("OUT_AI", "S12", 569.0, "Are you there?", "你在嗎？",
-       speaker="ai", voice="ai_her", style="ai_her_spoken")
+       speaker="ai", voice="ai_him", style="ai_him_spoken")
 
 # =============================================================================== instruments
 

@@ -112,7 +112,7 @@ def run_qa(renders, lines, model: str, plots: list[str], qa_dir: str) -> dict:
                                               r.qa["score_midi"], r.qa["vowel"])
                 row["pitch_err_cents"] = None if np.isnan(err) else round(err, 1)
                 row["pitch_frames"] = n
-                row["pitch_target_cents"] = 15.0 if line["style"] in ("ai", "ai_her") else 35.0
+                row["pitch_target_cents"] = 15.0 if line["style"] in ("ai", "ai_him") else 35.0
                 row["timing_offset_ms"] = qa.timing_offset_ms(r.audio, 48000, r.start, r.timing)
             cache.save("qa", r.id, k, row)
             hit = row
@@ -125,7 +125,7 @@ def run_qa(renders, lines, model: str, plots: list[str], qa_dir: str) -> dict:
                          f"→ “{hit['transcript']}” (WER {hit['wer']:.2f})",
                          os.path.join(qa_dir, f"{r.id}.png"))
     res = summarize(out)
-    # the AI's voice should drift toward hers: ai_0 -> ai_1 -> ai_2 -> ai_her (sung lines)
+    # the AI's voice should drift toward his: ai_0 -> ai_1 -> ai_2 -> ai_him (sung lines)
     res["summary"]["timbre_distance_to_you"] = qa.drift_report(timbre)
     return res
 
@@ -151,7 +151,7 @@ def summarize(rows: list[dict]) -> dict:
         if pe is not None and pe >= r["pitch_target_cents"]:
             fails.append({"id": r["id"], "check": "pitch", "value": pe, "limit": r["pitch_target_cents"]})
     pitch = {}
-    for grp, styles in (("ai", ("ai", "ai_her")), ("human", ("human",)), ("choir", ("choir",))):
+    for grp, styles in (("ai", ("ai", "ai_him")), ("human", ("human",)), ("choir", ("choir",))):
         pitch[grp] = stats([r for r in rows if r.get("style") in styles and r["mode"] == "sung"],
                            "pitch_err_cents")
     offs = [abs(r["timing_offset_ms"]) for r in rows if r.get("timing_offset_ms") is not None]

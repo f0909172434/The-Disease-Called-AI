@@ -89,7 +89,7 @@ export class LyricsOverlay {
 
   _isAI(line, st) {
     if (st && st.font) return st.font === 'ai';
-    return line.speaker === 'ai' || line.style === 'ai' || line.style === 'ai_her';
+    return line.speaker === 'ai' || line.style === 'ai' || line.style === 'ai_him';
   }
 
   /** visibility + vertical offset of every line at t (newest two at most) */

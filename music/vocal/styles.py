@@ -5,11 +5,11 @@ does to the timbre (breath, formant shift, brightness, vocoder layer, choir spre
 
   human            natural: portamento, scoops, vibrato, a little breath
   ai               hard-tuned, no vibrato, +3 % formants, brighter, quiet vocoder layer
-  ai_her           the same processing worn on her timbre (voice blend = af_heart)
+  ai_him           the same processing worn on his timbre (the AI singing in his voice)
   choir            soft airy harmony: breathy, darker, three detuned/delayed voices
   human_trembling  (spoken) panic: tremor + jitter + breath
   whisper          (spoken) WORLD resynthesis with F0 = 0: a true whisper
-  ai / ai_her_spoken (spoken) natural Kokoro speech, calmer intonation, light AI sheen
+  ai / ai_him_spoken (spoken) natural Kokoro speech, calmer intonation, light AI sheen
 """
 from __future__ import annotations
 
@@ -58,7 +58,7 @@ SUNG = {
                        breath_from=900.0, tilt_db_oct=-1.5, choir_voices=3, lowpass_hz=7500.0,
                        unvoiced_db=-9.0),
 }
-SUNG["ai_her"] = SUNG["ai"]
+SUNG["ai_him"] = SUNG["ai"]
 
 
 @dataclass
@@ -85,7 +85,7 @@ SPOKEN = {
                                    jitter_cents=14.0, amp_tremor=0.22, breath_layer_db=-11.0,
                                    level_dbfs=-23.0),
     "ai": SpokenStyle(flatten=0.6, formant=1.02, tilt_db_oct=1.0, vocoder_db=-22.0, world=True),
-    "ai_her_spoken": SpokenStyle(flatten=0.7, formant=1.015, tilt_db_oct=0.8, vocoder_db=-24.0,
+    "ai_him_spoken": SpokenStyle(flatten=0.7, formant=1.015, tilt_db_oct=0.8, vocoder_db=-24.0,
                                  world=True),
 }
 
