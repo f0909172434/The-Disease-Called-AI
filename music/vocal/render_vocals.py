@@ -63,20 +63,27 @@ def _worker_init():
 
 def render_line(job):
     """Render one line (cached on its inputs + the engine source)."""
-    line, voices = job
+    line, voices, backend = job
     import cache
-    k = cache.key("line", line, voices[line["voice"]], sources=ENGINE_SOURCES)
-    hit = cache.load("line", line["id"], k)
+    ds = backend == "diffsinger" and line["mode"] == "sung"
+    if ds:                                         # sung lines through DiffSinger
+        import diffsinger_backend as dsb
+        stage, k = "dsline", dsb.line_key(line, voices)
+    else:
+        stage, k = "line", cache.key("line", line, voices[line["voice"]], sources=ENGINE_SOURCES)
+    hit = cache.load(stage, line["id"], k)
     if hit is not None:
         return hit, 0.0
     t = time.time()
-    if line["mode"] == "sung":
+    if ds:
+        r = dsb.render_sung(line, voices)
+    elif line["mode"] == "sung":
         from singer import render_sung
         r = render_sung(line, voices)
     else:
         from speaker import render_spoken
         r = render_spoken(line, voices)
-    cache.save("line", line["id"], k, r)
+    cache.save(stage, line["id"], k, r)
     return r, time.time() - t
 
 
@@ -177,6 +184,10 @@ def main():
     ap.add_argument("--qa-model", default="medium.en")
     ap.add_argument("--plots", default=",".join(PLOT_LINES))
     ap.add_argument("--wav-dir", help="also write each line as a WAV here (auditions)")
+    ap.add_argument("--sung-backend", choices=["kokoro", "diffsinger"],
+                    default=os.environ.get("VOCAL_SUNG_BACKEND", "kokoro"),
+                    help="sung lines: Kokoro forced singing (default) or DiffSinger banks "
+                         "(music/diffsinger, see diffsinger_backend.py)")
     args = ap.parse_args()
 
     import cache
@@ -192,7 +203,12 @@ def main():
     # longest lines first for load balance
     def cost(l):
         return sum(n["d"] for s in l.get("syllables", []) for n in s["notes"]) or 4.0
-    jobs = [(l, voices) for l in sorted(sel, key=cost, reverse=True)]
+    jobs = [(l, voices, args.sung_backend) for l in sorted(sel, key=cost, reverse=True)]
+    if args.sung_backend == "diffsinger":
+        import diffsinger_backend as dsb
+        t = time.time()
+        st = dsb.prepare(sel, voices)             # one batched DiffSinger pass for all lines
+        print(f"DiffSinger stage: {st} in {time.time() - t:.1f} s")
     t = time.time()
     if args.jobs > 1 and len(jobs) > 1:
         ctx = mp.get_context("spawn")
@@ -217,6 +233,7 @@ def main():
         info = stems.write(stems.mix(renders, lines), os.path.join(BUILD, "stems"))
         timing = {"meta": {"bpm": 172, "sr": 48000, "duration": stems.DURATION,
                            "units": "seconds", "generator": "music/vocal/render_vocals.py",
+                  "sung_backend": args.sung_backend,
                            "notes": "start = consonant onset, end = release; syllable 'vowel' = "
                                     "vowel landing (the note's beat)"},
                   "lines": [r.timing for r in renders]}

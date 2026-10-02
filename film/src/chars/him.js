@@ -754,13 +754,13 @@ function himArm(K, c, a) {
 // Trouser legs from profile tables like the arms: [t, outer half-width, inner half-width] along thigh ('up') and shin
 // ('fore'). Quads widest just below the hip, a taper into the knee, the calf, a narrow ankle; the hem breaks on the shoe.
 // Leg lengths: thigh 6.8u, shin 6.6u (hips 14.25u above the soles when standing straight).
-const HIM_LEG = {
-  front: { up: [[0, 1.72, 1.42], [.2, 1.66, 1.62], [.42, 1.58, 1.6], [.65, 1.46, 1.4], [.85, 1.32, 1.17], [1, 1.24, 1.08]],
-           fore: [[.08, 1.2, 1.08], [.3, 1.3, 1.12], [.55, 1.14, 1.0], [.78, .98, .9], [.9, 1.0, .93], [1, 1.04, .96]] },
-  side:  { up: [[0, 2.08, 1.85], [.2, 2.02, 2.1], [.4, 1.9, 2.16], [.62, 1.66, 1.92], [.82, 1.38, 1.48], [.92, 1.22, 1.28], [1, 1.16, 1.22]],
-           fore: [[.08, 1.22, 1.1], [.3, 1.62, 1.08], [.55, 1.28, .96], [.78, .98, .86], [.9, 1.0, .9], [1, 1.06, .96]] }
+const HIM_LEG = {   // v7: slim straight trousers
+  front: { up: [[0, 1.58, 1.4], [.22, 1.56, 1.46], [.5, 1.44, 1.34], [.78, 1.28, 1.16], [1, 1.18, 1.08]],
+           fore: [[.08, 1.14, 1.04], [.35, 1.12, 1.02], [.65, 1.06, .97], [.9, 1.04, .96], [1, 1.07, .98]] },
+  side:  { up: [[0, 1.82, 1.58], [.2, 1.76, 1.66], [.45, 1.6, 1.58], [.75, 1.32, 1.3], [.92, 1.18, 1.2], [1, 1.14, 1.18]],
+           fore: [[.08, 1.16, 1.06], [.3, 1.34, 1.04], [.55, 1.18, .96], [.8, 1.02, .9], [.92, 1.02, .9], [1, 1.06, .94]] }
 };
-const HIM_THIGH = 6.8, HIM_SHIN = 6.6;
+const HIM_THIGH = 7.45, HIM_SHIN = 7.25;
 // Two-bone IK: the knee for a hip H and ankle A (bend = ±1 picks the side the knee goes).
 function himIK(H, A, L1, L2, bend) {
   const dx = A[0] - H[0], dy = A[1] - H[1], d = Math.hypot(dx, dy) || 1;
@@ -888,31 +888,40 @@ function himButton(K, c, x, y, r = .17, col = null) {
 // ---------- torsos ----------
 // Torso-local units: origin = hip centre, y up is negative. Each view gives: neck pivot (for the head), the head origin
 // relative to the pivot, shoulder and hip joints. The torso functions draw neck, shirt and jacket (no arms).
-const HIM_HS = 1.24;   // the head is drawn 24% larger than the body unit (anime proportions; v5: up from 1.15)
-const HIM_TRAP = .28, HIM_NECKDN = .3;   // HIM_NECKDN: how far the head sits lower than in v5 (a ~20 % shorter neck)
+const HIM_HS = .96;   // head size relative to the body unit: ~7.5 heads tall (v7: slim build, was 1.24)
+const HIM_TRAP = .1, HIM_NECKDN = .3;   // HIM_NECKDN: how far the head sits lower than in v5 (a shorter neck)
 const HIM_RIG = {
-  front: { neck: [0, -12.2 + HIM_NECKDN], head: [0, -1.5], sh: { R: [-5.4, -8.15], L: [5.4, -8.15] }, hip: { R: [-1.45, 0], L: [1.45, 0] } },
-  q:     { neck: [.1, -12.2 + HIM_NECKDN], head: [.2, -1.45], sh: { R: [-4.45, -8.2], L: [3.85, -9.15] }, hip: { R: [-1.12, 0], L: [1.3, 0] } },
-  side:  { neck: [.1, -12.15 + HIM_NECKDN], head: [.12, -1.4], sh: { R: [.1, -8.35], L: [-.3, -8.35] }, hip: { R: [.15, 0], L: [-.15, 0] } }
+  front: { neck: [0, -12.2 + HIM_NECKDN], head: [0, -1.5], sh: { R: [-3.15, -8.5], L: [3.15, -8.5] }, hip: { R: [-1.42, 0], L: [1.42, 0] } },
+  q:     { neck: [.1, -12.2 + HIM_NECKDN], head: [.2, -1.45], sh: { R: [-2.4, -8.5], L: [2.7, -9.0] }, hip: { R: [-1.1, 0], L: [1.2, 0] } },
+  side:  { neck: [.1, -12.15 + HIM_NECKDN], head: [.12, -1.4], sh: { R: [.1, -8.45], L: [-.3, -8.45] }, hip: { R: [.12, 0], L: [-.12, 0] } }
 };
-const HIM_TX = { front: .9, q: .9, side: .95 };
-// The build (from the reference): massive shoulders, chest and neck tapering to a narrow waist. x is widened by a factor
-// that ramps from 1 at the waist (y > -1.8) to HIM_BUILD at the chest and above.
-const HIM_BUILD = { front: 1.45, q: 1.42, side: 1.18 };
-const himWide = (y, view) => lerp(1, HIM_BUILD[view], ease(clamp((-y - 1.8) / 5.2)));
-// v6: the trapezius / collar line is raised near the neck (HIM_TRAP, fading out toward the shoulder tips and below the
+// The build (v7: slim). Torso shapes are authored in a wide base frame; x is scaled about a centre line by a factor that
+// varies with height (HIM_SLIM: average shoulders, a lean chest, a gently suppressed waist, slim hips).
+const HIM_SLIM = {
+  front: { cx: 0, s: [[-12, .86], [-10, .84], [-9.3, .82], [-8.5, .77], [-7.4, .71], [-5.2, .69], [-2.4, .79], [0, .74], [2.2, .74]] },
+  q:     { cx: .6, s: [[-12, .85], [-10, .82], [-9, .78], [-8, .72], [-6.5, .68], [-5, .7], [-2.4, .8], [0, .75], [2.2, .75]] },
+  side:  { cx: .3, s: [[-12, .85], [-10, .8], [-8.5, .73], [-7, .7], [-5.4, .71], [-3, .8], [-1, .82], [1, .8], [2.2, .8]] }
+};
+function himSlim(y, view) {
+  const S = (HIM_SLIM[view] || HIM_SLIM.front).s;
+  if (y <= S[0][0]) return S[0][1];
+  for (let i = 1; i < S.length; i++) if (y <= S[i][0]) return lerp(S[i - 1][1], S[i][1], (y - S[i - 1][0]) / (S[i][0] - S[i - 1][0]));
+  return S[S.length - 1][1];
+}
+// the collar line is raised a little near the neck (HIM_TRAP, fading out toward the shoulder tips and below the
 // collarbones) so the head sits on the shoulders; trap = false for the neck itself.
 function himBreath(o, view = 'front', trap = true) {
-  const br = o.breath || 0, tx = HIM_TX[view], cx = view === 'q' ? .35 : view === 'side' ? .3 : 0;
+  const br = o.breath || 0, cx = (HIM_SLIM[view] || HIM_SLIM.front).cx;
   return pts => pts.map(([x, y, k]) => {
     if (trap) y -= HIM_TRAP * clamp((-y - 8.6) / 2.4) * clamp(1 - (Math.abs(x - cx) - 1.1) / 3.8);
-    return [x * tx * himWide(y, view) * (1 + br * .015 * clamp(-y / 10)), y * (1 + br * .012), k];
+    return [cx + (x - cx) * himSlim(y, view) * (1 + br * .015 * clamp(-y / 10)), y * (1 + br * .012), k];
   });
 }
-// the neck shortened: everything above its base follows the lowered head
-const himNeckY = P => pts => P(pts.map(([x, y, k]) => [x, y < -10.6 ? -10.6 + (y + 10.6) * (1 - HIM_NECKDN / 3.1) : y, k]));
+// the neck: slender (x narrowed about its centre) and short (everything above its base follows the lowered head)
+const HIM_NECKW = { front: [0, .72], q: [-.08, .74], side: [-.15, .82] };
+const himNeckY = (P, view) => { const [nc, k] = HIM_NECKW[view]; return pts => P(pts.map(([x, y, kk]) => [nc + (x - nc) * k, y < -10.6 ? -10.6 + (y + 10.6) * (1 - HIM_NECKDN / 3.1) : y, kk])); };
 function himNeck(K, c, P, view) {
-  P = himNeckY(P);
+  P = himNeckY(pts => pts, view);
   if (view === 'front') {
     // a cylinder flaring into the trapezius; the jaw's shadow, the sternocleidomastoids, the Adam's apple
     K.shape(P([[-1.32, -13.7], [1.32, -13.7], [1.36, -12.4], [1.5, -11.6], [1.9, -11.0], [2.5, -10.6], [-2.5, -10.6], [-1.9, -11.0], [-1.5, -11.6], [-1.36, -12.4]]), { wash: c.skin, ink: null, n: 3 });
@@ -1223,7 +1232,7 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
   const hipJ = side => { const [x, y] = R.hip[side]; return [x * Math.cos(ht) - y * Math.sin(ht), x * Math.sin(ht) + y * Math.cos(ht)]; };
   const Hw = hipJ('R'), Lsum = HIM_THIGH + HIM_SHIN;
   // feet (world x, relative to the anchor): the standing foot near the centre line, the relaxed one out to the side
-  const feet = view === 'front' ? { R: lerp(-1.75, -1.0, ct), L: lerp(1.75, 2.3, ct) } : view === 'q' ? { R: lerp(-1.2, -.65, ct), L: lerp(1.6, 2.1, ct) } : { R: .05, L: lerp(1.15, 1.5, ct) };
+  const feet = view === 'front' ? { R: lerp(-1.6, -.85, ct), L: lerp(1.6, 2.05, ct) } : view === 'q' ? { R: lerp(-1.1, -.55, ct), L: lerp(1.5, 1.95, ct) } : { R: .05, L: lerp(1.1, 1.4, ct) };
   const wx = feet.R - dxh, ankleY = Hw[1] + Math.sqrt(Lsum * Lsum * .997 - (wx - Hw[0]) ** 2);   // the standing leg sets the ground
   const legH = ankleY + .95;   // hips above the soles
   const leg = (side, far) => {
@@ -1246,7 +1255,7 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, bust) {
   // legs: seat of the trousers first
   if (!bust) {
     push(); rotate(ht);
-    if (view === 'front') { rs('seat'); K.shape([[-2.6, -1.0], [2.6, -1.0], [3.0, .9], [0, 2.0], [-3.0, .9]], { wash: c.pants, ink: null, n: 2 }); }
+    if (view === 'front') { rs('seat'); K.shape([[-2.4, -1.0], [2.4, -1.0], [2.75, .9], [0, 2.0], [-2.75, .9]], { wash: c.pants, ink: null, n: 2 }); }
     pop();
     if (view === 'front') { leg('R', false); leg('L', false); }
     else if (view === 'q') { leg('L', true); leg('R', false); }
@@ -1285,7 +1294,7 @@ function himDesk(K, c, f, o, outfit, u, sw, rs) {
   // far leg (his left), behind everything
   const legAt = (side, far, dx) => {
     rs('leg' + side);
-    const [H, N, A] = himChain([hip[0] + dx, hip[1]], Math.PI / 2 - .05, HIM_THIGH + .35, -Math.PI / 2 + .02, 6.95);
+    const [H, N, A] = himChain([hip[0] + dx, hip[1]], Math.PI / 2 - .05, HIM_THIGH - .1, -Math.PI / 2 + .02, 6.95);
     rs('shoe' + side); himShoe(K, c, [A[0], A[1] + .05], 'side', far, outfit);
     rs('leg' + side); himLeg(K, c, H, N, A, HIM_LEG.side, { far, hem: 'side', outer: -1 });
   };
