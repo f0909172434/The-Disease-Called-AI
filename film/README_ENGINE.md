@@ -25,6 +25,30 @@ the default on Linux without `/dev/dri` or `/dev/nvidia*`; `--gpu-angle=vulkan|g
 page without touching `studio.html`; `--lyrics=hidden|karaoke|subtitle-only` overrides the overlay.
 The page is served from the repo root by a local server (`--file` loads it from file:// instead).
 
+## Rendering on Colab GPU
+`tools/colab_render.ipynb` renders the whole film on a Colab GPU (L4/A100 best, T4 works) and uploads the MP4 to a release of
+`f0909172434/voicebank-cache`; `tools/fetch_colab_render.sh <tag>` brings it back. In Colab: runtime GPU, add the Secret `GH_TOKEN`
+(fine-grained PAT, only that repo, Contents: Read and write, notebook access on), Run all. Parameters (cell 1): `BRANCH`, optional
+`COMMIT` pin, `FROM`/`TO` (s), `WORKERS` (0 = auto from vCPU/RAM/VRAM, max 6), `CRF` (12), `USE_DRIVE`.
+- **Setup**: shallow clone (prints the sha) · Node 22 (puppeteer-core 25 needs >= 22.12) + `npm ci` · Chrome for Testing via
+  `@puppeteer/browsers` · ffmpeg (Colab's 4.4 has no `-fps_mode`, which the chunk encoder uses; a newer static build is installed if a
+  smoke test of the real options fails) · only if Colab lacks them, the NVIDIA EGL/Vulkan libraries for the exact driver version
+  (apt `libnvidia-gl-<major>` when it matches, else NVIDIA's own `.run`, unpacked).
+- **GPU probe**: `node render.mjs --probe-gl --gpu-angle=vulkan|gl-egl [--chrome-flags=...]` launches Chrome through the normal
+  `launch()`, prints one `PROBE_GL {json}` line (WebGL2 renderer, vendor, GPU devices) and exits 0 (WebGL2 draws) or 2. The notebook
+  keeps the first candidate whose renderer says NVIDIA and stops otherwise: with no GPU path Chrome hands out SwiftShader or Mesa
+  llvmpipe (`gl-egl` on a CPU-only box "works" as llvmpipe), so the bench and the render also stop if the page's `GL:` line is not NVIDIA.
+- **Render**: bench (24 frames, s/frame and an estimate) · chunks dir linked into `MyDrive/disease_called_ai/chunks_<sha>` ·
+  `--video --no-audio` (re-run up to twice if it crashes) · ffprobe check (codec, 1920x1080, fps, frame count, duration) · upload
+  `video_<sha7>.mp4` + `render_log.json` to release `mv-render-<sha7>` (same-named assets replaced; over GitHub's 2 GiB a video goes up
+  as `.part001`, `.part002`, ...). After a disconnect set `COMMIT` to the printed sha and Run all: finished chunks come back from Drive.
+- The release repo is public, so a release is world-readable; `DRAFT_RELEASE = True` (advanced parameters) makes a draft, which the
+  fetch script then needs `GH_TOKEN` in the environment to find.
+```
+tools/fetch_colab_render.sh mv-render-<sha7> [--list]      # -> output/colab/ (rejoins parts, checks sha256 against render_log.json)
+python3 tools/assemble.py --video output/colab/video_<sha7>.mp4   # mux music/build/master.wav, encode the deliverables
+```
+
 ## Data (`src/data.js`, loaded before the first frame; all helpers are pure functions of t)
 Sources: `data/timeline.json` (`analysis/analyze.py`, blind analysis of the master) or else
 `data/timeline.placeholder.json` (`analysis/make_placeholder_timeline.py`); `../music/build/arrangement.json`
