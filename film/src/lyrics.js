@@ -21,7 +21,7 @@ const LYRIC_CFG = {
   band: .55, bandTop: .78, bandColor: '#05060A',                              // readability gradient: bottom 22 %, VOID 0 -> 55 %
   outline: 'rgba(24,18,30,.8)', outlineW: .085,                               // thin ink edge (em) so the light colours read on paper
   you: { color: TOKENS.HUMAN_SKIN, zh: TOKENS.HUMAN_SKIN }, ai: { color: TOKENS.AI_CYAN, zh: TOKENS.AI_WHITE },
-  leadIn: .25, fadeIn: .12, fadeOut: .35, shift: 46, shiftT: .25,             // human lines fade in .12 s from .25 s early; AI: instant
+  leadIn: .25, fadeIn: .12, fadeOut: .35, shift: 92, shiftT: .16,             // human lines fade in .12 s from .25 s early; AI: instant
   sylRise: .06, glow: 14, glowAlpha: .75, glowDecay: .25, jitter: .5
 };
 // On a light picture (white paper, a grey or daytime room) the pale colours vanish: the mean luminance of the subtitle band
@@ -95,7 +95,7 @@ function lyricLayout(t) {
   }
   out.sort((x, y) => x.tin - y.tin);
   const nw = out[out.length - 1];
-  for (let i = 0; i < out.length - 1; i++) { const k = clamp((t - nw.tin) / L.shiftT); out[i].shift = -L.shift * easeOut(k); out[i].alpha *= 1 - k; }
+  for (let i = 0; i < out.length - 1; i++) { const k = clamp((t - nw.tin) / L.shiftT); out[i].shift = -L.shift * easeOut(k); out[i].alpha *= (1 - k) ** 3; }   // the old line clears the new one's two rows (EN + 中文 = 65 px at 1080p) and fades fast
   return out.filter(o => o.alpha > .004).slice(-2);
 }
 const LAYOUT_CACHE = new Map();      // pure memo of text measurement (font + string -> per-char x)
