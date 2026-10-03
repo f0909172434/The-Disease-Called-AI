@@ -25,7 +25,7 @@ cd .. && python3 tools/assemble.py --video output/video.mp4 --audio music/build/
 上傳的檔案用 **HQ 保存版** `output/病名為AI_The_Disease_Called_AI_HQ.mp4`。平台會重新編碼，HQ 的畫質比較好。
 
 **共同**
-- 標題（照使用者給的，一字不改）：`docs/release/title.txt` → `The Disease Called AI(病名為愛）Opus5.5生成`
+- 標題（使用者確認：括號統一為全形）：`docs/release/title.txt` → `The Disease Called AI（病名為愛）Opus5.5生成`
 - 封面：`docs/stills/98.3.jpg`（06F 海報鏡頭）。如果平台要求 16:9 的 1280×720，就從 1920×1080 的全尺寸 still 縮出來。
 
 **YouTube**
