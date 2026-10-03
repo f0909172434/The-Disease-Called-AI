@@ -389,19 +389,18 @@
   // reads: 41.86-42.90 him and the phone on the pillow · 42.90-44.13 the finger, her nods · 44.16-44.65 the shake and the heart, the push
   // =============================================================================================================
   const G_HAND = 42.90;
-  const G_ROLL = -Math.PI / 2, G_SC = [406, 215, 470];                      // the camera rolls a quarter turn: pillow left, he lies across the frame; the phone's screen rect (screen px) for 02F's shrinking panel
+  const G_ROLL = -Math.PI / 2, G_SC = [544, 215, 470];                      // the camera rolls a quarter turn: pillow left, he lies across the frame; the phone's screen rect (screen px) for 02F's shrinking panel
   function s02g(t, lt, dur) {
     const k1 = kitEase.sine(seg(t, N3 - .05, T_END)), pushK = kitEase.expoIn(seg(t, N3 - .05, T_END)), zoom = lerp(1.3 + .06 * seg(lt, 0, dur), 2.05, pushK);
     const hd = [1150, 235], pw = [1500, 240];                                // head and phone in the surface's coordinates
-    const cx = lerp(1250, pw[0] + 10, k1), cy = lerp(666, pw[1] + 10, k1);
-    push(); resetMatrix(); translate(-W / 2, -H / 2); boilSeed('s02g sheet'); paint(rectPts(-60, -60, W + 120, H + 120), { wash: setRoomPal('dusk').sheet, ink: null }); pop();
+    const cx = lerp(1250, pw[0] + 10, k1), cy = lerp(560, pw[1] + 10, k1);
     kitCam(lt, [[0, cx, cy, zoom, G_ROLL]], { drift: 2 });
-    setSurface('bed', 'dusk', { res: 1.25 });
+    s02Bed(setRoomPal('dusk'), 1056, 640, 1760, 430, { cover: '#D2D9EC' });
     glow(pw[0], pw[1], 760, SET_C.cyan, .35);
     const f = himEmotions(t, [[T_G, 'tired'], [G_HAND, 'tired', { mouth: 'smile', browIn: -.5 }]], { take: .5 });
     const PN = setRoomPal('night');
     // side-lying: his head toward the pillow (screen left), face turned up the frame toward the phone, the body running to the right over the duvet
-    him(1080, 705, 34, { ...f, pose: 'sidelie', outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverCol: PN.cover, sheetCol: PN.sheet, boilKey: 's02g him', seed: .4 });
+    him(1080, 705, 34, { ...f, pose: 'sidelie', outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverCol: '#D2D9EC', sheetCol: mixCol(PN.sheet, '#FFFFFF', .4), boilKey: 's02g him', seed: .4 });
     const sh = t >= N3;
     setPillowPhone(pw[0], pw[1], 360, { rot: Math.PI / 2 - .1, k: .8 + .2 * pulse(t, 4), screen: S => {
       boilSeed('s02g glass'); setP(setBox(S.x, S.y, S.x + S.w, S.y + S.h), { wash: '#10285A', ink: null });
@@ -412,6 +411,34 @@
     } });
     camEnd();
     if (t > T_END - .14) kitFade(kitEase.sine(seg(t, T_END - .14, T_END)), '#0D1530');
+  }
+
+
+  // the bed from above, painted live in the (rolled) world: a washed sheet, one wide pillow under the head, and a duvet that rises in soft ridges
+  // below `hem` (world y). hx = the head's x, px0/px1 the pillow's extent. Head up in the world = pillow at the left once the camera is rolled.
+  function s02Bed(P, hx, px0, px1, hem, o = {}) {
+    const lt = mixCol(P.sheet, '#FFFFFF', .3), pil = mixCol(P.pillow, '#FFFFFF', .4), pl = mixCol(P.ink, P.pillowSh, .45), cv = o.cover || mixCol(P.cover, '#FFFFFF', .25), dk = mixCol(cv, P.ink, .22), cl = mixCol(P.coverLt, '#FFFFFF', .4);
+    const cxm = (px0 + px1) / 2, x0 = px0 - 1400, x1 = px1 + 1400;
+    boilSeed('s02bed  sheet'); paint(rectPts(x0, -900, x1 - x0, 3200), { wash: lt, ink: null });
+    for (let i = 0; i < 6; i++) { boilSeed('s02bed  bloom' + i); paint(ellPts(cxm + (i - 2.5) * 360, 700 + 520 * hash(i + 2), 380, 200, 20, 12), { fill: P.sheetSh, fillOp: 50, bleed: .25, tex: .6, ink: null }); }
+    for (let i = 0; i < 7; i++) { boilSeed('s02bed  crease' + i); const x = cxm - 1100 + i * 330 + 40 * hash(i), y = 420 + 600 * hash(i * 3.3); inkLine([[x, y], [x + 130, y + 30 * Math.sin(i)], [x + 300, y - 12]], .6, P.sheetSh, 'inkfine', .6); }
+    // the pillow
+    const T = -70, B = 340, O = [[px0 + 30, T + 30], [cxm, T - 14], [px1 - 30, T + 26], [px1 + 18, 130], [px1 + 4, B - 70], [px1 - 70, B + 6], [cxm, B + 22], [px0 + 70, B + 4], [px0 - 8, B - 70], [px0 - 16, 130]];
+    boilSeed('s02bed  pillow shadow'); paint(O.map(([x, y]) => [x + 22, y + 26]), { wash: P.sheetSh, washOp: 120, ink: null, curv: .8 });
+    boilSeed('s02bed  pillow'); paint(O, { wash: pil, ink: pl, sw: 1.1, curv: .8 });
+    paint([[px0 + 20, B - 90], [cxm, B - 40], [px1 - 20, B - 90], [px1 - 60, B], [cxm, B + 18], [px0 + 60, B]], { wash: P.pillowSh, washOp: 110, ink: null, curv: .7 });
+    boilSeed('s02bed  dent'); paint(ellPts(hx, 170, 190, 150, 22, 12), { wash: P.pillowSh, washOp: 85, ink: null, curv: .8 });
+    for (const [a, b] of [[px0 + 70, 40], [px1 - 70, 40]]) inkLine([[a, b], [a + (a < cxm ? 26 : -26), 150], [a + (a < cxm ? 8 : -8), 270]], .6, P.pillowSh, 'inkfine', .6);
+    // the duvet: a wavy hem, a wash, long soft ridges, a few cloth creases, the turned-down band
+    const hemP = []; for (let i = 0; i <= 12; i++) { const x = lerp(x0, x1, i / 12); hemP.push([x, hem + 26 * Math.sin(i * 1.1 + 1) + 12 * Math.sin(i * 2.7)]); }
+    boilSeed('s02bed  duvet'); paint(hemP.concat([[x1, 2400], [x0, 2400]]), { wash: cv, ink: null });
+    boilSeed('s02bed  duvet tex'); paint([[x0, hem + 60], [x1, hem + 60], [x1, 2400], [x0, 2400]], { fill: dk, fillOp: 28, bleed: .2, tex: .8, ink: null });
+    const rid = (x, w, op, col, key) => { boilSeed('s02bed  ' + key); for (const k of [1, .7, .42]) paint(ribbon([[x, hem + 60], [x - 20, hem + 360], [x + 30, hem + 700], [x + 10, hem + 1100]], w * k, w * k * 1.1), { wash: col, washOp: op, ink: null }); };
+    for (const [dx, w] of [[-520, 300], [-60, 360], [440, 320], [900, 300]]) { rid(cxm + dx + 70, w, 40, dk, 'sh' + dx); rid(cxm + dx - 30, w * .8, 60, cl, 'lt' + dx); }
+    boilSeed('s02bed  creases'); for (let i = 0; i < 9; i++) { const x = cxm - 760 + i * 190 + 30 * hash(i * 2.2), y = hem + 140 + 90 * hash(i * 1.7); inkLine([[x, y], [x - 14 + 28 * hash(i), y + 140], [x + 8, y + 300]], .55, dk, 'inkfine', .6); }
+    const hb = hemP.map(([x, y]) => [x, y + 54 + 10 * Math.sin(x * .006)]);
+    boilSeed('s02bed  hem'); paint(hb.map(([x, y]) => [x, y - 2]).concat(hb.map(([x, y]) => [x, y + 20]).reverse()), { wash: dk, washOp: 80, ink: null });
+    paint(hemP.concat(hb.slice().reverse()), { wash: cl, ink: null }); inkLine(hemP, 1.2, P.ink, 'ink', .5); inkLine(hb, .5, dk, 'inkfine', .5);
   }
 
   const stub = (name) => (t, lt, dur) => { kitFade(1, '#1B2036'); letter(name, W / 2, H / 2, 60, '#E8FDFF', { screen: true, ink: false }); };

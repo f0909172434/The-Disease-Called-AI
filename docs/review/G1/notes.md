@@ -20,3 +20,6 @@ Shared-file requests: none required. (him 'lie' cannot be rotated head-up withou
 - 02B: check 190 px with ink + glow; phone hand shrunk (PU 190).
 - 02C: cells fall from above with overshoot. 02A: hand fingers separated.
 - Determinism: 1/8 times differed (noise-level, same as before).
+
+## Fix #2
+- 03B/02G/03C: setSurface replaced by own live top-down bed (s02Bed / s03BedTop, painted in the rolled world): light washed sheet with creases, one wide pillow under his head (outline, dent, shadow), duvet with wavy hem band, soft ridges and cloth creases. 02G: his side-lying cover recoloured pale so its highlight ellipses vanish; phone leans on the pillow. ~0.1-0.4 s/frame (live paint). Weak: 02G is pale/low contrast; his cover silhouette is still the shared fixed shape.
