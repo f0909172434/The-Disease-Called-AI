@@ -27,7 +27,7 @@
 | 盲測分析 | ✅ 172.007 BPM、節拍誤差 2.5 ms、小節線命中 100 % |
 | 手繪水彩引擎、角色、場景 | ✅ |
 | 67 個鏡頭（S00–S13） | ✅ 全部通過審稿 |
-| 全片算圖與交付 MP4 | ✅ 在 M5 上 7.5 分鐘算完；`output/病名為AI_The_Disease_Called_AI.mp4` 93.65 MB，−11.1 LUFS，音畫逐樣本對齊（`docs/tasks/mac_03_report.md`）；HQ 版留在委託者的 Mac |
+| 全片算圖與交付 MP4 | ✅ 在 M5 上 8.4 分鐘算完（v2，含最後潤飾）；`output/病名為AI_The_Disease_Called_AI.mp4` 93.65 MB，−11.1 LUFS，音畫逐樣本對齊（`docs/tasks/mac_03_report.md`）；HQ 版留在委託者的 Mac |
 | README | ✅ 完成（含劇照） |
 
 ---
@@ -82,13 +82,9 @@
 
 ## 4. 下一步
 
-成品已經交付，主線工作完成。以下是可以再做的（都不擋交付）：
-- 各組回饋裡標為「有空再做」的小潤飾：
-  - 02G 被子上的淡色圓斑；
-  - 09B 說話空檔的嘴型；
-  - 09H 手掌的質感；
-  - 巨大的手 `aiGiantHand` 再精細一點。
-- 改了任何鏡頭，都在 Mac 上重算全片（約 7.5 分鐘），再跑 `tools/assemble.py`。整部片必須在同一台機器上算。
+成品已經交付，最後一輪潤飾（02G 被子、09B 嘴型、09H 掌心、巨大的手）也已完成，並重算為 v2。
+- 發布：YouTube 和 B站由 Mac 上傳（`docs/tasks/mac_04_polish_and_publish.md` 的 C 段），標題和簡介在 `docs/release/`。網址回報在 `docs/tasks/mac_04_report.md`。
+- 改了任何鏡頭，都在 Mac 上重算全片（約 8.4 分鐘），再跑 `tools/assemble.py`。整部片必須在同一台機器上算。
 
 ---
 
