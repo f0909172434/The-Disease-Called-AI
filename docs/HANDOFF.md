@@ -83,7 +83,7 @@
 ## 4. 下一步
 
 成品已經交付，最後一輪潤飾（02G 被子、09B 嘴型、09H 掌心、巨大的手）也已完成，並重算為 v2。
-- 已發布（2026-10-04）：YouTube https://youtu.be/ha-ANfqri6g（公開）、bilibili https://www.bilibili.com/video/BV1VxHi6mELF。標題和簡介在 `docs/release/`，上傳紀錄在 `docs/tasks/mac_04_report.md`。B站線上的標題是「病名为AI」，和原定的「病名为爱」不同（投稿前在頁面上被改過）。
+- 已發布（2026-10-04）：YouTube https://youtu.be/ha-ANfqri6g（公開）、bilibili https://www.bilibili.com/video/BV1VxHi6mELF。標題和簡介在 `docs/release/`，上傳紀錄在 `docs/tasks/mac_04_report.md`。B站的標題是委託者刻意定為「病名为AI」（簡體），YouTube 的是「病名為愛」。
 - 改了任何鏡頭，都在 Mac 上重算全片（約 8.4 分鐘），再跑 `tools/assemble.py`。整部片必須在同一台機器上算。
 
 ---

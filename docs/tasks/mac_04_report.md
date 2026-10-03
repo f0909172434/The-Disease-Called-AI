@@ -51,7 +51,7 @@
 - 營利：這個頻道沒有營利選項，所以沒有開啟
 
 **Bilibili 設定**（使用者要求 B站用簡體）
-- 標題：Claude 填的是 `The Disease Called AI（病名为爱）Opus5.5生成`；**線上的實際標題是 `The Disease Called AI（病名为AI）Opus5.5生成`**（投稿前在頁面上被改過，照實記錄）
+- 標題：Claude 填的是 `The Disease Called AI（病名为爱）Opus5.5生成`；**線上的實際標題是 `The Disease Called AI（病名为AI）Opus5.5生成`**（委託者刻意改的，已確認）
 - 简介：`docs/release/description_bilibili_zhs.txt`（description_bilibili.txt 的簡體版，1117 字）
 - 封面：06F 海報鏡頭，4:3 與 16:9 兩種比例
 - 创作声明：**含AI生成内容**，加上「内容为自制：未经作者允许，禁止转载」
