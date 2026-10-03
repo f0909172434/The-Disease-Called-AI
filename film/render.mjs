@@ -26,6 +26,8 @@
 //   --inject=a.js,b.js (add throwaway scripts, e.g. a test shot, after the page loads), --chrome=<path>,
 //   --soft-gl (SwiftShader; the default on Linux without a GPU) | --gpu-angle=vulkan|gl-egl (NVIDIA, headless Linux) |
 //   --hw-gl (platform default GL), --file (load studio.html from file:// instead of the local server).
+//   node render.mjs --probe-gl [--gpu-angle=vulkan|gl-egl | --soft-gl] [--chrome=<path>]   which WebGL renderer do these GL flags get?
+//         prints one 'PROBE_GL {json}' line (renderer, vendor, GPU devices) and exits 0 if WebGL2 draws, 2 if not (tools/colab_render.ipynb)
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, existsSync, statSync, renameSync, readdirSync, rmSync, unlinkSync } from 'node:fs';
 import { dirname, resolve, join, relative } from 'node:path';
@@ -86,6 +88,19 @@ if (args.serve) {
   server = await serve(undefined, +args.port || 0);
   console.log(`studio: ${studioURL(server, {}).replace('?render', '')}   (?t=55.8  ?loop=<name>  ?lyrics=hidden  ?nocache)  Ctrl-C to stop`);
   await new Promise(() => {});
+}
+
+if (args['probe-gl']) {   // no page, no server: just the launch path (flags, Chrome) and a WebGL2 context; lets a notebook pick GPU flags
+  const b = await launch(args), p = await b.newPage();
+  const r = await p.evaluate(() => {
+    const gl = document.createElement('canvas').getContext('webgl2', { antialias: true, preserveDrawingBuffer: true }); if (!gl) return { ok: false, error: 'no WebGL2 context' };
+    const e = gl.getExtension('WEBGL_debug_renderer_info'), px = new Uint8Array(4);
+    gl.clearColor(1, 0, .5, 1); gl.clear(gl.COLOR_BUFFER_BIT); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    return { ok: px[0] === 255 && px[1] === 0 && Math.abs(px[2] - 128) < 3, renderer: gl.getParameter(e ? e.UNMASKED_RENDERER_WEBGL : gl.RENDERER), vendor: gl.getParameter(e ? e.UNMASKED_VENDOR_WEBGL : gl.VENDOR), version: gl.getParameter(gl.VERSION) };
+  }).catch(e => ({ ok: false, error: e.message }));
+  const sys = await (await b.target().createCDPSession()).send('SystemInfo.getInfo').catch(() => null);
+  console.log('PROBE_GL ' + JSON.stringify({ gl: glFlags(args).name, chrome: await b.version(), ...r, devices: (sys?.gpu?.devices || []).map(d => d.deviceString || d.vendorString), features: Object.fromEntries(['webgl', 'webgl2', 'vulkan', 'opengl', 'gpu_compositing'].map(k => [k, sys?.gpu?.featureStatus?.[k]])) }));
+  await b.close(); process.exit(r.ok ? 0 : 2);
 }
 
 const { b: browser, p: page0 } = await boot();
