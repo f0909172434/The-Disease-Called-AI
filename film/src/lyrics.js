@@ -24,6 +24,9 @@ const LYRIC_CFG = {
   leadIn: .25, fadeIn: .12, fadeOut: .35, shift: 46, shiftT: .25,             // human lines fade in .12 s from .25 s early; AI: instant
   sylRise: .06, glow: 14, glowAlpha: .75, glowDecay: .25, jitter: .5
 };
+// On a light picture (white paper, a grey or daytime room) the pale colours vanish: the mean luminance of the subtitle band
+// (sampled before the band is drawn) blends the text towards dark ink with a pale halo and thins the dark band away.
+const LYRIC_LIGHT = { lo: .4, hi: .5, you: '#3A2214', youZh: '#3A2214', ai: '#07445A', aiZh: '#0A3342', halo: 'rgba(255,244,222,.9)', haloHi: '#FFE9C4' };
 const LYRIC_LABELS = { you: 'you', ai: 'assistant', both: 'you + assistant' };
 
 // ---------- fonts (local woff2 subsets in assets/fonts, built by tools/build_fonts.py; never the network) ----------
@@ -123,13 +126,24 @@ function lyricRun(c, text, x, y, font, track, col, alpha, o = {}) {
   return lay;
 }
 
+let LYRIC_PROBE = null;
+function lyricLightness(c) {   // 0 (dark picture) .. 1 (light picture): luminance of the bottom band, through a 24 x 6 downscale
+  try {
+    if (!LYRIC_PROBE) { const cv = document.createElement('canvas'); cv.width = 24; cv.height = 6; LYRIC_PROBE = { cv, g: cv.getContext('2d', { willReadFrequently: true }) }; }
+    const y0 = Math.round(H * LYRIC_CFG.bandTop), g = LYRIC_PROBE.g; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+    g.drawImage(c.canvas, 0, y0, W, H - y0, 0, 0, 24, 6);
+    const d = g.getImageData(0, 0, 24, 6).data; let sum = 0; for (let i = 0; i < d.length; i += 4) sum += (.2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]) / 255;
+    return clamp((sum / (d.length / 4) - LYRIC_LIGHT.lo) / (LYRIC_LIGHT.hi - LYRIC_LIGHT.lo));
+  } catch (e) { return 0; }
+}
 function drawLyrics(c, t, mode = 'karaoke', styleFn = null) {
   if (mode === 'hidden' || !LYRICS.length) return;
   const act = lyricLayout(t); if (!act.length) return;
   const L = LYRIC_CFG, u = H / 1080, left = W * L.margin, right = W * (1 - L.margin);
   for (const a of act) a.st = (styleFn && styleFn(a.line, t)) || {};
-  // readability band under the text
-  const band = Math.max(...act.map(a => a.alpha * (a.st.band ?? L.band)));
+  const lk = lyricLightness(c);
+  // readability band under the text (it fades out on a light picture, where the text goes dark instead)
+  const band = Math.max(...act.map(a => a.alpha * (a.st.band ?? L.band))) * (1 - lk);
   if (band > .002) {
     const y0 = H * L.bandTop, g = c.createLinearGradient(0, y0, 0, H), col = hexRGB(L.bandColor);
     g.addColorStop(0, `rgba(${col},0)`); g.addColorStop(1, `rgba(${col},${band})`);
@@ -137,14 +151,14 @@ function drawLyrics(c, t, mode = 'karaoke', styleFn = null) {
   }
   for (const a of act) {
     const l = a.line, st = a.st, ai = st.font ? st.font === 'ai' : l.ai, pal = ai ? L.ai : L.you, align = st.align || 'left';
-    const outline = st.outline === undefined ? L.outline : st.outline, enY = H * L.enY + a.shift * u, zhY = H * L.zhY + a.shift * u;
+    const outline0 = st.outline === undefined ? L.outline : st.outline, outline = lk > .5 && outline0 ? LYRIC_LIGHT.halo : outline0, enY = H * L.enY + a.shift * u, zhY = H * L.zhY + a.shift * u;
     if (mode === 'karaoke') {
-      const col = st.color || pal.color, role = ai ? 'ai' : 'human', track = FONT_ROLES[role].tracking;
+      const col = lk > .02 ? mixCol(st.color || pal.color, ai ? LYRIC_LIGHT.ai : LYRIC_LIGHT.you, lk) : (st.color || pal.color), role = ai ? 'ai' : 'human', track = FONT_ROLES[role].tracking;
       let size = L.enSize * u, font = fontCSS(role, size), w = charLayout(c, l.text, font, track * size).width;
       if (w > right - left) { size *= (right - left) / w; font = fontCSS(role, size); w = charLayout(c, l.text, font, track * size).width; }
       const x = align === 'center' ? (W - w) / 2 : left;
       const as = l._as || (l._as = mapSyllables(l.text, l.syllables));
-      const sa = l.syllables.map(s => .4 + .6 * clamp((t - s.start) / L.sylRise));
+      const fl = .4 + .22 * lk, sa = l.syllables.map(s => fl + (1 - fl) * clamp((t - s.start) / L.sylRise));   // unsung syllables stay a bit stronger on light pictures
       const sg = l.syllables.map(s => t < s.start ? 0 : t <= s.end ? 1 : Math.exp(-(t - s.end) / L.glowDecay));
       const lay = lyricRun(c, l.text, x, enY, font, track * size, col, a.alpha, {
         per: i => ({ a: sa[as[i]] ?? 1, g: sg[as[i]] ?? 0 }), glow: L.glow * u, outline, outlineW: L.outlineW * size,
@@ -166,7 +180,7 @@ function drawLyrics(c, t, mode = 'karaoke', styleFn = null) {
       }
     }
     if ((mode === 'karaoke' || mode === 'subtitle-only') && l.zh) {
-      const zc = st.zhColor || pal.zh, zs = L.zhSize * u, zf = ai ? fontCSS('sans', zs) : fontCSS('title', zs, { weight: 400 });
+      const zc = lk > .02 ? mixCol(st.zhColor || pal.zh, ai ? LYRIC_LIGHT.aiZh : LYRIC_LIGHT.youZh, lk) : (st.zhColor || pal.zh), zs = L.zhSize * u, zf = ai ? fontCSS('sans', zs) : fontCSS('title', zs, { weight: 400 });
       const zw = charLayout(c, l.zh, zf, 0).width, zx = align === 'center' ? (W - zw) / 2 : left;
       lyricRun(c, l.zh, zx, zhY, zf, 0, zc, .9 * a.alpha, { outline, outlineW: L.outlineW * zs });
     }
