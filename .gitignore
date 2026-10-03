@@ -26,3 +26,7 @@ music/diffsinger/voicebanks/
 music/diffsinger/ourender/bin/
 music/diffsinger/ourender/obj/
 output/preview/
+
+# final render (mac_03): the raw picture and the CRF 16 archive stay on the Mac
+output/video.mp4
+output/*_HQ.mp4
