@@ -103,7 +103,7 @@
   // =============================================================================================================
   function bigWave(t, t0) {                                                 // the chibi wave, bigger: one hand high and out, the other on her chest
     const w = aiAct('wave', t, t0), a = t - t0, e = kitEase.sine(seg(a, 0, .26)), sw = Math.sin(bpOf(t) * TAU), k = backOut(seg(a, 0, .3));
-    return { ...w, reachR: [lerp(.55, 3.2 + .7 * sw, e), lerp(-3.55, -7.1 - .25 * Math.abs(sw), e)], handKR: 1.4, handAR: -Math.PI / 2 + .75 * sw * k + .1 };
+    return { ...w, reachR: [lerp(.55, 3.5 + .8 * sw, e), lerp(-3.55, -7.2 - .25 * Math.abs(sw), e)], handKR: 1.4, handAR: -Math.PI / 2 + .75 * sw * k + .1 };
   }
   const C_POP = 6.62, C_CLIMB = .54, C_WAVE = C_POP + .44;                  // she is out by 7.16 and waves until the cut
   function s00c(t, lt, dur) {
@@ -114,7 +114,7 @@
     setChatScreen(S, t, { reply: { t: T_REPLY, text: 'Always.' }, bg: false });
     if (t >= C_POP - .05) {                                                  // the little her climbs out of the input box
       const edge = S.Y(.72) - 2, ax = 450, u = 44, p = (t - C_POP) / C_CLIMB;
-      const f = aiEmotions(t, [[C_POP - .3, 'eager'], [C_POP + 1.0, 'smile']]);
+      const f = aiEmotions(t, [[C_POP - .3, 'eager'], [C_POP + .62, 'smile']]);
       glow(ax, edge, 330, KIT.CYAN, .8 * kitEnv(t, C_POP + .2, .05, .22));
       ai(ax, edge, u, { ...f, ...aiClimb(t, C_POP, C_CLIMB), ...(p > .72 ? bigWave(t, C_WAVE - .08) : {}), form: 'chibi', view: 'front', pal: 'glow', t, seed: 3,
         clip: [ax - 320, edge - 700, ax + 320, edge], noShadow: true, boilKey: 's00c her' });
