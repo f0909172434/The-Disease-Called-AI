@@ -152,14 +152,14 @@
     kitCam(lt, [[0, cx, cy, zoom]], { drift: push < 1 ? 3 : 0 });
     // the light of the screen in front of him (cyan, from below and ahead), behind then over him
     glow(HX, HY + 60, 700, KIT.CYAN, .34);
-    const feel = himEmotions(t, [[T_D, 'tired', { glare: .3 }], [D_SMILE, 'smile', { glare: .3, lookX: .1 }]], { take: .9 });
+    const feel = himEmotions(t, [[T_D, 'tired', { glare: .12 }], [D_SMILE, 'smile', { glare: .12, lookX: .1 }]], { take: .9 });
     const dil = kitEase.sine(seg(t, 8.9, D_PUSH1));
     him(960, NY, u, { ...feel, pose: 'bust', view: 'front', cut: 3.6, outfit: 'launch', band: false, pupil: 1 + .85 * dil, boilKey: 's00d him', seed: .6,
       lens: (i, Ls) => lensReflection(t, i, Ls) });
-    glow(HX, HY + 100, 560, KIT.CYAN, .46 * (1 - .5 * push));                // the same light on his face (additive, from the screen below and ahead)
+    glow(HX, HY + 100, 560, KIT.CYAN, .23 * (1 - .5 * push));                // the same light on his face (additive, from the screen below and ahead)
     camEnd();
     // the light of 00C still pouring in at the start of the shot (hidden cut), the riser at the end, then black
-    kitSpill(.9 * (1 - kitEase.sine(seg(lt, 0, .5))), W * .5, H * .45);
+    kitSpill(.6 * (1 - kitEase.sine(seg(lt, 0, .4))), W * .5, H * .45);
     if (t > D_PUSH1) kitSpill(kitEase.in2(seg(t, D_PUSH1, D_BLACK)), W * .5, H * .5, KIT.CYAN, { core: KIT.CYANW, cover: 1 });
     if (t >= D_BLACK) kitFade(1);
   }

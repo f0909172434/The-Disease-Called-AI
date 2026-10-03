@@ -111,7 +111,7 @@ const AI_GH = {   // fingers: base [x, y], length, width (index, middle, ring, l
   palm: [[0, -.19], [.16, -.21], [.32, -.225], [.46, -.22], [.53, -.16], [.56, -.05], [.56, .07], [.54, .19], [.44, .245], [.3, .26], [.14, .25], [0, .2]],
 };
 function aiGiantHand0(s, a, kind, o, C) {
-  const S = AI_S, sw = S.sw * .6, back = !!o.back, part = o.part || 'all';
+  const S = AI_S, big = s > 450, sw = S.sw * (big ? .42 : .6), back = !!o.back, part = o.part || 'all';   // big: the giant scale: thinner ink, more skin detail
   const R = (x, y) => { const c = Math.cos(a), n = Math.sin(a); return [(x * c - y * n) * s, (x * n + y * c) * s]; };
   const M = pts => pts.map(p => { const q = R(p[0], p[1]); return p[2] ? [q[0], q[1], 1] : q; });
   const crease = mixCol(C.skinSh, C.ink, .3), out = { palm: R(.3, 0), tips: [] };
@@ -126,7 +126,7 @@ function aiGiantHand0(s, a, kind, o, C) {
       const nb = E.C[Math.round(m * .8)], nl = rr * 1.25;
       aiPaint(aiEll(lerp(nb[0], tip[0], .55), lerp(nb[1], tip[1], .55), nl * .62, nl * .44, 14, Math.atan2(uy, ux)), { wash: '#F7DEDA', ink: crease, sw: sw * .45 });
       for (const f of [.28, .6]) { const j = Math.round(m * f), c = E.C[j]; aiLine([[lerp(c[0], E.L[j][0], .5), lerp(c[1], E.L[j][1], .5)], [c[0] + ux * rr * .25, c[1] + uy * rr * .25], [lerp(c[0], E.R[j][0], .5), lerp(c[1], E.R[j][1], .5)]], sw * .45, crease); }
-    } else if (!back) for (const f of [.36, .68]) { const j = Math.round(m * f); aiLine([[lerp(E.L[j][0], E.R[j][0], .25), lerp(E.L[j][1], E.R[j][1], .25)], [lerp(E.L[j][0], E.R[j][0], .75), lerp(E.L[j][1], E.R[j][1], .75)]], sw * .4, crease); }
+    } else if (!back) for (const f of (big ? [.22, .44, .7] : [.36, .68])) { const j = Math.round(m * f); aiLine([[lerp(E.L[j][0], E.R[j][0], .25), lerp(E.L[j][1], E.R[j][1], .25)], [lerp(E.L[j][0], E.R[j][0], .75), lerp(E.L[j][1], E.R[j][1], .75)]], sw * .4, crease); }
     out.tips[i] = tip; if (i === 0) out.tip = tip;
     return E;
   };
@@ -172,6 +172,11 @@ function aiGiantHand0(s, a, kind, o, C) {
     if (back) { for (const y of [-.13, -.03, .08]) aiLine(aiCurve(M([[.18, y * .8], [.34, y * .95], [.48, y]]), 3), sw * .4, mixCol(C.skinSh, C.skin, .3)); }
     else { aiLine(aiCurve(M([[.1, .21], [.2, .08], [.28, -.12]]), 4), sw * .5, crease); aiLine(aiCurve(M([[.45, -.2], [.38, -.05], [.43, .14]]), 4), sw * .45, crease); aiLine(aiCurve(M([[.36, -.2], [.31, -.07]]), 3), sw * .35, crease); }
     aiPaint(aiLoop(M([[.04, -.12], [.3, -.17], [.47, -.13], [.3, -.07], [.08, -.04]]), 3), { wash: C.skinSh, op: 90, ink: null });
+    if (big) {   // a soft shading wash over the palm (heel in shade, a lit pad at the base of the thumb) and a few skin lines
+      aiPaint(aiLoop(M([[0, .2], [.14, .25], [.3, .26], [.44, .245], [.42, .14], [.24, .09], [.06, .12]]), 3), { wash: C.skinSh, op: 70, ink: null });
+      aiPaint(aiLoop(M([[.12, .17], [.26, .2], [.36, .17], [.3, .1], [.18, .09]]), 3), { wash: mixCol(C.skin, '#FFFFFF', .4), op: 110, ink: null });
+      if (!back) for (const [x0, y0, x1, y1] of [[.2, -.1, .38, -.08], [.16, .0, .36, .03], [.3, .12, .42, .1]]) aiLine(aiCurve(M([[x0, y0], [(x0 + x1) / 2, (y0 + y1) / 2 + .015], [x1, y1]]), 3), sw * .4, crease);
+    }
   }
   if (part !== 'back') {
     const folded = [0, 1, 2, 3].filter(i => !ext[i]);
@@ -231,7 +236,8 @@ function aiReels(t, o) {
   const fi = faces.indexOf(fin) >= 0 ? faces.indexOf(fin) : nf - 1;
   const draw = name => () => {
     boilSeed(key + ' bg ' + name); paint(rectPts(x - 10, y - 10, w + 20, h + 20), { wash: o.bg || '#101634', ink: null });
-    AI_NOGLOW = true; ai(x + w / 2, y + h * .5 + 1.05 * u, u, { ...aiFeel(name, 0), form: 'full', pose: 'bust', pal: o.pal || 'glow', t: 0, seed: 3, blink: 0, bob: 0, tilt: 0, cut: 1.6, clip: [x, y, x + w, y + h], boilKey: key + name }); AI_NOGLOW = false;
+    const Tsave = T; T = 0;   // the cached faces must not depend on the frame that first paints them (heart eyes pulse with the global T)
+    AI_NOGLOW = true; ai(x + w / 2, y + h * .5 + 1.05 * u, u, { ...aiFeel(name, 0), form: 'full', pose: 'bust', pal: o.pal || 'glow', t: 0, seed: 3, blink: 0, bob: 0, tilt: 0, cut: 1.6, clip: [x, y, x + w, y + h], boilKey: key + name }); AI_NOGLOW = false; T = Tsave;
   };
   for (const f of faces) { push(); translate(-8 * W, 0); cachedLayer(key + ' ' + f, 1, draw(f), { paper: false }); pop(); }
   const allStopped = t >= stops[2] + .25 && o.live !== false;

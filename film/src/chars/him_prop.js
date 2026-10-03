@@ -453,7 +453,7 @@ function himAfter(K, c, o, u, sw, x, y) {
     if (!p) return;
     const to = Array.isArray(o.ivTo && o.ivTo[0]) ? (o.ivTo[i] || o.ivTo[0]) : o.ivTo || [x - sx * (6 + 2 * i) * u, y - 30 * u];
     const d = HIM_W.ivDir[i], a1 = [p[0] + (d[0] - p[0]) * .8, p[1] + (d[1] - p[1]) * .8];
-    const P = through([p, a1, ...sag(a1, to, 2.5 * u).slice(1)], 6);
+    const P = through([p, a1, ...sag(a1, to, (o.ivSag ?? 2.5) * u).slice(1)], 6);
     himInkV(P, .9 * sw, mixCol(HIM_CYAN, '#1B6FFF', .25), c.clean ? 'himclean' : 'inkfine', 0);
     himInkV(P, .35 * sw, HIM_CYANW, 'inkfine', 0);
     for (let k = 0; k < 3; k++) {   // glowing tokens flowing down the line into his arm (one light per line: glow() is costly)
@@ -524,7 +524,7 @@ function himWrist(x, y, u, o = {}) {
   const tw = Math.sin(clamp(o.twitch || 0) * Math.PI);
   rs('arm');
   HIM_HANDS.desk = HIM_HANDS.desk || { draw: himHandBack, spread: .22, curl: .3, thumbA: .7, thumbL: .74 };
-  HIM_HANDS.desk.curl = .3 + .35 * tw; HIM_HANDS.desk.spread = .22 - .1 * tw;
+  HIM_HANDS.desk.curl = (o.curl ?? .3) + .35 * tw;   // o.curl: the fingers' rest curl (01A: relaxed, lying flat) HIM_HANDS.desk.spread = .22 - .1 * tw;
   himArm(K, c, { S, E, W, outfit, hand: 'desk', thumb: -1, band: false });
   const k = clamp(o.bandK || 0);
   if (k > 0) {

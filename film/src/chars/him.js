@@ -26,7 +26,7 @@ function himCyan(h) {
 function himSilver(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#4E5562', '#B4BBC7', Math.pow(l, .9)); }
 // clean (the real 'swapped', final chorus): the masses become dark translucent navy so lines behind them are hidden,
 // and the drawing itself is thin even cyan line (see himKit's clean mode)
-function himNavy(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#060D1C', '#13385A', Math.pow(l, 1.3)); }
+function himNavy(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#040A16', '#0C2742', Math.pow(l, 1.3)); }   // darker masses: the line is the subject
 const HIM_PALS = {};
 function himPal(name = 'human') {
   if (HIM_PALS[name]) return HIM_PALS[name];
@@ -34,7 +34,7 @@ function himPal(name = 'human') {
   for (const k in HIM_BASE) c[k] = map(HIM_BASE[k]);
   if (name === 'cyan') { c.ink = '#0B3D6E'; c.inkSoft = '#1B6FFF'; c.glare = '#E8FDFF'; }   // the v1–v7 'swapped' (a colour map)
   if (name === 'swapped') {   // clean line: bright cyan contours, a dimmer cyan for inner detail, cyan eyes
-    Object.assign(c, { ink: '#8FF0FF', inkSoft: '#3FB4DE', lash: '#B8F6FF', glare: '#E8FDFF', iris: '#2FA8D8', irisLt: '#9FF0FF', irisDk: '#1B6FFF',
+    Object.assign(c, { ink: '#A6F4FF', inkSoft: '#62CDF0', lash: '#B8F6FF', glare: '#E8FDFF', iris: '#2FA8D8', irisLt: '#9FF0FF', irisDk: '#1B6FFF',
       pupil: '#06213A', white: '#123A5C', tear: '#7FE9FF', code: '#8FF0FF', glassDk: '#8FF0FF', glass: '#1B4A6E' });
     c.clean = true;
   }
@@ -1266,7 +1266,7 @@ let HIM_N = 0, HIM_WCFILL = true, HIM_PROF = {};   // HIM_WCFILL: real watercolo
 function him(x, y, u, o = {}) {
   const id = o.boilKey ?? ('n' + (++HIM_N));
   const c = himPal(o.pal || 'human'), clean = !!c.clean, rs = part => clean ? himSeed(`him ${id} ${part}`) : boilSeed(`him ${id} ${part}`);
-  const sw = clamp(.28 + u / 100, .32, 1.7) * (o.swMul || 1) * (clean ? .8 : 1);
+  const sw = clamp(.28 + u / 100, .32, 1.7) * (o.swMul || 1) * (clean ? lerp(1.35, .8, clamp((u - 25) / 60)) : 1);   // clean: bolder in wide shots
   const view = o.view || 'front', pose = o.pose || 'stand', outfit = o.outfit || 'launch';
   // unravel (10F): the body is drawn only inside a shrinking disc round his chest (o.unravelAt, caller coordinates)
   HIM_DISC = o.unravel > 0 ? [...(o.unravelAt || [x, y + (pose === 'bust' ? 3.2 : pose === 'bed' ? -7.5 : pose === 'stand' ? -21 : -6) * u]), (o.unravelR ?? (pose === 'bust' ? 11 : pose === 'stand' ? 22 : 15) * u) * Math.pow(1 - clamp(o.unravel), 1.3)] : null;
@@ -1298,8 +1298,8 @@ function himSwapGlow(x, y, u, pose, o = {}) {
   if (o.swapGlow === 0) return;
   const k = o.swapGlow ?? 1, h = HIM_LAST.head;
   const top = pose === 'stand' ? 27 : pose === 'desk' ? 20 : pose === 'bed' ? 13 : 4;
-  glow(h ? h[0] : x, h ? h[1] : y - top * u, 7 * u, '#7FE9FF', .4 * k);
-  if (pose === 'stand' || pose === 'bed') glow(x, y - (pose === 'bed' ? 5 : 14) * u, 9 * u, '#1B6FFF', .3 * k);
+  glow(h ? h[0] : x, h ? h[1] : y - top * u, 7 * u, '#7FE9FF', .22 * k);   // soft: it must not wash out the face lines
+  if (pose === 'stand' || pose === 'bed') glow(x, y - (pose === 'bed' ? 5 : 14) * u, 9 * u, '#1B6FFF', .2 * k);
 }
 // Automatic blinks (a pure function of t): ~every 3.7 s, close and open over 0.16 s.
 function himBlink(t, seed = 0) { const p = (t * .9 + seed * 1.7) % 3.3, d = .16; return p < d ? Math.sin(p / d * Math.PI) : 0; }
