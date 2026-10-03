@@ -1,0 +1,9 @@
+# G4 notes: S08 CHORUS 2 (Metal, one worker, in-page ms/frame; ward tiles repaint once per worker)
+- 08A 117.21-120.00 (~0.1-1.0 s): cyan flood drains to red, tilt up from him in bed to her giant bust (giant:true) leaning in, cupped hands under the island, finger lowered, he hugs it (arms up -> hug), heart eyes. Weak: him small; the cup hands read as mittens at the frame corners; her bust edge is hidden by a dark gradient.
+- 08B 120.00-122.79 (~0.1-0.9): live ring lamp descends, splits, closes on his wrists (setRingLampCuffs, then cuffs:1), heat ribbons over the bed. Weak: rings small; no hair-float option, so fever = blush/sweat + shimmer; blanket mound is big and pale.
+- 08C 122.79-125.58 (~0.1-1.3): jump down, quick turn, run cycle right, her wall palm rises (thumb edge), he hits it (sq/rot), cupped hand carries him left on an arc, sets him down and he sits (rise reversed); camera pulls wide. Weak: giant face absent; IV lines are long diagonals.
+- 08D 125.58-128.37 (~0.1-0.7): top view lying, 3 glowing drips, flutter lids; tilt up to her giant unblinking eyes (clip + dark gradient). Weak: lid flutter is subtle; flat mattress.
+- 08E 128.37-131.16 (~0.05-0.1): he looks up and sings (syllable-driven visemes), her giant mouth repeats the same shape from 129.60. Weak: her mouth is cropped; he is q view looking up-left.
+- 08F 131.16-133.95 (~0.05-0.6): profile, two giant fingertips ride the hair top and comb; hairLines ramp 132.0-133.7 gives parallel cyan lines. Weak: tips hover very close, not clearly touching.
+- 08G 133.95-139.53 (~0.05-0.6): turn side->q->front, own amber breath strokes pulled straight and cyan, mouthGlow at "coming" (data), eyeGlow, cyan flood, hard cut black 138.84 with a ↻ turning once. Weak: front view breath goes down-right over the collar.
+Determinism: --range=117.21:139.53:0.5, 45 frames identical.
