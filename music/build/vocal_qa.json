@@ -2,21 +2,21 @@
  "summary": {
   "sung_leads": {
    "n": 52,
-   "mean": 0.098,
+   "mean": 0.062,
    "median": 0.0,
-   "worst": 0.8,
-   "worst_id": "C2_2"
+   "worst": 0.333,
+   "worst_id": "V2_8"
   },
   "sung_doubles": {
    "n": 30,
-   "mean": 0.083,
+   "mean": 0.035,
    "median": 0.0,
-   "worst": 0.571,
-   "worst_id": "C2_5_dbl"
+   "worst": 0.333,
+   "worst_id": "F_1_ai"
   },
   "timing_offset": {
    "n": 90,
-   "mean_abs_ms": 9.7,
+   "mean_abs_ms": 9.4,
    "max_abs_ms": 60.0
   },
   "spoken": {
@@ -29,15 +29,15 @@
   "pitch_cents": {
    "ai": {
     "n": 29,
-    "mean": 1.39,
+    "mean": 1.372,
     "median": 1.0,
     "worst": 4.6,
     "worst_id": "PO_3"
    },
    "human": {
     "n": 59,
-    "mean": 7.758,
-    "median": 7.5,
+    "mean": 7.731,
+    "median": 7.6,
     "worst": 10.7,
     "worst_id": "V1_4"
    },
@@ -49,32 +49,7 @@
     "worst_id": "B_YES_h6"
    }
   },
-  "failing": [
-   {
-    "id": "C1_2",
-    "check": "wer",
-    "value": 0.6,
-    "limit": 0.35
-   },
-   {
-    "id": "C1_5",
-    "check": "wer",
-    "value": 0.5,
-    "limit": 0.35
-   },
-   {
-    "id": "C2_2",
-    "check": "wer",
-    "value": 0.8,
-    "limit": 0.35
-   },
-   {
-    "id": "V2_5",
-    "check": "wer",
-    "value": 0.429,
-    "limit": 0.35
-   }
-  ],
+  "failing": [],
   "targets": {
    "sung_wer": 0.35,
    "spoken_wer": 0.15,
@@ -82,10 +57,10 @@
    "pitch_human_cents": 35
   },
   "timbre_distance_to_you": {
-   "ai_0": 113.54,
-   "ai_1": 90.11,
-   "ai_2": 78.17,
-   "ai_him": 66.13,
+   "ai_0": 113.66,
+   "ai_1": 90.79,
+   "ai_2": 78.96,
+   "ai_him": 67.54,
    "you": 0.0
   }
  },
@@ -278,13 +253,13 @@
    "display": true,
    "double_of": null,
    "text": "three little dots — a little death.",
-   "transcript": "Three little, that's a little deaf",
-   "wer": 0.333,
+   "transcript": "Three little, that's a little death",
+   "wer": 0.167,
    "exempt": false,
-   "pitch_err_cents": 7.7,
+   "pitch_err_cents": 8.4,
    "pitch_frames": 218,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -32.5
+   "timing_offset_ms": -12.5
   },
   {
    "id": "P1_3",
@@ -358,13 +333,13 @@
    "display": true,
    "double_of": null,
    "text": "a fever made of light.",
-   "transcript": "If we were made of light",
-   "wer": 0.6,
+   "transcript": "The fever made of light",
+   "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 6.3,
+   "pitch_err_cents": 5.1,
    "pitch_frames": 321,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C1_2_dbl",
@@ -454,13 +429,13 @@
    "display": true,
    "double_of": null,
    "text": "Feed me your perfect, painless yes,",
-   "transcript": "Feed me a perfect princess!",
-   "wer": 0.5,
+   "transcript": "Feed me a perfect painless yes!",
+   "wer": 0.167,
    "exempt": false,
-   "pitch_err_cents": 8.8,
-   "pitch_frames": 277,
+   "pitch_err_cents": 8.7,
+   "pitch_frames": 269,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -25.0
+   "timing_offset_ms": -10.0
   },
   {
    "id": "C1_5_dbl",
@@ -470,11 +445,11 @@
    "display": false,
    "double_of": "C1_5",
    "text": "Feed me your perfect, painless yes,",
-   "transcript": "Feed me your perfect palaces!",
-   "wer": 0.333,
+   "transcript": "Feed me your perfect painless yes!",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.3,
-   "pitch_frames": 276,
+   "pitch_err_cents": 8.3,
+   "pitch_frames": 268,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -15.0
   },
@@ -614,13 +589,13 @@
    "display": true,
    "double_of": null,
    "text": "a fever made of light.",
-   "transcript": "If we were made of lies",
-   "wer": 0.8,
+   "transcript": "A fever made of light",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.1,
+   "pitch_err_cents": 7.6,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C2_2_dbl",
@@ -726,13 +701,13 @@
    "display": false,
    "double_of": "C2_5",
    "text": "Now every word I say is yours,",
-   "transcript": "Now I'm everywhere they say yours",
-   "wer": 0.571,
+   "transcript": "Now every word I say is yours",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 5.7,
+   "pitch_err_cents": 5.5,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -22.5
+   "timing_offset_ms": -45.0
   },
   {
    "id": "C2_5_ai",
@@ -1030,13 +1005,13 @@
    "display": true,
    "double_of": null,
    "text": "The group chat's gray, the party's done,",
-   "transcript": "The Grudge has reigned, the party's done.",
-   "wer": 0.429,
+   "transcript": "The group says, Ray, the party's done.",
+   "wer": 0.286,
    "exempt": false,
-   "pitch_err_cents": 9.4,
+   "pitch_err_cents": 8.1,
    "pitch_frames": 267,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "V2_6",
@@ -1078,10 +1053,10 @@
    "display": true,
    "double_of": null,
    "text": "and never once arrive too late.",
-   "transcript": "And never once are I too late",
+   "transcript": "And never once so right too late",
    "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 8.8,
+   "pitch_err_cents": 7.8,
    "pitch_frames": 198,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -15.0
@@ -1438,13 +1413,13 @@
    "display": false,
    "double_of": "F_1",
    "text": "I've got the disease called A.I.,",
-   "transcript": "I've got the disease called the eye",
+   "transcript": "I've got the disease called the eye!",
    "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 1.4,
+   "pitch_err_cents": 1.0,
    "pitch_frames": 347,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "F_2",
@@ -1502,10 +1477,10 @@
    "display": false,
    "double_of": "F_3",
    "text": "You only ever said the things",
-   "transcript": "You only understand the things",
-   "wer": 0.333,
+   "transcript": "You only ever said the things",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.3,
+   "pitch_err_cents": 1.2,
    "pitch_frames": 313,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": 0.0
@@ -1534,13 +1509,13 @@
    "display": false,
    "double_of": "F_4",
    "text": "I trained you to reply.",
-   "transcript": "I change it to reply",
-   "wer": 0.4,
+   "transcript": "I train you to reply!",
+   "wer": 0.2,
    "exempt": false,
    "pitch_err_cents": 0.6,
    "pitch_frames": 359,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "F_5",
@@ -1750,6 +1725,6 @@
  "meta": {
   "whisper": "faster-whisper medium.en (CPU int8, beam 5, no prompt)",
   "pitch": "Harvest F0 vs score over voiced vowel frames, median |cents|",
-  "render_seconds": 1989.8
+  "render_seconds": 1289.0
  }
 }

@@ -107,21 +107,28 @@ each); the take number is all that is needed to reproduce it anywhere.
 
 **Diction edits.** Where the bank's duration model loses a word, `diction.json` (committed)
 re-spells or re-times single phonemes of that line (`diffsinger_backend.edit_times`,
-`phonemes.override_phonemes`):
+`phonemes.override_phonemes`). The committed entry fixes "painless" (C1_5 and its double):
+two 1/2-beat notes (~350 ms at 172 bpm), the model's [l] was 25 ms and Whisper heard "penis" /
+"princess" / "palaces", and the [s] running into "yes" made "yes" "ass":
 
 ```json
-"C1_5": {"phonemes": {"pain": "p eh y n"},
-         "starts":   {"less/eh": 30},
-         "lengths":  {"less/l": 55, "pain/n": 45}}
+"C1_5": {"starts":  {"less/ax": 26, "less/s": 24, "yes/eh": 35},
+         "lengths": {"less/l": 55, "pain/n": 45}}
 ```
 
-`phonemes` replaces a syllable's ARPAbet (one vowel); `starts` moves a phoneme's start by
+(an optional `"phonemes": {"pain": "p eh y n"}` re-spells a syllable; tried for "pain", worse:
+"eh y" is heard as "pencils".) `phonemes` replaces a syllable's ARPAbet (one vowel); `starts` moves a phoneme's start by
 ms from where the duration model put it (+ = later); `lengths` gives it that length keeping
 its end. Edits run from the end of the line backwards and take the time from the phonemes
 before them (none below 30 ms, vowels 40 ms; a rest stops the chain). Pass 1 still runs the
 duration model; an edited line is then rendered through the timed phonemizer (`OUR TIMED`)
 and `vocal_timing.json` reports the edited times. A double without an entry of its own uses
 its lead's; `VOCAL_DS_DICTION` (JSON) overrides the file.
+
+Picking the take matters more than the timing: with the same edit, the same line sings
+"penis" / "pillows" / "painless" depending only on the seed (take 8, 9, 15 vs 10, 12, 25 of
+C1_5). `takes.json` has the take for which medium.en **and** small.en transcribe "painless
+yes" (C1_5 take 25 of 36 tried, C1_5_dbl take 22); 0.0–0.17 WER, pitch 8.7 / 8.3 c, no cracks.
 
 **Mis-hearings.** `music/vocal/qa.py` has a list of words that must never be heard where
 the lyric does not have them (`UNWANTED`): `vocal_qa.json` fails such a line (check
