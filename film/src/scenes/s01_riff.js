@@ -46,9 +46,10 @@
     let act = {};
     if (!climbing && t < CLICK) act = { reachLW: end, reachR: [.7, -3.4], handL: 'fist', handR: 'fist', handAL: Math.PI, handAR: 1.9 };
     else if (t >= CLICK && t < 13.55) { const tap = Math.abs(Math.sin((t - CLICK - .1) * 10)) * (pat ? 1 : 0); act = { reachLW: [WNEAR[0] + 14, WNEAR[1] - 6 - 20 * tap], reachR: [.7, -3.3], handL: 'flat', handR: 'fist', handAL: Math.PI - .6, handAR: 1.9 }; }
-    else if (t >= 13.55) act = aiAct('salute', t, 13.58);
+    else if (t >= 13.55) act = { ...aiAct('salute', t, 13.58), handKR: 1.45, dy: -.25 * kitEnv(t, 13.62, .04, .12) };
     if (climbing || t < 11.2 + CLIMB) ai(PX, PTOP, HER_U, { ...f, ...aiClimb(t, CLIMB0, CLIMB), form: 'chibi', view: 'front', pal: 'glow', t, seed: 4, clip: climbing ? [PX - 300, PTOP - 700, PX + 300, PTOP] : null, noShadow: true, boilKey: 's01a her' });
     else ai(her[0], her[1], HER_U, { ...f, ...act, ...(t < 12.0 ? { dy: -.35 * Math.sin(seg(t, 11.74, 12.0) * Math.PI) } : {}), form: 'chibi', view: 'front', flip: false, pal: 'glow', t, seed: 4, noShadow: false, boilKey: 's01a her' });
+    glow(PX, PY - 150, 1100, KIT.CYAN, .22 * lit + .12 * flare);                // the phone's light on his hand and on her
     camEnd();
   }
   function lerp2(a, b, k) { return [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }

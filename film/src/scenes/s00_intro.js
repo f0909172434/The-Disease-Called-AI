@@ -77,7 +77,7 @@
     for (const k of typ) { if (k.t > T_C + .02 || (k.t < t - .2) || k.t > t + .2) continue; const i = typ.indexOf(k); if (i % 2 !== hand) continue; const d = (t - (k.t - .045)) / .035; v += Math.exp(-d * d); }
     return v;
   }
-  function s00b(t, lt, dur) {
+  function s00bBody(t, lt, dur) {
     const hover = kitMove(t, 3.60, 3.80, { ant: .25, over: .15 }) - kitMove(t, 3.99, 4.16, { ant: .15, over: .1 });   // hands up and held, then down for the retype
     const bs = kitEnv(t, 3.837, .02, .06) + kitEnv(t, 3.942, .02, .06) + kitEnv(t, 4.047, .02, .06);                  // the three backspaces: a dip of the head
     const key = (1 - clamp(hover)) * 1;
@@ -92,13 +92,19 @@
     glow(721, 500, 520, KIT.CYAN, .5);
     camEnd();
   }
+  const B_DISSOLVE = .26;                                                  // 00A's light dissolves into 00B while the pull-back carries on
+  function s00b(t, lt, dur) { if (lt < B_DISSOLVE) kitXfade(lt / B_DISSOLVE, () => s00a(t, t, 3), () => s00bBody(t, lt, dur)); else s00bBody(t, lt, dur); }
 
   // =============================================================================================================
   // 00C  4.19-7.67  the chat screen, face on (subtitle-only: the English is in the picture).
   // reads: 4.19-5.20 the words are typed (a typo, three backspaces) · 5.20-5.58 Enter · 5.58-6.62 `Always.` flashes ·
   //        6.62-7.67 the little her pops out of the input box and waves
   // =============================================================================================================
-  const C_POP = 6.62, C_CLIMB = .62, C_WAVE = C_POP + .5;                   // she is out by 7.24 and waves until the cut
+  function bigWave(t, t0) {                                                 // the chibi wave, bigger: one hand high and out, the other on her chest
+    const w = aiAct('wave', t, t0), a = t - t0, e = kitEase.sine(seg(a, 0, .26)), sw = Math.sin(bpOf(t) * TAU), k = backOut(seg(a, 0, .3));
+    return { ...w, reachR: [lerp(.55, 3.2 + .7 * sw, e), lerp(-3.55, -7.1 - .25 * Math.abs(sw), e)], handKR: 1.4, handAR: -Math.PI / 2 + .75 * sw * k + .1 };
+  }
+  const C_POP = 6.62, C_CLIMB = .54, C_WAVE = C_POP + .44;                  // she is out by 7.16 and waves until the cut
   function s00c(t, lt, dur) {
     const z = 1 + .035 * seg(lt, 0, dur), CY = H / 2 + 80;                   // the screen sits 80 px high: the typing stays above y .76 H
     setScreenFull('night');
@@ -109,7 +115,7 @@
       const edge = S.Y(.72) - 2, ax = 450, u = 44, p = (t - C_POP) / C_CLIMB;
       const f = aiEmotions(t, [[C_POP - .3, 'eager'], [C_POP + 1.0, 'smile']]);
       glow(ax, edge, 330, KIT.CYAN, .8 * kitEnv(t, C_POP + .2, .05, .22));
-      ai(ax, edge, u, { ...f, ...aiClimb(t, C_POP, C_CLIMB), ...(p > .8 ? aiAct('wave', t, C_WAVE - .1) : {}), form: 'chibi', view: 'front', pal: 'glow', t, seed: 3,
+      ai(ax, edge, u, { ...f, ...aiClimb(t, C_POP, C_CLIMB), ...(p > .72 ? bigWave(t, C_WAVE - .08) : {}), form: 'chibi', view: 'front', pal: 'glow', t, seed: 3,
         clip: [ax - 320, edge - 700, ax + 320, edge], noShadow: true, boilKey: 's00c her' });
     }
     camEnd();
