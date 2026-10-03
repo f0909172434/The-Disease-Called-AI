@@ -3,7 +3,7 @@
 (() => {
   // ---- the cuts (the score grid; kitCut follows the song's data) ----
   const SEC = section('S00');
-  const T_A = SEC.start, T_B = kitCut(3, 1, 2.79), T_C = kitCut(4, 1, 4.19), T_D = kitCut(6, 3, 7.67), T_END = SEC.end;
+  const T_A = SEC.start, T_B = kitEv('typing', 0, 2.79), T_C = kitEv('typing', 10, 4.19), T_D = kitCut(6, 3, 7.67), T_END = SEC.end;
   const hbT = i => kitEv('heartbeat', i, i * .6977);                   // her heartbeats: 0.00, 0.70, 1.40, 2.09, 2.79 ...
   const typ = events('typing');
   const T_REPLY = (lyricById('IN_AI') || {}).start ?? 5.58;            // `Always.` (vocal_timing.json)
@@ -55,17 +55,17 @@
   // settles into a medium shot. He presses the first key of the retype exactly on the cut (4.19), which 00C picks up.
   // reads: 2.79-3.60 found: his face lit by the screen, hands typing · 3.60-4.19 stops, hands hang, three backspaces
   // =============================================================================================================
-  const B_X = 1250, B_Y = 968, B_U = 40;                                   // the floor under the front edge of his chair; u 40 (medium)
+  const B_X = 1170, B_Y = 1010, B_U = 34;                                  // the floor under the front edge of his chair (seated he is ~24u tall: u 34 fills the frame)
   function bgDesk(v) {                                                      // his room at night, seen from the side: the wall, a window, a shelf, the floor
     const P = setRoomPal('night'), wall = mixCol(P.wallC, '#05060A', .3);
     boilSeed('s00b wall'); paint(rectPts(-40, -40, W + 80, B_Y - 14 + 40), { wash: wall, ink: null });
-    [[700, 380, 560, 380, '#2D5288', 130], [1650, 260, 420, 300, '#06081A', 150], [300, 800, 500, 260, '#080A1C', 120], [1400, 700, 600, 250, '#0A0C20', 100], [980, 120, 700, 160, '#0A0C1E', 90]]
+    [[720, 500, 560, 400, '#2D5288', 130], [1700, 300, 420, 320, '#06081A', 150], [300, 850, 500, 240, '#080A1C', 120], [1400, 800, 600, 230, '#0A0C20', 100], [980, 80, 800, 200, '#0A0C1E', 90]]
       .forEach(([x, y, rx, ry, c, op], i) => { boilSeed('s00b bloom' + i); paint(ellPts(x, y, rx, ry, 22, 24), { fill: c, fillOp: op, bleed: .3, tex: .7, ink: null }); });
-    boilSeed('s00b window'); setBlinds(1380, 150, 360, 380, { pal: P, open: 0, s: 1.1, key: 'b', sky: '#162044', skyLt: '#25356A' });
+    boilSeed('s00b window'); setBlinds(1480, 200, 330, 360, { pal: P, open: 0, s: 1.1, key: 'b', sky: '#162044', skyLt: '#25356A' });
     boilSeed('s00b shelf');
-    paint(rectPts(130, 318, 430, 20, .6), { wash: P.woodLt, ink: P.ink, sw: .9 });
+    paint(rectPts(130, 418, 430, 20, .6), { wash: P.woodLt, ink: P.ink, sw: .9 });
     let x = 150; [P.book1, P.book2, P.book3, P.book4, P.book5, P.book2, P.book1].forEach((c, i) => { const bw = 28 + 20 * hash(i * 2.1), bh = 120 + 70 * hash(i * 3.3); boilSeed('s00b book' + i);
-      paint(rectPts(x, 318 - bh, bw, bh, .6), { wash: c, ink: P.ink, sw: .7 }); inkLine([[x + 5, 318 - bh * .8], [x + bw - 5, 318 - bh * .8]], .5, mixCol(c, '#000000', .4), 'inkfine', 0); x += bw + 4; });
+      paint(rectPts(x, 418 - bh, bw, bh, .6), { wash: c, ink: P.ink, sw: .7 }); inkLine([[x + 5, 418 - bh * .8], [x + bw - 5, 418 - bh * .8]], .5, mixCol(c, '#000000', .4), 'inkfine', 0); x += bw + 4; });
     boilSeed('s00b floor'); paint(rectPts(-40, B_Y - 14, W + 80, H - B_Y + 60), { wash: P.floor, ink: null });
     paint(rectPts(-40, B_Y - 46, W + 80, 34, .6), { wash: P.skirt, ink: null });
     inkLine([[-40, B_Y - 46], [W / 2, B_Y - 44], [W + 40, B_Y - 46]], .8, P.ink, 'ink', .3); inkLine([[-40, B_Y - 12], [W / 2, B_Y - 10], [W + 40, B_Y - 12]], 1, P.ink, 'ink', .3);
@@ -81,15 +81,15 @@
     const hover = kitMove(t, 3.60, 3.80, { ant: .25, over: .15 }) - kitMove(t, 3.99, 4.16, { ant: .15, over: .1 });   // hands up and held, then down for the retype
     const bs = kitEnv(t, 3.837, .02, .06) + kitEnv(t, 3.942, .02, .06) + kitEnv(t, 4.047, .02, .06);                  // the three backspaces: a dip of the head
     const key = (1 - clamp(hover)) * 1;
-    const cam = [[0, 1010, 560, 1.62], [.62, 1070, 590, 1.22], [dur, 1085, 592, 1.2]];
+    const cam = [[0, 1150, 400, 1.85], [.85, 1100, 470, 1.4], [dur, 1096, 474, 1.38]];
     cachedLayer('s00b bg', 3, bgDesk);                                      // (the layer is the frame: the camera has to move in front of it)
     kitCam(lt, cam, { drift: 3 });
     himDeskProps(B_X, B_Y, B_U, { part: 'back', flip: true, glowK: .9 });
     const face = himEmotions(t, [[T_B, 'focused'], [3.62, 'focused', { browIn: -.5, browOut: .12, mouth: 'tight', lid: .12, irisK: .92, lookY: .25 }]], { take: .5 });
     him(B_X, B_Y, B_U, { ...face, pose: 'desk', flip: true, outfit: 'launch', band: false, screen: .9, glare: .3, type: 0,
-      aR: .05 * tapLift(t, 0) + .30 * hover + .02, aL: .05 * tapLift(t, 1) + .26 * hover, nod: (face.nod || 0) + .18 * bs - .06 * hover, boilKey: 's00b him', seed: .3 });
+      aR: .05 * tapLift(t, 0) + .2 * hover + .02, aL: .05 * tapLift(t, 1) + .17 * hover, nod: (face.nod || 0) + .2 * bs + .12 * hover, lean: (face.lean || 0) - .05 * hover, boilKey: 's00b him', seed: .3 });
     himDeskProps(B_X, B_Y, B_U, { part: 'front', flip: true });
-    glow(700, 420, 520, KIT.CYAN, .5);
+    glow(721, 500, 520, KIT.CYAN, .5);
     camEnd();
   }
 
