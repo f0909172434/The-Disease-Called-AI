@@ -421,8 +421,16 @@ namespace Ourender {
             using var cts = new CancellationTokenSource();
             var renderer = project.tracks[part.trackNo].RendererSettings.Renderer
                 ?? throw new Exception($"{part.name}: track has no renderer");
+            // seeded noise (DiffSingerNoise): part name (line + bank) + take + phrase index
+            int take = 0;
+            try {
+                using var meta = JsonDocument.Parse(string.IsNullOrEmpty(part.comment) ? "{}" : part.comment);
+                if (meta.RootElement.ValueKind == JsonValueKind.Object && meta.RootElement.TryGetProperty("take", out var tk)) take = tk.GetInt32();
+            } catch (JsonException) { }
+            int phraseNo = 0;
             foreach (var phrase in phrases) {
                 var t = Stopwatch.StartNew();
+                OpenUtau.Core.DiffSinger.DiffSingerNoise.Keys[phrase.hash] = $"{part.name}|take{take}|phrase{phraseNo++}";
                 // OpenUtau keeps a 16-bit copy of every rendered phrase; reading that back would
                 // make a second render differ (quantised) from the first. The tensor cache below
                 // it holds the exact model outputs, so drop the phrase copy and go through it.

@@ -115,9 +115,9 @@ def write_mp3(path: str, x: np.ndarray, sr: int = 48000) -> None:
 
 
 def retake(lines: list[dict], voices: dict, n: int, model: str) -> dict:
-    """DiffSinger's diffusion sampler is random: render takes 0..n-1 of every line (a take
-    is a 1-cent PITD offset per take number, i.e. a new input), score them with Whisper and
-    keep the best in takes.json (the tensor cache then reproduces it exactly)."""
+    """Sing takes 0..n-1 of every line (take k = DiffSinger's noise seeded with line, bank
+    and k: a different but reproducible performance), score them with Whisper and keep the
+    best in takes.json."""
     import diffsinger_backend as dsb
     import qa
     import soxr

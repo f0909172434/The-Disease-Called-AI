@@ -8,9 +8,13 @@
 #   1. .NET 10 SDK from the Ubuntu archive (apt: dotnet-sdk-10.0) unless `dotnet` exists.
 #   2. OpenUtau (MIT) at the pinned commit below -> music/diffsinger/vendor/OpenUtau
 #      (git-ignored; partial clone, blobs fetched on checkout).
-#   3. dotnet publish ourender (Release, framework-dependent, linux-x64) with
+#   3. one patch, ourender/openutau-seeded-noise.patch (+ DiffSingerNoise.cs and one call
+#      before each acoustic / vocoder / pitch / variance model run): models whose random
+#      ops seed_models.py turned into inputs get seeded noise -> reproducible renders.
+#   4. dotnet publish ourender (Release, framework-dependent, linux-x64) with
 #      ourender/cpu-onnxruntime.targets: OpenUtau.Core's Linux CUDA ONNX Runtime package
-#      is replaced by the CPU package (Microsoft.ML.OnnxRuntime). No OpenUtau file is edited.
+#      is replaced by the CPU package (Microsoft.ML.OnnxRuntime).
+#   5. a venv (.venv, system site packages + `onnx`) for seed_models.py.
 # Nothing here touches the system Python.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -39,6 +43,20 @@ if [ "$(git -C "$VENDOR" rev-parse HEAD 2>/dev/null || true)" != "$OPENUTAU_COMM
   git -C "$VENDOR" cat-file -e "$OPENUTAU_COMMIT^{commit}" 2>/dev/null \
     || git -C "$VENDOR" fetch -q origin "$OPENUTAU_COMMIT"
   git -C "$VENDOR" -c advice.detachedHead=false checkout -q -f "$OPENUTAU_COMMIT"
+fi
+
+PATCH="$HERE/ourender/openutau-seeded-noise.patch"
+if git -C "$VENDOR" apply --reverse --check "$PATCH" 2>/dev/null; then
+  echo "== seeded-noise patch already applied"
+else
+  echo "== applying $(basename "$PATCH")"
+  git -C "$VENDOR" apply "$PATCH"
+fi
+
+if [ ! -x "$HERE/.venv/bin/python" ]; then
+  echo "== venv for seed_models.py (onnx)"
+  python3 -m venv --system-site-packages "$HERE/.venv"
+  "$HERE/.venv/bin/pip" install -q onnx
 fi
 
 echo "== building ourender"

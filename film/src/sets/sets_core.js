@@ -52,7 +52,25 @@ function setBrushes() {
   if (SET_BRUSHES) return; SET_BRUSHES = true;
   brush.add('setclean', { type: 'default', weight: 2.4, scatter: .02, sharpness: .95, grain: 1, opacity: 235, spacing: .12, pressure: [1, 1], rotate: 'natural', noise: 0 });
 }
+// Culling: while a cached tile paints, SET_CLIP is its world rectangle and shapes wholly outside it are skipped (p5.brush
+// outlines far off the canvas are several times slower than on it). Props that draw under their own p5 transform
+// (push/rotate) raise SET_XF so their local coordinates are never culled.
+let SET_CLIP = null, SET_XF = 0;
+function setOut(pts, m) {
+  if (!SET_CLIP || SET_XF) return false;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const [x, y] of pts) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  return x1 < SET_CLIP[0] - m || x0 > SET_CLIP[2] + m || y1 < SET_CLIP[1] - m || y0 > SET_CLIP[3] + m;
+}
+// true when a prop that paints under its own transform lies wholly outside the painting tile (bb in world px)
+const setSkip = (bb, m = 40) => !!SET_CLIP && !SET_XF && (bb[2] < SET_CLIP[0] - m || bb[0] > SET_CLIP[2] + m || bb[3] < SET_CLIP[1] - m || bb[1] > SET_CLIP[3] + m);
+// a rectangle clipped to the painting tile (for walls, floors, voids: shapes much bigger than the canvas)
+function setClipBox(x0, y0, x1, y1, m = 60) {
+  const C = SET_XF ? null : SET_CLIP;
+  return C ? setBox(Math.max(x0, C[0] - m), Math.max(y0, C[1] - m), Math.min(x1, C[2] + m), Math.min(y1, C[3] + m)) : setBox(x0, y0, x1, y1);
+}
 function setP(pts, o = {}) {
+  if (setOut(pts, o.fill ? 90 : 30)) return;
   if (SET_MODE === 'line') {
     if (o.ink === null && !o.line) return;
     setBrushes();
@@ -63,6 +81,7 @@ function setP(pts, o = {}) {
   paint(pts, o);
 }
 function setL(pts, sw = 1, col = PAL.ink, br = 'ink', curv = .5, o = {}) {
+  if (setOut(pts, 30)) return;
   if (SET_MODE === 'line') { if (o.skipLine) return; setBrushes(); inkLine(pts, (o.lineSw ?? .8) * SET_LINE.sw, o.lineCol || SET_LINE.col, SET_LINE.br, curv); return; }
   inkLine(pts, sw, col, br, curv);
 }
@@ -129,12 +148,14 @@ function setCone(x, y, ang, len, spread = .35, col = SET_C.amber, a = .6) { setA
 function setRingLight(x, y, rx, ry, col = SET_C.cyan, a = .8, ang = 0) { setAdd(setTex('ring'), x, y, rx * 2 / .92, ry * 2 / .92, ang, col, a); }
 
 // ---------- cached sets ----------
-// Resolution of a world-space set's cache for a camera zoom: layer pixels per world pixel. Below ~.55 a whole-room view
-// is painted at half resolution (one tile), up to 1.1 at 1:1, then 2× and 3× for close framings.
-const setAutoRes = z => z <= .56 ? .5 : z <= 1.12 ? 1 : z <= 2.2 ? 2 : 3;
+// Resolution of a world-space set's cache for a camera zoom: layer pixels per world pixel. A whole-room view (zoom ≈ .41)
+// is painted at .4 (the room fits one 4800 × 2700 tile), up to .56 at .5, up to 1.1 at 1:1, then 2× and 3× for close framings.
+const setAutoRes = z => z <= .42 ? .4 : z <= .56 ? .5 : z <= 1.12 ? 1 : z <= 2.2 ? 2 : 3;
 // setTiles(key, draw, o): a static world-space layer drawn under the current camera, cached in frame-sized tiles.
 //   draw(x0, y0, x1, y1, res): paints everything that touches that world rectangle (world coordinates; cull by it).
 //   o.res: fix the resolution for a shot (default setAutoRes(zoom): fix it for a push or pull, or the detail pops).
+//   o.paper: false = transparent tiles (beware: brush edges fringe white on them). o.alpha: draw the tiles faded (a cross-
+//   fade between two variants; the cache itself is always painted untinted).
 //   o.variants: boil drawings (default 3). o.cam: the camera to frame for (default the active one).
 // Each tile is its own cachedLayer, so only tiles the camera sees get painted (once per boil variant per worker).
 // Every element must seed itself (boilSeed per element) so a shape crossing a tile seam paints identically in both.
@@ -143,13 +164,21 @@ function setTiles(key, draw, o = {}) {
   const cam = o.cam || CAM || { cx: W / 2, cy: H / 2, zoom: 1, rot: 0 };
   const res = o.res ?? setAutoRes(cam.zoom), tw = W / res, th = H / res;
   const hw = W / 2 / cam.zoom, hh = H / 2 / cam.zoom, c = Math.abs(Math.cos(cam.rot || 0)), s = Math.abs(Math.sin(cam.rot || 0));
-  const ex = hw * c + hh * s + 2, ey = hw * s + hh * c + 2;
+  const ex = hw * c + hh * s, ey = hw * s + hh * c;
   const x0 = cam.cx - ex, x1 = cam.cx + ex, y0 = cam.cy - ey, y1 = cam.cy + ey;
   let n = 0;
-  for (let j = Math.floor(y0 / th); j * th < y1; j++) for (let i = Math.floor(x0 / tw); i * tw < x1; i++) {
+  for (let j = Math.floor(y0 / th + 1e-4); j * th < y1 - .5; j++) for (let i = Math.floor(x0 / tw + 1e-4); i * tw < x1 - .5; i++) {
     const wx = i * tw, wy = j * th;
+    const id = `${key}@${res}:${i},${j}`, paintTile = () => {
+      scale(res); translate(-wx, -wy); const c0 = SET_CLIP, x0 = SET_XF; SET_CLIP = [wx, wy, wx + tw, wy + th]; SET_XF = 0;
+      try { draw(wx, wy, wx + tw, wy + th, res); } finally { SET_CLIP = c0; SET_XF = x0; }
+    };
+    const fade = o.alpha != null && o.alpha < 1;
+    if (fade) { push(); translate(1e6, 1e6); cachedLayer(id, o.variants ?? 3, paintTile, { paper: o.paper !== false }); pop(); }   // paint it untinted (off-canvas) first
     push(); translate(wx, wy); scale(1 / res);
-    cachedLayer(`${key}@${res}:${i},${j}`, o.variants ?? 3, () => { scale(res); translate(-wx, -wy); draw(wx, wy, wx + tw, wy + th, res); });
+    if (fade) tint(255, 255 * clamp(o.alpha));
+    cachedLayer(id, o.variants ?? 3, paintTile, { paper: o.paper !== false });
+    if (fade) noTint();
     pop(); n++;
   }
   SET_TILE_STATS.tiles = n;

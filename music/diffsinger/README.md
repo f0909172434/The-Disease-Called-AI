@@ -22,7 +22,10 @@ music/diffsinger/fetch_voicebanks.sh --from DIR   # zips already downloaded (e.g
 * `setup.sh` clones `stakira/OpenUtau` at commit `ec7ba52` into `vendor/` (git-ignored) and
   publishes `bin/ourender`. `ourender/cpu-onnxruntime.targets` swaps OpenUtau.Core's Linux
   CUDA package (`Microsoft.ML.OnnxRuntime.Gpu.Linux`) for the CPU one
-  (`Microsoft.ML.OnnxRuntime` 1.24.4) at build time; no OpenUtau file is edited. Build: 36 s
+  (`Microsoft.ML.OnnxRuntime` 1.24.4) at build time. One documented patch,
+  `ourender/openutau-seeded-noise.patch` (git apply; new `DiffSingerNoise.cs` + one line before
+  each acoustic / vocoder / pitch / variance model run), feeds seeded noise (see Determinism).
+  It also creates `.venv/` (system site packages + `onnx`) for `seed_models.py`. Build: 36 s
   from a fresh checkout (restore + compile OpenUtau.Core), 4 s incremental; `bin/` is 83 MB.
 * `fetch_voicebanks.sh` downloads from the official sources — TIGER: GitHub release `v106`
   of `spicytigermeat/tiger_diffsinger` (`TIGER_DS_v106_PACK.zip`); Hanami: the MediaFire link
@@ -95,24 +98,33 @@ A generated `.ustx` opens in the OpenUtau GUI as a normal project (timed lyrics 
 7. Gates, levels, inhale, timing entry and QA data: `singer.finish_sung`, then stems/QA
    unchanged.
 
-**Takes.** The diffusion sampler is random, so every render is a performance. For lines
-Whisper mis-hears, `audition.py --retake N --lines A,B` sings takes 0..N-1 (take k = the
-PITD raised by k cents: inaudible, but a new input) and records the best in `takes.json`
-(committed; WER per take in the file). On this machine the tensor cache replays the chosen
-take exactly; on a fresh machine every take is a new sample — re-run the retake for the
-lines in `takes.json`.
+**Takes.** Each line is one seeded performance (take 0 by default). For lines Whisper
+mis-hears, `audition.py --retake N --lines A,B` sings takes 0..N-1 (take k = noise seeded
+with line + bank + k) and records the best in `takes.json` (committed, with the WER of
+each); the take number is all that is needed to reproduce it anywhere.
 
 **Caches.** `music/build/cache/ds_<line>` (DiffSinger stage: line, bank fingerprints incl.
 voice mode, renderer build, sources) and `dsline_<line>` (finished line). OpenUtau's tensor
 cache lives in `oudata/` (git-ignored).
 
-**Determinism / threads.** Phonemizer, duration/pitch models and vocoders are
-deterministic; the diffusion sampler draws noise inside the ONNX graph (two uncached renders
-differ). OpenUtau's tensor cache stores every model output by its inputs, so the first render
-of an input is reused bit-exactly afterwards (ourender drops OpenUtau's 16-bit phrase WAV
-cache so a re-render equals the first). ONNX Runtime uses its default CPU pool (one intra-op
-thread per core); OpenUtau serialises DiffSinger phrases, so run one ourender at a time with
-a whole batch — two parallel processes were slower on 4 cores (RTF 4.9 vs 4.4).
+**Determinism / threads.** DiffSinger samples inside its ONNX graphs, unseeded: the acoustic
+(and pitch/variance) models' start noise (`RandomNormalLike`), the NSF vocoders' harmonic
+phases (`RandomUniform`) and source noise (`RandomNormalLike`); OpenUtau has no seed and ONNX
+Runtime's C# API no global seed, so stock renders of one input differ (measured: 38 % RMS
+difference). `seed_models.py` (run by `fetch_voicebanks.sh`) rewrites each of those nodes into
+a slice of a new input `ourender_{normal|uniform}_<k>__{t|f}<n>`; the patched OpenUtau
+(`DiffSingerNoise.cs`) fills it from xoshiro256** seeded by
+XXH64(`<line>__<bank>|take<k>|phrase<i>|<model>|<input>`) — keys registered by ourender per
+phrase (the phrase hash for other callers). Verified: two renders of C1_2 / PO_1 / B_L1 with
+empty caches are bit-identical (raw DiffSinger audio and finished lines), a line rendered
+alone equals the same line in a batch, take 7 differs from take 1. Same build + machine type
+→ same audio (Box–Muller uses libm log/cos; other platforms may differ in the last bit).
+Rewritten banks need ourender (stock OpenUtau reports the extra inputs as missing); the zips
+restore the originals. OpenUtau's tensor cache (`oudata/`) only saves time now; ourender drops
+OpenUtau's 16-bit phrase WAV cache so a re-render equals the first. ONNX Runtime uses its
+default CPU pool (one intra-op thread per core; results do not depend on it here); OpenUtau
+serialises DiffSinger phrases, so run one ourender at a time with a whole batch — two
+parallel processes were slower on 4 cores (RTF 4.9 vs 4.4).
 
 ## Measured (4-core CPU)
 

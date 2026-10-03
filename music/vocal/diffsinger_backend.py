@@ -99,9 +99,10 @@ def bank_weights(blend: dict[str, float]) -> list[tuple[str, float]]:
 
 
 def takes() -> dict[str, int]:
-    """Chosen performances: DiffSinger's diffusion sampler is random, so each line is one
-    "take"; music/diffsinger/takes.json records the take kept for a line (picked by
-    audition.py --retake on Whisper WER), VOCAL_DS_TAKES (JSON) overrides it."""
+    """Chosen performances: DiffSinger's noise is seeded per line + bank + take (ourender,
+    seed_models.py), so every take is reproducible; music/diffsinger/takes.json records the
+    take kept for a line (picked by audition.py --retake on Whisper WER), VOCAL_DS_TAKES
+    (JSON) overrides it."""
     out = {}
     try:
         with open(TAKES_JSON) as fh:

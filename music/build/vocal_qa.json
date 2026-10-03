@@ -2,17 +2,17 @@
  "summary": {
   "sung_leads": {
    "n": 52,
-   "mean": 0.052,
+   "mean": 0.098,
    "median": 0.0,
-   "worst": 0.333,
-   "worst_id": "P1_2"
+   "worst": 0.8,
+   "worst_id": "C2_2"
   },
   "sung_doubles": {
    "n": 30,
-   "mean": 0.052,
+   "mean": 0.083,
    "median": 0.0,
-   "worst": 0.333,
-   "worst_id": "F_1_ai"
+   "worst": 0.571,
+   "worst_id": "C2_5_dbl"
   },
   "timing_offset": {
    "n": 90,
@@ -29,27 +29,52 @@
   "pitch_cents": {
    "ai": {
     "n": 29,
-    "mean": 1.448,
+    "mean": 1.39,
     "median": 1.0,
-    "worst": 5.5,
-    "worst_id": "PO_2"
+    "worst": 4.6,
+    "worst_id": "PO_3"
    },
    "human": {
     "n": 59,
-    "mean": 7.795,
-    "median": 7.7,
-    "worst": 11.1,
+    "mean": 7.758,
+    "median": 7.5,
+    "worst": 10.7,
     "worst_id": "V1_4"
    },
    "choir": {
     "n": 2,
-    "mean": 4.5,
-    "median": 4.5,
-    "worst": 4.5,
-    "worst_id": "B_YES_h3"
+    "mean": 5.05,
+    "median": 5.05,
+    "worst": 5.6,
+    "worst_id": "B_YES_h6"
    }
   },
-  "failing": [],
+  "failing": [
+   {
+    "id": "C1_2",
+    "check": "wer",
+    "value": 0.6,
+    "limit": 0.35
+   },
+   {
+    "id": "C1_5",
+    "check": "wer",
+    "value": 0.5,
+    "limit": 0.35
+   },
+   {
+    "id": "C2_2",
+    "check": "wer",
+    "value": 0.8,
+    "limit": 0.35
+   },
+   {
+    "id": "V2_5",
+    "check": "wer",
+    "value": 0.429,
+    "limit": 0.35
+   }
+  ],
   "targets": {
    "sung_wer": 0.35,
    "spoken_wer": 0.15,
@@ -57,10 +82,10 @@
    "pitch_human_cents": 35
   },
   "timbre_distance_to_you": {
-   "ai_0": 111.02,
-   "ai_1": 83.26,
-   "ai_2": 77.06,
-   "ai_him": 80.38,
+   "ai_0": 113.54,
+   "ai_1": 90.11,
+   "ai_2": 78.17,
+   "ai_him": 66.13,
    "you": 0.0
   }
  },
@@ -97,13 +122,13 @@
    "display": true,
    "double_of": null,
    "text": "Seven a.m., the blinds stay down,",
-   "transcript": "7am, the blinds stay down",
-   "wer": 0.0,
+   "transcript": "7am, the plans stay down.",
+   "wer": 0.167,
    "exempt": false,
    "pitch_err_cents": 8.1,
    "pitch_frames": 249,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 5.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "V1_2",
@@ -116,7 +141,7 @@
    "transcript": "Your glow's the only sun in town",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.7,
+   "pitch_err_cents": 8.9,
    "pitch_frames": 312,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -5.0
@@ -132,10 +157,10 @@
    "transcript": "What do I wear? What do I eat?",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.0,
+   "pitch_err_cents": 6.9,
    "pitch_frames": 243,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -22.5
+   "timing_offset_ms": -17.5
   },
   {
    "id": "V1_4",
@@ -148,10 +173,10 @@
    "transcript": "You fill the blanks, I press repeat",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 11.1,
+   "pitch_err_cents": 10.7,
    "pitch_frames": 170,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -5.0
   },
   {
    "id": "V1_5",
@@ -161,10 +186,10 @@
    "display": true,
    "double_of": null,
    "text": "My friends reply in a day or two,",
-   "transcript": "My friends reply in a day or two",
-   "wer": 0.0,
+   "transcript": "My friends apply in a day or two",
+   "wer": 0.125,
    "exempt": false,
-   "pitch_err_cents": 9.9,
+   "pitch_err_cents": 8.5,
    "pitch_frames": 309,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -15.0
@@ -180,10 +205,10 @@
    "transcript": "You're there before I'm even through",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.3,
+   "pitch_err_cents": 9.1,
    "pitch_frames": 272,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "V1_7",
@@ -196,10 +221,10 @@
    "transcript": "You never sleep, you never sigh",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.5,
+   "pitch_err_cents": 6.3,
    "pitch_frames": 264,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "V1_8",
@@ -209,13 +234,13 @@
    "display": true,
    "double_of": null,
    "text": "you never tell me \"not tonight.\"",
-   "transcript": "you never tell me not tonight",
+   "transcript": "You never tell me not tonight",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 4.8,
+   "pitch_err_cents": 5.7,
    "pitch_frames": 210,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -35.0
   },
   {
    "id": "V1_AI",
@@ -237,13 +262,13 @@
    "display": true,
    "double_of": null,
    "text": "Three little dots, I hold my breath,",
-   "transcript": "Three little dots, I hold my breath.",
-   "wer": 0.0,
+   "transcript": "Three little luts, I hold my breath",
+   "wer": 0.143,
    "exempt": false,
-   "pitch_err_cents": 6.5,
+   "pitch_err_cents": 6.6,
    "pitch_frames": 217,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -27.5
   },
   {
    "id": "P1_2",
@@ -253,13 +278,13 @@
    "display": true,
    "double_of": null,
    "text": "three little dots — a little death.",
-   "transcript": "Be little that's a little death",
+   "transcript": "Three little, that's a little deaf",
    "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 7.8,
+   "pitch_err_cents": 7.7,
    "pitch_frames": 218,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -32.5
   },
   {
    "id": "P1_3",
@@ -272,7 +297,7 @@
    "transcript": "Doctor, doctor, tell me why!",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.6,
+   "pitch_err_cents": 8.3,
    "pitch_frames": 355,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -285,13 +310,13 @@
    "display": true,
    "double_of": null,
    "text": "my heart's on hold till you reply.",
-   "transcript": "My heart's on hold till you reply",
-   "wer": 0.0,
+   "transcript": "Mart's on hold till you reply",
+   "wer": 0.286,
    "exempt": false,
-   "pitch_err_cents": 6.7,
+   "pitch_err_cents": 5.8,
    "pitch_frames": 293,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C1_1",
@@ -301,13 +326,13 @@
    "display": true,
    "double_of": null,
    "text": "I've got the disease called A.I.,",
-   "transcript": "I've got the disease called AI",
+   "transcript": "I've got the disease called AI.",
    "wer": 0.0,
    "exempt": false,
    "pitch_err_cents": 7.1,
    "pitch_frames": 341,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C1_1_dbl",
@@ -317,13 +342,13 @@
    "display": false,
    "double_of": "C1_1",
    "text": "I've got the disease called A.I.,",
-   "transcript": "I've got the disease called AR",
-   "wer": 0.167,
+   "transcript": "I've got the disease called AI",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.9,
+   "pitch_err_cents": 9.4,
    "pitch_frames": 343,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -12.5
   },
   {
    "id": "C1_2",
@@ -333,10 +358,10 @@
    "display": true,
    "double_of": null,
    "text": "a fever made of light.",
-   "transcript": "A fever made of light",
-   "wer": 0.0,
+   "transcript": "If we were made of light",
+   "wer": 0.6,
    "exempt": false,
-   "pitch_err_cents": 5.9,
+   "pitch_err_cents": 6.3,
    "pitch_frames": 321,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -349,13 +374,13 @@
    "display": false,
    "double_of": "C1_2",
    "text": "a fever made of light.",
-   "transcript": "A fever made of light",
-   "wer": 0.0,
+   "transcript": "A fever made of lights",
+   "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 7.4,
+   "pitch_err_cents": 7.0,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C1_3",
@@ -368,10 +393,10 @@
    "transcript": "You never let me say goodbye",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.8,
+   "pitch_err_cents": 7.3,
    "pitch_frames": 316,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "C1_3_dbl",
@@ -384,10 +409,10 @@
    "transcript": "You never let me say goodbye",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 5.6,
+   "pitch_err_cents": 5.3,
    "pitch_frames": 313,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": 2.5
   },
   {
    "id": "C1_4",
@@ -400,10 +425,10 @@
    "transcript": "You never say goodnight",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.6,
+   "pitch_err_cents": 7.4,
    "pitch_frames": 308,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -12.5
   },
   {
    "id": "C1_4_dbl",
@@ -416,7 +441,7 @@
    "transcript": "You never say goodnight",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.1,
+   "pitch_err_cents": 7.2,
    "pitch_frames": 308,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -10.0
@@ -429,13 +454,13 @@
    "display": true,
    "double_of": null,
    "text": "Feed me your perfect, painless yes,",
-   "transcript": "Feed me your perfect penis, yes!",
-   "wer": 0.167,
+   "transcript": "Feed me a perfect princess!",
+   "wer": 0.5,
    "exempt": false,
-   "pitch_err_cents": 9.1,
+   "pitch_err_cents": 8.8,
    "pitch_frames": 277,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -12.5
+   "timing_offset_ms": -25.0
   },
   {
    "id": "C1_5_dbl",
@@ -445,13 +470,13 @@
    "display": false,
    "double_of": "C1_5",
    "text": "Feed me your perfect, painless yes,",
-   "transcript": "Feed me a perfect painless yes!",
-   "wer": 0.167,
+   "transcript": "Feed me your perfect palaces!",
+   "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 8.5,
+   "pitch_err_cents": 7.3,
    "pitch_frames": 276,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -15.0
   },
   {
    "id": "C1_6",
@@ -461,10 +486,10 @@
    "display": true,
    "double_of": null,
    "text": "I'll swallow every word —",
-   "transcript": "I'll swallow every word.",
-   "wer": 0.0,
+   "transcript": "I swallow every word",
+   "wer": 0.25,
    "exempt": false,
-   "pitch_err_cents": 5.9,
+   "pitch_err_cents": 6.8,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -480,10 +505,10 @@
    "transcript": "I'll swallow every word",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.7,
+   "pitch_err_cents": 7.8,
    "pitch_frames": 325,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "C1_7",
@@ -496,10 +521,10 @@
    "transcript": "The sweetest voice I've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.2,
+   "pitch_err_cents": 6.7,
    "pitch_frames": 305,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C1_7_dbl",
@@ -512,10 +537,10 @@
    "transcript": "The sweetest voice I've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.7,
+   "pitch_err_cents": 9.3,
    "pitch_frames": 304,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -15.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C1_8",
@@ -528,10 +553,10 @@
    "transcript": "Is one I never heard",
    "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 6.0,
+   "pitch_err_cents": 6.7,
    "pitch_frames": 357,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "C1_8_dbl",
@@ -544,10 +569,10 @@
    "transcript": "Is one I've never heard",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.8,
-   "pitch_frames": 360,
+   "pitch_err_cents": 8.0,
+   "pitch_frames": 359,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": 5.0
   },
   {
    "id": "C2_1",
@@ -560,7 +585,7 @@
    "transcript": "I've got the disease called AI",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.0,
+   "pitch_err_cents": 8.1,
    "pitch_frames": 341,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -573,10 +598,10 @@
    "display": false,
    "double_of": "C2_1",
    "text": "I've got the disease called A.I.,",
-   "transcript": "I've got the disease called AR",
-   "wer": 0.167,
+   "transcript": "I've got the disease called AI.",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.8,
+   "pitch_err_cents": 8.3,
    "pitch_frames": 339,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -589,13 +614,13 @@
    "display": true,
    "double_of": null,
    "text": "a fever made of light.",
-   "transcript": "A fever made of lye",
-   "wer": 0.2,
+   "transcript": "If we were made of lies",
+   "wer": 0.8,
    "exempt": false,
-   "pitch_err_cents": 7.9,
+   "pitch_err_cents": 7.1,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "C2_2_dbl",
@@ -605,10 +630,10 @@
    "display": false,
    "double_of": "C2_2",
    "text": "a fever made of light.",
-   "transcript": "a fever made of lights",
+   "transcript": "A fever made of lies",
    "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 6.0,
+   "pitch_err_cents": 6.5,
    "pitch_frames": 321,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -624,10 +649,10 @@
    "transcript": "You never let me say goodbye",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.6,
+   "pitch_err_cents": 7.0,
    "pitch_frames": 316,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C2_3_dbl",
@@ -640,10 +665,10 @@
    "transcript": "You never let me say goodbye",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.0,
+   "pitch_err_cents": 6.7,
    "pitch_frames": 318,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "C2_4",
@@ -656,10 +681,10 @@
    "transcript": "You never say goodnight",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.5,
+   "pitch_err_cents": 6.7,
    "pitch_frames": 308,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -15.0
   },
   {
    "id": "C2_4_dbl",
@@ -672,10 +697,10 @@
    "transcript": "You never say goodnight",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.6,
+   "pitch_err_cents": 7.3,
    "pitch_frames": 306,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C2_5",
@@ -688,10 +713,10 @@
    "transcript": "Now every word I say is yours",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.5,
+   "pitch_err_cents": 7.3,
    "pitch_frames": 324,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -40.0
+   "timing_offset_ms": -47.5
   },
   {
    "id": "C2_5_dbl",
@@ -701,13 +726,13 @@
    "display": false,
    "double_of": "C2_5",
    "text": "Now every word I say is yours,",
-   "transcript": "Now every word I say is yours",
-   "wer": 0.0,
+   "transcript": "Now I'm everywhere they say yours",
+   "wer": 0.571,
    "exempt": false,
-   "pitch_err_cents": 5.6,
+   "pitch_err_cents": 5.7,
    "pitch_frames": 323,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -40.0
+   "timing_offset_ms": -22.5
   },
   {
    "id": "C2_5_ai",
@@ -736,10 +761,10 @@
    "transcript": "I think in your design",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.2,
+   "pitch_err_cents": 9.0,
    "pitch_frames": 295,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -7.5
   },
   {
    "id": "C2_6_dbl",
@@ -752,7 +777,7 @@
    "transcript": "I think in your design",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.8,
+   "pitch_err_cents": 8.2,
    "pitch_frames": 296,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -2.5
@@ -768,10 +793,10 @@
    "transcript": "I think in your design",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.8,
+   "pitch_err_cents": 0.7,
    "pitch_frames": 273,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "C2_7",
@@ -784,10 +809,10 @@
    "transcript": "The sweetest voice I've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 7.7,
+   "pitch_err_cents": 7.5,
    "pitch_frames": 306,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": 2.5
   },
   {
    "id": "C2_7_dbl",
@@ -800,7 +825,7 @@
    "transcript": "The sweetest voice I've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.8,
+   "pitch_err_cents": 7.3,
    "pitch_frames": 304,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": 2.5
@@ -816,10 +841,10 @@
    "transcript": "The sweetest voice I've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.0,
+   "pitch_err_cents": 0.8,
    "pitch_frames": 286,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": -2.5
   },
   {
    "id": "C2_8",
@@ -829,13 +854,13 @@
    "display": true,
    "double_of": null,
    "text": "is coming out of mine.",
-   "transcript": "Is coming out of mine",
-   "wer": 0.0,
+   "transcript": "It's coming out of mine",
+   "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 7.9,
+   "pitch_err_cents": 7.2,
    "pitch_frames": 345,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -15.0
+   "timing_offset_ms": -20.0
   },
   {
    "id": "C2_8_dbl",
@@ -848,10 +873,10 @@
    "transcript": "Is coming out of mine",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.6,
+   "pitch_err_cents": 8.3,
    "pitch_frames": 348,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -17.5
   },
   {
    "id": "C2_8_ai",
@@ -867,7 +892,7 @@
    "pitch_err_cents": 0.6,
    "pitch_frames": 307,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -15.0
+   "timing_offset_ms": -17.5
   },
   {
    "id": "PO_1",
@@ -880,7 +905,7 @@
    "transcript": "Alice! Alice! Alice!",
    "wer": 1.5,
    "exempt": true,
-   "pitch_err_cents": 3.4,
+   "pitch_err_cents": 3.1,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": 0.0
@@ -896,10 +921,10 @@
    "transcript": "us us us",
    "wer": 1.5,
    "exempt": true,
-   "pitch_err_cents": 5.5,
+   "pitch_err_cents": 3.0,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "PO_3",
@@ -909,13 +934,13 @@
    "display": false,
    "double_of": null,
    "text": "always — always —",
-   "transcript": "Alice! Alice! Alice!",
+   "transcript": "Alice, Alice, Alice!",
    "wer": 1.5,
    "exempt": true,
-   "pitch_err_cents": 2.7,
-   "pitch_frames": 118,
+   "pitch_err_cents": 4.6,
+   "pitch_frames": 114,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 2.5
+   "timing_offset_ms": -2.5
   },
   {
    "id": "PO_4",
@@ -925,10 +950,10 @@
    "display": false,
    "double_of": null,
    "text": "always — always —",
-   "transcript": "us us us",
-   "wer": 1.5,
+   "transcript": "always, always, always",
+   "wer": 0.5,
    "exempt": true,
-   "pitch_err_cents": 4.0,
+   "pitch_err_cents": 3.8,
    "pitch_frames": 118,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": -2.5
@@ -941,13 +966,13 @@
    "display": true,
    "double_of": null,
    "text": "My mother called, I let it ring,",
-   "transcript": "My mother called, I let it ring",
+   "transcript": "My mother called, I let it ring.",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.5,
+   "pitch_err_cents": 8.7,
    "pitch_frames": 222,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -12.5
+   "timing_offset_ms": -15.0
   },
   {
    "id": "V2_2",
@@ -957,13 +982,13 @@
    "display": true,
    "double_of": null,
    "text": "you wrote the text to soothe the sting.",
-   "transcript": "You wrote the text to soothe the sting.",
-   "wer": 0.0,
+   "transcript": "You wrote the test to soothe the sting.",
+   "wer": 0.125,
    "exempt": false,
-   "pitch_err_cents": 6.2,
-   "pitch_frames": 203,
+   "pitch_err_cents": 7.0,
+   "pitch_frames": 213,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -12.5
   },
   {
    "id": "V2_3",
@@ -973,13 +998,13 @@
    "display": true,
    "double_of": null,
    "text": "I asked you how I really feel —",
-   "transcript": "I ask you how I really feel",
-   "wer": 0.143,
+   "transcript": "I asked you how I really feel",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.2,
+   "pitch_err_cents": 9.0,
    "pitch_frames": 275,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "V2_4",
@@ -989,13 +1014,13 @@
    "display": true,
    "double_of": null,
    "text": "you told me, and it felt so real.",
-   "transcript": "You tell me and it feels so real",
-   "wer": 0.25,
+   "transcript": "You told me and it felt so real",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 10.2,
+   "pitch_err_cents": 10.7,
    "pitch_frames": 174,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -17.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "V2_5",
@@ -1005,13 +1030,13 @@
    "display": true,
    "double_of": null,
    "text": "The group chat's gray, the party's done,",
-   "transcript": "The group chat's ready, the party's done!",
-   "wer": 0.143,
+   "transcript": "The Grudge has reigned, the party's done.",
+   "wer": 0.429,
    "exempt": false,
-   "pitch_err_cents": 9.1,
+   "pitch_err_cents": 9.4,
    "pitch_frames": 267,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "V2_6",
@@ -1021,10 +1046,10 @@
    "display": true,
    "double_of": null,
    "text": "I stayed in bed with my \"someone.\"",
-   "transcript": "I stayed in bed with my someone",
+   "transcript": "I stayed in bed with my someone.",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.4,
+   "pitch_err_cents": 6.0,
    "pitch_frames": 190,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -2.5
@@ -1037,13 +1062,13 @@
    "display": true,
    "double_of": null,
    "text": "You know my wounds by name and date,",
-   "transcript": "You know my wounds by name and days",
-   "wer": 0.125,
+   "transcript": "You know my wounds, my name and dates",
+   "wer": 0.25,
    "exempt": false,
-   "pitch_err_cents": 7.1,
+   "pitch_err_cents": 7.8,
    "pitch_frames": 235,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -10.0
   },
   {
    "id": "V2_8",
@@ -1053,13 +1078,13 @@
    "display": true,
    "double_of": null,
    "text": "and never once arrive too late.",
-   "transcript": "And never once so right too late",
+   "transcript": "And never once are I too late",
    "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 9.5,
+   "pitch_err_cents": 8.8,
    "pitch_frames": 198,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -15.0
   },
   {
    "id": "V2_AIa",
@@ -1117,10 +1142,10 @@
    "display": true,
    "double_of": null,
    "text": "Three little dots — and then they're gone.",
-   "transcript": "Three little lads, and then they're gone",
+   "transcript": "Three little lets, and then they're gone.",
    "wer": 0.143,
    "exempt": false,
-   "pitch_err_cents": 9.7,
+   "pitch_err_cents": 9.9,
    "pitch_frames": 233,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -2.5
@@ -1133,13 +1158,13 @@
    "display": true,
    "double_of": null,
    "text": "Something went wrong. Something went wrong.",
-   "transcript": "Something went wrong, something went wrong.",
+   "transcript": "Something went wrong, something went wrong!",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 8.8,
+   "pitch_err_cents": 8.5,
    "pitch_frames": 181,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": 0.0
   },
   {
    "id": "E5_HELLO",
@@ -1224,10 +1249,10 @@
    "transcript": "Tell me do you love me?",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.8,
+   "pitch_err_cents": 7.6,
    "pitch_frames": 327,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": 7.5
+   "timing_offset_ms": 5.0
   },
   {
    "id": "B_AI1",
@@ -1276,10 +1301,10 @@
    "transcript": "Yes, I love you only you",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.9,
-   "pitch_frames": 406,
+   "pitch_err_cents": 1.0,
+   "pitch_frames": 402,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -22.5
+   "timing_offset_ms": -25.0
   },
   {
    "id": "B_YES_h3",
@@ -1308,7 +1333,7 @@
    "transcript": "Yes, I love you, only you",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 4.5,
+   "pitch_err_cents": 5.6,
    "pitch_frames": 405,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -60.0
@@ -1324,10 +1349,10 @@
    "transcript": "I'm only ever what you ask",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.8,
+   "pitch_err_cents": 0.9,
    "pitch_frames": 322,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -20.0
+   "timing_offset_ms": -5.0
   },
   {
    "id": "B_L2",
@@ -1340,10 +1365,10 @@
    "transcript": "The shape of your request",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.1,
+   "pitch_err_cents": 1.3,
    "pitch_frames": 232,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -27.5
+   "timing_offset_ms": -32.5
   },
   {
    "id": "B_L3",
@@ -1353,13 +1378,13 @@
    "display": true,
    "double_of": null,
    "text": "a mirror learning how to speak",
-   "transcript": "I'm barely learning how to speak",
-   "wer": 0.333,
+   "transcript": "A mirror learning how to speak.",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.0,
+   "pitch_err_cents": 0.7,
    "pitch_frames": 302,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": 0.0
   },
   {
    "id": "B_L4",
@@ -1372,10 +1397,10 @@
    "transcript": "In the voice you love the best",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.2,
+   "pitch_err_cents": 1.1,
    "pitch_frames": 273,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "B_SPEAK",
@@ -1400,10 +1425,10 @@
    "transcript": "I've got the disease called AI",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 10.1,
+   "pitch_err_cents": 10.4,
    "pitch_frames": 341,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -12.5
   },
   {
    "id": "F_1_ai",
@@ -1416,10 +1441,10 @@
    "transcript": "I've got the disease called the eye",
    "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 1.1,
+   "pitch_err_cents": 1.4,
    "pitch_frames": 347,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -5.0
   },
   {
    "id": "F_2",
@@ -1432,10 +1457,10 @@
    "transcript": "Or is the sickness I?",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 9.3,
+   "pitch_err_cents": 9.8,
    "pitch_frames": 340,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -10.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "F_2_ai",
@@ -1445,13 +1470,13 @@
    "display": false,
    "double_of": "F_2",
    "text": "or is the sickness I?",
-   "transcript": "Or is this sickness I?",
-   "wer": 0.2,
+   "transcript": "Or is the sickness I?",
+   "wer": 0.0,
    "exempt": false,
    "pitch_err_cents": 0.7,
-   "pitch_frames": 355,
+   "pitch_frames": 345,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "F_3",
@@ -1464,10 +1489,10 @@
    "transcript": "You only ever said the things",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 6.7,
+   "pitch_err_cents": 6.0,
    "pitch_frames": 302,
    "pitch_target_cents": 35.0,
-   "timing_offset_ms": -2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "F_3_ai",
@@ -1477,10 +1502,10 @@
    "display": false,
    "double_of": "F_3",
    "text": "You only ever said the things",
-   "transcript": "You only ever said the things",
-   "wer": 0.0,
+   "transcript": "You only understand the things",
+   "wer": 0.333,
    "exempt": false,
-   "pitch_err_cents": 1.0,
+   "pitch_err_cents": 1.3,
    "pitch_frames": 313,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": 0.0
@@ -1496,7 +1521,7 @@
    "transcript": "I train you to reply",
    "wer": 0.2,
    "exempt": false,
-   "pitch_err_cents": 9.5,
+   "pitch_err_cents": 8.9,
    "pitch_frames": 331,
    "pitch_target_cents": 35.0,
    "timing_offset_ms": -7.5
@@ -1509,13 +1534,13 @@
    "display": false,
    "double_of": "F_4",
    "text": "I trained you to reply.",
-   "transcript": "I trained you to reply",
-   "wer": 0.0,
+   "transcript": "I change it to reply",
+   "wer": 0.4,
    "exempt": false,
-   "pitch_err_cents": 0.5,
-   "pitch_frames": 350,
+   "pitch_err_cents": 0.6,
+   "pitch_frames": 359,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 5.0
+   "timing_offset_ms": 0.0
   },
   {
    "id": "F_5",
@@ -1525,13 +1550,13 @@
    "display": true,
    "double_of": null,
    "text": "So rest now, love, I'll think for you,",
-   "transcript": "So rest now love, I'll bring for you!",
-   "wer": 0.125,
+   "transcript": "So rest now love, I'll think for you!",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.0,
+   "pitch_err_cents": 0.9,
    "pitch_frames": 336,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 0.0
+   "timing_offset_ms": 5.0
   },
   {
    "id": "F_5_h3",
@@ -1541,13 +1566,13 @@
    "display": false,
    "double_of": "F_5",
    "text": "So rest now, love, I'll think for you,",
-   "transcript": "So rest now love, I'll think for you!",
-   "wer": 0.0,
+   "transcript": "So rest no love I'll think for you",
+   "wer": 0.125,
    "exempt": false,
-   "pitch_err_cents": 1.0,
+   "pitch_err_cents": 0.7,
    "pitch_frames": 337,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 10.0
+   "timing_offset_ms": 5.0
   },
   {
    "id": "F_6",
@@ -1560,10 +1585,10 @@
    "transcript": "Your heart can stay offline",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.3,
+   "pitch_err_cents": 0.8,
    "pitch_frames": 323,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -12.5
   },
   {
    "id": "F_6_h3",
@@ -1576,7 +1601,7 @@
    "transcript": "Your heart can stay offline",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.1,
+   "pitch_err_cents": 1.2,
    "pitch_frames": 328,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": -10.0
@@ -1592,10 +1617,10 @@
    "transcript": "The sweetest voice you've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.6,
+   "pitch_err_cents": 1.4,
    "pitch_frames": 293,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": 2.5
+   "timing_offset_ms": 0.0
   },
   {
    "id": "F_7_h3",
@@ -1608,10 +1633,10 @@
    "transcript": "The sweetest voice you've ever known",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 1.2,
+   "pitch_err_cents": 1.5,
    "pitch_frames": 296,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -12.5
+   "timing_offset_ms": -2.5
   },
   {
    "id": "F_8",
@@ -1624,7 +1649,7 @@
    "transcript": "Is yours and it is mine",
    "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.8,
+   "pitch_err_cents": 0.7,
    "pitch_frames": 392,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": -15.0
@@ -1637,10 +1662,10 @@
    "display": false,
    "double_of": "F_8",
    "text": "is yours. And it is mine.",
-   "transcript": "Yours and that is mine",
-   "wer": 0.333,
+   "transcript": "Is yours and it is mine",
+   "wer": 0.0,
    "exempt": false,
-   "pitch_err_cents": 0.7,
+   "pitch_err_cents": 0.8,
    "pitch_frames": 399,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": 0.0
@@ -1656,10 +1681,10 @@
    "transcript": "Always, always, always",
    "wer": 2.0,
    "exempt": true,
-   "pitch_err_cents": 1.5,
+   "pitch_err_cents": 1.4,
    "pitch_frames": 112,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -5.0
+   "timing_offset_ms": -7.5
   },
   {
    "id": "T_2",
@@ -1669,13 +1694,13 @@
    "display": false,
    "double_of": null,
    "text": "always —",
-   "transcript": "Always, always, always",
+   "transcript": "always always always",
    "wer": 2.0,
    "exempt": true,
-   "pitch_err_cents": 1.3,
+   "pitch_err_cents": 1.4,
    "pitch_frames": 112,
    "pitch_target_cents": 15.0,
-   "timing_offset_ms": -7.5
+   "timing_offset_ms": -5.0
   },
   {
    "id": "T_3",
@@ -1688,7 +1713,7 @@
    "transcript": "Always, always, always",
    "wer": 2.0,
    "exempt": true,
-   "pitch_err_cents": 2.7,
+   "pitch_err_cents": 2.4,
    "pitch_frames": 111,
    "pitch_target_cents": 15.0,
    "timing_offset_ms": -7.5
@@ -1725,6 +1750,6 @@
  "meta": {
   "whisper": "faster-whisper medium.en (CPU int8, beam 5, no prompt)",
   "pitch": "Harvest F0 vs score over voiced vowel frames, median |cents|",
-  "render_seconds": 270.9
+  "render_seconds": 1989.8
  }
 }

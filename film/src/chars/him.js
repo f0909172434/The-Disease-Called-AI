@@ -26,7 +26,7 @@ function himCyan(h) {
 function himSilver(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#4E5562', '#B4BBC7', Math.pow(l, .9)); }
 // clean (the real 'swapped', final chorus): the masses become dark translucent navy so lines behind them are hidden,
 // and the drawing itself is thin even cyan line (see himKit's clean mode)
-function himNavy(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#08142A', '#1B4A6E', Math.pow(l, 1.3)); }
+function himNavy(h) { const [r, g, b] = himHex(h), l = (.3 * r + .59 * g + .11 * b) / 255; return mixCol('#060D1C', '#13385A', Math.pow(l, 1.3)); }
 const HIM_PALS = {};
 function himPal(name = 'human') {
   if (HIM_PALS[name]) return HIM_PALS[name];
@@ -135,20 +135,31 @@ function himClipLine(P, g) {
 // Clean-line mode (c.clean, the final chorus' 'swapped'): no boil (J = 0, seeds without the boil frame), no watercolour,
 // no hatching, no translucent shading overlays; masses are flat dark navy so lines behind them are hidden, every outline
 // is one even cyan line ('himclean' brush: constant pressure, no scatter), contours bright, inner detail dimmer.
-let HIM_CLEAN_BR = false;
-function himCleanBrush() { if (HIM_CLEAN_BR) return; HIM_CLEAN_BR = true;
-  brush.add('himclean', { type: 'default', weight: 3.4, scatter: .04, sharpness: 1, grain: 40, opacity: 250, spacing: .14, pressure: [1, 1], rotate: 'natural', noise: 0 }); }
+// registered when the script loads, before setup() scales every brush by 5 (so the values are a fifth): registering it
+// later, in a frame, would change that frame's random stream (and the first frame would differ from the rest)
+let HIM_DISC = null, HIM_EDGE = [];
+if (typeof brush !== 'undefined') brush.add('himclean', { type: 'default', weight: 3.4 / 5, scatter: .04 / 5, sharpness: 1, grain: 40, opacity: 250, spacing: .14 / 5, pressure: [1, 1], rotate: 'natural', noise: 0 });
+function himCleanBrush() {}
 function himKit(u, c, swBase, J, clean) {
   clean = clean || !!c.clean;
   const k = { u, cut: null, det: u * HIM_HS >= 13, det2: u * HIM_HS >= 26, clean, c };   // det / det2: levels of detail
   if (c.clean) { J = 0; himCleanBrush(); }
   const cc = col => col === c.ink || col === c.lash || col === c.glassDk || col === c.code ? c.ink : c.inkSoft;   // clean line colour
-  const g = () => k.keep ? k.keep : k.cut == null ? null : (p => p[1] - (k.cut + Math.sin(p[0] / u * 1.7) * .12 * u));
+  const g0 = () => k.keep ? k.keep : k.cut == null ? null : (p => p[1] - (k.cut + Math.sin(p[0] / u * 1.7) * .12 * u));
+  // HIM_DISC (unravel): only what lies inside a disc in the caller's coordinates is drawn
+  const gW = HIM_DISC ? (p => { const q = himToCaller(p[0], p[1]); return Math.hypot(q[0] - HIM_DISC[0], q[1] - HIM_DISC[1]) - HIM_DISC[2]; }) : null;
+  const g = () => { const a = g0(); return a && gW ? [a, gW] : a || gW; };
+  const clipP = (pts, G) => {
+    for (const f of Array.isArray(G) ? G : [G]) { pts = himClipPoly(pts, f); if (pts.length < 3) break; }
+    if (gW && HIM_EDGE.length < 600 && pts.length > 2) for (let i = 0; i < pts.length; i += 2) if (Math.abs(gW(pts[i])) < 1.5) HIM_EDGE.push(himToCaller(pts[i][0], pts[i][1]));   // where the outline is being unravelled
+    return pts;
+  };
+  const clipL = (pts, G) => { let runs = [pts]; for (const f of Array.isArray(G) ? G : [G]) runs = runs.flatMap(r => himClipLine(r, f)); return runs; };
   k.pts = (P, closed = true, n = 5, j = J) => himS(himJ(P, j / u), closed, n).map(([x, y]) => [x * u, y * u]);
   k.shape = (P, o = {}) => {
     if (c.clean && o.ink === null && (o.op ?? 255) < 200 && !o.cl) return [];   // shading overlays: not in line art
     let pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, true, o.n || 5, o.j ?? J);
-    const G = g(); if (G) { pts = himClipPoly(pts, G); if (pts.length < 3) return pts; }
+    const G = g(); if (G) { pts = clipP(pts, G); if (pts.length < 3) return pts; }
     if (c.clean) {
       const inkC = o.ink === undefined ? c.ink : o.ink;
       paint(pts, { wash: o.wash ? (o.cl || o.wash) : undefined, washOp: o.op, ink: inkC === null ? null : cc(inkC), sw: swBase * ((o.sw ?? 1) >= .5 ? .62 : .44), br: 'himclean' });
@@ -184,7 +195,7 @@ function himKit(u, c, swBase, J, clean) {
   };
   k.line = (P, w = .5, col = c.ink, o = {}) => {
     const pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, false, o.n || 5, o.j ?? J);
-    const G = g(), runs = G ? himClipLine(pts, G) : [pts];
+    const G = g(), runs = G ? clipL(pts, G) : [pts];
     if (c.clean) { const ww = w >= .5 ? .62 : w >= .3 ? .46 : .36; for (const r of runs) inkLine(r, ww * swBase, cc(col), 'himclean', o.curv ?? 0); return; }
     // line-weight hierarchy: silhouettes and main contours in 'ink', thin inner details in 'inkfine'
     const br = o.br || (clean || w < .5 ? 'inkfine' : 'ink'), ww = br === 'inkfine' && !o.br ? w * 1.5 : w;
@@ -203,7 +214,7 @@ const himPuff = (P, k, cx = 0) => !k ? P : P.map(([x, y, kk]) => { const b = Mat
 // the cheeks' round highlight and a soft crease at the mouth corners
 function himPuffFx(K, c, k, cheeks) {
   if (!(k > 0)) return;
-  for (const [x, y, r] of cheeks) { K.shape(ellPts(x, y, r * 1.1, r * .8, 14), { wash: c.skinHi, op: 140 * k, ink: null, raw: true, j: 0 }); K.shape(ellPts(x, y + r * .25, r * .9, r * .5, 12), { wash: c.blush, op: 40 * k, ink: null, raw: true, j: 0 }); }
+  for (const [x, y, r] of cheeks) { K.shape(ellPts(x - r * .15, y - r * .2, r * .55, r * .4, 12), { wash: c.skinHi, op: 75 * k, ink: null, raw: true, j: 0 }); K.shape(ellPts(x, y + r * .2, r * .95, r * .55, 12), { wash: c.blush, op: 55 * k, ink: null, raw: true, j: 0 }); }
 }
 
 function himEye(K, c, f, cx, s, E = HIM_EYE.k, cmp = 1) {
@@ -419,14 +430,21 @@ function himShine(K, c, x0, x1, y, sag = .3, seed = 0, w = .13) {
     x = xb + .1 + .1 * hash(seed + i * 5.3); i++;
   }
 }
+// The hair's silhouette per view (head units, before the hair squash): also used by effects that cover the hair.
+const HIM_HAIR = {};
+HIM_HAIR.front = [[-1.9, .25, 1], [-1.98, -.7], [-2.04, -1.35], [-2.32, -1.7, 1], [-2.1, -2.05], [-2.18, -2.6], [-2.3, -2.95, 1], [-1.8, -3.1], [-1.35, -3.45], [-.75, -3.62], [-.5, -3.82, 1], [-.12, -3.66],
+                [.5, -3.68], [1.0, -3.75, 1], [1.22, -3.45], [1.72, -3.1], [2.18, -3.0, 1], [2.0, -2.5], [2.1, -1.9], [2.3, -1.62, 1], [2.02, -1.25], [1.98, -.6], [1.9, .25, 1]];
+HIM_HAIR.q = [[-1.05, 1.05, 1], [-1.6, .9], [-2.05, .35], [-2.32, .18, 1], [-2.22, -.4], [-2.35, -1.2], [-2.68, -1.55, 1], [-2.4, -2.0], [-2.42, -2.6], [-2.52, -2.98, 1], [-1.95, -3.1], [-1.3, -3.48],
+                [-.85, -3.85, 1], [-.45, -3.55], [.3, -3.6], [.75, -3.76, 1], [.98, -3.3], [1.5, -3.0], [1.95, -2.85, 1], [1.72, -2.25], [1.92, -1.32, 1], [1.45, -1.3], [1.2, -.5], [-1.2, -.3]];
+HIM_HAIR.side = [[1.15, -2.0], [.6, -1.6], [.12, -1.42], [-.02, -.6], [-.06, .3, 1], [-.32, -.1], [-.6, -.48], [-1.0, -.35], [-1.05, .55], [-.72, 1.18, 1], [-1.45, .85], [-1.95, .25], [-2.3, .1, 1], [-2.18, -.45], [-2.38, -1.3],
+    [-2.7, -1.6, 1], [-2.38, -2.1], [-2.25, -2.75], [-2.4, -3.1, 1], [-1.75, -3.2], [-1.0, -3.55], [-.55, -3.85, 1], [-.2, -3.55], [.5, -3.45], [1.0, -3.58, 1], [1.2, -3.0], [1.62, -2.55, 1], [1.45, -1.98], [1.6, -1.3, 1], [1.3, -1.5]];
 // The head, front view, drawn around its own origin (between the eyes).
 const HIM_BANGS_FRONT = [  // [root, tip, width, bend]: heavy uneven locks swept toward screen left from a parting at the right
   [[-1.62, -1.95], [-1.92, .22], .62, -.2], [[-1.2, -2.3], [-1.58, -.32], .8, .2], [[-.7, -2.42], [-1.06, -.36], .84, .16], [[-.2, -2.48], [-.44, .16], .8, .2],
   [[.3, -2.46], [.13, -.12], .74, .12], [[.8, -2.4], [.9, -.42], .68, -.08], [[1.24, -2.25], [1.48, -.36], .64, -.18], [[1.62, -1.95], [1.96, .18], .56, .22]];
 function himHeadFront(K, c, f, u, sw) {
   // hair mass behind the head: rounded volume with a few tufts breaking the silhouette, not a crown
-  const back = [[-1.9, .25, 1], [-1.98, -.7], [-2.04, -1.35], [-2.32, -1.7, 1], [-2.1, -2.05], [-2.18, -2.6], [-2.3, -2.95, 1], [-1.8, -3.1], [-1.35, -3.45], [-.75, -3.62], [-.5, -3.82, 1], [-.12, -3.66],
-                [.5, -3.68], [1.0, -3.75, 1], [1.22, -3.45], [1.72, -3.1], [2.18, -3.0, 1], [2.0, -2.5], [2.1, -1.9], [2.3, -1.62, 1], [2.02, -1.25], [1.98, -.6], [1.9, .25, 1]];
+  const back = HIM_HAIR.front;
   himHairMass(K, c, back, [.45, -2.7], p => p[1] < -.3, 28, 1);
   // ears
   for (const s of [-1, 1]) {
@@ -484,8 +502,7 @@ function himHeadFront(K, c, f, u, sw) {
 const HIM_BANGS_Q = [[[-1.2, -1.9], [-1.46, -.02], .6, -.14], [[-.72, -2.3], [-1.1, -.36], .8, .18], [[-.18, -2.44], [-.52, -.2], .82, .16],
   [[.36, -2.46], [.12, .14], .74, .18], [[.86, -2.36], [.94, -.42], .66, -.08], [[1.28, -2.15], [1.56, -.42], .58, -.2]];
 function himHeadQ(K, c, f, u, sw) {
-  const back = [[-1.05, 1.05, 1], [-1.6, .9], [-2.05, .35], [-2.32, .18, 1], [-2.22, -.4], [-2.35, -1.2], [-2.68, -1.55, 1], [-2.4, -2.0], [-2.42, -2.6], [-2.52, -2.98, 1], [-1.95, -3.1], [-1.3, -3.48],
-                [-.85, -3.85, 1], [-.45, -3.55], [.3, -3.6], [.75, -3.76, 1], [.98, -3.3], [1.5, -3.0], [1.95, -2.85, 1], [1.72, -2.25], [1.92, -1.32, 1], [1.45, -1.3], [1.2, -.5], [-1.2, -.3]];
+  const back = HIM_HAIR.q;
   himHairMass(K, c, back, [-.5, -2.85], p => p[1] < .95 && !(p[0] > 1.15 && p[1] > -1.6), 30, 2);
   const pq = P => himPuff(P, f.puff, .2);
   const face = pq([[.1, -2.25], [1.0, -2.0], [1.42, -1.45], [1.56, -.62], [1.47, -.18], [1.56, .32], [1.48, .88], [1.25, 1.42, 1], [.88, 1.92], [.52, 2.14], [.15, 2.08], [-.55, 1.72], [-1.12, 1.22, 1], [-1.38, .7], [-1.42, -.3], [-1.28, -1.2], [-.85, -1.95]]);
@@ -564,7 +581,7 @@ function himHeadSide(K, c, f, u, sw) {
     const k = Math.max(f.puff || 0, m === 'puff' ? 1 : 0), B = [[1.5, .97], [1.5 + .12 * k, 1.12], [1.5 + .18 * k, 1.38], [1.5 + .12 * k, 1.62], [1.47, 1.86]];
     K.shape(B.concat([[1.3, 1.6], [1.3, 1.1]]), { wash: c.skin, ink: null, n: 4 });
     K.line(B, .95, c.ink, { n: 4 });
-    K.shape(ellPts(.95, 1.02, .45 * k + .05, .36 * k + .05, 14), { wash: c.skinHi, op: 150, ink: null, raw: true, j: 0 });
+    K.shape(ellPts(.9, .95, .26 * k + .03, .2 * k + .03, 12), { wash: c.skinHi, op: 80, ink: null, raw: true, j: 0 }); K.shape(ellPts(.95, 1.1, .45 * k, .3 * k, 12), { wash: c.blush, op: 50 * k, ink: null, raw: true, j: 0 });
     K.line([[.42, .62], [.3, 1.0], [.42, 1.42]], .3 * k, c.skinSh, { n: 3 });
   }
   if (m === 'puff') K.line([[1.5 + .18 * Math.max(f.puff || 0, 1), y0 - .03], [1.52, y0 + .02]], .55, c.ink, { raw: true });
@@ -575,8 +592,7 @@ function himHeadSide(K, c, f, u, sw) {
   else if (m === 'U') K.line([[1.6, y0], [1.48, y0 + .03]], .5, c.ink, { raw: true });
   else K.line([[1.47, y0], [1.24, y0 + .04]], .55, c.ink, { raw: true });
   // hair: the mass covers the skull behind a hairline that runs from the forehead to the temple and down to a short sideburn
-  const back = [[1.15, -2.0], [.6, -1.6], [.12, -1.42], [-.02, -.6], [-.06, .3, 1], [-.32, -.1], [-.6, -.48], [-1.0, -.35], [-1.05, .55], [-.72, 1.18, 1], [-1.45, .85], [-1.95, .25], [-2.3, .1, 1], [-2.18, -.45], [-2.38, -1.3],
-    [-2.7, -1.6, 1], [-2.38, -2.1], [-2.25, -2.75], [-2.4, -3.1, 1], [-1.75, -3.2], [-1.0, -3.55], [-.55, -3.85, 1], [-.2, -3.55], [.5, -3.45], [1.0, -3.58, 1], [1.2, -3.0], [1.62, -2.55, 1], [1.45, -1.98], [1.6, -1.3, 1], [1.3, -1.5]];
+  const back = HIM_HAIR.side;
   himHairMass(K, c, back, [-.9, -2.75], p => p[0] < -.95 || p[1] < -1.95, 30, 3);
   K.line(back.slice(0, 5), .4, c.ink, { n: 3 });
   // ear
@@ -1209,8 +1225,11 @@ function him(x, y, u, o = {}) {
   const id = o.boilKey ?? ('n' + (++HIM_N));
   const c = himPal(o.pal || 'human'), clean = !!c.clean, rs = part => clean ? himSeed(`him ${id} ${part}`) : boilSeed(`him ${id} ${part}`);
   const sw = clamp(.28 + u / 100, .32, 1.7) * (o.swMul || 1) * (clean ? .8 : 1);
-  const K = himKit(u, c, sw, Math.max(.5, u * .012), false);
   const view = o.view || 'front', pose = o.pose || 'stand', outfit = o.outfit || 'launch';
+  // unravel (10F): the body is drawn only inside a shrinking disc round his chest (o.unravelAt, caller coordinates)
+  HIM_DISC = o.unravel > 0 ? [...(o.unravelAt || [x, y + (pose === 'bust' ? 3.2 : pose === 'bed' ? -7.5 : pose === 'stand' ? -21 : -6) * u]), (o.unravelR ?? (pose === 'bust' ? 11 : pose === 'stand' ? 22 : 15) * u) * Math.pow(1 - clamp(o.unravel), 1.3)] : null;
+  HIM_EDGE = [];
+  const K = himKit(u, c, sw, Math.max(.5, u * .012), false);
   const f = himFace(o), sq = o.sq || 0;
   HIM_M0 = himMat(); HIM_LAST = {}; HIM_W = {};
   rs('shadow');
@@ -1226,10 +1245,11 @@ function him(x, y, u, o = {}) {
   for (const k in HIM_LAST) HIM_LAST[k] = [ax + HIM_LAST[k][0] * fx, ay + HIM_LAST[k][1] * (1 - sq)];
   Object.assign(HIM_LAST, HIM_W);
   if (typeof himAfter === 'function') { rs('extras'); himAfter(K, c, o, u, sw, x, y); }
+  HIM_DISC = null;
   if (clean) himSwapGlow(x, y, u, pose, o);
   rs('after');
 }
-let HIM_W = {};
+let HIM_W = {}, HIM_SPECS = {};
 function himSwapGlow(x, y, u, pose, o = {}) {
   if (o.swapGlow === 0) return;
   const k = o.swapGlow ?? 1, h = HIM_LAST.head;
@@ -1278,9 +1298,10 @@ function himHeadFx(K, c, f, view) {
   if (f.qmark > 0) {   // confused: a painted "?" pops up beside the head
     const k = backOut(clamp(f.qmark)), [qx, qy] = view === 'side' ? [1.2, -3.6] : view === 'q' ? [2.3, -3.3] : [2.45, -3.1], s = 1.05 * k;
     const un = P => P.map(([x, y]) => [x, y < -2 ? -2 + (y + 2) / HIM_HAIRK : y]);   // (undo the hair's squash: himHead wraps this)
-    const hook = [[-.4, -.12], [-.36, -.42], [-.12, -.62], [.2, -.6], [.42, -.36], [.36, -.06], [.12, .12], [.03, .3], [.04, .46]].map(([x, y]) => [qx + x * s, qy + y * s]);
+    const ms = f.flip ? -1 : 1;   // never mirrored: when the figure is flipped, so is the glyph's drawing
+    const hook = [[-.4, -.12], [-.36, -.42], [-.12, -.62], [.2, -.6], [.42, -.36], [.36, -.06], [.12, .12], [.03, .3], [.04, .46]].map(([x, y]) => [qx + x * s * ms, qy + y * s]);
     K.shape(un(ribbon(hook, .24 * s, .17 * s)), { wash: c.ink, ink: null, raw: true, j: 0, cl: c.ink });
-    K.shape(un(ellPts(qx + .05 * s, qy + .76 * s, .12 * s, .12 * s, 10)), { wash: c.ink, ink: null, raw: true, j: 0, cl: c.ink });
+    K.shape(un(ellPts(qx + .05 * s * ms, qy + .76 * s, .12 * s, .12 * s, 10)), { wash: c.ink, ink: null, raw: true, j: 0, cl: c.ink });
   }
   if (f.screen > 0) {   // cool rim of monitor light on the side that faces the screen (screen right)
     const R = view === 'side' ? [[1.4, -.7], [1.5, .2], [1.78, .72], [1.52, 1.2], [1.44, 1.95], [1.15, 2.2]] : view === 'q' ? [[1.55, -.6], [1.56, .32], [1.48, .88], [1.25, 1.42], [.88, 1.92]] : [[1.74, -.3], [1.72, .35], [1.62, .85], [1.47, 1.22], [1.0, 1.75]];
@@ -1294,21 +1315,24 @@ function himHeadFx(K, c, f, view) {
 // mattress surface under the hips). Arms come from the default hanging angles, a preset (o.arms, see him_pose.js), or
 // IK to targets (o.toR / o.toL, in the caller's coordinates).
 function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
-  const bust = mode === true, bed = mode === 'bed', R = HIM_RIG[view] || HIM_RIG.front, lean = o.lean || 0, br = o.breath || 0;
+  const bust = mode === true, bed = mode === 'bed', lie = mode === 'lie', slie = mode === 'sidelie', R = HIM_RIG[view] || HIM_RIG.front, lean = o.lean || 0, br = o.breath || 0;
+  const covers = bed || slie || (lie && o.covers), noLegs = bust || bed || slie || (lie && o.covers);
   const band = o.band === false ? '' : view === 'front' ? 'L' : (o.flip ? 'R' : 'L');   // the hospital band is on his left wrist
   // bust: the anchor is the collarbone notch (torso-local (0, -10.35)); everything below the chest is cut away
   const hipY = bust ? 10.35 : bed ? -1.3 : -14.25;
   K.cut = bust ? (-10.35 + (o.cut ?? 4.95)) * u : null;   // o.cut: how far below the collarbones the bust ends (u)
   // arm angles per view: [a1 (shoulder), a2 (elbow)] for his right (R) and left (L) arm
   const A = view === 'front' ? { R: [-.09, .1], L: [.09, -.1] } : view === 'q' ? { R: [-.04, .14], L: [.02, .16] } : { R: [.06, .16], L: [-.02, .1] };
-  const gait = !bust && !bed && typeof himGait === 'function' ? himGait(o, view) : null;
-  const specs = {};
+  const gait = !bust && !bed && !lie && !slie && typeof himGait === 'function' ? himGait(o, view) : null;
+  const specs = HIM_SPECS = { view, mode };
+  if (typeof himArmSpec === 'function') for (const sd of ['R', 'L']) specs[sd] = himArmSpec(o, view, sd, R.sh[sd], mode, u, gait);
   const arm = (side, far, part) => {
     rs('arm' + side + (part || ''));
     const S = R.sh[side];
     let sp = specs[side];
     if (sp === undefined) sp = specs[side] = typeof himArmSpec === 'function' ? himArmSpec(o, view, side, S, mode, u, gait) : null;
     let E, W, hand;
+    if (sp && sp.toC && typeof himArmResolve === 'function') himArmResolve(sp, S, u);
     if (sp && sp.W) ({ E, W } = sp);
     else {
       // reach (0..1) raises his right arm toward the facing direction (screen left in the front view) and opens the hand
@@ -1328,7 +1352,7 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
   // centre of gravity; the hips tilt up on that side and shift over it, the shoulders counter-tilt. The left leg is
   // relaxed: its foot out to the side and a little forward (lower on screen), the heel lifted, the knee bent forward
   // (seen from the front only as a knee that drops and turns in a little). o.contra (0..1, default 1) scales it.
-  const ct = bust || bed || gait ? 0 : (o.contra ?? 1), ht = (view === 'side' ? 0 : view === 'q' ? .04 : .045) * ct, dxh = (view === 'front' ? -.22 : view === 'q' ? -.16 : -.05) * ct;
+  const ct = bust || bed || gait || lie || slie ? 0 : (o.contra ?? 1), ht = (view === 'side' ? 0 : view === 'q' ? .04 : .045) * ct, dxh = (view === 'front' ? -.22 : view === 'q' ? -.16 : -.05) * ct;
   const legProf = view === 'side' ? HIM_LEG.side : HIM_LEG.front, foot = view === 'front' ? 'front' : view;
   const hipJ = side => { const [x, y] = R.hip[side]; return [x * Math.cos(ht) - y * Math.sin(ht), x * Math.sin(ht) + y * Math.cos(ht)]; };
   const Hw = hipJ('R'), Lsum = HIM_THIGH + HIM_SHIN;
@@ -1348,13 +1372,15 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
       const N0 = himIK(H, A, HIM_THIGH, HIM_SHIN, side === 'L' ? 1 : -1), d = himDir(H, A), pr = (N0[0] - H[0]) * d[0] + (N0[1] - H[1]) * d[1], B = [H[0] + d[0] * pr, H[1] + d[1] * pr];
       N = [B[0] + (N0[0] - B[0]) * .32, B[1] + (N0[1] - B[1]) * .32 + (relax ? .12 : 0)];
     }
-    rs('shoe' + side); himShoe(K, c, [A[0], A[1] + (g ? 0 : lift) + fwd + .05], foot, far, outfit, view === 'front' ? (side === 'R' ? -1 : 1) * (relax ? .9 : .45) : 0, lift);
+    rs('shoe' + side);
+    if ((o.feet || (lie ? 'sock' : 'shoe')) === 'sock' && typeof himSockAny === 'function') himSockAny(K, c, [A[0], A[1] + .05], foot, far, view === 'front' ? (side === 'R' ? -1 : 1) * (lie ? 1.2 : .45) : 0);
+    else himShoe(K, c, [A[0], A[1] + (g ? 0 : lift) + fwd + .05], foot, far, outfit, view === 'front' ? (side === 'R' ? -1 : 1) * (relax ? .9 : .45) : 0, lift);
     rs('leg' + side);   // the trousers over the shoe: the hem rests on it
     himLeg(K, c, H, N, [A[0], A[1] + fwd * .6], legProf, { far, hem: view === 'front' ? 'front' : 'side', outer: view === 'front' ? (side === 'R' ? -1 : 1) : -1, heavy: view === 'front' ? (side === 'R' ? 1.2 : .85) : 1 });
   };
-  push(); translate(dxh * u, (bust || bed ? hipY : -legH) * u);
+  push(); translate(dxh * u, (bust || bed ? hipY : lie || slie ? 0 : -legH) * u);
   // legs: seat of the trousers first
-  if (!bust && !bed) {
+  if (!noLegs) {
     push(); rotate(ht);
     if (view === 'front') { rs('seat'); K.shape([[-2.4, -1.0], [2.4, -1.0], [2.75, .9], [0, 2.0], [-2.75, .9]], { wash: c.pants, ink: null, n: 2 }); }
     pop();
@@ -1371,10 +1397,14 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
   rs('torso');
   // 3/4 suit: the far arm goes over the far panel's side and under the chest / lapel, so its deltoid continues the
   // shoulder line as one form
-  (view === 'front' ? himTorsoFront : view === 'q' ? himTorsoQ : himTorsoSide)(K, c, o, outfit, () => arm('L', true));
+  // a 3/4 far arm posed in front of the body (phone, look, wrists, ...): drawn behind the torso, its forearm again over it
+  const farFront = view === 'q' && specs.L && !specs.L.lap && !specs.L.a;
+  if (farFront) arm('L', true);
+  (view === 'front' ? himTorsoFront : view === 'q' ? himTorsoQ : himTorsoSide)(K, c, o, outfit, farFront ? () => {} : () => arm('L', true));
+  if (farFront) arm('L', true, 'fore');
   if (typeof himTorsoProps === 'function') { rs('chest'); himTorsoProps(K, c, o, view, u); }
-  if (bed && typeof himCovers === 'function') {   // the covers over the lap (not leaning with him), then any forearm resting on them
-    rs('covers'); push(); rotate(-lean); const top = himCovers(K, c, o, view, u); pop();
+  if (covers && typeof himCovers === 'function') {   // the covers over the lap (not leaning with him), then any forearm resting on them
+    rs('covers'); push(); rotate(-lean); const top = himCovers(K, c, o, view, u, mode); pop();
     if (view === 'q' && specs.L && specs.L.lap) {   // redraw the far forearm over the covers, clipped to below their top edge
       const cl = Math.cos(lean), sl = Math.sin(lean);
       K.keep = p => top(p[0] * cl - p[1] * sl) - (p[0] * sl + p[1] * cl); arm('L', true, 'fore'); K.keep = null;

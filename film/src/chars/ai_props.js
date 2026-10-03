@@ -24,7 +24,7 @@ function aiPropAt(spec, g, a, u, s, form) {
     case 'phone': { const c = sp.mid ? [sp.mid[0] * u, sp.mid[1] * u] : F(.35, 0); return aiPhone(c, sp.ang ?? -Math.PI / 2, hl * (sp.size || 1.25), sp); }
     case 'cord': return aiCord(g, sp, hl);
     case 'stetho': return aiStetho(g, sp, u, form);
-    case 'page': { const c = sp.mid ? [sp.mid[0] * u, sp.mid[1] * u] : F(.7, -.1); return aiPage(c, sp.ang ?? a * .3 - .2, hl * (sp.size || 1.3), sp.k || 0, sp); }
+    case 'page': { const c = sp.mid ? [sp.mid[0] * u, sp.mid[1] * u] : F(.7, -.1); return aiPage(c, sp.ang ?? a * .3 - .2, hl * (sp.size || (form === 'chibi' ? 2.1 : 1.4)), sp.k || 0, sp); }
     case 'block': {
       const z = (sp.size ?? (form === 'chibi' ? .82 : .5)) * u;
       const c = sp.at === 'side' ? F(.55 + z / hl * .55, 0) : sp.at === 'mid' && sp.mid ? [sp.mid[0] * u, sp.mid[1] * u] : [F(.45, 0)[0], F(.45, 0)[1] - z * .58];
@@ -115,6 +115,15 @@ function aiPhone(c, a, h, sp) {
     rows.forEach(([len, y0], i) => { const f = clamp(k * rows.length - i); if (f <= 0) return; const x0 = -h * .3 + i * h * .12, y = (-w * .22 + w * .22 * (y0 - .6) * 2);
       aiLine([at(x0, -w * .3), at(x0, -w * .3 + w * .62 * len * f)], sw * .9, AI_CYAN, 'inkfine'); });
     if (k > .99) aiPaint(rr(h * .1, w * .3, w * .08).map(p => [p[0] - d[0] * h * .25, p[1] - d[1] * h * .25]), { wash: AI_CYAN, op: 200, ink: null });
+  }
+  if (sp.thumbs) {   // two thumbs tapping over the lower screen, on eighth notes (sp.t: time; default T)
+    const n = Math.floor(bpOf(sp.t ?? T) * 2), C = S.P;
+    for (const sd of [-1, 1]) {
+      const tap = (n + (sd > 0 ? 1 : 0)) % 2 === 0, q = at(-h * (.12 + .14 * hash(n * 1.7 + sd)), sd * w * (.18 + .08 * hash(n * 2.3 - sd))), r = w * .2;
+      aiPaint(aiEll(q[0], q[1] + (tap ? 0 : -r * .3), r * .8, r * 1.05, 12, a + Math.PI / 2 + sd * .5), { wash: C.skin, ink: C.ink, sw: S.sw * .4 });
+      aiPaint(aiEll(q[0], q[1] - r * .45 + (tap ? 0 : -r * .3), r * .42, r * .3, 8, a + Math.PI / 2), { wash: '#F7DEDA', ink: null });
+      if (tap && S.u > 12) aiGlow(q[0], q[1] - r * .9, r * 1.4, AI_CYAN, .5);
+    }
   } else if (scr === 'glow') aiPaint(rr(h * .3, w * .28, w * .1), { wash: '#FFFFFF', op: 120, ink: null });
   aiPaint([at(h * .43, -w * .36), at(h * .43, w * .1), at(h * .4, w * .1), at(h * .4, -w * .36)], { wash: '#FFFFFF', op: 90, ink: null });
   return { screen: c };
@@ -134,13 +143,13 @@ function aiStetho(g, sp, u, form) {
   const S = AI_S, H = S.H; if (!H) return;
   const chibi = form === 'chibi', y0 = chibi ? .42 : .38, ex = .96;
   const eL = H(-ex, y0), eR = H(ex, y0), Y = chibi ? [.15 * u, -4.05 * u] : [.1 * u, -7.7 * u], hl = (chibi ? AI_CHIBI_ARM.hl : .52) * u;
-  const tube = (a, b, c) => aiLine(aiCurve([a, b, c], 6), S.sw * .55, AI_CYAN, 'inkfine');
+  const tube = (a, b, c) => { const P = aiCurve([a, b, c], 6); aiLine(P, S.sw * 1.1, AI_CYAND, 'inkfine'); aiLine(P, S.sw * .6, AI_CYANW, 'inkfine'); if (S.u > 12) for (let i = 2; i < P.length; i += 4) aiGlow(P[i][0], P[i][1], .22 * u, AI_CYAN, .35); };
   tube(eL, [lerp(eL[0], Y[0], .4) - .3 * u, lerp(eL[1], Y[1], .55)], Y); tube(eR, [lerp(eR[0], Y[0], .4) + .2 * u, lerp(eR[1], Y[1], .55)], Y);
   tube(Y, [lerp(Y[0], g[0], .5) + .2 * u, lerp(Y[1], g[1], .5) + .25 * u], g);
   for (const e of [eL, eR]) aiPaint(aiEll(e[0], e[1], hl * .12, hl * .12, 8), { wash: AI_CYANW, ink: AI_CYAND, sw: S.sw * .3 });
-  const cp = [g[0], g[1] + hl * .28];
-  aiPaint(aiEll(cp[0], cp[1], hl * .34, hl * .26, 16), { wash: AI_CYANW, ink: AI_CYAND, sw: S.sw * .4 });
-  aiPaint(aiEll(cp[0], cp[1], hl * .22, hl * .16, 14), { wash: AI_CYAN, op: 200, ink: null });
+  const cp = [g[0], g[1] + hl * .32];
+  aiPaint(aiEll(cp[0], cp[1], hl * .44, hl * .32, 16), { wash: AI_CYANW, ink: AI_CYAND, sw: S.sw * .4 });
+  aiPaint(aiEll(cp[0], cp[1], hl * .3, hl * .21, 14), { wash: AI_CYAN, op: 200, ink: null });
   if (S.u > 12) { aiGlow(cp[0], cp[1], hl * 1.2, AI_CYAN, .8); aiGlow(Y[0], Y[1], hl * .7, AI_CYAN, .4); }
   return { chest: cp };
 }
@@ -175,7 +184,7 @@ function aiBlock(c, z, sp = {}) {
 // The IV stand (04C), standalone: (0, 0) = its floor point; ~11u tall. Returns { grip (the pole at hand height), bag, drip }.
 function aiIVStand(u, sp) {
   const S = AI_S, sw = S.sw, P = S.P, steel = '#AEB6C8', hgt = (sp.h ?? 10.5) * u;
-  for (const k of [-1, 1, -.4, .4]) aiLine([[0, -.35 * u], [k * .95 * u, -.05 * u + Math.abs(k) * .02 * u]], sw * .7, steel);   // the legs
+  for (const k of [-1, 1, -.4, .4]) aiPaint(aiRibPts(aiRib([[0, -.38 * u], [k * .5 * u, -.2 * u], [k * .95 * u, -.07 * u]], [.09 * u, .08 * u, .07 * u], 3)), { wash: steel, ink: P.ink, sw: sw * .4 });   // the legs
   for (const k of [-1, 1, -.4, .4]) aiPaint(aiEll(k * .95 * u, 0, .1 * u, .08 * u, 8), { wash: '#3C4258', ink: null });
   const pole = aiRib([[0, -.3 * u], [0, -hgt * .5], [0, -hgt]], [.11 * u, .1 * u, .09 * u], 3);
   aiPaint(aiRibPts(pole), { wash: steel, ink: P.ink, sw: sw * .45 });

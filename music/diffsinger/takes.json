@@ -1,44 +1,79 @@
 {
  "C1_2": {
-  "take": 1,
-  "wer": 0.0,
-  "transcript": "A fever made of light",
-  "takes_tried": 4,
-  "wer_take0": 0.8
- },
- "C1_5_dbl": {
-  "take": 1,
-  "wer": 0.167,
-  "transcript": "Feed me a perfect painless yes!",
-  "takes_tried": 4,
-  "wer_take0": 0.333
- },
- "C2_2_dbl": {
-  "take": 1,
+  "take": 5,
   "wer": 0.2,
-  "transcript": "a fever made of lights",
-  "takes_tried": 4,
+  "transcript": "The fever made of light",
+  "takes_tried": 6,
   "wer_take0": 0.6
  },
- "F_4": {
-  "take": 2,
-  "wer": 0.2,
-  "transcript": "I train you to reply",
-  "takes_tried": 4,
-  "wer_take0": 0.2
+ "C1_5": {
+  "take": 5,
+  "wer": 0.167,
+  "transcript": "Feed me your perfect penis, yes!",
+  "takes_tried": 6,
+  "wer_take0": 0.5
  },
- "P1_3": {
-  "take": 3,
+ "C1_5_dbl": {
+  "take": 2,
+  "wer": 0.167,
+  "transcript": "Feed me your perfect penless yes!",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "C2_2": {
+  "take": 2,
   "wer": 0.0,
-  "transcript": "Doctor, doctor, tell me why!",
-  "takes_tried": 4,
+  "transcript": "A fever made of light",
+  "takes_tried": 6,
+  "wer_take0": 0.8
+ },
+ "C2_5_dbl": {
+  "take": 5,
+  "wer": 0.0,
+  "transcript": "Now every word I say is yours",
+  "takes_tried": 6,
+  "wer_take0": 0.571
+ },
+ "F_1_ai": {
+  "take": 1,
+  "wer": 0.333,
+  "transcript": "I've got the disease called the eye!",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "F_3_ai": {
+  "take": 4,
+  "wer": 0.0,
+  "transcript": "You only ever said the things",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "F_4_ai": {
+  "take": 5,
+  "wer": 0.2,
+  "transcript": "I train you to reply!",
+  "takes_tried": 6,
   "wer_take0": 0.4
  },
+ "P1_2": {
+  "take": 3,
+  "wer": 0.167,
+  "transcript": "Three little, that's a little death",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "V2_5": {
+  "take": 3,
+  "wer": 0.286,
+  "transcript": "The group says, Ray, the party's done.",
+  "takes_tried": 6,
+  "wer_take0": 0.429
+ },
  "V2_8": {
-  "take": 5,
+  "take": 2,
   "wer": 0.333,
   "transcript": "And never once so right too late",
-  "takes_tried": 8,
-  "wer_take0": 0.833
+  "takes_tried": 6,
+  "wer_take0": 0.333
  }
 }

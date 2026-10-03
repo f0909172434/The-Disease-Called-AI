@@ -134,8 +134,8 @@ def part_for_line(line: dict, lp: phm.LinePhonemes, bank: bk.Bank, track: int, *
                   dict_source: str = "ours", take: int = 0) -> PartSpec:
     """One line as one part. `times` (song seconds per phoneme, see ours_times) switches the
     lyrics to the timed form; `contour` = (t seconds, MIDI) becomes the PITD curve.
-    `take` > 0 raises that curve by `take` cents: inaudible, but a new input for DiffSinger's
-    diffusion sampler, i.e. another performance of the same line (see diffsinger_backend)."""
+    `take` goes into the part's metadata: ourender seeds DiffSinger's noise with part name +
+    take + phrase, so take k is another, reproducible performance of the same line."""
     timed = times is not None
     sylls = lp.syllables
     if dict_source == "bank" and not timed:
@@ -172,7 +172,7 @@ def part_for_line(line: dict, lp: phm.LinePhonemes, bank: bk.Bank, track: int, *
                           "timing": "timed" if timed else "bank", "transpose": transpose,
                           "take": take})
     if contour is not None:
-        part.pitd = pitd_curve(part, *contour, transpose=transpose, offset_cents=take)
+        part.pitd = pitd_curve(part, *contour, transpose=transpose)
     return part
 
 
@@ -205,8 +205,7 @@ def _bank_dict_syllables(line: dict, lp: phm.LinePhonemes, bank: bk.Bank) -> lis
     return out
 
 
-def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int = 0,
-               offset_cents: int = 0):
+def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int = 0):
     """PITD (cents relative to the notes, 5-tick grid) so that OpenUtau's pitch curve equals
     `midi` (+ transpose) at song time `t`. OpenUtau's base pitch at tick x is the tone of the
     first note ending after x (flat notes; no pitch points, no vibrato)."""
@@ -216,7 +215,7 @@ def pitd_curve(part: PartSpec, t: np.ndarray, midi: np.ndarray, transpose: int =
     idx = np.minimum(np.searchsorted(ends, xs, side="right"), len(tones) - 1)
     base = tones[idx]
     target = np.interp(xs * SEC_PER_TICK, t, midi) + transpose
-    ys = np.clip(np.round((target - base) * 100.0) + offset_cents, -1200, 1200).astype(int)
+    ys = np.clip(np.round((target - base) * 100.0), -1200, 1200).astype(int)
     return xs.tolist(), ys.tolist()
 
 

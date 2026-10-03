@@ -271,6 +271,26 @@ class RealBanks(unittest.TestCase):
                     self.assertLessEqual(ps.start, ps.vowel_start)
 
 
+    def test_seeded_renders_are_bit_identical(self):
+        """Two renders with empty caches (fresh OpenUtau data dirs) give the same samples;
+        another take gives another performance."""
+        import runner
+        line = LINES["PO_1"]
+        b = bk.find("hanami")
+        lp = phm.line_phonemes(line)
+        with tempfile.TemporaryDirectory() as d:
+            outs = []
+            for run, take in (("a", 0), ("b", 0), ("c", 3)):
+                part = su.part_for_line(line, lp, b, 0, times=su.ours_times(line, lp), take=take)
+                proj = su.write_ustx(os.path.join(d, f"{run}.ustx"), [su.track_for(b, True)], [part])
+                runner.run("render", proj, os.path.join(d, run), data=os.path.join(d, f"data_{run}"),
+                           steps=8, log=None)
+                outs.append(runner.load_part(os.path.join(d, run), part.name)["audio"])
+            self.assertTrue(np.array_equal(outs[0], outs[1]))
+            n = min(len(outs[0]), len(outs[2]))
+            self.assertFalse(np.array_equal(outs[0][:n], outs[2][:n]))
+
+
 @unittest.skipUnless(os.environ.get("DIFFSINGER_TEST_VOICEBANKS"), "test bank not configured")
 class Smoke(unittest.TestCase):
     """Real renders through bin/ourender with the opencpopJPN test bank (timed phonemizer)."""

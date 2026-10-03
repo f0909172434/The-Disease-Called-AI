@@ -6,3 +6,4 @@ downloads/
 bin/
 ourender/bin/
 ourender/obj/
+.venv/

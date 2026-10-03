@@ -42,7 +42,7 @@ function setBed(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), f = o.flip ? -1 : 1, X = (px, py) => [x + px * s * f, y + py * s], M = Q => Q.map(([a, b]) => X(a, b));
   const kk = o.key || '';
   boilSeed('setbed shadow' + kk);
-  setP(M([[50, -180], [1100, -180], [1120, -6], [30, -6]]), { wash: P.shadow, washOp: 150, ink: null });
+  setP(M([[50, -180], [1100, -180], [1120, -6], [30, -6]]), { wash: P.shadow, washOp: 95, ink: null });
   boilSeed('setbed rail' + kk);
   setP(M(setBox(40, -262, 1102, -176, 1.2)), { wash: P.bedWood, ink: P.ink, sw: sw * .9 });
   setL(M([[52, -252], [1092, -253]]), sw * .5, P.woodLt, 'inkfine', .5);
@@ -109,7 +109,8 @@ function setNightstand(x, y, s = 1, o = {}) {
 function setClock(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), ring = o.ring || 0, t = o.t ?? T;
   const sh = ring * .12 * Math.sin(t * TAU * 14), dy = -(o.jump || 0), a = (o.rot || 0) + sh;
-  push(); translate(x, y + dy * s); rotate(a); scale(s);
+  if (setSkip([x - 120 * s, y - 220 * s + dy * s, x + 120 * s, y + 10 * s])) return;
+  push(); SET_XF++; translate(x, y + dy * s); rotate(a); scale(s);
   const lw = sw / s;
   boilSeed('setclock' + (o.key || ''));
   setP([[-30, -6], [-38, 2], [-24, 4]], { wash: P.clockDk, ink: P.ink, sw: lw * .6 });
@@ -126,7 +127,7 @@ function setClock(x, y, s = 1, o = {}) {
   const hr = o.time ?? 7, ha = (hr / 12) * TAU - Math.PI / 2, ma = (frac(hr) * TAU) - Math.PI / 2;
   setL([[0, -56], [Math.cos(ha) * 20, -56 + Math.sin(ha) * 20]], lw * 1.1, P.ink, 'ink', 0);
   setL([[0, -56], [Math.cos(ma) * 30, -56 + Math.sin(ma) * 30]], lw * .8, P.ink, 'ink', 0);
-  pop();
+  SET_XF--; pop();
   if (ring > .05) {   // painted vibration marks either side
     boilSeed('setclockring' + (o.key || '') + Math.floor(t * 12));
     for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) {
@@ -144,7 +145,7 @@ function setDesk(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), M = Q => Q.map(([a, b]) => [x + a * s, y + b * s]);
   boilSeed('setdesk' + (o.key || ''));
   setP(M([[-380, -16], [380, -16], [400, 0], [-400, 0]]), { wash: P.shadow, washOp: 120, ink: null });
-  setP(M([[-372, -380], [372, -380], [372, -6], [-372, -6]]), { wash: P.shadow, washOp: 110, ink: null });
+  setP(M([[-372, -380], [372, -380], [372, -6], [-372, -6]]), { wash: P.shadow, washOp: 60, ink: null });
   setP(M(setBox(-372, -380, -342, 0, .8)), { wash: P.woodDk, ink: P.ink, sw });
   setP(M(setBox(190, -380, 372, -4, .8)), { wash: P.wood, ink: P.ink, sw });
   for (const yy of [-300, -200]) setL(M([[198, yy], [364, yy]]), sw * .6, P.woodDk, 'inkfine', 0);
@@ -228,22 +229,27 @@ function setBlinds(x, y, w, h, o = {}) {
   setL([[x + w / 2, y], [x + w / 2, y + h]], sw * 1.6, P.winFrame, 'ink', 0);
   setL([[x, y + h * .52], [x + w, y + h * .52]], sw * 1.4, P.winFrame, 'ink', 0);
   // slats: lowered ones from the headrail down to openY, raised ones bunched in a stack under the headrail
-  const rail = 26, pitch = 22, slat = 18, avail = h - rail, nAll = Math.floor(avail / pitch), nDown = Math.round(nAll * (1 - open));
-  const stack = (nAll - nDown) * 4.2, y0 = y + rail + stack, gaps = [];
+  const { rail, pitch, slat, nAll, nDown, stack, y0, gaps, openY } = setBlindsGeom(x, y, w, h, open);
   boilSeed(kk + ' slats');
   if (stack > 1) { setP(setBox(x - 6, y + rail - 2, x + w + 6, y0 + 2), { wash: P.blind, ink: P.ink, sw: sw * .7 }); for (let i = 1; i < (nAll - nDown); i += 2) setL([[x - 4, y + rail + i * 4.2], [x + w + 4, y + rail + i * 4.2]], sw * .3, P.blindSh, 'inkfine', 0); }
   for (let i = 0; i < nDown; i++) {
     const sy = y0 + i * pitch;
     setP([[x - 6, sy], [x + w + 6, sy], [x + w + 6, sy + slat], [x - 6, sy + slat]], { wash: P.blind, ink: null });
     setL([[x - 6, sy + slat], [x + w * .5, sy + slat + .6], [x + w + 6, sy + slat]], sw * .45, P.blindSh, 'inkfine', .5);
-    gaps.push(sy + slat + 2);
   }
-  const openY = y0 + nDown * pitch;
   if (nDown) setP(setBox(x - 8, openY - 4, x + w + 8, openY + 6, .5), { wash: P.blindSh, ink: P.ink, sw: sw * .6 });
   setP(setBox(x - 10, y - 4, x + w + 10, y + rail, .6), { wash: P.winFrame, ink: P.ink, sw: sw * .8 });
   for (const cx of [x + w * .18, x + w * .82]) setL([[cx, y + rail], [cx, openY]], sw * .35, P.blindSh, 'inkfine', 0);
   setL([[x + w - 14, y + rail], [x + w - 12, y + h * .78], [x + w - 13, openY + h * .4 * open + 30]], sw * .5, P.inkSoft, 'inkfine', .3);
   return { gaps, openY, x, y, w, h };
+}
+
+// the blinds' geometry without painting (for the light shafts): slat pitch, the slivers' y, where the lowered slats end
+function setBlindsGeom(x, y, w, h, open = 0) {
+  const rail = 26, pitch = 22, slat = 18, nAll = Math.floor((h - rail) / pitch), nDown = Math.round(nAll * (1 - clamp(open)));
+  const stack = (nAll - nDown) * 4.2, y0 = y + rail + stack, gaps = [];
+  for (let i = 0; i < nDown; i++) gaps.push(y0 + i * pitch + slat + 2);
+  return { rail, pitch, slat, nAll, nDown, stack, y0, gaps, openY: y0 + nDown * pitch, x, y, w, h };
 }
 
 // ---------------------------------------------------------------- wardrobe, photo frames, door
@@ -263,12 +269,13 @@ function setWardrobe(x, y, s = 1, o = {}) {
     setP(M(rrPts(sd * 16 - 5, -640, 10, 90, 4)), { wash: P.metal, ink: P.ink, sw: sw * .5 });
   }
   if (o.sleeve !== false) {
-    setP(M([[-4, -470], [22, -478], [40, -430], [30, -380], [10, -386], [16, -428], [-2, -440]]), { wash: P.cover, ink: P.ink, sw: sw * .6, curv: .3 });
-    setP(M([[26, -392], [40, -398], [44, -376], [30, -372]]), { wash: P.sheet, ink: P.ink, sw: sw * .5 });
+    setP(M([[-6, -560], [20, -556], [30, -470], [36, -400], [12, -398], [8, -466], [-4, -520]]), { wash: P.cover, ink: P.ink, sw: sw * .6, curv: .3 });
+    setL(M([[8, -540], [16, -470], [22, -410]]), sw * .4, P.coverDk, 'inkfine', .5);
+    setP(M([[11, -402], [37, -404], [40, -372], [12, -370]]), { wash: P.sheet, ink: P.ink, sw: sw * .5 });
   }
 }
 // One standing photo frame with a warm party snapshot (friends' amber silhouettes). Anchor: bottom centre (on the
-// ledge). o.i 0..4 picks the photo; o.grey 0..1 fades it to grey; o.rot tips it over its bottom-right corner (06E dominoes).
+// ledge); SET_PHOTOS[i][0] wide. o.i 0..4 picks the photo; o.grey 0..1 fades it to grey; o.rot tips it over its bottom-right corner (06E dominoes).
 const SET_PHOTOS = [   // [w, h, heads: [x, y, r] in frame units (0..1)]
   [84, 108, [[.3, .5, .12], [.55, .45, .13], [.78, .55, .11]]],
   [100, 80, [[.25, .55, .12], [.45, .5, .12], [.65, .52, .13], [.85, .58, .1]]],
@@ -279,7 +286,8 @@ const SET_PHOTOS = [   // [w, h, heads: [x, y, r] in frame units (0..1)]
 function setPhotoFrame(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), [fw, fh, heads] = SET_PHOTOS[(o.i || 0) % 5], g = clamp(o.grey || 0);
   const G = c => g ? mixCol(c, setDesat(mixCol(c, '#8C8F98', .35), 1), g) : c;
-  push(); translate(x + fw / 2 * s, y); rotate(o.rot || 0); translate(-fw / 2 * s, 0); scale(s);
+  if (setSkip([x - fh * s * 1.2, y - fh * s * 1.2, x + fh * s * 1.2, y + 10 * s])) return;
+  push(); SET_XF++; translate(x + fw / 2 * s, y); rotate(o.rot || 0); translate(-fw * s, 0); scale(s);   // pivots on its bottom-right corner
   const lw = sw / s, X0 = 0, Y0 = -fh;
   boilSeed('setphoto' + (o.i || 0) + (o.key || ''));
   if (!o.rot) setP([[fw * .2, 0], [fw * 1.02, 0], [fw * 1.1, -6], [fw * .3, -5]], { wash: P.shadow, washOp: 110, ink: null });
@@ -295,7 +303,7 @@ function setPhotoFrame(x, y, s = 1, o = {}) {
   setL([[PX(ax + ar * 1.2), PY(ay + ar * 1.6)], [PX(ax + ar * 1.9), PY(ay - ar * .3)], [PX(ax + ar * 1.6), PY(ay - ar * 1.5)]], lw * 1.4, G(P.silDk), 'ink', .5);
   for (let i = 0; i < 5; i++) setP(ellPts(PX(hash(i * 3.3 + (o.i || 0))), PY(hash(i * 5.1 + 2) * .4), 1.6, 1.6, 6), { wash: G(i % 2 ? P.clock : P.gold || '#FFD36E'), ink: null });
   setP([[ix - 1, Y0 + iy - 1], [ix + pw + 1, Y0 + iy - 1], [ix + pw + 1, Y0 + iy + ph + 1], [ix - 1, Y0 + iy + ph + 1]], { wash: null, ink: G(P.frameLt), sw: lw * .4 });
-  pop();
+  SET_XF--; pop();
 }
 // Mum's hand-painted photo (warm, the last real warmth in 06A). (x, y) top-left, w × h. o.grey 0..1.
 function setMumPhoto(x, y, w, h, o = {}) {
@@ -376,14 +384,14 @@ function setDiary(x, y, s = 1, o = {}) {
 // One torn page in flight. Anchor: centre. o.rot, o.curl -1..1 (bends it), o.k 0..1 (fade). 250 × 330.
 function setPage(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), c = o.curl || 0;
-  push(); translate(x, y); rotate(o.rot || 0); scale(s);
+  push(); SET_XF++; translate(x, y); rotate(o.rot || 0); scale(s);
   const lw = sw / s, bend = (px, py) => [px + c * 40 * Math.pow(py / 165, 2), py - c * 20 * Math.pow(px / 125, 2)];
   boilSeed('setpage' + (o.key || ''));
   const out = [[-125, -165], [125, -165], [125, 165], [-125, 165]], rag = [];
   for (let i = 0; i <= 12; i++) rag.push([-125 - 6 * hash(i * 1.7 + (o.seed || 0)), lerp(165, -165, i / 12)]);
   setP([out[0], out[1], out[2], ...rag].map(([a, b]) => bend(a, b)), { wash: P.page, washOp: 255 * (o.k ?? 1), ink: P.ink, sw: lw * .7 });
   for (let i = 0; i < 8; i++) { const yy = -125 + i * 34, pts = []; for (let k = 0; k <= 8; k++) pts.push(bend(lerp(-100, 100 - 40 * hash(i + (o.seed || 0)), k / 8), yy + 4 * Math.sin(k * 2.9 + i))); setL(pts, lw * .5, P.scrib, 'inkfine', .6); }
-  pop();
+  SET_XF--; pop();
 }
 // Cup noodles (no brand): Anchor: bottom centre. 150 × 170. o.steam 0..1.
 function setNoodles(x, y, s = 1, o = {}) {
@@ -442,7 +450,7 @@ function setSpider(x, y, s = 1, o = {}) {
 // Anchor: centre of the label. ~420 × 40 at s = 1. o.text (default true), o.rot.
 function setBandCut(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s);
-  push(); translate(x, y); rotate(o.rot ?? -.06); scale(s);
+  push(); SET_XF++; translate(x, y); rotate(o.rot ?? -.06); scale(s);
   const lw = sw / s;
   boilSeed('setbandcut' + (o.key || ''));
   const top = [], bot = [];
@@ -451,18 +459,19 @@ function setBandCut(x, y, s = 1, o = {}) {
   setP(bot.slice(2, 13).map(([a, b]) => [a, b - 7]).concat(bot.slice(2, 13).reverse()), { wash: P.bandSh, washOp: 180, ink: null });
   for (let i = 0; i < 16; i++) { const bx = -150 + i * 4.6 + (hash(i * 3.7) - .5) * 1.5; setL([[bx, -10], [bx, 10]], lw * (hash(i * 1.9) > .6 ? .55 : .3), P.code, 'inkfine', 0); }
   setP([[-200, -14], [-188, -15], [-186, 14], [-198, 15]], { wash: P.bandSh, ink: null });
-  pop();
+  SET_XF--; pop();
   if (o.text !== false) { const c = Math.cos(o.rot ?? -.06), si = Math.sin(o.rot ?? -.06), tx = 40 * s, ty = 1 * s;
     setLetter('PATIENT: YOU', x + tx * c - ty * si, y + tx * si + ty * c, 19 * s, P.code, { font: fontCSS('ui', 19 * s, { weight: 800 }), rot: o.rot ?? -.06, seed: 41, j: .3 }); }
 }
 // A grey unread-notification "snowflake": a little card with a dot and a bar (no text). Anchor: centre.
-function setFlake(x, y, s = 1, rot = 0, o = {}) {
-  const P = setPalOf(o);
-  push(); translate(x, y); rotate(rot); scale(s);
-  setP(rrPts(-22, -9, 44, 18, 6), { wash: o.col || P.snow, washOp: o.op ?? 255, ink: null });
-  setP(ellPts(-12, 0, 4, 4, 8), { wash: o.dk || P.snowDk, ink: null });
-  setP(setBox(-5, -2, 15, 2), { wash: o.lt || P.snowLt, ink: null });
-  pop();
+function setFlake(x, y, s = 1, rot = 0, o = {}) { setFlakes([[x, y, s, rot]], o); }
+// Many flakes at once, painted colour by colour (each colour change is a blend pass over the whole canvas).
+// list: [[x, y, s, rot, op?], ...]
+function setFlakes(list, o = {}) {
+  const P = setPalOf(o), card = rrPts(-22, -9, 44, 18, 6), dot = ellPts(-12, 0, 4, 4, 8), bar = setBox(-5, -2, 15, 2);
+  [[card, o.col || P.snow], [dot, o.dk || P.snowDk], [bar, o.lt || P.snowLt]].forEach(([shape, col], pass) => {
+    for (const [x, y, s, rot, op] of list) setP(setTf(shape, x, y, s, rot), { wash: col, washOp: (op ?? o.op ?? 255) * (pass ? .9 : 1), ink: null });
+  });
 }
 
 // ---------------------------------------------------------------- the ward's hospital things

@@ -40,18 +40,25 @@ const AI_HANDK = 1.3;
 // angles: a (upper arm from hanging, + = out / up on side s) and e (elbow bend). The elbow points out (down and back
 // in profile). The forearm shortens as it bends, as aiArm draws it.
 function aiIK(Sh, T, lu, lf, s, hl, prof, rk = .3) {
-  let tg = T, a = 0, e = 0;
-  for (let it = 0; it < 3; it++) {
-    const dx = tg[0] - Sh[0], dy = tg[1] - Sh[1], D = Math.hypot(dx, dy) || 1e-6;
-    let ee = 0, lf2 = lf;
-    for (let j = 0; j < 4; j++) { lf2 = lf * (1 - rk * clamp(ee)); ee = Math.acos(clamp((D * D - lu * lu - lf2 * lf2) / (2 * lu * lf2), -1, 1)); }
-    lf2 = lf * (1 - rk * clamp(ee));
-    const th = Math.atan2(s * dx, dy), beta = Math.atan2(lf2 * Math.sin(ee), lu + lf2 * Math.cos(ee));
-    a = prof ? th - beta : th + beta; e = ee;
-    const a2 = prof ? a + e : a - e;
-    tg = [T[0] - s * Math.sin(a2) * hl, T[1] - Math.cos(a2) * hl];
-  }
-  return { a, e };
+  // Two solutions: the elbow bent one way (e > 0: aiArm folds the forearm in, and shortens it) or the other (e < 0).
+  // Take the one whose elbow hangs lower (elbows stay down), except in profile where it points back.
+  const solve = sgn => {
+    let tg = T, a = 0, e = 0;
+    for (let it = 0; it < 3; it++) {
+      const dx = tg[0] - Sh[0], dy = tg[1] - Sh[1], D = Math.hypot(dx, dy) || 1e-6;
+      let ee = 0, lf2 = lf;
+      for (let j = 0; j < 4; j++) { lf2 = lf * (1 - rk * clamp(ee)); ee = Math.acos(clamp((D * D - lu * lu - lf2 * lf2) / (2 * lu * lf2), -1, 1)); }
+      lf2 = lf * (1 - rk * clamp(ee));
+      const th = Math.atan2(s * dx, dy), beta = Math.atan2(lf2 * Math.sin(ee), lu + lf2 * Math.cos(ee));
+      if (prof) { a = th - sgn * beta; e = sgn * ee; } else { a = th + sgn * beta; e = sgn * ee; }
+      const a2 = prof ? a + e : a - e;
+      tg = [T[0] - s * Math.sin(a2) * hl, T[1] - Math.cos(a2) * hl];
+    }
+    return { a, e, ey: Sh[1] + Math.cos(a) * lu };
+  };
+  if (prof) return solve(1);
+  const p = solve(1), q = solve(-1);
+  return q.ey > p.ey + .02 * lu ? q : p;
 }
 // The full form's arm settings for ai(): angles, or a reach target (o.reachL / o.reachR in her local u, o.reachLW /
 // o.reachRW in world px) solved by aiIK; o.propL / o.propR = what each hand holds; o.handAL / handAR = hand angle (rad,
@@ -61,15 +68,18 @@ function aiArmsFull(G, B, view, o, sit) {
   for (const [s, k] of [[-1, 'L'], [1, 'R']]) {
     let a = o['a' + k], e = o['e' + k];
     const hand = o['hand' + k] || 'relax', tW = o['reach' + k + 'W'];
-    const tU = o['reach' + k] || (sit && a === undefined && !tW ? AI_SIT.rest[k] : null);
+    const rest = sit && !tW && !o['reach' + k] && o.sitRest !== false;   // sitting, the hands rest on the lap (the emotions' standing arm angles would cross them)
+    const tU = o['reach' + k] || (rest ? (view === 'q' ? AI_SIT.restQ : AI_SIT.rest)[k] : null);
     const Tg = tW ? aiFromW(tW) : tU ? [tU[0] * u, tU[1] * u] : null, ik = !!Tg && !(prof && s < 0);
     if (ik) {
-      const Sh = prof ? [-.06 * u, G.shY * u + .16 * u] : [B(s * G.shW) - s * .06 * u, G.shY * u + .16 * u];
-      const r = aiIK(Sh, Tg, G.arm[0] * u, G.arm[1] * u, s, (.06 + G.arm[2] * AI_HANDK * .5) * u, prof);
+      // the target is the palm; with a set hand angle the wrist sits half a hand back along it, else along the forearm
+      const Sh = prof ? [-.06 * u, G.shY * u + .16 * u] : [B(s * G.shW) - s * .06 * u, G.shY * u + .16 * u], hA = o['handA' + k], hl = G.arm[2] * AI_HANDK * .5 * u;
+      const T2 = hA === undefined ? Tg : [Tg[0] - Math.cos(hA) * hl, Tg[1] - Math.sin(hA) * hl];
+      const r = aiIK(Sh, T2, G.arm[0] * u, G.arm[1] * u, s, hA === undefined ? .06 * u + hl : .06 * u, prof);
       a = r.a; e = r.e;
     }
     out['a' + k] = a ?? .06; out['e' + k] = e ?? (s < 0 ? 1.05 : 1.0); out['h' + k] = hand;
-    out['x' + k] = { prop: o['prop' + k], hang: o['handA' + k], key: k, ik };
+    out['x' + k] = { prop: o['prop' + k], hang: o['handA' + k] ?? (rest ? (view === 'q' ? AI_SIT.restAQ : AI_SIT.restA)[k] : undefined), key: k, ik };
   }
   return out;
 }
@@ -86,10 +96,11 @@ function aiChibiRig(o, q, u) {
     const tW = o['reach' + k + 'W'], tU = o['reach' + k];
     if (!tW && !tU) return;
     const bodyX = x => q ? .16 + x * (x < 0 ? 1 : .8) : x;
-    const T = tW ? aiFromW(tW) : [tU[0] * u, tU[1] * u], Sh = [bodyX(s * A.sh[0]) * u, A.sh[1] * u];
+    const hA = o['handA' + k], T0 = tW ? aiFromW(tW) : [tU[0] * u, tU[1] * u], Sh = [bodyX(s * A.sh[0]) * u, A.sh[1] * u];
+    const T = hA === undefined ? T0 : [T0[0] - Math.cos(hA) * A.hl * .5 * u, T0[1] - Math.sin(hA) * A.hl * .5 * u];   // the target is the palm
     Sh[1] -= .3 * u * clamp((Sh[1] - T[1]) / (2 * u));   // the shoulder lifts for a high reach
-    const D = Math.hypot(T[0] - Sh[0], T[1] - Sh[1]), reach = (A.lu + A.lf + A.hl * .55) * u, st = clamp(D / reach, 1, 1.9);
-    const r = aiIK(Sh, T, A.lu * u * st, A.lf * u * st, s, A.hl * .55 * u, false, 0);
+    const D = Math.hypot(T[0] - Sh[0], T[1] - Sh[1]), reach = (A.lu + A.lf + A.hl * .55) * u, st = clamp(D / (reach * .9), 1, o.armStretch ?? 1.9);
+    const r = aiIK(Sh, T, A.lu * u * st, A.lf * u * st, s, (hA === undefined ? A.hl * .55 + .1 : .1) * u, false, 0);
     out[i] = { s, Sh, a: r.a, e: r.e, st, hand: o['hand' + k] || 'fist', prop: o['prop' + k], hang: o['handA' + k], up: T[1] < Sh[1] - .25 * u || Math.abs(T[0]) > 2.1 * u, key: k };
   });
   return out;
@@ -150,9 +161,11 @@ function aiChibiHand(p, a, L, kind, th) {
 // Her frame is the standing one with the seat at AI_SIT.seat: the upper body is unchanged, the thighs come toward the
 // viewer over the seat, the skirt falls from the knees and the feet rest AI_SIT.floor u below the seat. The anchor
 // (x, y) is the seat point under her hips (the bed's front edge). Default hands rest on the lap (AI_SIT.rest).
-const AI_SIT = { seat: -5.62, knee: -5.28, hem: -3.72, ankle: -2.78, floor: 3.05, hair: { lenL: 5.0, lenR: 5.0 }, rest: { L: [-.3, -6.0], R: [.36, -5.98] }, lap: [.05, -6.05] };
+const AI_SIT = { seat: -5.62, knee: -5.28, hem: -3.72, ankle: -2.78, floor: 3.05, hair: { lenL: 5.0, lenR: 5.0 }, rest: { L: [-.42, -5.72], R: [.44, -5.7] }, restA: { L: Math.PI / 2 + .25, R: Math.PI / 2 - .25 }, lap: [.05, -6.05],
+  restQ: { L: [.5, -6.28], R: [1.05, -6.22] }, restAQ: { L: .45, R: .3 }, lapQ: [1.3, -6.1] };
 function aiSitLower(G, B, P, view, swing, tt) {
-  const S = AI_S, C = S.P, u = S.u, sw = S.sw, Z = AI_SIT, q = view === 'q', kx = q ? .45 : 0;   // in 3/4 the knees come toward screen-right
+  if (view === 'q') return aiSitLowerQ(G, swing);
+  const S = AI_S, C = S.P, u = S.u, sw = S.sw, Z = AI_SIT, q = false, kx = 0;
   const Q = pts => pts.map(p => { const r = P(p[0], p[1]); return p[2] ? [r[0], r[1], 1] : r; });
   S.pts.lap = P(Z.lap[0] + kx * .5, Z.lap[1]);
   // stockings and shoes: the shins hang from the knees, the feet a little apart
@@ -171,7 +184,7 @@ function aiSitLower(G, B, P, view, swing, tt) {
   const n = 12, hem = []; for (let i = 0; i <= n; i++) { const f = i / n; hem.push([lerp(-1.3, 1.3, f) + kx * 1.1, Z.hem + .08 * Math.sin(f * Math.PI) + .04 * Math.sin(f * Math.PI * 9)]); }
   aiFrill(Q(hem.map(([a, b]) => [a * 1.01, b - .05])), .3 * u, 15, { shade: true, double: true });
   // the skirt: over the hips, across the lap to the knees, then falling to the hem
-  const sk = [[-.47, -6.62], [-.72, -6.32], [-1.0, -5.98], [-1.17 + kx * .6, -5.42], [-1.2 + kx, Z.knee, 1], [-1.25 + kx, -4.6], [hem[0][0], hem[0][1], 1], ...hem.slice(1, -1), [hem[n][0], hem[n][1], 1], [1.25 + kx * 1.05, -4.6], [1.2 + kx * 1.2, Z.knee, 1], [1.12 + kx, -5.5], [.95, -6.0], [.72, -6.32], [.47, -6.62]];
+  const sk = [[-.47, -6.62], [-.72, -6.32], [-1.0, -5.98], [-1.2, -5.5], [-1.24, Z.knee, 1], [-1.27, -4.6], [hem[0][0], hem[0][1], 1], ...hem.slice(1, -1), [hem[n][0], hem[n][1], 1], [1.27, -4.6], [1.24, Z.knee, 1], [1.2, -5.5], [1.0, -5.98], [.72, -6.32], [.47, -6.62]];
   aiPaint(aiLoop(Q(sk), 4), { wash: C.navy, ink: C.ink, sw: sw * .85, br: C.brS });
   // the lap's lit top, the shadow falling down the front, the knees' edge, folds, embroidery
   aiPaint(aiLoop(Q([[-.9, -6.0], [.9 + kx * .3, -6.0], [1.1 + kx * 1.1, -5.4], [-1.1 + kx * .8, -5.4]]), 3), { wash: C.navyHi, op: 100, ink: null });
@@ -182,9 +195,45 @@ function aiSitLower(G, B, P, view, swing, tt) {
   for (const off of [.2, .34]) aiLine(Q(hem.map(([a, b]) => [a * .98, b - off])), sw * .38, C.gold);
   if (C.glowK) aiLine(Q([[-1.0, -5.98], [-1.17 + kx * .6, -5.42], [-1.22 + kx, -4.6]]), sw * .6, C.rim);
 }
+// 3/4 (facing screen-right): the thighs run toward screen-right over the seat, the skirt falls from the knees like a
+// bell, the shins hang from the knees. Coordinates are drawn x (u, from her centre line), not the body's B() remap.
+const AI_SITQ = { lap: [[.45, -6.62], [.66, -6.36], [1.2, -6.07], [1.75, -5.92], [2.15, -5.82], [2.32, -5.56]], knee: [2.1, -5.45] };
+function aiSitLowerQ(G, swing) {
+  const S = AI_S, C = S.P, u = S.u, sw = S.sw, Z = AI_SIT, qc = .12, D = (x, y) => [(qc + x) * u, y * u];
+  const Q = pts => pts.map(p => { const r = D(p[0], p[1]); return p[2] ? [r[0], r[1], 1] : r; });
+  S.pts.lap = D(Z.lapQ[0], Z.lapQ[1]); S.pts.knee = D(AI_SITQ.knee[0], AI_SITQ.knee[1]);
+  // the shins hang from the knees; the feet point toward screen-right
+  for (const s of [1, -1]) {
+    const far = s > 0, kn = far ? [2.22, -5.45] : [2.02, -5.4], an = [kn[0] - .12 + (swing[far ? 1 : 0] || 0) * 1.6, Z.ankle - (far ? .06 : 0)];
+    const L = aiRib([D(kn[0], kn[1]), D(lerp(kn[0], an[0], .45) + .05, lerp(kn[1], an[1], .45)), D(an[0], an[1])], [.27 * u, .25 * u, .16 * u], 4);
+    aiPaint(aiRibPts(L), { wash: far ? C.stockSh : C.stock, ink: C.ink, sw: sw * .55, br: C.brS });
+    aiLine(L.R.slice(Math.round(L.R.length * .3)), sw * .35, C.stockSh);
+    const A0 = D(an[0], an[1]), ang = .35 + (swing[far ? 1 : 0] || 0), Ls = .42 * u;
+    const F = (x, y) => { const c = Math.cos(ang), n = Math.sin(ang); return [A0[0] + (x * c - y * n) * Ls, A0[1] + (x * n + y * c) * Ls]; };
+    aiPaint(aiLoop([F(-.25, -.3), F(.2, -.34), F(.7, -.32), F(1.02, -.12), F(1.02, .14), F(.6, .26), F(-.1, .3), F(-.3, .18)], 4), { wash: far ? mixCol(C.shoe, C.ink, .3) : C.shoe, ink: C.ink, sw: sw * .6 });
+    aiLine([F(.05, -.3), F(.15, .0), F(.1, .26)], sw * .45, C.gold);
+    aiLine([F(.6, -.22), F(.9, -.12)], sw * .4, C.shoeHi);
+  }
+  // the petticoat under the bell's hem
+  const n = 10, hem = []; for (let i = 0; i <= n; i++) { const f = i / n; hem.push([lerp(.82, 2.55, f), Z.hem + .1 * Math.sin(f * Math.PI) + .035 * Math.sin(f * Math.PI * 8)]); }
+  aiFrill(Q(hem.map(([a, b]) => [a, b - .05])), .3 * u, 12, { shade: true, double: true });
+  // the skirt: waist, over the hip and along the lap to the knee, down the bell to the hem, back up under the thigh,
+  // along the seat to the back of the hips
+  const lp = AI_SITQ.lap, sk = [[-.34, -6.62], ...lp, [2.36, -5.2], [2.45, -4.5], [hem[n][0], hem[n][1], 1], ...hem.slice(1, -1).reverse(), [hem[0][0], hem[0][1], 1], [.92, -4.5], [1.02, -5.3], [.75, -5.52], [.1, -5.58], [-.5, -5.62], [-.64, -5.95], [-.52, -6.35]];
+  aiPaint(aiLoop(Q(sk), 4), { wash: C.navy, ink: C.ink, sw: sw * .85, br: C.brS });
+  // the lap's lit top, the bell's shadow side, the knee's edge, folds, embroidery
+  aiPaint(aiLoop(Q([[.5, -6.5], [.7, -6.3], [1.2, -6.02], [1.75, -5.86], [2.12, -5.76], [2.0, -5.6], [1.4, -5.7], [.75, -5.85], [.2, -6.05]]), 3), { wash: C.navyHi, op: 110, ink: null });
+  aiPaint(aiLoop(Q([[1.0, -5.32], [1.6, -5.42], [2.1, -5.3], [2.0, -4.3], [2.1, Z.hem + .1], [1.0, Z.hem + .14], [.95, -4.5]]), 3), { wash: C.navySh, op: 170, ink: null, hatch: u > 30 ? aiHatch(C.hatch, .95) : null });
+  aiLine(aiCurve(Q([[1.05, -5.35], [1.55, -5.5], [2.05, -5.45], [2.3, -5.3]]), 4), sw * .45, C.navySh);
+  for (const f of [.2, .42, .62, .82]) aiLine(Q([[lerp(1.1, 2.3, f), -5.32 + .05 * Math.sin(f * 3)], [lerp(1.0, 2.4, f), lerp(-5.3, Z.hem, .6)], [lerp(.9, 2.5, f), Z.hem + .03]]), sw * .35, f > .6 ? C.ink : C.navySh);
+  for (const f of [.25, .55]) aiLine(Q([[lerp(.6, 2.0, f), lerp(-6.3, -5.88, f) + .05], [lerp(.6, 2.0, f) + .35, lerp(-6.3, -5.88, f) + .2]]), sw * .3, C.navySh);
+  for (const off of [.2, .34]) aiLine(Q(hem.map(([a, b]) => [a, b - off])), sw * .38, C.gold);
+  if (C.glowK) aiLine(Q(lp.slice(1)), sw * .6, C.rim);
+}
 // The apron over the lap, hanging over the knees, with the little whale.
 function aiSitApron(G, P, view) {
-  const S = AI_S, C = S.P, u = S.u, sw = S.sw, Z = AI_SIT, kx = view === 'q' ? .45 : 0;
+  if (view === 'q') return aiSitApronQ(G);
+  const S = AI_S, C = S.P, u = S.u, sw = S.sw, Z = AI_SIT, kx = 0;
   const Q = pts => pts.map(p => { const r = P(p[0], p[1]); return p[2] ? [r[0], r[1], 1] : r; });
   const by = -4.5, edge = [[-.42, -6.6], [-.62, -6.0], [-.74 + kx * .6, Z.knee], [-.74 + kx, -4.85], [-.6 + kx, by + .02], [kx, by + .08], [.6 + kx, by + .02], [.74 + kx * 1.1, -4.85], [.76 + kx * 1.1, Z.knee], [.62, -6.0], [.42, -6.6]];
   aiFrill(aiCurve(Q(edge.slice(1, -1)), 4), .16 * u, 14, { shade: true, sw: sw * .45 });
@@ -199,6 +248,20 @@ function aiSitApron(G, P, view) {
   for (const [a, b] of [[[-.32, -.36], [-.42, -.58]], [[-.24, -.37], [-.2, -.6]]]) aiLine(W([a, b]), sw * .3, C.bow);
   const wy = G.waistY, ww = G.waistW + .04;
   aiPaint(Q([[-ww, wy - .07], [ww, wy - .07], [ww, wy + .08], [-ww, wy + .08]]), { wash: C.cream, ink: C.ink, sw: sw * .55 });
+}
+function aiSitApronQ(G) {
+  const S = AI_S, C = S.P, u = S.u, sw = S.sw, qc = .12, D = (x, y) => [(qc + x) * u, y * u];
+  const Q = pts => pts.map(p => { const r = D(p[0], p[1]); return p[2] ? [r[0], r[1], 1] : r; });
+  const ap = [[.3, -6.62], [.62, -6.32], [1.15, -6.0], [1.75, -5.86], [2.12, -5.76], [2.3, -5.5], [2.36, -5.0], [2.38, -4.62, 1], [2.0, -4.55], [1.72, -4.6, 1], [1.72, -5.1], [1.55, -5.5], [1.0, -5.68], [.45, -5.9], [-.08, -6.25], [-.14, -6.62]];
+  aiFrill(aiCurve(Q([[2.38, -4.62], [2.05, -4.52], [1.72, -4.6]]), 4), -.14 * u, 5, { shade: true, sw: sw * .45 });
+  aiPaint(aiLoop(Q(ap), 4), { wash: C.cream, ink: C.ink, sw: sw * .6 });
+  aiPaint(aiLoop(Q([[.4, -6.5], [1.1, -5.98], [1.75, -5.84], [2.1, -5.74], [1.9, -5.62], [1.1, -5.84], [.3, -6.3]]), 3), { wash: '#FFFFFF', op: 80, ink: null });
+  aiPaint(aiLoop(Q([[1.75, -5.45], [2.25, -5.4], [2.3, -4.7], [1.8, -4.66]]), 3), { wash: C.creamSh, op: 150, ink: null, hatch: u > 30 ? aiHatch(mixCol(C.creamSh, C.ink, .25), .9, 1.2) : null });
+  aiLine(aiCurve(Q([[1.6, -5.52], [2.0, -5.58], [2.28, -5.45]]), 4), sw * .4, C.creamSh);
+  const wc = D(1.0, -5.92), z = G.whale * u, W = pts => pts.map(([a, b, k]) => k ? [wc[0] + a * z, wc[1] + b * z, 1] : [wc[0] + a * z, wc[1] + b * z]);
+  aiPaint(aiLoop(W([[-.52, .04], [-.48, -.2], [-.25, -.32], [.05, -.3], [.3, -.18], [.44, -.06], [.54, -.22], [.7, -.34, 1], [.64, -.08], [.78, .04, 1], [.52, .04], [.34, .14], [0, .22], [-.36, .2]]), 4), { wash: C.navy, ink: C.ink, sw: sw * .35 });
+  const wy = G.waistY;
+  aiPaint(Q([[-.36, wy - .07], [.5, wy - .07], [.5, wy + .08], [-.36, wy + .08]]), { wash: C.cream, ink: C.ink, sw: sw * .55 });
 }
 // The tail lying on the seat beside her, its flukes curling up (front: to screen-right; 3/4: behind her, to the left).
 function aiTailSit(G, view, sway) {
@@ -222,14 +285,27 @@ function aiTailSit(G, view, sway) {
 //   full form only: cover (hands over his ears, o.at = his head, world px), cup (hands cupping his face, o.at), stroke
 //   (stroking his hair on her lap, o.at), throat (hand on her own throat, 10G), glass (palm raised to the glass, 09H/09I)
 function aiAct(name, t, t0 = 0, o = {}) {
+  const r = aiAct0(name, t, t0, o);
+  return o.side === 'L' ? aiActMirror(r) : r;
+}
+// The same action done with the other hand: swap the arms' keys, mirror their x and hand angles.
+function aiActMirror(r) {
+  const out = { ...r };
+  for (const [a, b] of [['reachL', 'reachR'], ['handL', 'handR'], ['handAL', 'handAR'], ['propL', 'propR'], ['reachLW', 'reachRW']]) { out[a] = r[b]; out[b] = r[a]; if (out[a] === undefined) delete out[a]; if (out[b] === undefined) delete out[b]; }
+  for (const k of ['reachL', 'reachR']) if (out[k]) out[k] = [-out[k][0], out[k][1]];
+  for (const k of ['handAL', 'handAR']) if (out[k] !== undefined) out[k] = Math.PI - out[k];
+  for (const k of ['tilt', 'rot', 'lookX', 'yaw', 'headDx', 'dx']) if (out[k] !== undefined) out[k] = -out[k];
+  return out;
+}
+function aiAct0(name, t, t0, o) {
   const age = t - t0, k = backOut(seg(age, 0, .28)), kin = ease(seg(age, 0, .22)), b = bpOf(t), full = o.form === 'full';
   const mix = (a, c) => [lerp(a[0], c[0], kin), lerp(a[1], c[1], kin)];
   const restL = full ? [-.25, -6.75] : [-.55, -3.55], restR = full ? [.25, -6.75] : [.55, -3.55];
   switch (name) {
     case 'wave': {
-      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : [2.75, -5.75];
+      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : o.high ? [4.0, -8.9] : [2.75, -5.75];   // high: the hand clears the hair (a shadow puppet)
       const p = [up[0] + .22 * sw * k, up[1] - .1 * Math.abs(sw) * k];
-      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .55 * sw * k + .15, reachL: mix(restL, full ? [-.05, -7.75] : [-.3, -4.15]), handL: 'flat', handAL: full ? -.2 : -.35,
+      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .55 * sw * k + .15, armStretch: o.high ? 4 : undefined, reachL: mix(restL, full ? [-.05, -7.75] : [-.3, -4.15]), handL: 'flat', handAL: full ? -.2 : -.35,
         tilt: .06 * k + .02 * sw, rot: -.02 * k, lookX: .25 };
     }
     case 'point': {
@@ -239,8 +315,8 @@ function aiAct(name, t, t0 = 0, o = {}) {
     case 'nod': { const h = Math.pow(Math.abs(Math.sin(b * Math.PI)), 1.5); return { headDy: .16 * h * k, tilt: -.03 * h, sq: .03 * h, lookY: .3 * h, ahoge: .35 * Math.sin(b * Math.PI) }; }
     case 'shake': { const d = Math.exp(-1.8 * Math.max(0, age - .6)), s = Math.sin(age * TAU * 2.6) * kin * d; return { yaw: .3 * s, headDx: .1 * s, tilt: -.05 * s, ahoge: -.4 * s, hairLag: -.15 * s }; }
     case 'carry': {
-      const p = o.at || [2.05, -5.25];
-      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 - .25, propR: { kind: 'block', at: 'top', ...(o.prop || {}) }, reachL: mix(restL, [-.5, -3.6]), handL: 'fist', rot: -.03 * k, tilt: -.05 * k };
+      const p = o.at || [3.05, -4.75];
+      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .2, propR: { kind: 'block', at: 'top', ...(o.prop || {}) }, reachL: mix(restL, [-.5, -3.6]), handL: 'fist', rot: -.03 * k, tilt: -.05 * k };
     }
     case 'push': {
       const p = o.at || [2.4, -4.5];
@@ -268,7 +344,7 @@ function aiAct(name, t, t0 = 0, o = {}) {
     case 'cover': { const c = o.at, r = o.r || 40; return { reachLW: [c[0] - r * .95, c[1] + r * .05], reachRW: [c[0] + r * .95, c[1] - r * .05], handL: 'flat', handR: 'flat', handAL: -Math.PI / 2 - .1, handAR: -Math.PI / 2 + .1, tilt: .1 }; }
     case 'cup': { const c = o.at, r = o.r || 40; return { reachLW: [c[0] - r * .85, c[1] + r * .35], reachRW: [c[0] + r * .85, c[1] + r * .3], handL: 'flat', handR: 'flat', handAL: -Math.PI / 2 + .35, handAR: -Math.PI / 2 - .35, tilt: .08 }; }
     case 'stroke': { const c = o.at, r = o.r || 40, s = Math.sin(age * TAU * .5); return { reachRW: [c[0] + r * (.1 + .35 * s), c[1] - r * .55], handR: 'flat', handAR: .25 + .2 * s, reachL: [-.15, -6.05], tilt: .14, lookY: .7 }; }
-    case 'throat': return { reachR: mix(restR, [.12, -8.55]), handR: 'flat', handAR: -2.0, tilt: -.03 };
+    case 'throat': return { reachR: mix(restR, [.06, -8.22]), handR: 'flat', handAR: -2.15, tilt: -.05 };
     case 'glass': { const p = o.at || [1.0, -9.0]; return { reachR: mix(restR, p), handR: 'flat', handAR: -Math.PI / 2, tilt: .04 }; }
   }
   return {};
@@ -287,7 +363,7 @@ function aiClimb(t, t0, dur = 1.2) {
   if (p > .75) { const k = ph(.75, 1); dy = lerp(2.0, 0, k) - 1.4 * 4 * k * (1 - k); }
   const grab = ph(.28, .4), hold = p < .8;
   const o = { dy, float: 0, bob: 0, eyes: p < .45 ? 'wide' : 'normal', lookY: p < .3 ? .2 : 0, sq: p > .45 && p < .75 ? -.06 * Math.sin(ph(.45, .75) * Math.PI) : 0, tilt: .05 * Math.sin(p * 9) };
-  if (grab > 0 && hold) { const y = -dy; o.reachL = [lerp(-.55, -1.25, grab), lerp(-3.55, y + .05, grab)]; o.reachR = [lerp(.55, 1.3, grab), lerp(-3.55, y + .05, grab)]; o.handL = o.handR = 'fist'; }
+  if (grab > 0 && hold) { const y = -dy - .38; o.reachL = [lerp(-.55, -1.8, grab), lerp(-3.55, y, grab)]; o.reachR = [lerp(.55, 1.85, grab), lerp(-3.55, y, grab)]; o.handL = o.handR = 'fist'; o.handAL = Math.PI / 2 + .3; o.handAR = Math.PI / 2 - .3; }
   return o;
 }
 // Descending out of the lamp (04A): from h u above, slowing to land at t1, then the curtsy dip and settle.

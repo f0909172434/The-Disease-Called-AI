@@ -112,6 +112,15 @@ else
   [ "$DELETE" = 1 ] && rm -f "$z"
 fi
 
+# reproducible renders: the models' random ops become seeded inputs (seed_models.py)
+PY="$HERE/.venv/bin/python"
+if [ -x "$PY" ] && "$PY" -c "import onnx" 2>/dev/null; then
+  echo "== seeding the models' noise"
+  "$PY" "$HERE/seed_models.py" --voicebanks "$DEST"
+else
+  echo "warning: no $HERE/.venv with onnx (run setup.sh): models left unseeded, renders not reproducible" >&2
+fi
+
 if [ -x "$HERE/bin/ourender" ]; then
   echo "== OpenUtau sees:"
   "$HERE/bin/ourender" singers --voicebanks "$DEST" | python3 -c 'import json,sys
