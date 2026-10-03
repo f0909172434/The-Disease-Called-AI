@@ -68,6 +68,16 @@
   "takes_tried": 6,
   "wer_take0": 0.333
  },
+ "PO_3": {
+  "take": 1,
+  "wer": 1.5,
+  "transcript": "Alice, Alice, Alice!",
+  "takes_tried": 8,
+  "wer_take0": 1.5,
+  "check": {
+   "small.en": "Horrors! Horrors! Horrors!"
+  }
+ },
  "V2_5": {
   "take": 3,
   "wer": 0.286,
