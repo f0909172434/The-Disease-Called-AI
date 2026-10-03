@@ -11,7 +11,7 @@ Sheets: `output/sheets/sets.jpg` (all 47 entries of `SET_SHEET`, labelled), `out
 page), `output/sheets/sets_crops.jpg` (full-resolution details).
 ```
 cd film
-node render.mjs --loop=sets_sheet --sheet=0.2,1.2,...,46.2 --cols=5 --w=384 --out=../output/sheets/sets.jpg
+node render.mjs --soft-gl --loop=sets_sheet --sheet=$(seq -s, 0.2 1 46.2) --cols=5 --w=384 --out=../output/sheets/sets.jpg   # ≈ 14 min cold
 node render.mjs --loop=sets_sheet --sheet=9.2 --crop=700,300,800,600 --cols=1 --w=800 --out=out/check/desk.jpg   # full res
 node render.mjs --loop=sets_props --sheet=.2 --cols=1 --w=1920 --out=../output/sheets/sets_props.jpg
 ```
@@ -30,7 +30,7 @@ draw(t)]`; entry i is loop time i..i+1, so each entry is also a ready-made examp
 | confessional · screen / slot + lever / black mirror / glass edge | done | `confessional.js`, sheet 36–40 |
 | void · shards + halos (+ ash) / black + ↻ / black + flat line; end card | done | `void.js`, sheet 41–46 |
 | props: bed, covers, pillow, nightstand, alarm clock, desk, monitor, keyboard, chair, mug, blinds, wardrobe, photo frames ×5, mum's photo, diary, page, frosted door + knock, IV stand / bag / tube, ring lamp, cobweb + spider, noodles, apple, cut band, grey snow, ECG, lever, reels, mirror frame, phones (cyan / friend's grey) | done | `props.js` etc., props page |
-| two shirts (02B) | **added this pass** | `setShirt`, sheet 11 |
+| two shirts (02B) | done | `setShirt` (live, one in his hand) + baked room option `shirts: 'both' \| 'grey' \| 'warm'` (the one that stays), sheet 11 |
 | ring lamp → two cuff rings (08B) | **added this pass** | `setRingLampCuffs`, sheet 21 |
 | gold confetti (09F) | **added this pass** | `setConfetti`, sheet 38 |
 | lighthouse cone (11A) | done (the `scan` variant's beam, `o.beam`) | `setRoomLights` |
@@ -101,7 +101,7 @@ depth: lower = nearer the camera (characters standing in front of the furniture:
 | `dawn` | 12C | flat, door .9, blinds half up (.55), photos fallen, snow | window → real morning light `#FFE9C2` through the open half, shafts across the centre wall; monitor amber (.3) |
 
 Baked options (cache key): `covers` ('flat' / 'rumpled' / 'lump' / 'none'), `door` 0..1, `blinds` 0..1, `photos` ('up' /
-'fallen' / 'none'), `snow`, `chair`, `clock`, `pillow`. Live: `t`, `res`, `lights` (false: call `setRoomLights` yourself,
+'fallen' / 'none'), `snow`, `shirts` ('none' default / 'both' / 'grey' / 'warm': the two 02B shirts at `SET_ROOM.shirts`), `chair`, `clock`, `pillow`. Live: `t`, `res`, `lights` (false: call `setRoomLights` yourself,
 e.g. after the characters), `screen`, `screenCol`, `p`, `beam`, `beamK`, `coverGlow`, `lump`, `stripes`, `door`, `blinds`.
 **Falloff:** each variant (but `black503`) bakes glazes of a shadow colour outside growing wobbly ellipses round its light
 (`SET_ROOM_SHADE[v]`: `c`, `r0`→`r1`, `n` steps, `op`), so the room darkens step by step away from the screen (night) or
@@ -254,7 +254,7 @@ match a set), `o.key` when one prop is drawn twice in a frame.
 | desk, monitor, keyboard, chair, mug | `setDesk`, `setMonitor({screen})`, `setKeyboard`, `setChair({turn})`, `setMug({pens})` | monitor returns its screen rect |
 | blinds / window | `setBlinds(x, y, w, h, {open, sky})`, `setBlindsGeom` | top-left of the opening; returns slivers' y for light |
 | wardrobe | `setWardrobe({sleeve})` | floor centre |
-| two shirts (02B) | `setShirt(x, y, s, {kind: 'grey' \| 'warm', rot, hanger})` | the hanger's hook (put it in his hand); ~300 × 420; returns the chest point for her ✓ |
+| two shirts (02B) | `setShirt(x, y, s, {kind: 'grey' \| 'warm', rot, hanger})` | the hanger's hook (put it in his hand); ~300 × 420; returns the chest point for her ✓. Hanging in the wardrobe: `SET_ROOM.shirts` = grey (3080, 1180, rot .06), warm (3440, 1190, rot -.08); bake the one that stays with `setRoom('morning', { shirts: 'warm' })` and draw only the one he holds live |
 | photo frames | `setPhotoFrame({i 0..4, grey, rot})`, `SET_PHOTOS` | bottom centre; rot tips over the bottom-right corner (06E dominoes) |
 | mum's photo | `setMumPhoto(x, y, w, h, {grey})` | top-left rect |
 | diary, torn page | `setDiary({torn})`, `setPage({rot, curl})` | top-down; amber scribbles, never letters |
@@ -290,7 +290,7 @@ for dusk, 1 for the line ward / line chart); **per frame** = median (max) of the
 | 8 | room · dawn, full | 3 × 34 | 0.13 (0.14) |
 | 9 | room · night, `desk` (4 tiles) + chat screen | 3 × 121 | 0.12 (0.17) |
 | 10 | room · morning, `bedWall` (4 tiles) + live clock | 3 × 86 | 0.13 (0.17) |
-| 11 | room · morning, wardrobe (4 tiles) + 2 live shirts + ✓ | 3 × 124 | 0.33 (0.41) |
+| 11 | room · morning, wardrobe (4 tiles) + 2 live shirts + ✓ (now: 1 baked + 1 live, see re-measure) | 3 × 124 | 0.33 (0.41) |
 | 12 | room · drained, `rightWall` (4 tiles) + 5 live photo frames + door/knock + snow | 3 × 75 | 0.55 (1.42) ¹ |
 | 13 | room · dawn, keyboard (4 tiles @ 2) + chat + band | 3 × 107 | 0.15 (0.27) |
 | 14 | surface · desk top + grey phone + cobweb | 3 × 21 | 0.16 (0.48) |
@@ -329,6 +329,27 @@ per worker; a cut to a framing already built in that worker costs nothing. Cache
 (median ≤ 0.26 s under this load) except where a shot keeps detailed props live (photo dominoes, the call screen,
 shirts in hand: 0.3–0.6 s); the characters are the real per-frame cost. A push or pull with a fixed `res` builds once;
 with auto res it builds again at every step it crosses.
+
+### Re-measured 2026-10-03 (second pass)
+Same method (`bench.sh`: a fresh page, frame 1 cold = build of one boil drawing, frames 2–5 warm), box still shared (load
+average 9–11 on 4 cores, i.e. ≈ 2–3 × a quiet worker). Sheet render of all 47 entries (`--soft-gl`, one drawing each,
+cold): 14 min 17 s in total; per entry, build of one drawing: full room views 13–20 s, close room framings (4 tiles)
+27–61 s, ward full 26 s / bed framing 50 s / line ward 10 s, screens 7–25 s, chart 26 s, slot 22–25 s, void 15–25 s.
+
+| entry | build, one drawing | warm frames, s |
+|---|---|---|
+| 0 room night, full | 12.6 s | 0.07–0.11 |
+| 9 room night, `desk` + chat | 87 s | 0.14–0.17 |
+| 11 room morning, wardrobe, 1 baked + 1 live shirt + ✓ | 49 s | 0.35–0.57 (was 0.57–1.0 with both shirts live) |
+| 12 room drained, `rightWall`, 5 live photo frames + knock + snow | 44 s | 0.42–0.62 |
+| 17 ward C2, full + alarm + 7 tubes | 20 s | 0.21–0.34 |
+| 21 ward C2, lamp → cuffs | 50 s | 0.19–0.47 |
+| 34 chart 01B, `cache: true` | 26 s | 0.11–0.25 |
+| 38 slot jackpot + confetti, `cache: true` | 27 s | 0.26–0.84 |
+
+Everything that is only cached background + light + one screen is ≤ 0.3 s warm (0.07–0.25 s). Over budget under this load:
+the live photo dominoes (06E), the shirts in hand (02B) and the jackpot's confetti + 3 heart reels (09F, ≤ 0.8 s); each
+is a small, bounded part of a shot (≈ 1–2 s of film). Bake whatever stays still (`photos`, `shirts`), keep only what moves live.
 
 ## Known limits / notes
 - Tiles are opaque. A transparent cached layer gives white fringes on every brush edge (the pigment mixes with

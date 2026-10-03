@@ -23,8 +23,8 @@ const SET_SHEET = [
   ['room · dawn (12C)', 202, setSheetRoom('dawn', { show: 'off' }, t => setBandCut(2350, 1598, .55, { pal: setRoomPal('dawn') }))],
   ['room · night, desk framing + chat (00B/00C)', 6.8, setSheetRoom('night', { cam: SET_ROOM.cam.desk, show: S => setChatScreen(S, 6.8, { reply: { t: 5.58, text: 'Always.' } }) })],
   ['room · morning, bed wall (02A)', 24, setSheetRoom('morning', { cam: SET_ROOM.cam.bedWall, show: 'off' }, t => setClock(...SET_ROOM.clock, 1, { pal: setRoomPal('morning'), ring: 1, jump: 14, t, key: 'live' }))],
-  ['room · morning, wardrobe + two shirts (02B)', 28.4, setSheetRoom('morning', { cam: [3250, 1480, .95], show: 'off', coverGlow: 0 }, t => {
-    const P = setRoomPal('morning'), c = setShirt(3080, 1180, 1, { pal: P, kind: 'grey', rot: .06 }); setShirt(3440, 1190, 1, { pal: P, kind: 'warm', rot: -.08 });
+  ['room · morning, wardrobe + two shirts (02B)', 28.4, setSheetRoom('morning', { cam: [3250, 1480, .95], show: 'off', coverGlow: 0, shirts: 'warm' }, t => {
+    const P = setRoomPal('morning'), [sx, sy, sr] = SET_ROOM.shirts[0], c = setShirt(sx, sy, 1, { pal: P, kind: 'grey', rot: sr, key: 'live' });   // warm baked; the grey one (in his hand) live
     setCheck(c[0], c[1], 120, SET_C.cyan, { glow: .7 }); })],
   ['room · drained, right wall (06E/06H)', 104, setSheetRoom('drained', { cam: SET_ROOM.cam.rightWall, photos: 'none' }, t => {
     SET_ROOM.photos.forEach((px, i) => setPhotoFrame(px, SET_ROOM.ledge[2], 1, { pal: setRoomPal('drained'), i, grey: i < 2 ? 1 : 0, rot: i === 0 ? 1.2 : i === 1 ? .5 : 0, key: 'live' + i }));

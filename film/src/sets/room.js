@@ -18,6 +18,7 @@ const SET_ROOM = {
   W: 4660, H: 2622, FL: 2020, CL: 520, A: 1700, B: 3000,
   bed: [370, 2046], night: [210, 2038], clock: [210, 1730], win: [620, 780, 660, 616], desk: [2350, 2046], monitor: [2330, 1590],
   screen: { x: 2132, y: 1204, w: 396, h: 246 }, keyboard: [2350, 1606], chair: [2690, 2084], robe: [3290, 2036],
+  shirts: [[3080, 1180, .06, 'grey'], [3440, 1190, -.08, 'warm']],   // 02B: hook x/y, rot, kind (setShirt)
   ledge: [3630, 4140, 1240], photos: [3702, 3802, 3898, 3992, 4088], door: [4380, 2030], lamp: [2350, 520],
   // framings [cx, cy, zoom] for camBegin(...)
   cam: {
@@ -60,7 +61,7 @@ const SET_ROOM_DEF = {
 function setRoomCfg(v, o = {}) {
   const d = SET_ROOM_DEF[v] || {};
   return { covers: o.covers ?? d.covers ?? 'rumpled', door: o.door ?? d.door ?? 0, blinds: o.blinds ?? d.blinds ?? 0, photos: o.photos ?? d.photos ?? 'up',
-    snow: o.snow ?? d.snow ?? false, chair: o.chair ?? true, clock: o.clock ?? true, pillow: o.pillow ?? true };
+    snow: o.snow ?? d.snow ?? false, shirts: o.shirts ?? d.shirts ?? 'none', chair: o.chair ?? true, clock: o.clock ?? true, pillow: o.pillow ?? true };
 }
 
 // ---------- the painted room (static: cached) ----------
@@ -154,6 +155,7 @@ function setRoomItems(v, cfg) {
   add('keyboard', [2200, 1580, 2500, 1630], () => setKeyboard(...R.keyboard, 1, { pal: P }));
   if (cfg.chair) add('chair', [2510, 1500, 2860, FL + 90], () => setChair(...R.chair, 1, { pal: P, turn: .35 }));
   add('wardrobe', [3000, 880, 3580, FL + 40], () => setWardrobe(...R.robe, 1, { pal: P }));
+  if (cfg.shirts !== 'none') add('shirts', [2900, 1090, 3620, 1640], () => R.shirts.forEach(([sx, sy, sr, kind], i) => { if (cfg.shirts === 'both' || cfg.shirts === kind) setShirt(sx, sy, 1, { pal: P, kind, rot: sr, key: 'room' + i }); }));
   add('ledge', [R.ledge[0] - 20, 1080, R.ledge[1] + 20, 1300], () => {
     setP(setBox(R.ledge[0], R.ledge[2], R.ledge[1], R.ledge[2] + 22, .6), { wash: P.woodLt, ink: P.ink, sw: .8 });
     setP(setBox(R.ledge[0], R.ledge[2] + 22, R.ledge[1], R.ledge[2] + 44), { wash: P.wallSh, washOp: 90, ink: null });
@@ -203,9 +205,10 @@ function setShadeGlaze(cx, cy, rx, ry, col, op, x0, y0, x1, y1, seed = 0) {
 // Paint the room under the active camera (its tiles), plus its live light. o: t, res (fix the cache resolution for
 // a camera move), lights (false: none; call setRoomLights yourself, e.g. after the characters), p (dusk 0..1 → small
 // hours), and the baked state: covers 'flat'|'rumpled'|'lump'|'none', door 0..1, blinds 0..1, photos 'up'|'fallen'|'none',
-// snow, chair, clock, pillow (false: leave that prop out of the cache and draw it live).
+// snow, shirts ('none' | 'both' | 'grey' | 'warm': the two hanging shirts of 02B at SET_ROOM.shirts; bake the one that stays,
+// draw the one in his hand live with setShirt), chair, clock, pillow (false: leave that prop out of the cache and draw it live).
 function setRoom(v = 'night', o = {}) {
-  const cfg = setRoomCfg(v, o), key = `setroom ${v} ${cfg.covers} d${cfg.door} b${cfg.blinds} ${cfg.photos} ${cfg.snow ? 's' : ''}${cfg.chair ? 'c' : ''}${cfg.clock ? 'k' : ''}${cfg.pillow ? 'p' : ''}`;
+  const cfg = setRoomCfg(v, o), key = `setroom ${v} ${cfg.covers} d${cfg.door} b${cfg.blinds} ${cfg.photos} ${cfg.shirts === 'none' ? '' : 'sh' + cfg.shirts} ${cfg.snow ? 's' : ''}${cfg.chair ? 'c' : ''}${cfg.clock ? 'k' : ''}${cfg.pillow ? 'p' : ''}`;
   const items = setRoomItems(v, cfg);
   const draw = (x0, y0, x1, y1) => { for (const it of items) if (setHit(it.bb, x0, y0, x1, y1)) { boilSeed('room ' + it.id); it.draw(x0, y0, x1, y1); } };
   if (v === 'dusk') {   // dusk → small hours: the night painting fades in over the dusk one (2 boil drawings each, so the

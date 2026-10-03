@@ -295,8 +295,9 @@ function setShirt(x, y, s = 1, o = {}) {
   setP(M(body), { wash: c, ink: P.ink, sw, curv: .25 });
   if (SET_MODE !== 'line') setP(M([[-110, 120], [-60, 110], [-70, 400], [-112, 398]]), { fill: cd, fillOp: 90, bleed: .15, tex: .5, ink: null });
   if (o.kind === 'warm' && SET_MODE !== 'line') {   // the check: a few darker stripes each way
-    for (let i = 0; i < 5; i++) { const xx = -88 + i * 44; setL(M([[xx, 92], [xx + 2, 404]]), sw * 1.6, cd, 'dry', 0); }
-    for (let i = 0; i < 6; i++) { const yy = 120 + i * 50; setL(M([[-112, yy], [112, yy + 2]]), sw * 1.3, cd, 'dry', 0); }
+    const st = mixCol(c, cd, .55);   // soft stripes in a shade of the cloth, not a dark grid
+    for (let i = 0; i < 4; i++) { const xx = -78 + i * 52; setL(M([[xx, 92], [xx + 2, 404]]), sw * 1.5, st, 'dry', 0); }
+    for (let i = 0; i < 5; i++) { const yy = 130 + i * 64; setL(M([[-112, yy], [112, yy + 2]]), sw * 1.2, st, 'dry', 0); }
   }
   // collar, placket, buttons, pocket
   setP(M([[-36, 46], [0, 72], [36, 46], [26, 34], [0, 50], [-26, 34]]), { wash: cl, ink: P.ink, sw: sw * .7 });
