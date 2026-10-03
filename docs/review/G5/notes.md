@@ -9,3 +9,5 @@
 - 09H 153.49-164.65 (0.07-0.15): gold drains, mirror goes black, glint, his silver reflection, ripple at 156.28, ripple + veil swap to her in his pose/tilt (dissolve), sings, ripples every half bar from her mouth, amber seeps (glow + palette), palm rises. Weak: the amber is a palette tint; palm is small.
 - 09I 164.65-167.44 (0.1-0.2): glass edge-on, both full figures, his flat palm meets hers at 165.25, ripples + swirl, "Then speak for me" mouth, her eyes close, whirl, white (#F4F9FF) from 166.65, solid by 167.09. Weak: her mirror palette is dim next to him.
 Requests: ai_fx aiReels cached faces use global T (heart-eye pulse): worked around by setting T=0 during the call (s09 only); fix in ai_fx.js if wanted.
+
+Fix #1: 09B sad eyes + small pulled-down mouths; 09C sad eyes, raised brows, trembling 'wobble'; 09D eager kept. 09H amber is now an outer amber copy + amber wash + smaller silver self on top (rim only, hair stays mirror silver); palm handK 1.7, flare/ring/glint on contact from 163.75. 09E lever 1.2x, full swing (pull .95). aiReels T workaround removed. Weak: 09C mouth still a bit open; palm glint is a simple flare.

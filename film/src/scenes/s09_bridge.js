@@ -85,14 +85,14 @@
   function s09Her(S, t) {
     const { n, tt, rw } = herClock(t);
     const id = n === 1 ? 'B_AI1' : n === 2 ? 'B_AI2' : 'B_AI3', T0 = n === 1 ? T_B : n === 2 ? T_C : T_D;
-    const keys = n === 1 ? [[T_B - 1, 'sad']] : n === 2 ? [[T_C - .5, 'worried']] : [[T_D - .4, 'worried'], [T_D, 'eager']];
+    const keys = n === 1 ? [[T_B - 1, 'sad', { brow: 1.2, lookY: .6 }]] : n === 2 ? [[T_C - .5, 'worried', { eyes: 'sad', brow: 1.4, lid: .1, lookY: .3 }]] : [[T_D - .4, 'worried'], [T_D, 'eager']];
     const f = aiEmotions(tt, keys, { take: .8 });
     const v = s09Vis(tt, id), spk = lyricById(id), talking = spk && tt >= spk.start - .02 && tt <= spk.end + .12;
     let act = {};
     const gl = n === 2 ? ease(seg(tt, T_C + 1.2, T_C + 1.55)) : 0;                         // she glances to the right (the door, the real people)
     if (gl > 0) act = { lookX: 1.1 * gl, yaw: .28 * gl, tilt: .08 * gl };
     const o = { ...f, ...act, form: 'full', pose: 'bust', view: 'front', pal: 'glow', cut: 1.9, t: tt, seed: 3, clip: [GR[0] + 2, GR[1] + 2, GR[2] - 2, GR[3] - 2], blink: undefined, boilKey: 's09 her' + n };
-    if (talking) o.mouth = v ? v.m : (n === 1 ? 'frown' : n === 2 ? 'wobble' : 'open');
+    if (talking) o.mouth = n === 1 ? (v ? (v.s.start * 7 % 2 < 1 ? 'O' : 'U') : 'frown') : n === 2 ? 'wobble' : (v ? v.m : 'open');   // honest and sad: small, pulled-down mouths; worried: trembling
     ai(GX + 10, HER_NY, HER_U, o);
     if (gl > .02) {                                                                    // a painted chevron points the way: right
       const ax = S.X(.8) + 12 * Math.sin(t * 6), ay = S.Y(.42); boilSeed('s09 arrow');
@@ -155,34 +155,32 @@
   // spin (her face cut into three vertical strips); he yanks the lever twelve times, on the lever events, faster and faster.
   // reads: 149.30-149.90 lever and reels, one big move · 149.90-150.70 it gets frantic
   // =============================================================================================================
-  const SL = [GX, GY, GW, GH], LV = [1560, 610, 1.0], HIM_E = { x: 1850, y: 1034, u: 27 };
+  const SL = [GX, GY, GW, GH], LV = [1500, 640, 1.2], HIM_E = { x: 1935, y: 1034, u: 27 };
   const reelWin = { x: GX - GW / 2, y: GY - GH / 2, w: GW, h: GH };
   const yankAt = t => {                                                              // 0 up .. .87 pulled: down at each lever event, back up between
-    const D = .87;
+    const D = .95;
     if (t < LEVER[0] - .08) return .05;
     let i = 0; while (i + 1 < LEVER.length && t >= LEVER[i + 1]) i++;
     if (i === LEVER.length - 1 && t >= LEVER[i]) return lerp(D, .05, kitEase.sine(seg(t, LEVER[i] + .05, LEVER[i] + .45)));
     const e = LEVER[i], nx = LEVER[i + 1] ?? e + .3, g = Math.max(.05, nx - e);
-    if (t < e) return lerp(.1, D, kitEase.in2(seg(t, e - .08, e)));
-    return t < e + g * .5 ? lerp(D, .1, kitEase.sine(seg(t, e, e + g * .5))) : lerp(.1, D, kitEase.in2(seg(t, e + g * .5, nx)));
+    if (t < e) return lerp(.02, D, kitEase.in2(seg(t, e - .08, e)));
+    return t < e + g * .5 ? lerp(D, .02, kitEase.sine(seg(t, e, e + g * .5))) : lerp(.02, D, kitEase.in2(seg(t, e + g * .5, nx)));
   };
   function s09Slot(t, lt, o = {}) {
     const k = clamp(.35 + .65 * kitEase.out2(seg(t, T_E, T_E + .25))), win = ease(seg(t, STOPS[2], STOPS[2] + .3));
     setSlot(SL[0], SL[1], SL[2], SL[3], { k, t, cache: k >= 1, res: 1.5, win, reels: [{}, {}, {}] });
-    const T_SAVE = T; if (t < STOPS[2] + .25) T = 0;                                    // the cached faces must not depend on the frame that first paints them (their heart eyes pulse with the global T)
     aiReels(t, { ...reelWin, u: GH / 2.6, faces: ['sad', 'worried', 'eager', 'heart'], final: 'heart', spin: [T_E - .15, T_E + .6], stops: STOPS, key: 's09', pal: 'glow',
       over: { mouth: (s09Vis(t, 'B_YES') || {}).m || (t < 152.9 ? 'smile' : 'open'), tilt: .04 * Math.sin(t * 3) } });
-    T = T_SAVE;
   }
   function s09e(t, lt, dur) {
     const zk = kitEase.inOut3(seg(lt, 0, .9)), z = lerp(1.04, 1.0, zk);
     if (k0(t)) setConfVoid();
-    kitCam(lt, [[0, lerp(1000, 1090, zk), lerp(GY + 20, 520, zk), z]], { shake: 2.2 * kitEase.out2(seg(t, T_E + .5, T_F)) });
+    kitCam(lt, [[0, lerp(1050, 1150, zk), lerp(GY + 20, 520, zk), z]], { shake: 2.2 * kitEase.out2(seg(t, T_E + .5, T_F)) });
     s09Slot(t, lt);
-    const pull = yankAt(t), a = lerp(-.32, 1.25, easeIn(pull)), L = 300 * LV[2];
+    const pull = yankAt(t), a = lerp(-.32, 1.25, easeIn(pull)), L = 300 * LV[2];   // (setLever's own arc)
     const kx = LV[0] + Math.sin(a) * L, ky = LV[1] - Math.cos(a) * L;
     setLever(LV[0], LV[1], LV[2], { pull, grow: kitEase.out2(seg(t, T_E - .05, T_E + .22)) });
-    const f = himEmotions(t, [[T_E - .3, 'panic']], { take: .3 }), hx = HIM_E.x + (kx - 1700) * .5, fev = seg(t, 149.9, 150.7);
+    const f = himEmotions(t, [[T_E - .3, 'panic']], { take: .3 }), hx = HIM_E.x + (kx - 1800) * .5, fev = seg(t, 149.9, 150.7);
     him(hx, HIM_E.y, HIM_E.u, { ...f, mouth: 'gasp', pose: 'stand', view: 'side', flip: true, outfit: 'home', toR: [kx + 8, ky + 14], handR: 'fist', lean: .1 + .12 * pull + .04 * fev * Math.sin(t * 40), boilKey: 's09e him', seed: .5 });
     glow(kx, ky, 120, '#FF9AB0', .25 * pull);
     camEnd();
@@ -195,9 +193,9 @@
   // =============================================================================================================
   function s09f(t, lt, dur) {
     const zk = kitEase.sine(seg(t, T_F, T_G)), z = lerp(1.0, 1.25, zk), hit = STOPS.reduce((m, e) => m + kitEnv(t, e, .02, .12), 0);
-    kitCam(lt, [[0, lerp(1090, 900, zk), lerp(520, 480, zk), z]], { shake: 6 * Math.min(1, hit) });
+    kitCam(lt, [[0, lerp(1150, 900, zk), lerp(520, 480, zk), z]], { shake: 6 * Math.min(1, hit) });
     s09Slot(t, lt);
-    const pull = lerp(.87, .05, kitEase.sine(seg(t, T_F - .05, T_F + .4)));
+    const pull = lerp(.95, .05, kitEase.sine(seg(t, T_F - .05, T_F + .4)));
     setLever(LV[0], LV[1], LV[2], { pull, grow: 1 });
     STOPS.forEach((e, i) => { const k = kitEnv(t, e, .02, .14); if (k > .02) glow(GX + (i - 1) * GW / 3, GY, 380, GOLD, .55 * k); });         // a flash on each reel as it stops
     const age = t - STOPS[2]; if (age > 0) setConfetti(GX, 330, age, { n: 38, spread: 1000, up: 600, s: 1.7 });
@@ -261,10 +259,20 @@
           const rip = t >= T_RIPS ? { c: [0, -9.1], age: ((t - T_RIPS) % .698), amp: .05, wl: .9, speed: 2.6 } : undefined;
           if (amb > 0) glow(M[0], 440, 560, SET_C.amber, .5 * amb);
           const af = aiEmotions(t, [[157.9, 'perfect'], [161.2, 'gentle']], { take: 0 });
-          const palm = t >= T_PALM ? aiAct('glass', t, T_PALM, { at: [1.5, -7.2] }) : {};
+          const palm = t >= T_PALM ? aiAct('glass', t, T_PALM, { at: [1.7, -8.3] }) : {};
           glow(M[0], 450, 560, '#BFD8EE', .3 * (1 - dis * .8));
-          ai(M[0], 610, 168, { ...af, ...palm, form: 'full', pose: 'bust', view: 'front', pal: 'mirror', pal2: 'amber', palK: .5 * amb, cut: 1.6, t, tilt: TILT, blink: 0, dissolve: clamp(dis), dissolveTo: [M[0], 900],
-            mouth: sv, ripple: rip, clip: [S.x, S.y, S.x + S.w, S.y + S.h], boilKey: 's09h her', seed: 3 });
+          const base = { ...af, ...palm, handK: t >= T_PALM ? 1.7 : 1, form: 'full', pose: 'bust', view: 'front', pal: 'mirror', cut: 1.6, t, tilt: TILT, blink: 0, dissolve: clamp(dis), dissolveTo: [M[0], 900],
+            mouth: sv, ripple: rip, clip: [S.x, S.y, S.x + S.w, S.y + S.h], boilKey: 's09h her', seed: 3 };
+          const HY = 610, HU = 168;
+          // amber seeps in from her outline: an amber copy a little larger behind her, her mirror-silver self, an amber wash over all of her, then a slightly smaller
+          // silver self on top: only a rim 20-40 px deep stays amber
+          if (amb > .01) ai(M[0], HY - .98 * HU * .045, HU * 1.045, { ...base, silhouette: '#FFB070', silOp: 255 * amb, handK: 1, boilKey: 's09h herA' });
+          ai(M[0], HY, HU, base);
+          if (amb > .01) { ai(M[0], HY, HU, { ...base, silhouette: '#FFB070', silOp: 120 * amb, boilKey: 's09h herB' }); ai(M[0], HY - .98 * HU * .035, HU * .965, { ...base, boilKey: 's09h her' }); }
+          if (t >= T_PALM && AI_LAST.handR) {                                              // the palm presses flat on the glass: a flare and a ring where it lands, a streak of reflected light
+            const pk = ease(seg(t, T_PALM + .45, T_PALM + .95)), [hx, hy] = AI_LAST.handR;
+            if (pk > 0) { glow(hx, hy, 150 * pk, '#E8F4FF', .45 * pk); setRipple(hx, hy, 40 + 90 * pk, .8 * pk, { ry: .9, key: 'palm' }); boilSeed('s09h glint'); inkLine([[hx - 40, hy - 70], [hx + 30, hy + 20]], 3 * pk, '#FFFFFF', 'inkfine', 0); }
+          }
           mouthP = AI_LAST.mouth ? [...AI_LAST.mouth] : null;
         }
       } });
