@@ -9,3 +9,13 @@
 - 04H 75.35-78.14 (~0.13-1.0; shatter frames 0.4-1.0): headphones lifted, plug pinched, ? pops, he looks at her, her mouth moves silently, flash at 77.79 and the ward breaks into 80 textured triangles flying outward over the indigo void.
 - 05A 78.14-83.72 (~0.08-0.45): void + setShards continuing, face gathers by dissolve, a halo per "always" onset (data), vortex from 80.93 (<=56 rings, behind the face), grey + ash + pan down from 82.33, fade to ash grey (#2A2A30) at the end for 06A. Weak: face sits low (mouth y ~0.65H) so the bust is cropped by the frame.
 Determinism: 14 frames checked, 1 (74.7) differed in order-shuffled run; identical in a pairwise pixel diff (GPU noise).
+
+## Fix #1 (review feedback G2 #1)
+- 04A: tilt now done by ~56.7 (kitMove .16-.86 s), frame 1 = SET_WARD.cam.lamp (lamp centre screen (960,550), zoom 1, unchanged for 03C); he sits mid-frame on the island; she descends 56.85-58.20 from above onto HIS LEFT (x 1215 -> 1115), same spot as 04B.
+- 04B: camera pushed to 1.62-1.78x on both faces (eases back for the clap); thermometer bulb now actually between his lips (mouth 'parted'), extra column glow; 04E: 1.68-1.82x, big painted capsule (s04Pill, ~70 px, x1.7 on screen) with a clear check / heart held beside his open mouth (67.4-68.0, 68.9-69.3), then in; marks enlarged.
+- 04C: `ivSag` 2.5 -> 0.2 over the walk (taut at 62.6-63.3 through the snap), slack again after the landing.
+- 04D: spectacles in profile: darker thin temple arm + a drawn lens pane around the eye (no white bar); her face hangs in at x 1650, eyes ~370 px below the top (66.30-66.98, whole face in frame).
+- 04F: recomposed upward (eyes ~.42H, mouth ~.56H), chest + throat glow both above .76H (71.16 'word'); her bust cut shortened so her hand stays above the line.
+- 04G: pan-down zoom 1.2 -> 1.78x, plug centred at ~.65H with a brighter glint.
+- 05A: face raised (mouth ~.50H, eyes ~.40H); every 'always' pushes a bold ring centred on the lips, widening and fading (1.5 s) with a lip glow; from 80.93 round rings on a spiral wind into a vortex behind her (8 -> 52 rings), grey/ash from 82.33, fade to #2A2A30 kept.
+- Key frames: 04A 57.5, 04B 59.9, 04C 62.85, 04D 66.65, 04E 67.8, 04F 71.3, 04G 74.8, 05A 81.9. Determinism: 9 frames identical.

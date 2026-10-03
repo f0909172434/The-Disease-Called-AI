@@ -41,12 +41,13 @@
   // 04A  55.81-58.60  the lamp flares on the downbeat (the loader of 03C was its ring), the camera tilts down to the bed island,
   // she comes down out of the light and drops into a curtsy (lands 58.20, dips till the cut).
   // reads: 55.81-56.90 the lamp flares, the tilt finds the island and him smiling in bed · 56.90-58.60 she descends, curtsies
-  // First frame: the ring lamp's centre at screen (960, 500), zoom 1 (03C's loader should end there).
+  // First frame: the ring lamp's centre at screen (960, 550), zoom 1 (03C's loader should end there).
   // =============================================================================================================
   const A_LAND = 58.20;
   function s04a(t, lt, dur) {
-    const k = kitMove(lt, .42, 1.2, { ant: .05, over: .035, pre: .1 });
-    const cx = lerp(1850, 1330, k), cy = lerp(870, 1500, k), z = lerp(1, 1.0, k);
+    // the tilt starts right after the flare and is done by ~56.7, so at 56.35 he already sits mid-frame on the island
+    const k = kitMove(lt, .16, .86, { ant: .04, over: .03, pre: .08 });
+    const cx = lerp(1850, 1345, k), cy = lerp(820, 1425, k), z = 1;       // frame 1 = SET_WARD.cam.lamp [1850, 820, 1]: the lamp centre at screen (960, 550), as 03C's loader ends
     const [dx, dy] = kitDrift(lt, 4, .35);
     camBegin(cx + dx, cy + dy, z);
     ward(t);
@@ -55,11 +56,11 @@
     const hf = himEmotions(t, [[T_A, 'smile', { blush: .55, sweat: .3, lookY: -.5, lookX: 0 }], [57.3, 'smile', { blush: .7, sweat: .4, lookX: .55, lookY: .05 }]], { take: .5 });
     himBed(t, { ...hf, boilKey: 's04 him' });
     // her: out of the lamp (head of the descent at the lamp), a slanting path to her place, then the curtsy dip
-    const t0 = 56.30, d = aiDescend(t, t0, A_LAND, 3.4);
-    const p = ease(seg(t, t0, A_LAND)), hx = lerp(1620, HER[0], p);
+    const t0 = 56.85, d = aiDescend(t, t0, A_LAND, 9.5);
+    const p = ease(seg(t, t0, A_LAND)), hx = lerp(1215, HER[0], p);          // comes down on HIS LEFT (screen left), where she stands in 04B
     const f = aiEmotions(t, [[T_A, 'smile']], {});
     if (t >= t0 - .05) {
-      if (d.beam > .02) aiBeam(hx, HER[1] - 8, AU, d.beam, { top: 940, w0: 1.1, w1: 1.9, key: 'a' });
+      if (d.beam > .02) aiBeam(hx, HER[1] - 8, AU, d.beam, { top: 700, w0: 1.1, w1: 1.9, key: 'a' });
       ai(hx, HER[1], AU, { ...f, ...d, form: 'full', view: 'front', pose: 'curtsy', pal: 'glow', t, boilKey: 's04 her' });
     }
     camEnd();
@@ -75,22 +76,23 @@
   // =============================================================================================================
   const B_FLARE = kitCut(44, 1, 59.99);
   function s04b(t, lt, dur) {
-    const z = lerp(1.1, 1.2, ease(lt / dur)), [dx, dy] = kitDrift(lt, 4, .35, .3);
-    camBegin(1320 + dx, 1400 + dy, z);
+    // pushed in on the two faces (the thermometer, its cyan column and his lips are the read); eases back for the clap
+    kitCam(lt, [[0, 1318, 1205, 1.62], [1.8, 1318, 1200, 1.78], [2.8, 1325, 1245, 1.62]], { drift: 3 });
     ward(t, { flash: 1.3 * kitEnv(t, B_FLARE, .015, .22) });
     const lvl = ease(seg(t, 59.40, 60.40)), hot = ease(seg(t, 59.7, 61.0));
     const hf = himEmotions(t, [[T_B, 'smile', { blush: .6, lookX: .5 }], [59.45, 'smile', { blush: .9, sweat: .8, lid: .45, lookX: .4 }]], { take: .5 });
-    const hl = himBed(t, { ...hf, blush: lerp(.6, 1, hot), sweat: lerp(.2, 1, hot), thermo: false });
+    const hl = himBed(t, { ...hf, mouth: t < T_B + .1 ? hf.mouth : 'parted', blush: lerp(.6, 1, hot), sweat: lerp(.2, 1, hot), thermo: false });
     // her hand: the thermometer's bulb end at his lips, held in a pinch
     const reach = kitMove(t, T_B - .12, T_B + .45, { ant: .0, over: .08 });
     const ang = -.42, hlen = .4 * 1.3 * AU, tipOff = 1.71 * hlen;
-    const palm = [hl.mouth[0] - Math.cos(ang) * tipOff + 4, hl.mouth[1] - Math.sin(ang) * tipOff + 2];
+    const palm = [hl.mouth[0] - Math.cos(ang) * tipOff + 9, hl.mouth[1] - Math.sin(ang) * tipOff - 13];       // the bulb end between his lips
     const rest = [HER[0] + 70, HER[1] - 330];
     const f = aiEmotions(t, [[T_B, 'smile'], [60.45, 'heart', {}]], {});
     const clap = t >= 60.5 ? aiAct('clap', t, 60.5, { form: 'full' }) : {};
     const hand = t < 60.5 ? { reachRW: [lerp(rest[0], palm[0], clamp(reach)), lerp(rest[1], palm[1], clamp(reach)) - 14 * Math.sin(clamp(reach) * Math.PI) * (reach < 1 ? 1 : 0)], handR: 'pinch', handAR: lerp(-1.1, ang, clamp(reach)),
       propR: { kind: 'thermometer', level: lvl } } : {};
     ai(HER[0], HER[1], AU, { ...f, ...clap, ...hand, form: 'full', view: 'front', pal: 'glow', t, rot: .16 * ease(seg(t, T_B - .15, T_B + .3)), dy: (f.dy || 0) - .55 * ease(seg(t, T_B - .3, T_B + .2)), boilKey: 's04 her' });
+    if (t < 60.5 && lvl > .02) glow(lerp(palm[0], hl.mouth[0], .45), lerp(palm[1], hl.mouth[1], .45), 70 + 50 * lvl, KIT.CYAN, .5 * lvl);       // the column's light, readable from afar
     camEnd();
   }
 
@@ -105,7 +107,9 @@
   const HER_C = [1292, 1965], POLE = [1182, 1560];
   function himC(t, ex = {}) {
     const f = himEmotions(t, [[T_C, 'smile', { blush: .6, sweat: .2 }], [C_WAVE0, 'smile', { blush: .7, lookX: .4 }], [C_WALK0, 'smile', { blush: .5 }], [C_PULL - .25, 'anxious'], [C_YANK, 'panic'], [C_LAND + .05, 'blank', { sweat: .6, blush: .8 }]], { take: .5 });
-    const base = { outfit: 'home', iv: 1, ivTo: PORT, boilKey: 's04 himC', ...f, ...ex };
+    // the IV line: slack at first, drawn tight as he reaches the end of his walk, stays tight through the snap, slack again once he lands
+    const ivSag = t < C_WALK0 ? 2.5 : t < C_LAND ? lerp(2.5, .2, ease(seg(t, C_WALK0 + .1, C_WALK1))) : lerp(.2, 2.5, ease(seg(t, C_LAND, C_LAND + .35)));
+    const base = { outfit: 'home', iv: 1, ivTo: PORT, ivSag, boilKey: 's04 himC', ...f, ...ex };
     const rise = ease(seg(t, C_UP0, C_UP1)), hop = ease(seg(rise, .28, .62));
     const gy = lerp(C_SEAT, C_FLOOR, hop);
     if (t < C_UP0 && t >= T_C) return him(C_ANCH, C_SEAT, HU, { ...base, pose: 'edge', flip: true, seatH: 8.2, arms: 'lap', phone: false });
@@ -156,9 +160,11 @@
   // faster; then she hangs in from the top of the frame, a finger hooked in the lamp's pull cord.
   // reads: 64.19-64.90 he shuts his eyes · 64.90-66.30 the lamp lights up a step and his eyes are pulled open, twice · 66.30-66.98 it is her
   // =============================================================================================================
-  const D_NOTCH = [1500, 640], D_U = 112, D_LAMP = [880, 125];
+  const D_NOTCH = [1500, 640], D_U = 112, D_LAMP = [880, 125], D_HY = 0;
   const D_STEPS = [kitCut(47, 3, 64.89), kitCut(48, 1, 65.59)];                    // the lamp lights up a level (b47 beat 3, b48 beat 1)
   const D_SHUT = [T_D + .22, D_STEPS[0] + .42], D_PEEK = T_D + 2.06;
+  // the profile's temple arm + lens edge were light grey on pale skin: read as a white bar across the face. Same palette, dark thin metal frame.
+  const dPal = () => HIM_PALS.s04dFrame || (HIM_PALS.s04dFrame = { ...himPal('human'), glass: '#5B5666', glassDk: '#2F2B3A' });
   function s04d(t, lt, dur) {
     const lampK = 1 + .42 * kitEase.sine(seg(t, D_STEPS[0], D_STEPS[0] + .06)) + .5 * kitEase.sine(seg(t, D_STEPS[1], D_STEPS[1] + .05)) + .35 * kitEnv(t, D_STEPS[0], .02, .18) + .45 * kitEnv(t, D_STEPS[1], .02, .2);
     setWardVoid('c1');
@@ -174,7 +180,13 @@
     const snap = kitEnv(t, D_STEPS[0] + .03, .02, .22) * .6 + kitEnv(t, D_STEPS[1] + .02, .015, .22) * 1;
     const f = himFeel('smile', t, { lid: clamp(closed) + (1 - closed) * .15, wide: clamp(snap), irisK: 1 - .14 * clamp(snap), browY: -.12 * clamp(snap), mouth: t < D_STEPS[0] ? 'soft' : 'parted', blush: .9, sweat: .7, low: 0 });
     push(); translate(D_NOTCH[0], D_NOTCH[1] + drop); rotate(-Math.PI / 2);
-    him(0, 0, D_U, { ...f, pose: 'bust', view: 'side', outfit: 'home', cut: 3.2, boilKey: 's04 himD', glare: 0 });
+    him(0, 0, D_U, { ...f, pose: 'bust', view: 'side', outfit: 'home', pal: (dPal(), 's04dFrame'), cut: 3.2, boilKey: 's04 himD', glare: 0 });
+    // profile spectacles: the engine's side view only has a temple arm + a lens edge line (a bar across the face), so draw the lens too:
+    // a tilted pane in front of the eye (head-local units: x = toward the face, origin between the eyes; the bust's head centre sits 2.8 u up)
+    { const hq = (a, b) => [a * D_U, (b - 2.8) * D_U + D_HY];
+      boilSeed('s04d lens');
+      paint([hq(.86, -.46), hq(1.56, -.44), hq(1.6, .4), hq(.9, .44)], { wash: '#CFEFFA', washOp: 70, ink: '#2F2B3A', sw: .9 });
+      inkLine([hq(1.44, -.34), hq(1.46, .2)], 1.2, '#FFFFFF', 'inkfine', 0); }
     pop();
     // the covers over the cut end of the bust
     boilSeed('s04d cover'); paint([[D_NOTCH[0] + 90, 826], [D_NOTCH[0] + 130, 560], [D_NOTCH[0] + 330, 520], [W + 60, 580], [W + 60, 826]], { wash: P.blanket, ink: P.ink, sw: 1, curv: .4 });
@@ -186,9 +198,9 @@
     // her: hanging in upside-down from the top edge, a finger through the lamp's cord
     const pk = kitOver(seg(t, D_PEEK - .26, D_PEEK), 1.4), cordFrom = [lx + 400, ly + 30];
     if (t > D_PEEK - .3) {
-      const hy = lerp(-420, 0, clamp(pk)) + 0;
+      const hy = lerp(-420, 120, clamp(pk));         // settles with the whole face in frame, eyes well below the top edge
       const af = aiEmotions(t, [[D_PEEK - .3, 'perfect'], [D_PEEK + .3, 'smile']]);
-      ai(1420, 640 + hy, 110, { ...af, form: 'full', view: 'front', pal: 'glow', t, roll: Math.PI, reachRW: [cordFrom[0] + 40, cordFrom[1] + 190], handR: 'point', handAR: -1.2,
+      ai(1650, 640 + hy, 110, { ...af, form: 'full', view: 'front', pal: 'glow', t, roll: Math.PI, reachRW: [cordFrom[0] + 40, cordFrom[1] + 190], handR: 'point', handAR: -1.2,
         propR: { kind: 'cord', from: cordFrom }, noShadow: true, boilKey: 's04 herD' });
     }
   }
@@ -200,8 +212,7 @@
   // =============================================================================================================
   const E_IN = T_E + 1.12, E_SWALLOW = T_YES, E_SPOON2 = T_YES + .36, E_IN2 = T_YES + 1.0;
   function s04e(t, lt, dur) {
-    const z = lerp(1.18, 1.26, ease(lt / dur)), [dx, dy] = kitDrift(lt, 4, .35, .9);
-    camBegin(1325 + dx, 1405 + dy, z);
+    kitCam(lt, [[0, 1322, 1215, 1.68], [dur, 1330, 1215, 1.82]], { drift: 3 });         // pushed in on both faces: the spoon, the capsule and his open mouth
     ward(t);
     const chew = kitEnv(t, E_SWALLOW, .03, .2), lean2 = kitMove(t, E_SPOON2 + .1, E_IN2 - .1, { ant: .0, over: .06 });
     const hf = himEmotions(t, [[T_E, 'smile', { blush: .8, sweat: .5, lookX: .5, lookY: -.2 }], [E_SWALLOW + .05, 'smile', { blush: 1, sweat: .6, lid: .8 }], [E_SPOON2, 'smile', { blush: 1, sweat: .6, lid: .6 }]], { take: .5 });
@@ -211,20 +222,35 @@
     // her spoon: up to his mouth, the capsule dropped in; then the second
     const ang = -.38, hlen = .4 * 1.3 * AU, bowl = 1.18 * hlen, rest = [HER[0] + 85, HER[1] - 400];
     const target = [hl.mouth[0] - Math.cos(ang) * (bowl + 6), hl.mouth[1] - Math.sin(ang) * (bowl + 6) + 4];
-    const k1 = kitMove(t, T_E + .1, E_IN, { ant: .06, over: .05 }), k1b = 1 - kitEase.sine(seg(t, E_IN + .12, E_SPOON2));        // in, then out for the second
-    const k2 = kitMove(t, E_SPOON2, E_IN2, { ant: .06, over: .04 });
+    const k1 = .74 * kitMove(t, T_E + .05, T_E + .6, { ant: .06, over: .04 }) + .26 * kitEase.in2(seg(t, E_IN - .3, E_IN)), k1b = 1 - kitEase.sine(seg(t, E_IN + .12, E_SPOON2));        // in, then out for the second
+    const k2 = .74 * kitMove(t, E_SPOON2, E_SPOON2 + .45, { ant: .06, over: .04 }) + .26 * kitEase.in2(seg(t, E_IN2 - .3, E_IN2));
     const second = t >= E_SPOON2 - .02, k = second ? k2 : (t < E_IN + .12 ? k1 : k1b * Math.min(1, k1));
-    const cap = !second ? (t < E_IN + .02 ? 'check' : null) : 'heart';
+    const cap = !second ? (t < E_IN + .02 ? 'check' : null) : 'heart';        // the prop's own capsule is tiny: s04Pill below draws a big one on the spoon
     const palm = [lerp(rest[0], target[0], clamp(k)) , lerp(rest[1], target[1], clamp(k)) - 26 * Math.sin(clamp(k) * Math.PI)];
     const f = aiEmotions(t, [[T_E, 'eager'], [E_SWALLOW + .1, 'smile'], [E_SPOON2 + .2, 'heart']]);
-    ai(HER[0], HER[1], AU, { ...f, reachRW: palm, handR: 'pinch', handAR: lerp(-1.0, ang, clamp(k)), propR: { kind: 'spoon', cap }, form: 'full', view: 'front', pal: 'glow', t,
+    ai(HER[0], HER[1], AU, { ...f, reachRW: palm, handR: 'pinch', handAR: lerp(-1.0, ang, clamp(k)), propR: { kind: 'spoon', cap: null }, form: 'full', view: 'front', pal: 'glow', t,
       rot: .15 * ease(seg(t, T_E - .1, T_E + .4)), dy: (f.dy || 0) - .55 * ease(seg(t, T_E - .2, T_E + .2)), boilKey: 's04 herE' });
     // the marks pop in (one frame) over the spoon, then fade; light down his throat on the swallow
     const bowlPt = [palm[0] + Math.cos(ang) * bowl, palm[1] + Math.sin(ang) * bowl];
-    if (!second && t > T_E + .38 && t < E_IN - .05) { const a = seg(t, T_E + .38, E_IN - .05); setCheck(bowlPt[0] - 52, bowlPt[1] - 84 - 10 * a, 44, KIT.CYANW, { glow: .9 * (1 - a * .7), key: 'e1' }); }
-    if (second && t > E_SPOON2 + .08 && t < E_IN2 + .1) { const a = seg(t, E_SPOON2 + .08, E_IN2 + .1); setHeart(bowlPt[0] - 52, bowlPt[1] - 84 - 10 * a, 46, SET_C.fever, { glow: .9 * (1 - a * .7), key: 'e2' }); }
+    if (cap) s04Pill([bowlPt[0] + 2, bowlPt[1] - 20], ang + .1, 70, cap, 'e' + cap);
+    if (!second && t > T_E + .38 && t < E_IN - .05) { const a = seg(t, T_E + .38, E_IN - .05); setCheck(bowlPt[0] - 70, bowlPt[1] - 90 - 14 * a, 78, KIT.CYANW, { glow: .9 * (1 - a * .6), key: 'e1' }); }
+    if (second && t > E_SPOON2 + .08 && t < E_IN2 + .1) { const a = seg(t, E_SPOON2 + .08, E_IN2 + .1); setHeart(bowlPt[0] - 70, bowlPt[1] - 90 - 14 * a, 64, SET_C.fever, { glow: .9 * (1 - a * .6), key: 'e2' }); }
     if (chew > .02) glow(hl.mouth[0] + 8, hl.mouth[1] + 70, 150, KIT.CYAN, .6 * chew);
     camEnd();
+  }
+
+  // a big glowing capsule (cream half, cyan half) with a ✓ or ♥ printed on the cyan half; len in world px; drawn live
+  function s04Pill(c, a, len, mark, key) {
+    const w = len * .44, d = [Math.cos(a), Math.sin(a)], n = [-d[1], d[0]], at = (x, y) => [c[0] + d[0] * x + n[0] * y, c[1] + d[1] * x + n[1] * y];
+    const half = sd => { const p = []; for (let i = 0; i <= 10; i++) { const q = -Math.PI / 2 + Math.PI * i / 10; p.push(at(sd * (len * .5 - w * .5 + Math.cos(q) * w * .5), Math.sin(q) * w * .5)); } p.push(at(0, w * .5), at(0, -w * .5)); return p; };
+    glow(c[0], c[1], len * 1.5, KIT.CYAN, .6);
+    boilSeed('s04pill ' + key);
+    paint(half(-1), { wash: '#FBF6EE', ink: '#241F2C', sw: 1.1 });
+    paint(half(1), { wash: '#3FCBEE', ink: '#241F2C', sw: 1.1 });
+    paint([at(-len * .4, -w * .3), at(len * .3, -w * .3), at(len * .3, -w * .15), at(-len * .4, -w * .15)], { wash: '#FFFFFF', washOp: 170, ink: null });
+    const z = w * .3, m = at(len * .2, w * .02);
+    if (mark === 'check') inkLine([[m[0] - z, m[1]], [m[0] - z * .2, m[1] + z * .8], [m[0] + z * 1.05, m[1] - z * .9]], 3.4, '#FFFFFF', 'ink', 0);
+    else paint(setHeartPts(m[0], m[1], z * 1.7), { wash: '#FF4F85', ink: null });
   }
 
   // =============================================================================================================
@@ -232,11 +258,11 @@
   // lips into his mouth along a curve; he closes his eyes and breathes them in; on "word" (71.16) he lights up from inside.
   // reads: 69.77-70.80 the ribbons flow from her to him · 70.80-72.56 he glows from within
   // =============================================================================================================
-  const F_HIM = [1250, 1000], F_HER = [330, 1000], F_UH = 100, F_UA = 165;
+  const F_HIM = [1250, 745], F_HER = [330, 745], F_UH = 88, F_UA = 145;          // composed upward: his eyes ~.42H, mouth ~.55H, chest still above the subtitle-safe line (.76H)
   function s04f(t, lt, dur) {
-    const z = lerp(1.0, 1.1, ease(lt / dur)), [dx, dy] = kitDrift(lt, 3, .3, 1.3);
+    const z = lerp(1.0, 1.06, ease(lt / dur)), [dx, dy] = kitDrift(lt, 3, .3, 1.3);
     setWardVoid('c1');
-    camBegin(960 + 60 * (z - 1) / .1 * .3 + dx, 560 + dy, z);
+    camBegin(960 + 60 * (z - 1) / .1 * .3 + dx, 540 + dy, z);
     const inner = ease(seg(t, T_F + 1.0, T_WORD + .25)) * (.8 + .2 * Math.sin(t * 9)), flare = kitEnv(t, T_WORD, .03, .3);
     const hf = himEmotions(t, [[T_F, 'smile', { lid: .5, blush: .8 }], [T_F + .9, 'peace', { blush: .9 }]], { take: .4 });
     him(F_HIM[0], F_HIM[1], F_UH, { ...hf, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 2.4, mouth: t > T_F + .9 ? 'O' : 'parted', innerGlow: clamp(inner + .5 * flare), boilKey: 's04 himF' });
@@ -246,7 +272,11 @@
     const m0 = [AI_LAST.mouth[0] + 8, AI_LAST.mouth[1]], m1 = [hl.mouth[0] + 6, hl.mouth[1] + 2];
     const grow = ease(seg(t, T_F, T_F + .5));
     s04Ribbons(t, m0, m1, grow, flare);
-    if (inner > .02) glow(hl.mouth[0] + 40, hl.mouth[1] + 150, 340, KIT.CYAN, .45 * inner);
+    if (inner > .02) {                        // the light from inside: throat, then chest (both kept above the subtitle-safe line)
+      const th = ease(seg(t, T_F + 1.0, T_WORD + .1)), ch = clamp(ease(seg(t, T_WORD - .15, T_WORD + .35)) + .4 * flare);
+      glow(hl.mouth[0] + 24, hl.mouth[1] + 105, 230, KIT.CYAN, .9 * th); glow(hl.mouth[0] + 24, hl.mouth[1] + 100, 110, KIT.CYANW, .6 * th);
+      glow(hl.mouth[0] + 50, hl.mouth[1] + 195, 320, KIT.CYAN, .85 * ch); glow(hl.mouth[0] + 50, hl.mouth[1] + 190, 140, KIT.CYANW, .55 * ch);
+    }
     camEnd();
   }
   // streams of abstract symbol strokes (dashes, waves, loops, dots) running m0 -> m1 along a bowed curve, three streams, ~24 tokens
@@ -281,8 +311,9 @@
   const G_PAN0 = T_G + 1.44, G_PAN1 = T_G + 2.25;
   const G_PLUG = [1730, 1400];
   function s04g(t, lt, dur) {
-    const pan = kitEase.inOut3(seg(t, G_PAN0, G_PAN1)), z = lerp(1.2, 1.42, pan), [dx, dy] = kitDrift(lt, 3, .35, 1.7);
-    camBegin(lerp(1325, 1700, pan) + dx, lerp(1405, 1420, pan) + dy, z);
+    // down the cable and in: the dangling plug ends centred above the subtitle line at ~1.75x (head still in the upper left)
+    const pan = kitEase.inOut3(seg(t, G_PAN0, G_PAN1)), z = lerp(1.2, 1.78, pan), [dx, dy] = kitDrift(lt, 3, .35, 1.7);
+    camBegin(lerp(1325, 1655, pan) + dx, lerp(1405, 1335, pan) + dy, z);
     ward(t);
     const sway = Math.sin(bpOf(t) * Math.PI / 2), hit = pulse(t, 5);
     const hf = himEmotions(t, [[T_G, 'peace', { blush: .8 }]], { take: .3 });
@@ -297,7 +328,7 @@
       s04Note(p[0] + 8 * Math.sin(k * 12 + i), p[1], 26 + 6 * (i % 2), a, i);
     }
     if (lt < .3 && hl.cable) { const a = 1 - lt / .3; for (let i = 0; i <= 6; i++) glow(lerp(hl.cable[0], plug[0], i / 6), lerp(hl.cable[1], plug[1], i / 6) - 90 * Math.sin(i / 6 * Math.PI) * -.3, 90, KIT.CYAN, .8 * a); }
-    if (pan > .3) glow(plug[0] + 4, plug[1] + 30, 120, KIT.CYAN, .3 * pan);          // the bare plug, glinting in the air
+    if (pan > .3) { glow(plug[0] + 4, plug[1] + 30, 150, KIT.CYAN, .45 * pan); glow(plug[0] + 4, plug[1] + 20, 60, KIT.CYANW, .4 * pan); }          // the bare plug, glinting in the air
     camEnd();
   }
   // a music note (painted mark, not a letter): head, stem, flag; a = opacity-ish 0..1
