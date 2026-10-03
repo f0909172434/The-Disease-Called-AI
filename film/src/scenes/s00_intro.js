@@ -90,7 +90,7 @@
       aR: .05 * tapLift(t, 0) + .2 * hover + .02, aL: .05 * tapLift(t, 1) + .17 * hover, nod: (face.nod || 0) + .2 * bs + .12 * hover, lean: (face.lean || 0) - .05 * hover, boilKey: 's00b him', seed: .3 });
     himDeskProps(B_X, B_Y, B_U, { part: 'front', flip: true });
     glow(721, 500, 520, KIT.CYAN, .42);
-    glow(1205, 292, 190, KIT.CYAN, .3);                                     // the screen's light on his face: the brightest thing of the read
+    glow(1198, 290, 170, KIT.CYAN, .5);                                     // the screen's light on his face: the brightest thing of the read
     camEnd();
   }
   const B_DISSOLVE = .26;                                                  // 00A's light dissolves into 00B while the pull-back carries on
