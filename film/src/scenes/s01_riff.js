@@ -65,10 +65,10 @@
   //        20.93-21.98 push to the middle dot · 21.98-22.33 flash
   // End state for 02A's match cut: the middle dot at the screen centre (960, 540), radius ~35 px, cyan with a glow.
   // =============================================================================================================
-  const CH = { x: 960, y: 540, s: 1.04 };                                   // the chart: centre and scale (fills the frame height)
+  const CH = { x: 960, y: 530, s: .96 };                                    // the chart: centre and scale. Placed so every framing of the film stays inside the one 1920 x 1080 cache tile (res 1; the view never leaves it for z >= 1.02)
   const CHART_BARCODE = [CH.x + SET_CHART.barcode[0] * CH.s, CH.y + SET_CHART.barcode[1] * CH.s];
   const T_STAMP1 = kitCut(12, 1, 15.35), T_STAMP2 = kitCut(13, 1, 16.74), T_DOTS = kitCut(15, 1, 19.534) + .006, T_PUSH = kitCut(16, 1, 20.93), T_FLASH = 21.98;
-  const BZ0 = 1.55, BZ1 = .94;                                              // pull back from the band's barcode (BZ0) to the framed chart (BZ1)
+  const BZ0 = 1.55, BZ1 = 1.02;                                              // pull back from the band's barcode (BZ0) to the framed chart (BZ1)
   const ecgRect = [CH.x + SET_CHART.ecg[0] * CH.s, CH.y + SET_CHART.ecg[1] * CH.s, SET_CHART.ecg[2] * CH.s, SET_CHART.ecg[3] * CH.s];
   function s01b(t, lt, dur) {
     const beats = Array.from(kick).filter(b => b <= t + .01 && b >= T_B - 3);
@@ -79,11 +79,11 @@
     let cx = lerp(a0[0], CH.x, pb), cy = lerp(a0[1], CH.y, pb), z = ZOOM(BZ0, BZ1, pb);
     // 2) a very slow push while the stamps land, then toward the heartbeat strip as the last three beats turn into dots
     const slow = seg(t, T_B + 1.5, T_DOTS - .4), toStrip = kitEase.sine(seg(t, T_DOTS - .3, T_PUSH));
-    z = ZOOM(z, 1.0, slow) ; z = ZOOM(z, 1.5 / z * z, toStrip);
-    cy = lerp(cy, CH.y + 230, toStrip); cx = lerp(cx, CH.x + 60, toStrip);
+    z = ZOOM(z, 1.1, slow); z = ZOOM(z, 1.5, toStrip);
+    cy = lerp(cy, CH.y + 180, toStrip); cx = lerp(cx, CH.x + 60, toStrip);
     // 3) the final push at the middle dot: slow, then faster and faster through the toms
     const [dotX, dotY] = ecgDots()[1], zEnd = 1.95, f = seg(t, T_PUSH, T_FLASH + .1), cEnd = kitAnchor(dotX, dotY, 960, 540, zEnd);
-    if (t >= T_PUSH) { const z1 = 1.5, c1 = [CH.x + 60, CH.y + 230], p3 = kitEase.expoIn(f); z = z1 * Math.pow(zEnd / z1, p3); cx = lerp(c1[0], cEnd[0], easeIn(f)); cy = lerp(c1[1], cEnd[1], easeIn(f)); }
+    if (t >= T_PUSH) { const z1 = 1.5, c1 = [CH.x + 60, CH.y + 180], p3 = kitEase.expoIn(f); z = z1 * Math.pow(zEnd / z1, p3); cx = lerp(c1[0], cEnd[0], easeIn(f)); cy = lerp(c1[1], cEnd[1], easeIn(f)); }
     const dr = kitDrift(t, 4, .25, 3), live = t < T_PUSH ? 1 : 0;
     camBegin(cx + live * dr[0] / z, cy + live * dr[1] / z, z);
     setChart(CH.x, CH.y, CH.s, { cache: true, bg: 'indigo', res: 1, stamp1: t - T_STAMP1, stamp2: t - T_STAMP2, ecg: { t, dotsT: T_DOTS, beats } });

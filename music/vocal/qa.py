@@ -92,7 +92,7 @@ def wer(ref: str, hyp: str) -> float:
 UNWANTED = set("""
 penis penises dick cock cocks ass arse asshole butt boob boobs tits nipple nipples vagina
 pussy sex sexy naked nude porn orgasm horny fuck fucking fucked shit shitty bitch whore slut
-cunt rape raped nazi nazis hitler
+cunt rape raped nazi nazis hitler hoe hoes
 """.split())
 
 
