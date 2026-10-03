@@ -89,7 +89,8 @@
     him(B_X, B_Y, B_U, { ...face, pose: 'desk', flip: true, outfit: 'launch', band: false, screen: .9, glare: .3, type: 0,
       aR: .05 * tapLift(t, 0) + .2 * hover + .02, aL: .05 * tapLift(t, 1) + .17 * hover, nod: (face.nod || 0) + .2 * bs + .12 * hover, lean: (face.lean || 0) - .05 * hover, boilKey: 's00b him', seed: .3 });
     himDeskProps(B_X, B_Y, B_U, { part: 'front', flip: true });
-    glow(721, 500, 520, KIT.CYAN, .5);
+    glow(721, 500, 520, KIT.CYAN, .42);
+    glow(1205, 292, 190, KIT.CYAN, .3);                                     // the screen's light on his face: the brightest thing of the read
     camEnd();
   }
   const B_DISSOLVE = .26;                                                  // 00A's light dissolves into 00B while the pull-back carries on
@@ -144,16 +145,16 @@
     himPaintV([[Ls.x - w * .44, Ls.y - h * .44], [Ls.x - w * .12, Ls.y - h * .44], [Ls.x - w * .44, Ls.y + h * .06]], { wash: '#FFFFFF', washOp: 70, ink: null });
   }
   function s00d(t, lt, dur) {
-    const u = 84, NY = 700, HX = 957, HY = NY - 2.88 * u, lensX = i => HX + (i ? .84 : -.84) * u * .92, LY = HY - 1;
+    const u = 80, NY = 800, HX = 957, HY = NY - 2.88 * u, lensX = i => HX + (i ? .84 : -.84) * u * .92, LY = HY - 1;
     const push = kitEase.sine(seg(t, D_PUSH0, D_PUSH1));
-    const zoom = 1 + .05 * seg(t, T_D, D_PUSH0) + (1.85 - 1.05) * push, cx = lerp(960, lensX(0) + 26, push), cy = lerp(500, LY, push);
+    const zoom = 1 + .05 * seg(t, T_D, D_PUSH0) + (1.85 - 1.05) * push, cx = lerp(960, lensX(0) + 26, push), cy = lerp(560, LY, push);
     setVoidLayer('navy');
     kitCam(lt, [[0, cx, cy, zoom]], { drift: push < 1 ? 3 : 0 });
     // the light of the screen in front of him (cyan, from below and ahead), behind then over him
     glow(HX, HY + 60, 700, KIT.CYAN, .34);
     const feel = himEmotions(t, [[T_D, 'tired', { glare: .3 }], [D_SMILE, 'smile', { glare: .3, lookX: .1 }]], { take: .9 });
     const dil = kitEase.sine(seg(t, 8.9, D_PUSH1));
-    him(960, NY, u, { ...feel, pose: 'bust', view: 'front', cut: 5.0, outfit: 'launch', band: false, pupil: 1 + .85 * dil, boilKey: 's00d him', seed: .6,
+    him(960, NY, u, { ...feel, pose: 'bust', view: 'front', cut: 3.6, outfit: 'launch', band: false, pupil: 1 + .85 * dil, boilKey: 's00d him', seed: .6,
       lens: (i, Ls) => lensReflection(t, i, Ls) });
     glow(HX, HY + 100, 560, KIT.CYAN, .46 * (1 - .5 * push));                // the same light on his face (additive, from the screen below and ahead)
     camEnd();
