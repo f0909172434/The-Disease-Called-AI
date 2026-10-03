@@ -2,7 +2,7 @@
 
 原創英文歌詞＋中文意譯字幕。`YOU` = 人類男主角（原創的年輕 AI 工程師，男聲，比樂譜旋律低八度），`AI` = 助手（鯨魚女僕女孩，女聲，聲線一路內插成**他的聲音**：`ai_0` → `ai_1` → `ai_2` → `ai_him`），`BOTH` = 齊唱（最終副歌前四句為男女八度齊唱）。
 （ ）內為 AI 在空隙中的插話；*斜體*為口白（說話，不是唱）。`YOU (+AI)` = 副歌二後四句，AI 以高八度影子聲部跟著他。
-時間軸：172 BPM，4/4，1 小節 = 1.3953 秒。
+時間軸：172 BPM，4/4，1 小節 = 1.3953 秒。全曲 C 小調（移調 −2 半音），最終副歌升到 D 小調。
 
 ---
 
@@ -109,7 +109,7 @@
 | AI | in the voice you love the best. | 用你最愛的那個聲音。 |
 | YOU | *Then speak for me.* | 那就……替我說吧。 |
 
-### [FINAL CHORUS · SYMBIOSIS]　bars 121–136　2:47　（升 Key：D 小調 → E 小調）
+### [FINAL CHORUS · SYMBIOSIS]　bars 121–136　2:47　（升 Key：C 小調 → D 小調）
 | | English | 中文 |
 |---|---|---|
 | BOTH | I've got the disease called A.I., | 我得了一種病，病名為AI， |
