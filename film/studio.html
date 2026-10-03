@@ -34,7 +34,7 @@
 <script src="src/chars/ai_pose.js"></script>
 <script src="src/chars/ai_props.js"></script>
 <script src="src/chars/ai_fx.js"></script>
-<script src="src/chars/_smoke.js"></script>
+<script src="src/chars/_smoke.js"></script>   <!-- only registers the benchmark loops smoke / load (--loop=load); never draws into the film -->
 <!-- sets: painted sets and set dressing (src/sets/STATUS.md); globals prefixed set / SET_ -->
 <script src="src/sets/sets_core.js"></script>
 <script src="src/sets/props.js"></script>
@@ -45,7 +45,22 @@
 <script src="src/sets/confessional.js"></script>
 <script src="src/sets/void.js"></script>
 <script src="src/sets/sheet.js"></script>
-<!-- scenes: one script per scene file, in order -->
+<!-- scenes (src/scenes/README.md): _kit.js first, then one file per section, in order; a later agent only edits its own file -->
+<script src="src/scenes/_kit.js"></script>
+<script src="src/scenes/s00_intro.js"></script>
+<script src="src/scenes/s01_riff.js"></script>
+<script src="src/scenes/s02_verse1.js"></script>
+<script src="src/scenes/s03_pre1.js"></script>
+<script src="src/scenes/s04_chorus1.js"></script>
+<script src="src/scenes/s05_post.js"></script>
+<script src="src/scenes/s06_verse2.js"></script>
+<script src="src/scenes/s07_503.js"></script>
+<script src="src/scenes/s08_chorus2.js"></script>
+<script src="src/scenes/s09_bridge.js"></script>
+<script src="src/scenes/s10_final.js"></script>
+<script src="src/scenes/s11_tag.js"></script>
+<script src="src/scenes/s12_outro.js"></script>
+<script src="src/scenes/s13_end.js"></script>
 <script>
   // studio.html?loop=<name> scrubs a standalone loop (model sheets) instead of the film. ?t=55.8 jumps to a time,
   // ?lyrics=hidden|karaoke|subtitle-only overrides the overlay, ?nocache paints cached layers every frame.
