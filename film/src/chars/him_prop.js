@@ -524,7 +524,7 @@ function himWrist(x, y, u, o = {}) {
   const tw = Math.sin(clamp(o.twitch || 0) * Math.PI);
   rs('arm');
   HIM_HANDS.desk = HIM_HANDS.desk || { draw: himHandBack, spread: .22, curl: .3, thumbA: .7, thumbL: .74 };
-  HIM_HANDS.desk.curl = .3 + .35 * tw; HIM_HANDS.desk.spread = .22 - .1 * tw;
+  HIM_HANDS.desk.curl = (o.curl ?? .3) + .35 * tw;   // o.curl: the fingers' rest curl (01A: relaxed, lying flat) HIM_HANDS.desk.spread = .22 - .1 * tw;
   himArm(K, c, { S, E, W, outfit, hand: 'desk', thumb: -1, band: false });
   const k = clamp(o.bandK || 0);
   if (k > 0) {

@@ -116,13 +116,14 @@
   // finger and she curtsies, he moves another and she tilts her head: a good little puppet.
   // reads: 173.02-174.20 the threads find her · 174.20-175.81 he moves, she does what she is told
   // =============================================================================================================
-  const C_CAM = [1300, 1360, 1.0];
+  const C_CAM = [1450, 1200, .8], C_HIM = [1450, 1000], C_HU = 22, C_HER = [1450, 1520], C_AU = 46;   // the mirror of 10D: he above, she below, threads straight down
   const C_DIP1 = T_C + 1.38, C_DIP2 = T_C + 2.12;          // the two commands (174.40, 175.14)
   // ten threads (his fingertips) -> her head and wrists; k 0..1 grows them from his fingers; flick 0..1 lifts the one finger that gives the command
   function s10Threads(from, to, k, col, o = {}) {
+    const sc = o.sc ?? 1;
     if (k <= .01) return;
     const [hr, hl] = from, tips = [];
-    [[hr, -1], [hl, 1]].forEach(([h, sd]) => { if (!h) return; for (let j = 0; j < 5; j++) tips.push([h[0] + (j - 2) * 19 + sd * 4, h[1] - 58 - 14 * (2 - Math.abs(j - 2)) + (o.flick && j === (o.flickJ ?? 1) && sd === (o.flickSide ?? -1) ? -26 * o.flick : 0)]); });
+    [[hr, -1], [hl, 1]].forEach(([h, sd]) => { if (!h) return; for (let j = 0; j < 5; j++) tips.push([h[0] + ((j - 2) * 19 + sd * 4) * sc, h[1] - (58 + 14 * (2 - Math.abs(j - 2))) * sc + (o.flick && j === (o.flickJ ?? 1) && sd === (o.flickSide ?? -1) ? -26 * o.flick : 0)]); });
     const tg = [to.wR, to.wR, to.head, to.head, to.wL, to.wL, to.head, to.head, to.wR, to.wL];
     boilSeed('s10 threads' + (o.key || ''));
     for (let i = 0; i < tips.length; i++) {
@@ -134,20 +135,20 @@
   }
   function s10c(t, lt, dur) {
     const spin = seg(lt, dur - .36, dur), spk = kitEase.in2(spin);
-    s10Cam(lt, [[0, C_CAM[0], C_CAM[1], C_CAM[2], 0], [dur, C_CAM[0] + 30, C_CAM[1] - 10, 1.06, 0]], ...kitDrift(lt, 2.5, .3), -Math.PI * spk);
-    s10Ward(t);
-    s10Lit(t, .8);
+    s10Cam(lt, [[0, C_CAM[0], C_CAM[1], C_CAM[2] * 1.05, 0], [dur, C_CAM[0], C_CAM[1] + 10, C_CAM[2], 0]], ...kitDrift(lt, 2, .3), -Math.PI * spk);
+    setWardVoid('final');
+    glow(C_HIM[0], C_HIM[1] - 200, 700, CY, .22);
     const v = s10Vis(t, ['F_3', 'F_4']);
     const hf = himEmotions(t, [[T_C, 'focused']], { take: .3 });
     const flick1 = kitEnv(t, C_DIP1 - .1, .06, .18), flick2 = kitEnv(t, C_DIP2 - .1, .06, .18);
-    const hl = s10Him(t, { ...hf, view: 'q', flip: true, coverW: .72, arms: 'puppet', mouth: v ? v.m : hf.mouth, boilKey: 's10c him', nod: .03 * Math.sin(t * 3) });
-    // her: the curtsy on the strings (a dip after the first command), a tilt of the head after the second
+    him(C_HIM[0], C_HIM[1], C_HU, { ...hf, pose: 'bed', view: 'front', outfit: 'home', pal: 'swapped', coverW: .6, arms: 'puppet', mouth: v ? v.m : hf.mouth, boilKey: 's10c him', nod: .03 * Math.sin(t * 3) });
+    const hl = { ...HIM_LAST };
     const dip = kitEnv(t, C_DIP1, .1, .34), tilt = kitEnv(t, C_DIP2, .12, .5);
     const af = aiEmotions(t, [[T_C, 'smile']], {});
-    ai(HER[0], HER[1], AU, { ...af, mouth: v ? v.m : af.mouth, form: 'full', pose: 'curtsy', pal: 'amber', t, boilKey: 's10c her', dy: .85 * dip, tilt: .22 * tilt - .04 * dip, seed: 5 });
+    ai(C_HER[0], C_HER[1], C_AU, { ...af, mouth: v ? v.m : af.mouth, form: 'full', pose: 'curtsy', pal: 'amber', t, boilKey: 's10c her', dy: .85 * dip, tilt: .22 * tilt - .04 * dip, seed: 5 });
     const L = { ...AI_LAST };
     s10Threads([hl.handR, hl.handL], { wR: L.wristR, wL: L.wristL, head: L.crown || L.head }, ease(seg(t, T_C + .08, T_C + 1.15)), CY,
-      { flick: flick1 + flick2, flickJ: 1, flickSide: -1, taut: .5 * (dip + tilt), key: 'c' });
+      { flick: flick1 + flick2, flickJ: 1, flickSide: -1, taut: .5 * (dip + tilt), key: 'c', sc: C_HU / 30, sag: 8 });
     camEnd();
     s10Streaks(spk, -1, 7, [CY, AMBER]);
   }
@@ -190,7 +191,7 @@
   // strokes his hair (warm, and not quite right).
   // reads: 178.60-179.80 she sings in his voice, his mouth is closed · 179.80-181.40 he shuts his eyes, she strokes his hair
   // =============================================================================================================
-  const E_SEAT = [1330, 1540], E_AU = 80, E_HU = 27, E_HIP = [1840, 1498];
+  const E_SEAT = [1330, 1540], E_AU = 80, E_HU = 27, E_HIP = [1930, 1498];
   const E_ARML = { W: [.9, -4.6], hand: 'rest', handAng: -(Math.PI - .55), bend: -1, thumb: -1, k2: .8 };
   function s10e(t, lt, dur) {
     // the last .45 s push in on his heart (1648, 1437): 10F starts on the same light at screen (1015, 711)
@@ -206,11 +207,11 @@
     const hf = himEmotions(t, [[T_E, 'blank'], [179.75, 'peace']], { take: .3 });
     const kf_ = clamp(fall), fy = -430 * (1 - kf_) * (1 - kf_), fr = -.6 * (1 - kf_);
     // she first (her hand reaches over his hair), then he lies beside / across her lap, in front of her skirt
-    const head = [1490, 1408];
-    const stroke = t >= 179.8 ? aiAct('stroke', t, 179.8, { form: 'full', at: head, r: 46 }) : {};
+    const head = [1590, 1432];
+    const sw_ = Math.sin((t - 179.8) * 3.1), reach = ease(seg(t, 179.6, 179.95)), stroke = t >= 179.5 ? { reachRW: [lerp(1400, head[0] + 14 * sw_, reach), lerp(1380, head[1], reach)], handR: 'flat', handAR: .5 + .15 * sw_, reachL: [-.15, -6.05], tilt: .14, lookY: .7 } : {};
     const hb = ease(seg(t, T_F - .42, T_F - .1));
-    ai(E_SEAT[0], E_SEAT[1], E_AU, { ...herP, ...stroke });
     him(E_HIP[0], E_HIP[1] + fy, E_HU, { ...hf, heart: .85 * hb, mouth: 'closed', pose: 'lie', rot: -Math.PI / 2 + .1 + fr, outfit: 'home', pal: 'swapped', swapGlow: 1, covers: false, armR: 'chest', armL: E_ARML, boilKey: 's10e him' });
+    ai(E_SEAT[0], E_SEAT[1], E_AU, { ...herP, ...stroke });
     if (HIM_LAST.heart && hb > 0) glow(HIM_LAST.heart[0], HIM_LAST.heart[1], 160 + 60 * pk, '#FF6F86', .6 * hb);
     camEnd();
   }

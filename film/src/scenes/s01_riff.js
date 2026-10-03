@@ -35,11 +35,18 @@
     glow(PX, PY - 150, 900, KIT.CYAN, .55 * lit + .3 * flare);
     setPhone(PX, PY, PH, { screen: S => { setP(setBox(S.x, S.y, S.x + S.w, S.y + S.h), { wash: mixCol('#1D6A96', '#CFF8FF', .25 + .6 * flare), ink: null });
       glow(S.X(.5), S.Y(.3), S.h * .6, KIT.CYANW, .6 * lit); }, glow: 0 });
+    // a soft cast shadow under his hand and forearm on the desk: the phone (right, below) is the key light, so it falls up-left;
+    // three widening washes = a soft edge. Same skeleton as himWrist (wrist at WX, WY; fingers along WD; forearm back).
+    for (const [g, op] of [[1.45, 22], [1.3, 26], [1.15, 30], [1.0, 36], [.88, 40]]) {
+      const o = [-40 - 10 * g, 30 + 6 * g], q = k => [WX + WD[0] * k * WU + o[0], WY + WD[1] * k * WU + o[1]];
+      boilSeed('s01a cast' + g);
+      paint(ribbon([q(-9), q(-4.3), q(0), q(1.2), q(2.55)], 1.75 * g * WU, .95 * g * WU), { wash: '#02040C', washOp: op, ink: null });
+    }
     // his wrist, band and fingers
     const s = seg(t, CLICK - .36, CLICK), bandK = t < 11.74 ? 0 : t < CLICK - .36 ? .3 : .6 + .4 * s;
     const her = herPos(t), chest = [her[0] - 3.5 * HER_U, her[1] - 3.7 * HER_U];      // her left hand, stretched out to the band's end
     const end = t < 11.98 ? lerp2(WNEAR, chest, ease(seg(t, 11.74, 11.98))) : chest;
-    himWrist(WX, WY, WU, { ang: WANG, bandK, bandEnd: end, clickT: CLICK, twitch: seg(t, CLICK + .12, CLICK + .42), outfit: 'launch', boilKey: 's01a wrist' });
+    himWrist(WX, WY, WU, { ang: WANG, bandK, bandEnd: end, clickT: CLICK, twitch: seg(t, CLICK + .12, CLICK + .42), curl: .85, outfit: 'launch', boilKey: 's01a wrist' });
     // her
     const p = (t - CLIMB0) / CLIMB, climbing = p < 1.05, f = aiEmotions(t, [[T_A, 'eager'], [CLICK + .3, 'smile']]);
     const grab = t >= 11.74 && t < CLICK + .5, pat = t >= CLICK + .1 && t < CLICK + .6;

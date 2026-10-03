@@ -7,7 +7,7 @@
 | G3 | S06+S07 | 待審（fix #2：06F 由 Opus 重做，已 push） | 0.1–0.7（06F 約 0.6–0.7） | – | `film/out/preview_G3.mp4`、`film/out/preview_06F.mp4`（96–101 s） |
 | G4 | S08 | 待審（fix #1 已 push） | 0.04–0.6 | – | `film/out/preview_G4.mp4`（已重出，0.09 s/幀牆鐘） |
 | G5 | S09 | 待審（fix #1 已 push） | 0.07–0.2（09H +0.13；拉霸 0.25–0.6） | – | `film/out/preview_G5.mp4`（已重出） |
-| G6 | S10–S13 | 待審（已 push） | 0.005–0.12，首幀 tile 1–3 s，12C 0.6 | – | `film/out/preview_G6.mp4`（1141 幀，2 workers 2.5 min） |
+| G6 | S10–S13 | 待審（fix #1 + S00/S01 潤飾已 push） | 0.005–0.12，首幀 tile 1–3 s | – | `film/out/preview_G6.mp4`（已重出） |
 
 ## 共用檔案請求（候選，等主 session 決定）
 - him IV 管下垂：已加 `ivSag` 選項（lead 改，預設不變），04C 修改時使用。
@@ -38,3 +38,5 @@
 ## [ask] him.js `swapped` 配色（G6 回饋 P2，lead 改）
 前後對照：`docs/review/G6/swapped_before_after.jpg`（上＝之前、下＝之後；168.6 / 174.2 / 180.0）。
 改了：色塊更暗（himNavy 上限 #13385A → #0C2742）；線更亮（ink #8FF0FF → #A6F4FF、inkSoft #3FB4DE → #62CDF0）；小 u 時線更粗（clean 線寬倍率 0.8 → u 25 時 1.35、u 85 以上回到 0.8）；swapGlow 頭部 .4 → .22、身體 .3 → .2，不再洗白臉。只影響 `pal: 'swapped'`（S10）。請確認方向，可以就沿用；G6 fix 會在這個配色上重出。
+- G6 fix #1：10C 改為垂直鏡像（他在上 u 22、她在下 u 46、十條線垂直落下，背景換成藍圖虛空 `setWardVoid('final')`）；10E 她的手放在他頭髮輪廓上輕撫；弱點：10C 兩人在 zoom 0.8 下偏小、10E 她的手臂仍僵硬。`swapped` 配色已獲核准。
+- S00/S01 潤飾（lead）：00D 臉上 glow .46→.23、glare .3→.12、開場 spill .9→.6；01A 手與前臂在桌面加柔和投影（5 層水洗），手指 curl .85（`himWrist` 新增 `curl` 選項，預設 .3 不變）。全尺寸檢查：`docs/review/S00S01/t8_00.jpg`、`t12_30.jpg`。
