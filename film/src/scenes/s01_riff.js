@@ -1,7 +1,7 @@
 // S01 RIFF "DIAGNOSIS" (11.16-22.33, b9-16, instrumental): 01A the band · 01B the chart. STORYBOARD §6.
 // No vocals: the lower frame is free, but text still sits in the middle. Read src/scenes/README.md first.
 (() => {
-  const SEC = section('S01');
+  const SEC = sectionById('S01');
   const T_A = SEC.start, T_B = kitCut(11, 1, 13.95), T_END = SEC.end;
   const kick = onsets('kick').filter(x => x >= T_A - .01 && x <= T_END + .3);       // the kick drum (S01 has the full kit)
 
@@ -16,16 +16,16 @@
   const WU = 150, WX = 700, WY = 600, WANG = 3.04;                          // his wrist: u 150, hand pointing up (a little right)
   const WD = [Math.sin(WANG), Math.cos(WANG)], WN = [-WD[1], WD[0]];       // along the hand, and across the wrist (the band's far -> near)
   const WAT = [WX + WD[0] * .2 * WU, WY + WD[1] * .2 * WU], WNEAR = [WAT[0] + WN[0] * .78 * WU, WAT[1] + WN[1] * .78 * WU];
-  const PX = 1200, PY = 830, PH = 640, PW = PH * .5, PTOP = PY - PH / 2 + PW * .1;      // the phone lying on the desk (screen top edge = her ground while she climbs)
-  const HER_U = 40, CLIMB0 = T_A + .02, CLIMB = .6, CLICK = kitCut(10, 3, 12.56);
+  const PX = 1230, PY = 830, PH = 640, PW = PH * .5, PTOP = PY - PH / 2 + PW * .1;      // the phone lying on the desk (screen top edge = her ground while she climbs)
+  const HER_U = 36, CLIMB0 = T_A + .02, CLIMB = .6, CLICK = kitCut(10, 3, 12.56);
   const herPos = t => {                                                     // where she stands (feet), world px
-    const hop = seg(t, 11.74, 12.0), run = seg(t, 12.2, CLICK - .02), back = seg(t, CLICK + .55, CLICK + .85);
-    let x = lerp(PX, 930, kitEase.sine(hop)), y = lerp(PTOP, 650, kitEase.sine(hop)) - 70 * Math.sin(hop * Math.PI) * (hop < 1 ? 1 : 0);
-    x = lerp(x, 880, kitEase.in2(run)) + 40 * kitEase.sine(back); y += 20 * kitEase.in2(run) + 30 * kitEase.sine(back);
+    const hop = seg(t, 11.74, 12.02), run = seg(t, 12.2, CLICK - .02), back = seg(t, CLICK + .6, CLICK + .9);
+    let x = lerp(PX, 1010, kitEase.sine(hop)), y = lerp(PTOP, 715, kitEase.sine(hop)) - 90 * Math.sin(hop * Math.PI) * (hop < 1 ? 1 : 0);
+    x = lerp(x, 975, kitEase.in2(run)) + 50 * kitEase.sine(back); y += 6 * kitEase.in2(run) + 20 * kitEase.sine(back);
     return [x, y];
   };
   function s01a(t, lt, dur) {
-    const pk = kitEase.inOut3(seg(t, CLICK, T_B)), z = kitZoom(t, CLICK, T_B, 1, 1.5, kitEase.inOut3), cEnd = kitAnchor(WAT[0], WAT[1], 1000, 560, 1.5);
+    const pk = kitEase.inOut3(seg(t, CLICK, T_B)), z = kitZoom(t, CLICK, T_B, 1, 1.5, kitEase.inOut3), cEnd = kitAnchor(WAT[0], WAT[1], 700, 560, 1.5);
     camBegin(lerp(960, cEnd[0], pk), lerp(540, cEnd[1], pk), z);
     setSurface('desk', 'night', { res: 1 });
     // the phone: lit on the cut, settling to a steady glow

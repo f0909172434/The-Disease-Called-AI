@@ -2,7 +2,7 @@
 // STORYBOARD §6. Read src/scenes/README.md first. Shots are pure functions of t: s00a(t, lt, dur) ...
 (() => {
   // ---- the cuts (the score grid; kitCut follows the song's data) ----
-  const SEC = section('S00');
+  const SEC = sectionById('S00');
   const T_A = SEC.start, T_B = kitEv('typing', 0, 2.79), T_C = kitEv('typing', 10, 4.19), T_D = kitCut(6, 3, 7.67), T_END = SEC.end;
   const hbT = i => kitEv('heartbeat', i, i * .6977);                   // her heartbeats: 0.00, 0.70, 1.40, 2.09, 2.79 ...
   const typ = events('typing');
