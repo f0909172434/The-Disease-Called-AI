@@ -8,6 +8,8 @@
 
 🎬 **成片 Film**：[`output/病名為AI_The_Disease_Called_AI.mp4`](output/病名為AI_The_Disease_Called_AI.mp4)　1920×1080 · 24 fps · 3:35 · H.264 + AAC
 
+▶️ **線上觀看 Watch**：[YouTube](https://youtu.be/ha-ANfqri6g) · [bilibili](https://www.bilibili.com/video/BV1VxHi6mELF)
+
 | | | | |
 |---|---|---|---|
 | ![00C](docs/stills/6.8.jpg) | ![04B](docs/stills/59.9.jpg) | ![06F](docs/stills/98.3.jpg) | ![08A](docs/stills/119.3.jpg) |
