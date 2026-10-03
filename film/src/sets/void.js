@@ -28,7 +28,11 @@ function setShards(t, o = {}) {
     const s = 26 + 46 * hash(i * 3.9), rot = t * (.6 + hash(i)) * (hash(i * 7) > .5 ? 1 : -1) + i, col = mixCol(cols[i % cols.length], '#6E6E78', ash);
     const P = [[-1, -.6], [.9, -.8], [1.1, .5], [-.4, .9]].map(([px, py]) => [px * (1 + .3 * hash(i + px)), py * (1 + .3 * hash(i * 2 + py))]);
     boilSeed('shard' + i);
-    setP(setTf(P, x, y, s, rot), { wash: col, washOp: 255 * (1 - ash * .5), ink: i % 3 ? null : '#E8FDFF', sw: .6 });
+    // watercolour: a wash, a paler pigment pool inside, a darker wet edge (pigment gathers at the rim), an inked edge of uneven weight
+    const wo = 255 * (1 - ash * .5), rim = mixCol(col, '#0A0C24', .45), pool = mixCol(col, '#FFFFFF', .28 + .15 * hash(i * 4.4));
+    setP(setTf(P, x, y, s, rot), { wash: col, washOp: wo, ink: null });
+    setP(setTf(P.map(([px, py]) => [px * .62 + .12 * (hash(i * 6.1) - .5), py * .62]), x, y, s, rot), { wash: pool, washOp: wo * .55, ink: null });
+    setP(setTf(P, x, y, s, rot), { wash: null, ink: i % 3 ? rim : '#E8FDFF', sw: .5 + .7 * hash(i * 8.8), line: true });
     if (i % 3 === 0 && ash < .8) glow(x, y, s * 2, SET_C.cyan, .35 * (1 - ash));
   }
 }

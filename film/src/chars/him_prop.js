@@ -453,7 +453,7 @@ function himAfter(K, c, o, u, sw, x, y) {
     if (!p) return;
     const to = Array.isArray(o.ivTo && o.ivTo[0]) ? (o.ivTo[i] || o.ivTo[0]) : o.ivTo || [x - sx * (6 + 2 * i) * u, y - 30 * u];
     const d = HIM_W.ivDir[i], a1 = [p[0] + (d[0] - p[0]) * .8, p[1] + (d[1] - p[1]) * .8];
-    const P = through([p, a1, ...sag(a1, to, 2.5 * u).slice(1)], 6);
+    const P = through([p, a1, ...sag(a1, to, (o.ivSag ?? 2.5) * u).slice(1)], 6);
     himInkV(P, .9 * sw, mixCol(HIM_CYAN, '#1B6FFF', .25), c.clean ? 'himclean' : 'inkfine', 0);
     himInkV(P, .35 * sw, HIM_CYANW, 'inkfine', 0);
     for (let k = 0; k < 3; k++) {   // glowing tokens flowing down the line into his arm (one light per line: glow() is costly)
