@@ -217,21 +217,121 @@
   // here.* the phone's light pulses with her voice. He turns toward it and curls up. The camera creeps up.
   // reads: 97.67-98.90 two faces on one pillow · 98.90-99.80 she dissolves into the phone · 99.80-100.47 he curls to it
   // =============================================================================================================
-  const F_DIS0 = 98.95, F_DIS1 = 99.55, F_HERE = (lyricById('V2_AIc') || {}).start ?? 99.77;
+  // Staging (top view, the 06G sheet): one wide pillow across the top third; her head on its left half facing right, his
+  // on its right half facing left. Only their heads and shoulders are drawn (busts, near upright: a profile seen from
+  // straight above IS a head lying on its side); ONE duvet is painted over both from the shoulders down, two soft ridges
+  // where their bodies are, running out of the bottom of the frame, so no body is ever cut.
+  const F_DIS0 = 98.95, F_DIS1 = 99.65, F_HERE = (lyricById('V2_AIc') || {}).start ?? 99.77, F_CURL0 = 99.80;
+  const F_AI = { x: 740, y: 520, u: 190, roll: .12 }, F_HIM = { x: 1190, y: 520, u: 66, rot: -.14 }, F_PH = [766, 352];
+  // the duvet's turned-down hem (world px, left → right): up under both chins, dipping between them
+  const F_HEM = [[-220, 640], [160, 600], [420, 548], [690, 500], [900, 540], [1010, 548], [1240, 492], [1520, 536], [1780, 596], [2140, 636]];
+  const s06fHem = c => F_HEM.map(([x, y], i) => [x - (i >= 4 && i <= 7 ? 26 * c * (i === 4 ? .5 : 1) : 0), y + (i >= 5 && i <= 7 ? 10 * c : 0)]);
+  // the pillow: one wide soft pillow, its dents under the two heads (painted live: a few washes). The bed top's own
+  // smaller pillow (setSurface) is painted out with the sheet first.
+  function s06fPillow(P) {
+    const pil = mixCol(P.pillow, '#FFFFFF', .3), sh = P.pillowSh, ln = mixCol(P.ink, P.pillowSh, .35);
+    boilSeed('s06f sheet over'); paint([[-260, -260], [2180, -260], [2180, 170], [-260, 170]], { wash: P.sheet, ink: null });
+    paint([[-260, 40], [2180, 40], [2180, 170], [-260, 170]], { wash: P.sheetSh, washOp: 60, ink: null });
+    boilSeed('s06f pillow shadow'); paint([[160, 140], [1760, 130], [1800, 660], [150, 670]], { wash: P.sheetSh, washOp: 130, ink: null, curv: .8 });
+    boilSeed('s06f pillow');
+    const O = [[240, 128], [600, 96], [960, 108], [1320, 94], [1680, 124], [1760, 300], [1730, 560], [1360, 632], [960, 618], [560, 634], [196, 572], [170, 330]];
+    paint(O, { wash: pil, ink: ln, sw: .9, curv: .8 });
+    paint([[200, 480], [600, 566], [960, 552], [1320, 566], [1730, 480], [1720, 560], [1360, 626], [960, 612], [560, 628], [206, 568]], { wash: sh, washOp: 110, ink: null, curv: .7 });
+    paint([[250, 150], [600, 116], [960, 130], [1320, 112], [1660, 140], [1600, 190], [960, 168], [330, 200]], { wash: sh, washOp: 60, ink: null, curv: .7 });
+    inkLine([[960, 116], [952, 260], [966, 420], [958, 606]], .45, sh, 'inkfine', .6);          // the seam between the two halves (a long pillow)
+    for (const [x0, s] of [[280, 1], [1650, -1]]) inkLine([[x0, 190], [x0 + 30 * s, 330], [x0 + 6 * s, 480]], .5, sh, 'inkfine', .6);
+    // dents: a soft shadow where each head sinks in (offset down-right: the light is from the top left)
+    boilSeed('s06f dents');
+    paint(ellPts(F_AI.x + 30, F_AI.y - 140, 250, 170, 22, 14), { wash: sh, washOp: 70, ink: null, curv: .8 });
+    paint(ellPts(F_HIM.x + 20, F_HIM.y - 150, 170, 150, 22, 12), { wash: sh, washOp: 70, ink: null, curv: .8 });
+  }
+  // her hair fanned out on the pillow behind her head (the bust's own locks hang; these lie): wide S-wave locks
+  // overlapping in a fan, navy at the root, lighter toward the tip, every tip free and pointed (never cut)
+  function s06fHairFan(dis) {
+    const A = AI_PAL.glow, op = 255 * Math.pow(1 - dis, 1.3); if (op < 4) return;
+    const c = [F_AI.x - 20, F_AI.y - 215];
+    // [angle (rad, screen), length, width, wave sign, shade]: back to front
+    const L = [[3.75, 300, 92, 1, 0], [2.35, 300, 90, -1, 0], [3.3, 360, 100, -1, 0], [2.8, 350, 100, 1, 0], [4.1, 230, 80, -1, 1],
+      [3.55, 330, 84, 1, 1], [3.05, 380, 86, -1, 1], [2.55, 320, 82, 1, 1], [3.3, 300, 60, 1, 2], [2.85, 290, 56, -1, 2], [3.8, 250, 54, -1, 2]];
+    const sh = [A.hair0, A.hair1, A.hair2];
+    L.forEach(([a, len, w, wv, d], i) => {
+      boilSeed('s06f fan' + i);
+      const p = k => { const ang = a + wv * .2 * Math.sin(k * 4.2 + i * 1.3) * k, r = len * k; return [c[0] + Math.cos(ang) * r, c[1] + Math.sin(ang) * r * .82]; };
+      const spine = [.05, .25, .45, .65, .82, .94, 1].map(p);
+      paint(ribbon(spine, w, 2), { wash: sh[d], washOp: op, ink: null });
+      paint(ribbon(spine.slice(3), w * .45, 1), { wash: d === 2 ? A.hair2 : A.hair1, washOp: op * .5, ink: null });
+      const R = ribbon(spine.slice(1), w * .92, 2), n = R.length / 2;
+      inkLine(R.slice(0, n), .55, A.hairInk, 'inkfine', .6);           // one side of the lock only: it grows out of the mass
+    });
+  }
+  // the duvet: one washed cover over both. Each body is a long soft rise under it (shoulder, hip, the drawn-up knees
+  // turning toward the middle), lit from the top left and glazed in a few thin layers; the slack falls into a valley
+  // between them and everything runs out of the bottom of the frame. c = his curl 0..1 (his hip and knees come in).
+  function s06fQuilt(c, P) {
+    const hem = through(s06fHem(c), 5), lo = 1340;
+    const base = mixCol(P.cover, '#FFFFFF', .3), dk = mixCol(P.cover, P.ink, .1), lt = mixCol(P.coverLt, '#FFFFFF', .45);
+    boilSeed('s06f quilt'); paint(hem.concat([[2140, lo], [-220, lo]]), { wash: base, ink: null });
+    boilSeed('s06f quilt tex'); paint([[-220, 620], [2140, 620], [2140, lo], [-220, lo]], { fill: dk, fillOp: 26, bleed: .2, tex: .8, ink: null });
+    const her = [[700, 560], [684, 720], [648, 900], [676, 1070], [760, 1200], [790, 1360]];
+    const his = [[1236, 560], [1256 - 20 * c, 720], [1284 - 50 * c, 900], [1252 - 80 * c, 1060], [1170 - 100 * c, 1190 - 30 * c], [1140 - 90 * c, 1360]];
+    const off = (S, dx) => S.map(([x, y], i) => [x + dx * (i ? 1 : .4), y]);
+    const glaze = (S, w, col, op, key) => { boilSeed('s06f ' + key); for (const k of [1, .72, .45]) paint(ribbon(S, w * k, w * k * 1.1), { wash: col, washOp: op, ink: null }); };
+    // the valley and the far sides in shade, each body's shadow side (its right), then the lit tops
+    glaze(her.map(([x, y], i) => [(x + his[i][0]) / 2 + 30, y + 30]), 150, dk, 45, 'valley');
+    glaze([[-60, 600], [-80, 900], [-60, 1360]], 360, dk, 45, 'outL'); glaze([[1980, 600], [2000, 900], [1980, 1360]], 360, dk, 45, 'outR');
+    glaze(off(her, 120), 170, dk, 40, 'herSh'); glaze(off(his, 120), 160, dk, 40, 'hisSh');
+    glaze(off(her, -30), 260, lt, 60, 'herLt'); glaze(off(his, -30), 240, lt, 60, 'hisLt');
+    glaze(off(her, -70), 90, '#FFFFFF', 45, 'herHi'); glaze(off(his, -70), 80, '#FFFFFF', 45, 'hisHi');
+    // wrinkles: pulls off the shoulders, slack sagging across the valley between the hips and knees
+    boilSeed('s06f folds'); const fc = mixCol(dk, P.ink, .2), fw = .6;
+    const W = [[[540, 650], [490, 780], [450, 900]], [[860, 660], [890, 770], [880, 860]], [[1090, 660], [1060 - 20 * c, 770], [1050 - 40 * c, 860]], [[1410, 650], [1460, 780], [1480, 900]],
+      [[810, 920], [890, 980], [930 - 30 * c, 1070]], [[1110 - 50 * c, 900], [1030 - 50 * c, 960], [990 - 50 * c, 1060]], [[900, 1100], [940 - 20 * c, 1180], [950 - 30 * c, 1290]],
+      [[400, 900], [370, 1030], [350, 1160]], [[1540, 900], [1570, 1030], [1590, 1160]], [[560, 1100], [620, 1180], [650, 1300]], [[1320 - 60 * c, 1100], [1260 - 70 * c, 1180], [1240 - 70 * c, 1300]]];
+    W.forEach(L => inkLine(L, fw, fc, 'inkfine', .6));
+    // the turned-down hem: a lighter band of cover, inked along its top edge, a soft shadow under it, a few creases
+    const hemBot = hem.map(([x, y]) => [x, y + 64 + 12 * Math.sin(x * .005)]);
+    boilSeed('s06f hem');
+    paint(hemBot.map(([x, y]) => [x, y - 4]).concat(hemBot.map(([x, y]) => [x, y + 24]).reverse()), { wash: dk, washOp: 90, ink: null });
+    paint(hem.concat(hemBot.slice().reverse()), { wash: lt, ink: null });
+    inkLine(hem, 1.2, P.ink, 'ink', .5);
+    inkLine(hemBot, .55, dk, 'inkfine', .5);
+    for (const x of [420, 880, 1060, 1500, 250]) { const yy = hem.reduce((m, q) => Math.abs(q[0] - x) < Math.abs(m[0] - x) ? q : m)[1]; inkLine([[x, yy + 8], [x + 16, yy + 34], [x + 8, yy + 58]], .45, dk, 'inkfine', .6); }
+  }
+  // the phone lying screen up on the pillow, where her face was: painted once into a transparent cached layer so it can
+  // fade in under a tint while she dissolves; its light is live (a painted halo + glows) and pulses with her voice
+  function s06fPhoneLayer() { cachedLayer('s06f phone', 1, () => setPhone(F_PH[0], F_PH[1], 230, { rot: -.18, glow: 0, key: 's06f', screen: S => setScreenGlass(S, 'cyan', { key: 'pillow6f', bright: .85 }) }), { paper: false }); }
+  function s06fPhone(a) {
+    if (a <= .003) return;
+    push(); translate(1e5, 1e5); s06fPhoneLayer(); pop();         // the layer exists before the tint (a miss repaints the frame)
+    push(); tint(255, 255 * clamp(a)); s06fPhoneLayer(); noTint(); pop();
+  }
   function s06f(t, lt, dur) {
-    const cy = lerp(262, 212, kitEase.sine(seg(lt, 0, dur)));
-    camBegin(960, cy, 1.35);
-    setSurface('bed', 'drained', { res: 1.25 });
-    const dis = kitEase.sine(seg(t, F_DIS0, F_DIS1)), hv = vox('ai', t), AX = 760, AY = 222, PH = [812, 218];
-    const turn = kitEase.sine(seg(t, T_G - .67, T_G - .05)), curl = .45 + .5 * turn;
-    const P = setRoomPal('drained'), cover = P.cover;
-    // her: head and shoulders on the pillow, face to him. NO phone before she goes.
-    ai(AX, AY, 118, { ...aiEmotions(t, [[T_F, 'heart', { lookX: .3 }], [F_DIS0 - .1, 'gentle', { lookX: .3 }]]), form: 'full', pose: 'lie', view: 'q', roll: 1.45, pal: 'glow', t, seed: 4, dissolve: dis, dissolveTo: PH, cut: 1.5, boilKey: 's06f her' });
-    // the phone appears only as she dissolves, in her place, growing to size; its light pulses with her voice
-    const pk = dis * (t >= F_HERE ? .6 + .4 * hv : .75);
-    if (dis > 0.02) setPillowPhone(PH[0], PH[1], 110 + 220 * dis, { k: pk, rot: -.5, screen: S => { setScreenGlass(S, 'cyan', { key: 'pillow6f', bright: pk }); glow(S.X(.5), S.Y(.45), S.h * .55, SET_C.cyanW, .55 * pk); } });
-    him(1150, 835, 46, { ...himEmotions(t, [[T_F, 'smile', { mouth: 'soft', lookX: -.8 }], [F_DIS0 + .1, 'sad', { lookX: -.5 }], [F_HERE + .1, 'neutral', { lookX: -.9, lookY: .1 }]], { take: .3 }), pose: 'sidelie', view: 'side', flip: true, rot: -.1 * turn, outfit: 'home', pal: 'drained', curlK: curl, coverCol: cover, boilKey: 's06f him', seed: .3 });
-    if (dis > 0.02) glow(1040, 215, 300, SET_C.cyan, .4 * pk);
+    const z = kitZoom(lt, 0, dur, 1, .94, kitEase.sine);
+    kitCam(lt, [[0, 960, 540, z], [dur, 960, 530, z]], { drift: 1.5 });
+    setSurface('bed', 'drained', { res: 1 });
+    const P = setRoomPal('drained');
+    s06fPillow(P);
+    const dis = kitEase.sine(seg(t, F_DIS0, F_DIS1)), hv = vox('ai', t);
+    const curl = kitEase.sine(seg(t, F_CURL0, T_G - .02));
+    // her: head and shoulders on the pillow, face to him, soft heart eyes. NO phone before she goes.
+    s06fHairFan(dis);
+    if (dis < .999) ai(F_AI.x, F_AI.y, F_AI.u, { ...aiFeel('gentle', t, { eyes: 'heart', mouth: 'smile', blush: .7, lookX: .5, emote: null }), form: 'full', pose: 'lie', roll: F_AI.roll, view: 'q', pal: 'glow', t, seed: 4, dissolve: dis, dissolveTo: F_PH, cut: 1.2, noShadow: true, boilKey: 's06f her' });
+    // the phone fades in where her face was (98.95 on), lit; I'm here: the light pulses with her voice
+    const ph = kitEase.sine(seg(t, F_DIS0 + .1, F_DIS1 + .05));
+    const pk = ph * (t >= F_HERE ? .5 + .7 * hv : .7);
+    if (ph > 0) {
+      boilSeed('s06f halo'); paint(ellPts(F_PH[0], F_PH[1] + 10, 220 + 50 * pk, 170 + 40 * pk, 24), { wash: '#C8F3FF', washOp: 170 * pk, ink: null });
+      s06fPhone(ph);
+      glow(F_PH[0], F_PH[1], 240 + 80 * pk, SET_C.cyan, .5 * pk); glow(F_PH[0], F_PH[1], 110, SET_C.cyanW, .5 * pk);
+    }
+    // him: head and shoulders, profile to the left, a faint relaxed smile; 99.80 he shifts toward the phone and curls
+    const f = himEmotions(t, [[T_F, 'smile', { mouth: 'soft', lookX: -.6, lid: .25 }], [F_DIS0 + .25, 'neutral', { lookX: -.8, lid: .1 }], [F_CURL0, 'peace', { mouth: 'soft' }]], { take: .2 });
+    const hx = F_HIM.x - 30 * curl, hy = F_HIM.y + 12 * curl, hr = F_HIM.rot - .1 * curl;
+    push(); translate(hx, hy); rotate(hr); translate(-hx, -hy);
+    him(hx, hy, F_HIM.u, { ...f, pose: 'bust', cut: 2.6, view: 'side', flip: true, outfit: 'home', pal: 'drained', glare: .5 * pk, boilKey: 's06f him', seed: .3 });
+    pop();
+    if (pk > 0) glow(hx - 60, hy - 170, 220, SET_C.cyan, .3 * pk);
+    s06fQuilt(curl, P);
     camEnd();
   }
 

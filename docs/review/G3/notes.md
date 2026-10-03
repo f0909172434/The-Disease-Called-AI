@@ -4,7 +4,7 @@
 - 06C bust/bust, cup hands, cyan scan line, perfect-eye flash. ~0.1 s. Weak: bust arm stiff.
 - 06D sticker pressed (own larger sticker prop), he touches it, she nods, whip-out. ~0.1 s.
 - 06E five photos grey and tip as dominoes per beat, last falls off ledge; whip-in. ~0.03-1 s. 
-- 06F top view poster: two faces, she dissolves into glowing pillow phone (98.95-99.55), light pulses with her voice, he curls. ~0.5 s. Weak: no match-cut arc from 06E beyond the falling frame.
+- 06F (fix #2, Opus) top-view poster: one wide pillow, her `lie` bust (roll .12, q, heart eyes) + hair fanned on the pillow, his side/flip bust; one duvet painted over both from the shoulders (two soft rises, valley, runs out of frame: no cuts). 98.95-99.65 she dissolves, the phone (cached layer under a tint) fades in in her dent; 99.77 halo pulses with vox; 99.80 he shifts/curls to it, the duvet follows. Zoom 1.0→.94. ~0.65 s. Frames: f06F_98.30/99.40/100.20 (q60, 3 MB budget). Weak: his face is flat drained grey; quilt glaze shows stepped edges; phone light is subtle on the pale sheet.
 - 06G diary pages fly into phone; chibi her (u33) catches/files 5 glowing ✓ blocks. ~0.1-0.45 s.
 - 06H door knock, foreground bed cheat, phone lights at 104.40 before his hand, snow sinks to grey. ~0.1-1.2 s.
 - 07A huge phone + dots vanish, face tightens, snow lets go. ~0.5 s.
