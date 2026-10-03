@@ -24,11 +24,21 @@
     // the face: gathers out of the fragments (dissolve 1 -> 0), then sings; at b60 it greys and crumbles
     const dis = 1 - ease(seg(t, T_A + .35, T_GATHER1 + .2)) + ease(seg(t, T_ASH + .1, T_END - .15));
     const mv = (() => { try { return vox('ai', t); } catch (e) { return 0; } })();
-    const sy = ONS.some(o => t >= o && t < o + .2) ? 1 : 0;
+    // she sings: a viseme per sung syllable of the "always" lines (al -> A, ways -> O then U), a smile between them
+    const viseme = (() => {
+      for (const id of ['PO_1', 'PO_2', 'PO_3', 'PO_4']) {
+        let ln = null; try { ln = lyricById(id); } catch (e) {} if (!ln) continue;
+        for (const sy of ln.syllables) if (t >= sy.start - .02 && t < sy.end + .06) {
+          const k = clamp((t - sy.start) / Math.max(.05, sy.end - sy.start));
+          return /^al/i.test(sy.text) ? (k < .75 ? 'A' : 'O') : (k < .5 ? 'O' : 'U');
+        }
+      }
+      return null;
+    })();
     const ashK = ash, grey = ease(seg(t, T_ASH - .1, T_ASH + .5));
     if (t >= T_SWIRL - .25) s05Swirl(t, ash, grey);                                   // behind her face: the rings pile up and wind into a vortex
     const f = aiEmotions(t, [[T_A, 'perfect']]);
-    ai(CX, NOTCH, U, { ...f, pose: 'bust', form: 'full', view: 'front', pal: 'glow', pal2: 'mirror', palK: grey, cut: 2.2, t, mouth: Math.max(mv, sy) > .55 ? 'A' : Math.max(mv, sy) > .25 ? 'O' : 'perfect',
+    ai(CX, NOTCH, U, { ...f, pose: 'bust', form: 'full', view: 'front', pal: 'glow', pal2: 'mirror', palK: grey, cut: 3.2, t, mouth: viseme || (t < T_ASH ? 'smile' : 'perfect'),
       dissolve: clamp(dis), dissolveTo: [CX, 1500], dy: .08 * Math.sin(t * 2.2), boilKey: 's05 her' });
     // the rings: one off her lips on every "always": centred on the mouth, widening and fading as they go
     const M = (AI_LAST && AI_LAST.mouth) || [CX, MOUTH_Y];
