@@ -1,0 +1,11 @@
+# G5 notes: S09 BRIDGE (film/src/scenes/s09_bridge.js). Cost 0.07-0.2 s/frame in screen shots, 0.25-0.6 s/frame on the slot (cold cache 1.5 s).
+- 09A 139.53-142.33 (0.1 s/f): black with 08G's turning loop; it fades as his tearful bust (cry, tears, mouth from B_ASK syllables) rises in cyan screen light; leans and pushes in; holds breath from 141.85. Weak: the sustained "me" ends 142.15, so the held breath is only the last ~.3 s.
+- 09B 142.33-145.12 (0.1): her bust in the glass (sad, lip-synced to B_AI1), his finger from lower right hovers over the big loop with a tremor (143.90), presses at 144.77; loop turns amber, her acting rewinds with scan bands. Weak: she looks a little cheerful while talking.
+- 09C 145.12-147.91 (0.1): worried answer; at 146.3 she glances/turns right with a painted chevron (no arm: bust has no usable pointing arm); finger dives in and pokes at 147.56, rewind.
+- 09D 147.91-149.30 (0.1): "You deserve-", poke at 148.43, rewind never stops: accelerating, scan bands, white-out into 09E.
+- 09E 149.30-150.70 (0.15-0.6): pull back, glass becomes slot (cabinet grows .25 s), three spinning reels (her face in strips), lever tracked by his hand, 12 yanks on the lever events. Weak: he starts half in frame; lever arc is small.
+- 09F 150.70-152.09 (0.25-0.6): reels stop on 150.70/151.05/151.40 with bounce, gold flash per reel, heart eyes (pink hearts over her eyes), confetti, push-in, gold spill into 09G.
+- 09G 152.09-153.49 (0.1): laugh + tears in gold light, confetti falling. One read.
+- 09H 153.49-164.65 (0.07-0.15): gold drains, mirror goes black, glint, his silver reflection, ripple at 156.28, ripple + veil swap to her in his pose/tilt (dissolve), sings, ripples every half bar from her mouth, amber seeps (glow + palette), palm rises. Weak: the amber is a palette tint; palm is small.
+- 09I 164.65-167.44 (0.1-0.2): glass edge-on, both full figures, his flat palm meets hers at 165.25, ripples + swirl, "Then speak for me" mouth, her eyes close, whirl, white (#F4F9FF) from 166.65, solid by 167.09. Weak: her mirror palette is dim next to him.
+Requests: ai_fx aiReels cached faces use global T (heart-eye pulse): worked around by setting T=0 during the call (s09 only); fix in ai_fx.js if wanted.

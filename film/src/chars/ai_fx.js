@@ -236,7 +236,8 @@ function aiReels(t, o) {
   const fi = faces.indexOf(fin) >= 0 ? faces.indexOf(fin) : nf - 1;
   const draw = name => () => {
     boilSeed(key + ' bg ' + name); paint(rectPts(x - 10, y - 10, w + 20, h + 20), { wash: o.bg || '#101634', ink: null });
-    AI_NOGLOW = true; ai(x + w / 2, y + h * .5 + 1.05 * u, u, { ...aiFeel(name, 0), form: 'full', pose: 'bust', pal: o.pal || 'glow', t: 0, seed: 3, blink: 0, bob: 0, tilt: 0, cut: 1.6, clip: [x, y, x + w, y + h], boilKey: key + name }); AI_NOGLOW = false;
+    const Tsave = T; T = 0;   // the cached faces must not depend on the frame that first paints them (heart eyes pulse with the global T)
+    AI_NOGLOW = true; ai(x + w / 2, y + h * .5 + 1.05 * u, u, { ...aiFeel(name, 0), form: 'full', pose: 'bust', pal: o.pal || 'glow', t: 0, seed: 3, blink: 0, bob: 0, tilt: 0, cut: 1.6, clip: [x, y, x + w, y + h], boilKey: key + name }); AI_NOGLOW = false; T = Tsave;
   };
   for (const f of faces) { push(); translate(-8 * W, 0); cachedLayer(key + ' ' + f, 1, draw(f), { paper: false }); pop(); }
   const allStopped = t >= stops[2] + .25 && o.live !== false;

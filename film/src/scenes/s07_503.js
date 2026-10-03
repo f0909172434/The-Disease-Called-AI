@@ -47,7 +47,7 @@
   // strips; he lunges and his hands pass through her; 110.76-111.1 she breaks into shards that fall; 111.63 it is black.
   // reads: 108.84-109.90 she flickers · 109.90-110.76 torn open, his hands go through · 110.76-111.63 she shatters, black
   // =============================================================================================================
-  const B_X = 1130, B_Y = 2120, B_U = 82, B_TEAR = 110.23, B_BREAK = 111.10;
+  const B_X = 1130, B_Y = 2120, B_U = 82, B_TEAR = 110.23, B_SHARD = 110.76, B_BREAK = 111.10;
   const B_CAM = [1420, 1745, .9];
   function s07b(t, lt, dur) {
     kitCam(lt, [[0, B_CAM[0], B_CAM[1], B_CAM[2]], [dur, B_CAM[0] - 30, B_CAM[1], B_CAM[2] * 1.03]], { drift: 2, shake: 5 * seg(t, 110.76, 111.5) });
@@ -59,7 +59,18 @@
     const herOpts = { ...aiEmotions(t, [[T_B, 'worried'], [109.6, 'perfect']]), form: 'full', view: 'front', pal: 'glow', t, seed: 4, boilKey: 's07b her' };
     const gl = Math.max(.9 * evPulse('glitch', t, .09), t >= B_TEAR - .3 && t < B_TEAR ? (t - B_TEAR + .3) / .3 * .5 : 0);
     if (t < B_TEAR) { if (!off) ai(B_X, B_Y, B_U, { ...herOpts, glitch: gl, dx: .12 * (fl - .5) * seg(t, T_B + .4, B_TEAR) }); else ai(B_X, B_Y, B_U, { ...herOpts, glitch: .5 + gl, dx: (fl - .5) * .4, silhouette: SET_C.cyan, silOp: 200 }); }
-    else { push(); translate(0, B_Y - 1000); aiShards(t, { x: B_X, y: 1000, u: B_U, pose: { ...aiEmotions(B_TEAR, [[0, 'perfect']]), view: 'front', pal: 'glow', seed: 4 }, tStill: B_TEAR, key: 's07b', t0: B_TEAR, t1: B_BREAK, n: 8, cols: 3, fall: 2600 }); pop(); }
+    else {      // torn into strips that slide apart, red / cyan fringes (the same strips, offset and tinted), then shards fall
+      const o = { x: B_X, y: 1000, u: B_U, pose: { ...aiEmotions(B_TEAR, [[0, 'perfect']]), view: 'front', pal: 'glow', seed: 4 }, tStill: B_TEAR, key: 's07b', t0: B_TEAR - .25, t1: B_BREAK, n: 9, cols: 3, fall: 2600 };
+      push(); translate(0, B_Y - 1000);
+      aiShards(t, o);
+      pop();
+      if (t < B_BREAK) {     // red / cyan fringes on the torn edges: a short bar at each cut, jumping sideways
+        const gf = Math.floor(t * 12), y0 = B_Y - 11 * B_U, y1 = B_Y + .6 * B_U;
+        boilSeed('s07b fringe' + gf);
+        for (let i = 1; i < 9; i++) { const yy = lerp(y0, y1, i / 9), j = (hash(i * 3.1 + gf * .7) - .5) * 2.6 * B_U, w = (1.2 + 2 * hash(i + gf)) * B_U;
+          inkLine([[B_X + j - w / 2, yy - 3], [B_X + j + w / 2, yy - 3]], 1.6, '#FF4D7D', 'ink', 0); inkLine([[B_X + j - w / 2 + 16, yy + 3], [B_X + j + w / 2 + 16, yy + 3]], 1.6, '#7FE9FF', 'ink', 0); }
+      }
+    }
     // him: phone in both hands, looks up (cut on action), then up, lunges at her, hands through, stumbles on
     const sp = kitEase.inOut3(seg(t, 109.62, 110.9)), run = (t > 109.62 && t < 110.98) ? 3.4 * (t - 109.62) : 0, X = lerp(1790, 1010, sp);
     const lunge = t >= 109.62;
@@ -95,6 +106,7 @@
   function s07d(t, lt, dur) {
     const cam = kitCam(lt, [[0, 1400, 1880, .78], [dur, 1380, 1860, .84]], { drift: 1.5 });
     setRoom('black503', { t, res: .7, screen: 0 });
+    boilSeed('s07d dark'); paint(rectPts(cam.cx - 1700, cam.cy - 1000, 3400, 2000), { wash: '#05060A', washOp: 214, ink: null });                      // the room all but gone: only the phone's light shows a little floor
     const hbk = hb.reduce((m, b) => Math.max(m, t >= b ? Math.exp(-(t - b) * 9) : 0), 0), press = kitMove(t, 113.8, 114.1, { over: .05, ant: .1 });
     const f = himEmotions(t, [[T_D, 'cry', { tears: .3 }]], { take: 0 });
     const hx = 1400, hy = 2130;

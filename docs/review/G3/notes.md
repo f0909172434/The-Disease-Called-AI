@@ -13,3 +13,7 @@
 - 07D page shrinks into phone (camera anchor iris), he rocks curled. ~0.1-1 s.
 - 07E cry bust + poking hand, local face light per retry, shake ramp, cyan spill from below. ~0.4 s.
 Determinism: 13 sampled frames identical across orders/processes.
+
+## Fix #1
+- 06F redone: sidelie side/flip + lie q roll 1.45 face-to-face, no phone before 98.95, phone grows in her place, light pulses with voice.
+- 06B zoom 1.9, phone size 5.6; 06E scaled frames (1.4x, zoom 1.95, ~66% width); 07B live torn strips + red/cyan fringe bars (strip slide still modest); 07D room darkened. 06A key re-exported.

@@ -78,7 +78,7 @@
   // reads: 86.51-87.91 she types for him · 87.91-88.80 sent, mum's photo turns grey · 88.80-89.30 phone down, her smile
   // =============================================================================================================
   const B_SEND = 87.907, B_DOWN = 88.80;
-  const B_CAM = [850, 1560, 1.45];
+  const B_CAM = [850, 1545, 1.9];
   // the screen of her phone: mum's photo (warm; g = grey 0..1), her typed reply (cyan bars, no letters), the sent bubble
   function s06phoneScreen(g, typed, sent) {
     return (sc, at, h, w) => {
@@ -98,14 +98,14 @@
       // her reply: cyan bars growing (no letters); sent: one solid bubble
       const rows = [[.7, -.06], [.5, -.14], [.62, -.22]], f = clamp(typed);
       if (sent <= 0) rows.forEach(([len, x], i) => { const q = clamp(f * rows.length - i); if (q <= 0) return; const y1 = .36 - .72 * len * q;
-        P([[x - .022, .36], [x - .022, y1], [x + .022, y1], [x + .022, .36]], { wash: AI_CYAN_, op: 235, ink: null }); });
+        P([[x - .034, .36], [x - .034, y1], [x + .034, y1], [x + .034, .36]], { wash: AI_CYAN_, op: 235, ink: null }); });
       else if (sent < 1) { const fl = easeOut(sent), a = 1 - sent, dx = .55 * fl; P([[-.04 + dx, -.36], [-.04 + dx, .36], [-.3 + dx, .36], [-.3 + dx, -.36]], { wash: AI_CYAN_, op: 235 * a, ink: null }); }
     };
   }
   const AI_CYAN_ = '#7FE9FF', S0 = () => AI_S;
   function s06b(t, lt, dur) {
     kitCam(lt, [[0, B_CAM[0], B_CAM[1], B_CAM[2]], [dur, B_CAM[0] + 6, B_CAM[1] - 10, B_CAM[2] * 1.04]], { drift: 3 });
-    setRoom('drained', { t, res: 1.4 > 1.25 ? 1.4 : 1, screen: .18 });
+    setRoom('drained', { t, res: 1.8, screen: .18 });
     const HU = 31, AX = 760, AY = 1722, AU = 82, HX = 1180, HY = 1734, curl = .55, lean = .2;
     // the phone rises into her hands (picked up), is typed on, then turned face down
     const up = kitEase.sine(seg(t, T_B, T_B + .4)), down = kitEase.sine(seg(t, B_DOWN - .05, B_DOWN + .3));
@@ -113,7 +113,7 @@
     const typed = seg(t, T_B + .15, B_SEND - .05), sent = seg(t, B_SEND, B_SEND + .25), grey = kitEase.sine(seg(t, B_SEND + .1, B_SEND + .6));
     const face = t < B_DOWN ? 'gentle' : 'smile';
     const f = aiEmotions(t, [[T_B, 'gentle', { lookY: .35 }], [B_DOWN - .1, 'smile', { lookX: .6, lookY: 0 }]]);
-    const hold = aiAct('hold', t, T_B - .1, { form: 'full', at: c, w: .5, prop: t < B_DOWN + .15 ? { kind: 'phone', screen: 'type', thumbs: t < B_SEND + .3, t, size: 4.4, glow: .5, draw: s06phoneScreen(grey, typed, sent), ang: -Math.PI / 2 + .12 * down } : { kind: 'phone', screen: 'back', size: 4.4 } });
+    const hold = aiAct('hold', t, T_B - .1, { form: 'full', at: c, w: .5, prop: t < B_DOWN + .15 ? { kind: 'phone', screen: 'type', thumbs: t < B_SEND + .3, t, size: 5.6, glow: .5, draw: s06phoneScreen(grey, typed, sent), ang: -Math.PI / 2 + .12 * down } : { kind: 'phone', screen: 'back', size: 5.6 } });
     setRoomSnow({ t });
     glow(AX + 20, 1520, 380, SET_C.cyan, .25);
     const sit = { form: 'full', pose: 'sit', view: 'front', pal: 'glow', t, seed: 4, boilKey: 's06b her' };
@@ -190,21 +190,22 @@
   const eStart = i => E_T0 + i * E_BEAT;
   function s06e(t, lt, dur) {
     const wi = kitWhipIn(lt, .22, 1), pan = kitEase.sine(seg(lt, .2, dur));
-    kitCam(lt, [[0, lerp(3760, 3985, pan) + wi.dx, 1205, 1.9]], { drift: 3 });
+    kitCam(lt, [[0, lerp(3790, 3975, pan) + wi.dx, 1235, 1.95]], { drift: 3 });
     setRoom('drained', { t, res: 1.8, photos: 'none', screen: .18 });
-    const P = setRoomPal('drained'), by = SET_ROOM.ledge[2];
+    const P = setRoomPal('drained'), by = SET_ROOM.ledge[2], SC = 1.4, CX = 3895, sx = x => CX + (x - CX) * SC;
+    boilSeed('s06e ledge'); paint(rectPts(CX - 330 * SC, by - 1, 660 * SC, 24 * SC, .5), { wash: mixCol(P.wood, '#FFFFFF', .15), ink: P.ink, sw: 1.2 });
     // warm light on the frames fades with them
     SET_ROOM.photos.forEach((px, i) => {
       const g = kitEase.sine(seg(t, eStart(i), eStart(i) + .2));
-      glow(px, by - 56, 190, SET_C.amber, .34 * (1 - g));
+      glow(sx(px), by - 56 * SC, 260, SET_C.amber, .34 * (1 - g));
     });
     // fall: tips about its bottom-right corner; the next one is struck when this one lands
     SET_ROOM.photos.forEach((px, i) => {
       const g = kitEase.sine(seg(t, eStart(i), eStart(i) + .2)), ts = eStart(i) + .1, k = seg(t, ts, ts + .3);
       let rot = i === 4 ? 1.1 * kitEase.in2(k) + (t > ts + .3 ? .9 * kitEase.in2(seg(t, ts + .3, ts + .62)) : 0) : 1.5 * kitEase.in2(k) + (t > ts + .3 ? -.06 * Math.exp(-(t - ts - .3) * 10) * Math.cos((t - ts - .3) * 34) : 0);
       const wob = (t < ts && t > ts - .12) ? .018 * Math.sin((t - ts) * 90) : 0;
-      let dy = i === 4 && t > ts + .3 ? 760 * kitEase.in2(seg(t, ts + .3, ts + .62)) : 0;
-      push(); translate(0, dy); setPhotoFrame(px, by, 1, { pal: P, i, grey: g, rot: rot + wob, key: 'e' + i }); pop();
+      let dy = i === 4 && t > ts + .3 ? 900 * kitEase.in2(seg(t, ts + .3, ts + .62)) : 0;
+      push(); translate(0, dy); setPhotoFrame(sx(px), by, SC, { pal: P, i, grey: g, rot: rot + wob, key: 'e' + i }); pop();
     });
     camEnd();
     if (wi.speed > 0) s06Streaks(wi.speed, 1, ['#C9CCD3', '#8E95A6', '#F0B070'], 7);
@@ -221,19 +222,16 @@
     const cy = lerp(262, 212, kitEase.sine(seg(lt, 0, dur)));
     camBegin(960, cy, 1.35);
     setSurface('bed', 'drained', { res: 1.25 });
-    const dis = kitEase.sine(seg(t, F_DIS0, F_DIS1)), hv = vox('ai', t), AX = 940, AY = 222;
-    const turn = kitEase.sine(seg(t, F_HERE, T_G - .05)), curl = .45 + .5 * turn;
-    const cover = setRoomPal('drained').cover;
-    // the phone lies on the pillow where her head was; its light comes up as she goes, and breathes with her voice
-    const pk = dis * (.55 + .45 * hv) * (t >= F_HERE ? 1 : .8);
-    if (dis > 0) setPillowPhone(AX - 100, AY - 90, 330, { k: pk, rot: -.5, screen: S => { setScreenGlass(S, 'cyan', { key: 'pillow6f', bright: pk }); glow(S.X(.5), S.Y(.45), S.h * .55, SET_C.cyanW, .55 * pk); } });
-    ai(AX, AY, 118, { ...aiEmotions(t, [[T_F, 'heart', { lookX: .7 }], [F_DIS0 - .1, 'gentle', { lookX: .5 }]]), form: 'full', pose: 'lie', view: 'q', roll: -1.25, pal: 'glow', t, seed: 4, dissolve: dis, dissolveTo: [AX - 100, AY - 90], cut: 1.5, boilKey: 's06f her' });
-    // the blanket over her body (only her head and shoulders are on the pillow)
-    boilSeed('s06f her blanket');
-    paint([[AX - 330, AY + 70], [AX - 160, AY + 52], [AX + 10, AY + 66], [AX + 90, AY + 120], [AX + 100, AY + 700], [AX - 330, AY + 700]], { wash: cover, ink: setRoomPal('drained').ink, sw: 1.4, curv: .4 });
-    paint([[AX - 330, AY + 70], [AX - 160, AY + 52], [AX + 10, AY + 66], [AX + 90, AY + 120], [AX + 80, AY + 150], [AX - 330, AY + 120]], { wash: setRoomPal('drained').coverLt, washOp: 190, ink: null, curv: .4 });
-    him(1020, 835, 46, { ...himEmotions(t, [[T_F, 'smile', { mouth: 'soft', lookX: -.8 }], [F_DIS0 + .1, 'sad', { lookX: -.5 }], [F_HERE + .1, 'neutral', { lookX: -.9, lookY: .1 }]], { take: .3 }), pose: 'sidelie', view: 'q', flip: true, rot: -.14 * turn, outfit: 'home', pal: 'drained', curlK: curl, coverCol: cover, boilKey: 's06f him', seed: .3 });
-    if (dis > 0) glow(1010, 215, 300, SET_C.cyan, .4 * pk);
+    const dis = kitEase.sine(seg(t, F_DIS0, F_DIS1)), hv = vox('ai', t), AX = 760, AY = 222, PH = [812, 218];
+    const turn = kitEase.sine(seg(t, T_G - .67, T_G - .05)), curl = .45 + .5 * turn;
+    const P = setRoomPal('drained'), cover = P.cover;
+    // her: head and shoulders on the pillow, face to him. NO phone before she goes.
+    ai(AX, AY, 118, { ...aiEmotions(t, [[T_F, 'heart', { lookX: .3 }], [F_DIS0 - .1, 'gentle', { lookX: .3 }]]), form: 'full', pose: 'lie', view: 'q', roll: 1.45, pal: 'glow', t, seed: 4, dissolve: dis, dissolveTo: PH, cut: 1.5, boilKey: 's06f her' });
+    // the phone appears only as she dissolves, in her place, growing to size; its light pulses with her voice
+    const pk = dis * (t >= F_HERE ? .6 + .4 * hv : .75);
+    if (dis > 0.02) setPillowPhone(PH[0], PH[1], 110 + 220 * dis, { k: pk, rot: -.5, screen: S => { setScreenGlass(S, 'cyan', { key: 'pillow6f', bright: pk }); glow(S.X(.5), S.Y(.45), S.h * .55, SET_C.cyanW, .55 * pk); } });
+    him(1150, 835, 46, { ...himEmotions(t, [[T_F, 'smile', { mouth: 'soft', lookX: -.8 }], [F_DIS0 + .1, 'sad', { lookX: -.5 }], [F_HERE + .1, 'neutral', { lookX: -.9, lookY: .1 }]], { take: .3 }), pose: 'sidelie', view: 'side', flip: true, rot: -.1 * turn, outfit: 'home', pal: 'drained', curlK: curl, coverCol: cover, boilKey: 's06f him', seed: .3 });
+    if (dis > 0.02) glow(1040, 215, 300, SET_C.cyan, .4 * pk);
     camEnd();
   }
 
