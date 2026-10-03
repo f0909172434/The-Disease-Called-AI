@@ -136,3 +136,19 @@ if (typeof drawWorld === 'function' && !drawWorld.kitWrapped) {
   window.drawWorld = function (t) { kitDrawWorld0(t); if (KIT_DEBUG || window.KIT_DEBUG) kitGuide(); };
   window.drawWorld.kitWrapped = true;
 }
+
+// ---------------------------------------------------------------------------------------------------- self-test loop
+// `node render.mjs --loop=kit_test --sheet=.3,.8,1.2,1.7,2.3,2.8,3.3,3.8 --cols=4 --w=480 --out=out/check/kit.jpg`
+// 0-1 whip out (camera streaks away) + whip in · 1-2 fade up from black · 2-3 flash, then a spill · 3-4 the safe guide on. Not part of the film.
+LOOPS.kit_test = t => {
+  const scene = (cx) => {
+    camBegin(cx, H / 2, 1);
+    for (let i = 0; i < 9; i++) for (let j = 0; j < 5; j++) { boilSeed('kit test ' + i + '_' + j); paint(rectPts(i * 230 - 40, j * 230 - 40, 200, 200, 3), { wash: (i + j) % 2 ? '#2F3C7A' : '#7FE9FF', ink: PAL.ink, sw: .8 }); }
+    camEnd();
+  };
+  if (t < 1) { const w = t < .5 ? kitWhipOut(t - .3, .2, 1) : kitWhipIn(t - .5, .2, 1); scene(W / 2 + w.dx * (t < .5 ? 1 : 1)); kitSmear(w.speed, 1); }
+  else if (t < 2) { scene(W / 2); kitFadeIn(t - 1, .8); }
+  else if (t < 3) { scene(W / 2); if (t < 2.5) kitFlash(kitEnv(t, 2.2, .04, .2)); else kitSpill(seg(t, 2.5, 3), W * .5, H * .5); }
+  else { scene(W / 2); kitGuide(); }
+};
+LOOPS.kit_test.len = 4;

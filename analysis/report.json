@@ -4,7 +4,7 @@
   "metrical_ladder": [
    {
     "bpm": 86.004,
-    "between_on_ratio": 0.544
+    "between_on_ratio": 0.565
    }
   ],
   "octave_method": "backbeat rule (drum stems)",
@@ -17,12 +17,12 @@
  "detected_bpm": 172.007,
  "score_bpm": 172.0,
  "bpm_error": 0.007,
- "beat_mae_ms": 2.505636136690834,
+ "beat_mae_ms": 2.478512184723555,
  "downbeat_phase_scores": [
-  89.54865176074283,
-  92.02834047485088,
-  77.78396854130266,
-  100.05697574776677
+  89.49564872280963,
+  92.11198672763776,
+  77.60413669404406,
+  99.7844558270892
  ],
  "downbeat_runs": [
   {
@@ -30,10 +30,10 @@
    "beats": 598,
    "phase": 1,
    "scores": [
-    -0.729,
+    -0.731,
     2.258,
-    -1.129,
-    -0.41
+    -1.132,
+    -0.405
    ]
   }
  ],
@@ -55,8 +55,8 @@
   "CHORUS2": 0.366,
   "BRIDGE": 0.238,
   "FINAL": 2.882,
-  "TAG": 6.023,
-  "OUTRO": 0.442,
+  "TAG": 6.139,
+  "OUTRO": 0.558,
   "ENDCARD": 3.884
  },
  "onset_counts": {

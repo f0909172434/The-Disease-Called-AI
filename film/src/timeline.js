@@ -5,7 +5,7 @@
 // lt = time since the shot started, dur = the shot's length. It paints the WHOLE frame, background included, and must be
 // a pure function of t: frames render in parallel and out of order, so nothing may carry over from one frame to the next.
 // An optional third element sets the lyric overlay for the shot (see lyrics.js): [t0, fn, { lyricMode, lyricStyle }]
-// (or set fn.lyricMode / fn.lyricStyle). Cut on beats: t0 = tAt(bar, beat) or section('S04').start (data.js).
+// (or set fn.lyricMode / fn.lyricStyle). Cut on beats: t0 = tAt(bar, beat) or sectionById('S04').start (data.js; section(t) takes a time).
 
 const SHOTS = [];
 function shots(list) { SHOTS.push(...list); SHOTS.sort((a, b) => a[0] - b[0]); }
