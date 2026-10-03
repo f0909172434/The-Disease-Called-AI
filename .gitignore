@@ -15,9 +15,8 @@ output/*.partial.mp4
 *.tmp
 .DS_Store
 
-# large regenerable audio masters (a compressed master is committed instead)
+# large regenerable audio master; the 16-bit FLAC (music/build/master.flac, ~25 MB) is committed for muxing
 music/build/master.wav
-music/build/master.flac
 
 # review contact sheets (regenerable)
 output/sheets/
@@ -26,3 +25,4 @@ output/sheets/
 music/diffsinger/voicebanks/
 music/diffsinger/ourender/bin/
 music/diffsinger/ourender/obj/
+output/preview/
