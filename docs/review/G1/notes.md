@@ -13,3 +13,10 @@
 
 Determinism: check_determinism over 22.5:55.8:1.5 had 4 diffs (37.5, 39, 42, 55.5); re-rendered in two orders: 37.5 and 55.5 identical, 42 at 62 dB (noise).
 Shared-file requests: none required. (him 'lie' cannot be rotated head-up without wrapping it; ai silhouette `silOp` is 0-255, not 0-1.)
+
+## Fix #1
+- 03B/02G/03C: camera rolled -pi/2 (pillow at left, he lies across the frame, head left; her counter-rotated upright on his chest; 02G phone leans above his face, face up the frame). Surface variant 'dusk' for visible pillow/duvet. 03C stays rolled; ring still ends at screen (960, 550).
+- 03A: face plane is a real side close-up (bust u 96, flip, eyes ~0.42H, hold cheeks, stronger dots flicker); only HE is flipped (faces left): he sits at the bed's head end, room not mirrored.
+- 02B: check 190 px with ink + glow; phone hand shrunk (PU 190).
+- 02C: cells fall from above with overshoot. 02A: hand fingers separated.
+- Determinism: 1/8 times differed (noise-level, same as before).

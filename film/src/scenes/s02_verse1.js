@@ -35,15 +35,15 @@
     boilSeed('s02 arm fore' + (o.key || '')); paint(fa.outline, { wash: c.skin, ink: c.ink, sw: 1, curv: .3 });
     inkLine([up.L[1], up.L[2]].map(p => p), .7, c.inkSoft, 'inkfine', .3);
     // the hand: a palm and four fingers laid along `dir`, fingers curled by o.curl 0..1 (a slap is open and flat)
-    const nx = -dir[1], ny = dir[0], cv = o.curl ?? 0, hs = 30 * k;
+    const nx = -dir[1], ny = dir[0], cv = o.curl ?? 0, hs = 36 * k;
     const P = (a, b) => [hand[0] + dir[0] * a * hs + nx * b * hs, hand[1] + dir[1] * a * hs + ny * b * hs];
-    boilSeed('s02 hand palm' + (o.key || '')); paint([P(-1.1, -.9), P(.1, -1.05), P(.7, -.8), P(.8, .75), P(.05, 1.0), P(-1.1, .85)], { wash: c.skin, ink: c.ink, sw: 1, curv: .5 });
+    boilSeed('s02 hand palm' + (o.key || '')); paint([P(-1.1, -1.1), P(.1, -1.2), P(.7, -1.1), P(.8, 1.1), P(.05, 1.2), P(-1.1, 1.05)], { wash: c.skin, ink: c.ink, sw: 1, curv: .5 });
     for (let i = 0; i < 4; i++) {
-      const b = -.78 + i * .52, len = (1.15 + (i === 1 || i === 2 ? .2 : 0) - .05 * i) * (1 - .35 * cv);
+      const b = -.9 + i * .6, len = (1.15 + (i === 1 || i === 2 ? .2 : 0) - .05 * i) * (1 - .35 * cv);
       boilSeed('s02 hand finger' + i + (o.key || ''));
-      paint([P(.55, b - .2), P(.55 + len, b - .18 + .1 * cv), P(.62 + len, b + .08 + .1 * cv), P(.55, b + .24)], { wash: c.skin, ink: c.ink, sw: .8, curv: .6 });
+      paint([P(.55, b - .15), P(.55 + len, b - .13 + .1 * cv), P(.62 + len, b + .1 + .1 * cv), P(.55, b + .17)], { wash: c.skin, ink: c.ink, sw: .8, curv: .6 });
     }
-    boilSeed('s02 hand thumb' + (o.key || '')); paint([P(-.5, -.9), P(.25, -1.55), P(.7, -1.55), P(.35, -.95)], { wash: c.skin, ink: c.ink, sw: .8, curv: .5 });
+    boilSeed('s02 hand thumb' + (o.key || '')); paint([P(-.5, -1.1), P(.3, -1.9), P(.8, -1.85), P(.4, -1.1)], { wash: c.skin, ink: c.ink, sw: .8, curv: .5 });
     inkLine([P(-.1, -.2), P(.4, -.05)], .5, c.skinDk, 'inkfine', .3);
   }
 
@@ -140,7 +140,7 @@
     if (!hung) {
       const gx = t < 28.62 ? hL[0] : lerp(hL[0], GH[0], slingK), gy = t < 28.62 ? hL[1] : lerp(hL[1], GH[1], slingK), gs = lerp(B_SH, .8, slingK), gr = lerp(.04, .06, slingK);
       const c = setShirt(gx, gy, gs, { pal: PD, kind: 'grey', rot: gr, key: 'live' });
-      if (t >= N1) { const k = kitOver(seg(t, N1, N1 + .12), 1.6); setCheck(c[0], c[1] - 20, 150 * k * gs, SET_C.cyan, { glow: .8 }); }
+      if (t >= N1) { const k = kitOver(seg(t, N1, N1 + .12), 1.6); setCheck(c[0], c[1] - 20, 200 * k * gs, SET_C.cyan, { glow: 1, ink: '#0B3D6E' }); }
     }
     if (t < 28.96) {
       let wx, wy, wr = -.05;
@@ -157,11 +157,11 @@
       const nx = hR[0], ny = hR[1] + 70;
       setNoodles(nx, ny, .76, { pal: PD, t, key: 'live', steam: eating ? 0 : 1 });
       if (eating) { boilSeed('s02b noodles'); for (let i = 0; i < 2; i++) { const a = [nx - 10 - 14 * i, ny - 170 * .76 + 4], b = [nx - 70 - 6 * i, 1395 + 4 * i + 8 * slurp]; inkLine([a, [lerp(a[0], b[0], .5) - 10, lerp(a[1], b[1], .5) + 22 * (1 - slurp)], b], 1.3, SET_C.amber, 'ink', .5); } }
-      if (t >= N2) { const k = kitOver(seg(t, N2, N2 + .12), 1.6); setCheck(nx + 36, ny - 80, 120 * k, SET_C.cyan, { glow: .5, key: 'n' }); }
+      if (t >= N2) { const k = kitOver(seg(t, N2, N2 + .12), 1.6); setCheck(nx + 20, ny - 100, 190 * k, SET_C.cyan, { glow: 1, ink: '#0B3D6E', key: 'n' }); }
     }
     camEnd();
     // the foreground: his hand holding the phone, the little her inside it (u 32)
-    const PX = 360, PY = 560, PU = 235;
+    const PX = 330, PY = 520, PU = 190;
     glow(PX, PY, 520, SET_C.cyan, .35);
     const ptT = seg(t, 28.0, 28.2), pointing = t >= 28.0 && t < 29.62, hint = t >= 28.9 && t < 29.62;
     himPhone(PX, PY, PU, { grip: 'hold', outfit: 'home', screen: 'off', ang: -.06, thumb: [.2, .9], tap: pulse2(t, 9) * .0, boilKey: 's02b phone',
@@ -217,16 +217,16 @@
   // =============================================================================================================
   const C_S = setScr(430, 60, 1400, 740), C_N0 = 6;
   const C_CELL = i => { const S = C_S, gx0 = S.X(.1), gx1 = S.X(.9), gy0 = S.Y(.2), gy1 = S.Y(.88), cw = (gx1 - gx0) / 7, ch = (gy1 - gy0) / 4; return [gx0 + (i % 7) * cw, gy0 + Math.floor(i / 7) * ch, cw, ch]; };
-  const C_FLY = [[-.06, .30], [.15, .50], [.36, .66]];                       // [throw, land] in the local time of the fill
+  const C_FLY = [[-.06, .30], [.08, .44], [.20, .56]], C_CS = j => .52 + .007 * j, C_CD = .2;                       // [throw, land] in the local time of the fill
   const C_HER = [215, 745, 40], C_PALM = [3.05, -4.75];
   function s02cBlock(x, y, w, h, k = 1) {
     boilSeed('s02c block' + Math.round(x / 7));
     setP(rrPts(x - w / 2, y - h / 2, w, h, C_S.h * .01), { wash: '#4FD4F5', ink: null });
     glow(x, y, w * .9, SET_C.cyan, .35 * k);
   }
-  function s02cFill(u) {                                                    // how many cells are full at local time u
+  function s02cFill(u) {                                                    // how many cells are full (landed) at local time u
     let n = C_N0; C_FLY.forEach(f => { if (u >= f[1]) n++; });
-    if (u >= .66) n = C_N0 + 3 + Math.floor(19 * kitEase.out2(seg(u, .66, .84)));
+    for (let j = 0; j < 19; j++) if (u >= C_CS(j) + C_CD) n++;
     return Math.min(28, n);
   }
   function s02c(t, lt, dur) {
@@ -252,10 +252,15 @@
       if (u >= f[0] && u < f[0] + .17) act = { ...aiAct('push', t, (rep ? 32.44 : T_C) + f[0]), propR: undefined };
       if (u >= f[0] && u < f[1]) blk.push([arcPt([C_HER[0] + C_PALM[0] * C_HER[2] + 40, C_HER[1] + C_PALM[1] * C_HER[2]], [tx, ty], 120, ease(seg(u, f[0], f[1]))), cw * .84, ch * .8, seg(u, f[0], f[1])]);
     });
-    if (u >= .86) act = aiAct('clap', t, (rep ? 32.44 : T_C) + .84);
+    if (u >= .84) act = aiAct('clap', t, (rep ? 32.44 : T_C) + .84);
     if (t >= 32.0 && t < 32.44) act = { lookX: .8, lookY: -.7 };
     const f = aiEmotions(t, [[T_C - .3, 'eager'], [T_C + .75, 'smile'], [32.0, 'eager']]);
     ai(C_HER[0], C_HER[1], C_HER[2], { ...f, ...act, form: 'chibi', view: 'front', pal: 'glow', t: rep ? t - 32.44 + T_C : t, seed: 8, noShadow: true, boilKey: 's02c her' });
+    for (let j = 0; j < 19; j++) {                                           // the rest drop in from above, with a bounce (Tetris)
+      const s0 = C_CS(j), k = seg(u, s0, s0 + C_CD); if (k <= 0 || k >= 1) continue;
+      const [cx, cy, cw, ch] = C_CELL(ord[C_N0 + 3 + j]), fall = 1 - kitOver(kitEase.in2(k) * .0 + k, 1.5), top = cy + ch / 2 - S.Y(.05) + ch;
+      s02cBlock(cx + cw / 2, cy + ch / 2 - top * Math.max(0, 1 - ease(k * 1.15)) * 1.0 + 0 * fall + 10 * Math.sin(clamp((k - .75) / .25) * Math.PI), cw * .84, ch * .8, k);
+    }
     blk.forEach(b => s02cBlock(b[0][0], b[0][1], b[1], b[2], b[3]));
     // his fingertip (amber), in from the right edge to the corner ↻
     const fin = seg(t, 32.0, 32.26), out = seg(t, 32.5, 32.8);
@@ -336,7 +341,7 @@
   // reads: 39.07-39.90 the two panels side by side · 39.90-41.16 he yawns, dozes, wakes · 41.16-41.86 she has not changed at all
   // =============================================================================================================
   const F_SPLIT = 960, F_YAWN = 39.60, F_WAKE = 41.16;
-  const G_PH = [700, 330, 640];                                             // 02G: the pillow phone (centre x, y, height)
+                                               // 02G: the pillow phone (centre x, y, height)
   function s02fWall() {                                                     // static painted wall of the right panel (the window is live)
     boilSeed('s02f wall'); paint(rectPts(-40, -40, W + 80, H + 80), { wash: '#2C2540', ink: null });
     for (let i = 0; i < 4; i++) { boilSeed('s02f bloom' + i); paint(ellPts(1100 + 300 * i, 300 + 220 * (i % 2), 420, 260, 22, 20), { fill: i % 2 ? '#3E3358' : '#241C38', fillOp: 90, bleed: .3, tex: .6, ink: null }); }
@@ -359,8 +364,8 @@
       nod: (face.nod || 0) + .55 * dips + .6 * yk * .3 - .8 * wake, tilt: (face.tilt || 0) - .12 * wake, boilKey: 's02f him', seed: .9, glare: .3 + .4 * dk });
   }
   function s02fLeft(t, lt, k) {                                             // the left panel; k 0..1 shrinks it into the phone
-    const rect = [lerp(0, G_PH[0] - G_PH[1] * 0 - G_PH[2] * .22, k), lerp(0, G_PH[1] - G_PH[2] * .42, k), lerp(F_SPLIT, G_PH[0] + G_PH[2] * .22, k), lerp(H, G_PH[1] + G_PH[2] * .44, k)];
-    const w = rect[2] - rect[0], h = rect[3] - rect[1], cx = (rect[0] + rect[2]) / 2, cy = (rect[1] + rect[3]) / 2, rot = -.32 * k;
+    const rect = [lerp(0, G_SC[0] - G_SC[2] * .22, k), lerp(0, G_SC[1] - G_SC[2] * .43, k), lerp(F_SPLIT, G_SC[0] + G_SC[2] * .22, k), lerp(H, G_SC[1] + G_SC[2] * .43, k)];
+    const w = rect[2] - rect[0], h = rect[3] - rect[1], cx = (rect[0] + rect[2]) / 2, cy = (rect[1] + rect[3]) / 2, rot = -.1 * k;
     push(); translate(cx, cy); rotate(rot); translate(-cx, -cy);
     boilSeed('s02f panel'); paint(rrPts(rect[0], rect[1], w, h, lerp(0, w * .08, k), 1), { wash: '#123A5A', ink: k > 0 ? SET_C.ink : null, sw: 1.2 });
     boilSeed('s02f panel bloom'); paint(ellPts(cx, cy + h * .08, w * .46, h * .4, 24, 18), { fill: '#2B6A98', fillOp: 120, bleed: .3, tex: .6, ink: null });
@@ -384,22 +389,25 @@
   // reads: 41.86-42.90 him and the phone on the pillow · 42.90-44.13 the finger, her nods · 44.16-44.65 the shake and the heart, the push
   // =============================================================================================================
   const G_HAND = 42.90;
+  const G_ROLL = -Math.PI / 2, G_SC = [406, 215, 470];                      // the camera rolls a quarter turn: pillow left, he lies across the frame; the phone's screen rect (screen px) for 02F's shrinking panel
   function s02g(t, lt, dur) {
-    const push = kitEase.expoIn(seg(t, N3 - .05, T_END)), zoom = lerp(1 + .06 * seg(lt, 0, dur), 2.05, push);
-    const cx = lerp(960, G_PH[0] + 20, kitEase.sine(seg(t, N3 - .05, T_END))), cy = lerp(540, G_PH[1] + 30, kitEase.sine(seg(t, N3 - .05, T_END)));
-    kitCam(lt, [[0, cx, cy, zoom]], { drift: 2 });
-    setSurface('bed', 'night', { res: 1.25 });
-    glow(G_PH[0], G_PH[1] + 40, 760, SET_C.cyan, .35);
+    const k1 = kitEase.sine(seg(t, N3 - .05, T_END)), pushK = kitEase.expoIn(seg(t, N3 - .05, T_END)), zoom = lerp(1.3 + .06 * seg(lt, 0, dur), 2.05, pushK);
+    const hd = [1150, 235], pw = [1500, 240];                                // head and phone in the surface's coordinates
+    const cx = lerp(1250, pw[0] + 10, k1), cy = lerp(666, pw[1] + 10, k1);
+    push(); resetMatrix(); translate(-W / 2, -H / 2); boilSeed('s02g sheet'); paint(rectPts(-60, -60, W + 120, H + 120), { wash: setRoomPal('dusk').sheet, ink: null }); pop();
+    kitCam(lt, [[0, cx, cy, zoom, G_ROLL]], { drift: 2 });
+    setSurface('bed', 'dusk', { res: 1.25 });
+    glow(pw[0], pw[1], 760, SET_C.cyan, .35);
     const f = himEmotions(t, [[T_G, 'tired'], [G_HAND, 'tired', { mouth: 'smile', browIn: -.5 }]], { take: .5 });
     const PN = setRoomPal('night');
-    him(1080, 705, 34, { ...f, pose: 'sidelie', flip: true, outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverCol: PN.cover, sheetCol: PN.sheet, boilKey: 's02g him', seed: .4 });
-    // the phone on the pillow; the little her inside nods on every beat, and shakes at "Never."
+    // side-lying: his head toward the pillow (screen left), face turned up the frame toward the phone, the body running to the right over the duvet
+    him(1080, 705, 34, { ...f, pose: 'sidelie', outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverCol: PN.cover, sheetCol: PN.sheet, boilKey: 's02g him', seed: .4 });
     const sh = t >= N3;
-    setPillowPhone(G_PH[0], G_PH[1], G_PH[2], { k: .8 + .2 * pulse(t, 4), screen: S => {
+    setPillowPhone(pw[0], pw[1], 360, { rot: Math.PI / 2 - .1, k: .8 + .2 * pulse(t, 4), screen: S => {
       boilSeed('s02g glass'); setP(setBox(S.x, S.y, S.x + S.w, S.y + S.h), { wash: '#10285A', ink: null });
       glow(S.X(.5), S.Y(.6), S.h * .6, SET_C.cyan, .5);
       const f2 = aiEmotions(t, [[T_G - .3, 'eager'], [N3, 'smile']]);
-      ai(S.X(.5), S.Y(.88), 31 * S.h / 600, { ...f2, ...(sh ? aiAct('shake', t, N3) : aiAct('nod', t, T_G)), form: 'chibi', view: 'front', pal: 'glow', t, seed: 6, noShadow: true, boilKey: 's02g her' });
+      ai(S.X(.5), S.Y(.88), 31 * S.h / 600 * 1.3, { ...f2, ...(sh ? aiAct('shake', t, N3) : aiAct('nod', t, T_G)), form: 'chibi', view: 'front', pal: 'glow', t, seed: 6, noShadow: true, boilKey: 's02g her' });
       if (sh) { const k = kitOver(seg(t, N3 + .1, N3 + .24), 1.7); setHeart(S.X(.5) + S.w * .22, S.Y(.34), S.w * .42 * k, SET_C.fever, { glow: .7, key: 'g' }); }
     } });
     camEnd();

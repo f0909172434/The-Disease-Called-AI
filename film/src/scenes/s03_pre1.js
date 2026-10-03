@@ -28,7 +28,7 @@
   }
   // the bed's foot end: he sits on the mattress at the end of it facing right (the bed lies behind him, to his left), the window and the
   // pillow behind. (A mirrored room would put him facing the screen at the left, but the cached tiles do not draw under a flip.)
-  const E_A = [1432, 2046], E_U = 26;
+  const E_A = [432, 2046], E_U = 26;
   function s03a(t, lt, dur) {
     const pan = kitEase.sine(seg(t, A_PAN0, A_PAN1));
     const drawGlass = (ox) => {                                                                  // plane 1: the dots, macro (on the right)
@@ -43,28 +43,28 @@
       push(); translate(ox, 0);
       boilSeed('s03a void'); paint(rectPts(-80, -80, W + 160, H + 160), { wash: '#070B16', ink: null });
       const fl = faceLight(t);
-      glow(W + 140, 470, 1100, DOT_COL, .55 * fl); glow(W - 40, 560, 520, DOT_COL, .5 * fl);
+      glow(-140, 450, 1300, DOT_COL, .8 * fl); glow(40, 520, 640, DOT_COL, .75 * fl);
       const f = himEmotions(t, [[T_A, 'focused'], [T_HOLD - .08, 'hold']], { take: .3 });
-      him(860, 800, 64, { ...f, pose: 'bust', view: 'side', outfit: 'home', cut: 3.4, boilKey: 's03a him', seed: .3, glare: .35 + .35 * fl, breath: kitEase.sine(seg(t, 45.45, T_HOLD)) * .8 });
-      glow(1110, 560, 520, DOT_COL, .45 * fl);                                                   // the light across his cheek
+      him(900, 740, 96, { ...f, pose: 'bust', view: 'side', flip: true, outfit: 'home', cut: 2.8, boilKey: 's03a him', seed: .3, glare: .35 + .35 * fl, breath: kitEase.sine(seg(t, 45.45, T_HOLD)) * .8 });
+      glow(680, 470, 700, DOT_COL, .6 * fl);                                                   // the light across his cheek
       pop();
     };
     const drawMedium = () => {
-      const zk = kitEase.inOut3(seg(t, A_PULL0, A_PULL1)), z = lerp(1.62, 1.0, zk), cx = lerp(1500, 1330, zk), cy = lerp(1450, 1580, zk);
+      const zk = kitEase.inOut3(seg(t, A_PULL0, A_PULL1)), z = lerp(1.62, 1.0, zk), cx = lerp(470, 700, zk), cy = lerp(1450, 1580, zk);
       kitCam(lt, [[0, cx, cy, z]], { drift: 2 });
       setRoom('night', { t, res: 1.6, lights: false, covers: 'rumpled' });
       setRoomLights('night', { t, screen: .9 });
       const fall = kitEase.in2(seg(t, T_DEATH + .05, T_DEATH + 1.18)) * (t >= T_DEATH ? 1 : 0), fl = faceLight(t);
       const f = himEmotions(t, [[T_A, 'hold'], [A_STOP, 'hold', { puff: .6 }], [T_DEATH + .15, 'blank']], { take: .5 });
       const dead = t >= T_DEATH, red = dead ? kitEnv(t, T_DEATH, .12, 1.4) : 0;
-      glow(E_A[0] + 4 * E_U, E_A[1] - 21 * E_U, 520, DOT_COL, .5 * fl * (dead ? 0 : 1));
-      him(E_A[0], E_A[1], E_U, { ...f, pose: 'edge', outfit: 'home', seatH: 318 / E_U, fall, screen: dead ? 'amber' : 'cyan', glowK: dead ? 0 : .5, boilKey: 's03a him2', seed: .3, coverCol: setRoomPal('night').cover });
-      if (!dead || fall < .35) s03Dots(E_A[0] + 5.3 * E_U, E_A[1] - 20.6 * E_U, 18 * (1 - .15 * fall), t, { glow: .9 });
-      if (dead) { glow(E_A[0] + 3 * E_U, E_A[1] - 25 * E_U, 700 + 500 * red, FEVER, .55 * red + .1); glow(E_A[0] + 2 * E_U, E_A[1] - 22 * E_U, 300, FEVER, .45 * red); }
+      glow(E_A[0] - 4 * E_U, E_A[1] - 21 * E_U, 520, DOT_COL, .5 * fl * (dead ? 0 : 1));
+      him(E_A[0], E_A[1], E_U, { ...f, pose: 'edge', flip: true, outfit: 'home', seatH: 318 / E_U, fall, screen: dead ? 'amber' : 'cyan', glowK: dead ? 0 : .5, boilKey: 's03a him2', seed: .3, coverCol: setRoomPal('night').cover });
+      if (!dead || fall < .35) s03Dots(E_A[0] - 5.3 * E_U, E_A[1] - 20.6 * E_U, 18 * (1 - .15 * fall), t, { glow: .9 });
+      if (dead) { glow(E_A[0] - 3 * E_U, E_A[1] - 25 * E_U, 700 + 500 * red, FEVER, .55 * red + .1); glow(E_A[0] - 2 * E_U, E_A[1] - 22 * E_U, 300, FEVER, .45 * red); }
       camEnd();
     };
     if (t < A_XF0) {
-      if (t < A_PAN1) { drawFace(-W * (1 - pan)); drawGlass(W * pan); }
+      if (t < A_PAN1) { drawGlass(-W * pan); drawFace(W * (1 - pan)); }
       else drawFace(0);
     } else if (t < A_XF1) kitXfade(seg(t, A_XF0, A_XF1), () => drawFace(0), drawMedium);
     else drawMedium();
@@ -92,23 +92,28 @@
     out.dy = -bounce * u * 1.1;
     return out;
   }
+  const ROLL = -Math.PI / 2;                                                   // the camera rolls a quarter turn: the pillow at the left, he lies across the frame head left
+  const s03Bed = () => { push(); resetMatrix(); translate(-W / 2, -H / 2); boilSeed('s03 sheet'); paint(rectPts(-60, -60, W + 120, H + 120), { wash: setRoomPal('dusk').sheet, ink: null }); pop(); };
   function s03b(t, lt, dur) {
-    const z = lerp(1.0, 1.22, kitEase.sine(seg(lt, .3, dur))), cx = lerp(960, 935, seg(lt, 0, dur)), cy = lerp(540, 470, seg(lt, 0, dur));
-    kitCam(lt, [[0, cx, cy, z]], { drift: 2 });
-    setSurface('bed', 'night', { res: 1.25 });
+    const z = lerp(1.38, 1.55, kitEase.sine(seg(lt, .3, dur))), cx = lerp(1010, 1000, seg(lt, 0, dur)), cy = lerp(470, 500, seg(lt, 0, dur));
+    s03Bed();
+    kitCam(lt, [[0, cx, cy, z, ROLL]], { drift: 2 });
+    setSurface('bed', 'dusk', { res: 1.25 });
     const P = s03Lying(t, lt, { stetho: seg(t, B_LISTEN - .1, B_LISTEN + .3) }), heart = P.heart, ph = P.screenC;
     push(); resetMatrix(); translate(-W / 2, -H / 2); s03Dim(105); pop();
-    const HU = 33, AX1 = heart[0] + 128, AY1 = heart[1] + 40, popK = kitOver(seg(t, B_POP, B_POP + .3), 1.6), step = kitEase.sine(seg(t, B_POP + .55, B_POP + .95));
-    if (t >= B_POP) {                                                            // she appears out of the phone's light (an interface element: instantly) and steps onto his chest
-      const AX = lerp(ph[0], AX1, step), AY = lerp(ph[1] - 8, AY1, step) - 26 * Math.sin(step * Math.PI), u = HU * Math.min(1.05, popK);
+    // she stands upright on the screen: counter-rotate her round her feet. World offsets (dx, dy) become screen (dy, -dx).
+    const HU = 33, AX1 = heart[0] + 18, AY1 = heart[1] + 70, popK = kitOver(seg(t, B_POP, B_POP + .3), 1.6), step = kitEase.sine(seg(t, B_POP + .55, B_POP + .95));
+    if (t >= B_POP) {
+      const AX = lerp(ph[0], AX1, step), AY = lerp(ph[1], AY1, step), u = HU * Math.min(1.05, popK), hop = 30 * Math.sin(step * Math.PI);
       const f = aiEmotions(t, [[B_POP, 'eager'], [B_LISTEN - .1, 'worried']], { take: .6 });
-      const act = t < B_LISTEN ? {} : aiAct('stetho', t, B_LISTEN, { side: 'L', at: [(AX1 - heart[0]) / HU - .1, (heart[1] - AY1) / HU + .1] });
+      const act = t < B_LISTEN ? {} : aiAct('stetho', t, B_LISTEN, { side: 'L', at: [Math.max(.8, (AY1 - heart[1]) / HU * -1 + 3.4), -1.0] });
       const ringK = seg(t, B_POP, B_POP + .35);
-      if (ringK > 0 && ringK < 1) { boilSeed('s03b burst'); inkLine(ellPts(ph[0], ph[1] - 30, 40 + 190 * ringK, 30 + 130 * ringK, 20).concat([ellPts(ph[0], ph[1] - 30, 40 + 190 * ringK, 30 + 130 * ringK, 20)[0]]), 3.5 * (1 - ringK), SET_C.cyanW, 'ink', .4); }
-      glow(ph[0], ph[1] - 20, 260 * (1 - .5 * seg(t, B_POP + .3, B_POP + .8)), SET_C.cyan, .8 * (1 - seg(t, B_POP + .3, B_POP + 1.1)) + .15);
-      ai(AX, AY, u, { ...f, ...act, form: 'chibi', view: 'front', pal: 'glow', t, seed: 12, noShadow: false, boilKey: 's03b her' });
+      if (ringK > 0 && ringK < 1) { const R = ellPts(ph[0], ph[1], 40 + 190 * ringK, 40 + 190 * ringK, 20); boilSeed('s03b burst'); inkLine(R.concat([R[0]]), 3.5 * (1 - ringK), SET_C.cyanW, 'ink', .4); }
+      glow(ph[0], ph[1], 260 * (1 - .5 * seg(t, B_POP + .3, B_POP + .8)), SET_C.cyan, .8 * (1 - seg(t, B_POP + .3, B_POP + 1.1)) + .15);
+      push(); translate(AX, AY); rotate(-ROLL); translate(0, -0); translate(-AX, -AY);
+      ai(AX, AY + 0, u, { ...f, ...act, dy: -hop / HU, form: 'chibi', view: 'front', pal: 'glow', t, seed: 12, noShadow: false, boilKey: 's03b her' });
+      pop();
     }
-    // the heart's weak light, over her (it is under his shirt, she stands beside it)
     const fl = kitEnv(t, 52.30, .02, .12) + kitEnv(t, 52.78, .02, .1);
     if (t >= B_LISTEN) glow(heart[0], heart[1], 120, '#FF6F86', .1 + .5 * Math.min(1, fl));
     camEnd();
@@ -135,9 +140,10 @@
     const pull = kitEase.expoIn(seg(t, C_PULL0, C_FLASH)), pushK = kitEase.sine(seg(lt, 0, .5));
     const u = lerp(lerp(30, 62, pushK), 28, pull), zoom = lerp(lerp(1.22, 1.9, pushK) * (1 + .03 * seg(lt, .5, 1.9)), 1.04, pull);
     const hip = [900, 620], HW = [hip[0] + 47 * u / 30, hip[1] - 219 * u / 30];            // the heart, from the lying figure's proportions
-    const cx = lerp(HW[0] - 4, 960, pull), cy = lerp(HW[1] + 40 / zoom * 1.5, 540, pull), rot = -.1 * pull;
+    const cx = lerp(HW[0] + 40 / zoom * 1.2, 960, pull), cy = lerp(HW[1] - 6, 540, pull), rot = ROLL - .1 * pull;
+    s03Bed();
     const cam = kitCam(lt, [[0, cx, cy, zoom, rot]], { drift: pull < .01 ? 3 : 0 });
-    setSurface('bed', 'night', { res: 1.25 });
+    setSurface('bed', 'dusk', { res: 1.25 });
     const heartK = 1 - kitEase.sine(seg(t, T_C + .1, T_C + 1.0));
     const P = s03Lying(t, lt, { phone: false, heart: .3 * heartK, stetho: 0 }, [hip[0], hip[1], u]);
     push(); resetMatrix(); translate(-W / 2, -H / 2); s03Dim(150 * (1 - .6 * pull)); pop();
