@@ -148,6 +148,11 @@ function aiGiantHand0(s, a, kind, o, C) {
       finger(chain([.3, -.06], .3, -1.25, -.25 * c), .13, 4, { noNail: true });   // the thumb's tip, behind the palm
       aiWC(aiLoop(M([[0, -.13], [.2, -.11], [.42, -.08], [.56, -.06], [.64, .02], [.62, .13], [.44, .17], [.2, .19], [0, .17]]), 4), C.skin, { dark: C.skinSh, glaze: 40, sw, br: C.brS, pool: .5, gx: .008, gy: .012 });
       aiLine(aiCurve(M([[.06, -.11], [.3, -.07], [.54, -.04]]), 4), sw * .5, crease);
+      if (big) {   // giant scale: the slab's underside in shade, a lit pad, the palm's creases
+        aiPaint(aiLoop(M([[0, .09], [.2, .12], [.44, .11], [.62, .1], [.62, .13], [.44, .17], [.2, .19], [0, .17]]), 3), { wash: C.skinSh, op: 120, ink: null });
+        aiPaint(aiLoop(M([[.08, -.08], [.3, -.06], [.5, -.03], [.32, .0], [.1, -.03]]), 3), { wash: mixCol(C.skin, '#FFFFFF', .45), op: 120, ink: null });
+        for (const P of [[[.12, -.02], [.28, .02], [.42, .01]], [[.3, .05], [.44, .07], [.56, .05]]]) aiLine(aiCurve(M(P), 3), sw * .4, crease);
+      }
     }
     if (part !== 'back') {
       const B = chain([.56, .0], .5, -.2 - .4 * c, -1.25 * c, [.36, .34, .3]);
@@ -155,6 +160,12 @@ function aiGiantHand0(s, a, kind, o, C) {
       const m = E.L.length - 1;   // the staggered fingertips and the separations between the stacked fingers
       for (const [f, k] of [[.28, .7], [.5, .45], [.72, .2]]) { const j = Math.round(m * (1 - k * .35)); aiLine(aiCurve([[lerp(E.L[j][0], E.R[j][0], f), lerp(E.L[j][1], E.R[j][1], f)], [lerp(E.L[m - 1][0], E.R[m - 1][0], f) * .5 + lerp(E.L[j][0], E.R[j][0], f) * .5, lerp(E.L[m - 1][1], E.R[m - 1][1], f) * .5 + lerp(E.L[j][1], E.R[j][1], f) * .5], [lerp(E.L[m][0], E.R[m][0], f), lerp(E.L[m][1], E.R[m][1], f)]], 3), sw * .45, crease); }
       for (const f of [.3, .6]) { const j = Math.round(m * f); aiLine([[lerp(E.L[j][0], E.R[j][0], .1), lerp(E.L[j][1], E.R[j][1], .1)], [lerp(E.L[j][0], E.R[j][0], .4), lerp(E.L[j][1], E.R[j][1], .4)]], sw * .4, crease); }
+      if (big) {   // giant scale: the stacked fingers separated along their whole length, a crease across each joint, the pads in shade
+        const at = (j, f) => [lerp(E.L[j][0], E.R[j][0], f), lerp(E.L[j][1], E.R[j][1], f)];
+        for (const f of [.27, .5, .73]) aiLine(aiCurve([at(1, f), at(Math.round(m * .4), f), at(Math.round(m * .75), f + .02)], 4), sw * .45, crease);
+        for (const g of [.35, .68]) { const j = Math.round(m * g); for (const [a, b] of [[.04, .24], [.29, .47], [.53, .7], [.76, .95]]) aiLine(aiCurve([at(j, a), [(at(j, a)[0] + at(j, b)[0]) / 2, (at(j, a)[1] + at(j, b)[1]) / 2 + .006 * s], at(j, b)], 3), sw * .35, crease); }
+        aiPaint(E.R.slice(Math.round(m * .1)).concat(E.C.slice(Math.round(m * .1)).map((q, j) => [lerp(q[0], E.R[j + Math.round(m * .1)][0], .55), lerp(q[1], E.R[j + Math.round(m * .1)][1], .55)]).reverse()), { wash: C.skinSh, op: 70, ink: null });
+      }
     }
     return out;
   }

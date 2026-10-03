@@ -183,6 +183,14 @@ function himCovers(K, c, o, view, u, mode) {
   K.keep = p => { let d = 1e9; for (let i = 0; i < outl.length; i++) { const a = outl[i], b = outl[(i + 1) % outl.length], ex = b[0] - a[0], ey = b[1] - a[1], t = clamp(((p[0] - a[0]) * ex + (p[1] - a[1]) * ey) / (ex * ex + ey * ey || 1)); d = Math.min(d, Math.hypot(p[0] - a[0] - ex * t, p[1] - a[1] - ey * t)); }
     return himInPoly(outl, p[0], p[1]) ? -d : d; };
   for (const S of shade) K.shape(pp(S), { wash: sh, op: 95, ink: null, n: 3, wc: .8, gran: false });
+  // o.coverRidges === false: no pale ridge ovals (they read as holes on a pale duvet); a soft lit wash along each ridge and
+  // a crease either side instead, so the cloth still has its rises
+  if (o.coverRidges === false) for (const [x, y, rx, ry, a] of ridges) {
+    const ca = Math.cos(a), sa = Math.sin(a), at = (d, e) => [x + ca * d * rx - sa * e * ry, y + sa * d * rx + ca * e * ry];
+    K.shape(pp([at(-1, -.25), at(-.4, -.55), at(.5, -.5), at(1, -.15), at(.4, .1), at(-.5, .05)]), { wash: hi, op: 55, ink: null, n: 3 });
+    K.line(pp([at(-.95, .35), at(-.1, .55), at(.8, .4)]), .3, sh, { n: 3 });
+    K.line(pp([at(-.7, -.75), at(.2, -.85), at(.9, -.6)]), .26, dk, { n: 3 });
+  } else
   for (const [x, y, rx, ry, a] of ridges) K.shape(ellPts(X(x), Y(y), rx * cw, ry * cd, 18, 0, a), { wash: hi, op: 110, ink: null, raw: true, j: 0 });
   for (const L of hiL) K.line(pp(L), .4, hi, { n: 3 });
   for (const F of folds) K.line(pp(F), .32, dk, { n: 3 });

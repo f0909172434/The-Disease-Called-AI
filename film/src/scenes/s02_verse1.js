@@ -400,7 +400,7 @@
     const f = himEmotions(t, [[T_G, 'tired'], [G_HAND, 'tired', { mouth: 'smile', browIn: -.5 }]], { take: .5 });
     const PN = setRoomPal('night');
     // side-lying: his head toward the pillow (screen left), face turned up the frame toward the phone, the body running to the right over the duvet
-    him(1080, 705, 34, { ...f, pose: 'sidelie', outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverCol: '#D2D9EC', sheetCol: mixCol(PN.sheet, '#FFFFFF', .4), boilKey: 's02g him', seed: .4 });
+    him(1080, 705, 34, { ...f, pose: 'sidelie', outfit: 'home', armR: 'finger', coverW: .78, coverD: .66, coverRidges: false, coverCol: '#D2D9EC', sheetCol: mixCol(PN.sheet, '#FFFFFF', .4), boilKey: 's02g him', seed: .4 });
     const sh = t >= N3;
     setPillowPhone(pw[0], pw[1], 360, { rot: Math.PI / 2 - .1, k: .8 + .2 * pulse(t, 4), screen: S => {
       boilSeed('s02g glass'); setP(setBox(S.x, S.y, S.x + S.w, S.y + S.h), { wash: '#10285A', ink: null });

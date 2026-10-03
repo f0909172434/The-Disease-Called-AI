@@ -22,6 +22,20 @@
     const m = (s.text.toLowerCase().match(/[aeiouy]/) || ['a'])[0];
     return { m: { a: 'A', e: 'E', i: 'I', o: 'O', u: 'U', y: 'I' }[m], s };
   }
+  // the open palm on the glass (09H): her mirror palette paints it near-white, so give it skin: a grey shading wash over the heel
+  // and the thumb pad, the three palm lines, a crease at each finger base. w = wrist, p = palm centre (world px, AI_LAST).
+  function s09Palm(w, p, dis) {
+    const dx = p[0] - w[0], dy = p[1] - w[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, vx = -uy, vy = ux, k = 1 - clamp(dis);
+    if (k <= 0) return;
+    const at = (a, b) => [p[0] + ux * a * L + vx * b * L, p[1] + uy * a * L + vy * b * L];   // a: along the hand (to the fingers), b: across; L = wrist to palm centre
+    const sh = '#7F8796', ln = '#525967';
+    boilSeed('s09 palm wash'); paint([at(-.9, -.42), at(-.45, -.55), at(.05, -.48), at(0, -.1), at(-.4, 0), at(-.85, -.05)], { wash: sh, washOp: 120 * k, ink: null });   // thumb pad
+    boilSeed('s09 palm wash2'); paint([at(-.9, .05), at(-.3, .15), at(.3, .4), at(.1, .5), at(-.7, .45)], { wash: sh, washOp: 90 * k, ink: null });                      // the heel / far edge
+    boilSeed('s09 palm wash3'); paint([at(.25, -.45), at(.45, -.4), at(.5, .4), at(.3, .45)], { wash: sh, washOp: 70 * k, ink: null });                                  // the pads under the fingers
+    for (const [i, P] of [[[.3, .42], [.18, .05], [.2, -.3]], [[.08, .45], [-.05, .05], [0, -.35]], [[-.1, -.4], [-.45, -.3], [-.8, -.15]]].entries())   // heart, head, life lines
+      { boilSeed('s09 palm line' + i); inkLine(P.map(([a, b]) => at(a, b)), 1.3, ln, 'inkfine', .4); }
+    for (const [i, b] of [-.3, -.1, .1, .3].entries()) { boilSeed('s09 palm crease' + i); inkLine([at(.5, b - .06), at(.515, b), at(.5, b + .06)], .7, sh, 'inkfine', .3); }
+  }
   const s09Dim = (op, col = '#05060A') => { boilSeed('s09 dim'); paint(rectPts(-60, -60, W + 120, H + 120), { wash: col, washOp: op, ink: null }); };
 
   // ---------------------------------------------------------------------------------------------------------------
@@ -92,7 +106,11 @@
     const gl = n === 2 ? ease(seg(tt, T_C + 1.2, T_C + 1.55)) : 0;                         // she glances to the right (the door, the real people)
     if (gl > 0) act = { lookX: 1.1 * gl, yaw: .28 * gl, tilt: .08 * gl };
     const o = { ...f, ...act, form: 'full', pose: 'bust', view: 'front', pal: 'glow', cut: 1.9, t: tt, seed: 3, clip: [GR[0] + 2, GR[1] + 2, GR[2] - 2, GR[3] - 2], blink: undefined, boilKey: 's09 her' + n };
-    if (talking) o.mouth = n === 1 ? (v ? (v.s.start * 7 % 2 < 1 ? 'O' : 'U') : 'frown') : n === 2 ? 'wobble' : (v ? v.m : 'open');   // honest and sad: small, pulled-down mouths; worried: trembling
+    // 09B: the mouth only opens for the first half of each syllable (small U / O), then falls back to a down-turned frown:
+    // between syllables and after the line she is not smiling
+    const half = v && (tt - v.s.start) < .55 * (v.s.end - v.s.start);
+    if (n === 1 && (talking || tt < T_C)) o.mouth = half ? (v.s.start * 7 % 2 < 1 ? 'U' : 'wobble') : 'frown';
+    else if (talking) o.mouth = n === 2 ? 'wobble' : (v ? v.m : 'open');   // honest and sad: small, pulled-down mouths; worried: trembling
     ai(GX + 10, HER_NY, HER_U, o);
     if (gl > .02) {                                                                    // a painted chevron points the way: right
       const ax = S.X(.8) + 12 * Math.sin(t * 6), ay = S.Y(.42); boilSeed('s09 arrow');
@@ -273,6 +291,7 @@
             const pk = ease(seg(t, T_PALM + .45, T_PALM + .95)), [hx, hy] = AI_LAST.handR;
             if (pk > 0) { glow(hx, hy, 150 * pk, '#E8F4FF', .45 * pk); setRipple(hx, hy, 40 + 90 * pk, .8 * pk, { ry: .9, key: 'palm' }); boilSeed('s09h glint'); inkLine([[hx - 40, hy - 70], [hx + 30, hy + 20]], 3 * pk, '#FFFFFF', 'inkfine', 0); }
           }
+          if (t >= T_PALM && AI_LAST.handR && AI_LAST.wristR) s09Palm(AI_LAST.wristR, AI_LAST.handR, dis);   // skin, not a white glove (over the flare)
           mouthP = AI_LAST.mouth ? [...AI_LAST.mouth] : null;
         }
       } });
