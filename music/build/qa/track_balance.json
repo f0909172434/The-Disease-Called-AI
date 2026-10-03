@@ -140,7 +140,7 @@
   "strings": -9.1,
   "choir": -13.0,
   "musicbox": -7.6,
-  "pad": -9.2,
+  "pad": -9.3,
   "fx_jackpot_bell": -13.6,
   "fx_lever_pull": -16.2,
   "fx_rewind": -14.4,
@@ -181,17 +181,17 @@
   "fx_reverse_cymbal": -25.3
  },
  "S12": {
-  "instrumental_lufs": -29.0,
-  "kick": -32.2,
+  "instrumental_lufs": -29.1,
+  "kick": -32.1,
   "snare": -24.9,
   "crash": -7.5,
   "bass": -6.3,
-  "guitar": -1.4,
-  "saw_lead": -12.0,
+  "guitar": -1.3,
+  "saw_lead": -11.9,
   "fx_flatline": -5.6,
   "fx_impact": -15.6,
   "fx_room_tone": -28.1,
-  "fx_typing_click": -2.8
+  "fx_typing_click": -2.7
  },
  "S13": {
   "instrumental_lufs": -41.6,

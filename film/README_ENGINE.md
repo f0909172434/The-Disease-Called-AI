@@ -76,7 +76,7 @@ EN + 中文, speaker, style, line/syllable/word times). `window.mvInfo()` lists 
     him(…); ai(…);                                // the characters (src/chars)
     camEnd();
   }
-  shots([[section('S04').start, chorus, { lyricMode: 'karaoke' }]]);
+  shots([[sectionById('S04').start, chorus, { lyricMode: 'karaoke' }]]);
 })();
 ```
 Third element (or `fn.lyricMode` / `fn.lyricStyle`): `lyricMode` `'karaoke'` (default) | `'subtitle-only'`
