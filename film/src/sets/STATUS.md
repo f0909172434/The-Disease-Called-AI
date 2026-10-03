@@ -227,8 +227,15 @@ the last three beats become three pulsing dots.
 and the void behind it into tiles — then skip `setConfVoid`), `setLever(x, y, s, { pull, grow })`,
 `setConfetti(x, y, age, { n ≤ 40, spread, up, s })` (09F: gold streamers and flakes from the burst at 151.40),
 `setMirror(x, y, w, h, { content(S), glint, amber })` (09H), `setRipple(x, y, r, a)`, `setGlassEdge(x, y0, y1)` (09I).
-`SET_CONF.screen` = [960, 500, 1100, 680] is the default screen placement; the whole set is screen space (`cam.screen`
-= [960, 540, 1], `cam.wide` = [960, 560, .72] if a shot wants a camera).
+`SET_CONF.screen` = [960, 500, 1100, 680] is the default screen placement. The set is drawn in screen space (world =
+1920 × 1080 at zoom 1); `setConfVoid` is a fixed screen layer, so under a camera only the screen / slot / mirror move.
+
+| framing (`SET_CONF.cam.*`) | world rect shown | what reads | for |
+|---|---|---|---|
+| `screen` [960, 540, 1] | 0..1920 × 0..1080 | glass 410..1510 × 160..840, bezel to 362..1558 × 112..888 (its bottom edge dips into the lyric band; keep content above y 820); `stand` reaches y ≈ 1090 | 09A–09D, 09H mirror at the same rect |
+| `close` [960, 500, 1.6] | 360..1560 × 162..838 | the glass fills the frame, bezel only at the sides | 09D press on ↻, 09H reflection |
+| `wide` [960, 560, .72] | −373..2293 × −190..1310 | the screen small (glass on screen 564..1356 × 252..742), void round it, `stand` to screen y ≈ 920 | 09A open, 09I pull-back |
+| slot (09E–09F) | — | `setSlot(860, 520, 900, 560)` + `setLever(1460, 560)` at zoom 1; jackpot `setSlot(960, 540, 1000, 620)` | 09E–09F |
 
 ### Void / abstract and end card — `void.js`
 `setVoidLayer(kind)` (black, navy, indigo, blood, ash; cached), `setShards(t, { gather, ash, n ≤ 40, cx, cy, r })` and

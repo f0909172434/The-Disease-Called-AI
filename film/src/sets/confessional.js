@@ -13,7 +13,7 @@
 //                                       sweeping the glass), o.amber 0..1 (her edges seeping amber, 09H end)
 //   setRipple(x, y, r, a, o)            a ripple ring of light (09H music-box notes, 09I swirl)
 //   setGlassEdge(x, y0, y1, o)          09I: the glass seen edge-on, a vertical line down the middle of the frame
-const SET_CONF = { screen: [960, 500, 1100, 680], cam: { screen: [960, 540, 1], wide: [960, 560, .72] } };
+const SET_CONF = { screen: [960, 500, 1100, 680], cam: { screen: [960, 540, 1], wide: [960, 560, .72], close: [960, 500, 1.6] } };
 
 function setConfVoid(o = {}) {
   setScreenLayer('setconfvoid', () => {
