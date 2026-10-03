@@ -17,7 +17,7 @@
   const WD = [Math.sin(WANG), Math.cos(WANG)], WN = [-WD[1], WD[0]];       // along the hand, and across the wrist (the band's far -> near)
   const WAT = [WX + WD[0] * .2 * WU, WY + WD[1] * .2 * WU], WNEAR = [WAT[0] + WN[0] * .78 * WU, WAT[1] + WN[1] * .78 * WU];
   const PX = 1230, PY = 830, PH = 640, PW = PH * .5, PTOP = PY - PH / 2 + PW * .1;      // the phone lying on the desk (screen top edge = her ground while she climbs)
-  const HER_U = 36, CLIMB0 = T_A + .02, CLIMB = .6, CLICK = kitCut(10, 3, 12.56);
+  const HER_U = 36, CLIMB0 = T_A + .02, CLIMB = .6, CLICK = kitCut(10, 1, 12.56);
   const herPos = t => {                                                     // where she stands (feet), world px
     const hop = seg(t, 11.74, 12.02), run = seg(t, 12.2, CLICK - .02), back = seg(t, CLICK + .6, CLICK + .9);
     let x = lerp(PX, 1010, kitEase.sine(hop)), y = lerp(PTOP, 715, kitEase.sine(hop)) - 90 * Math.sin(hop * Math.PI) * (hop < 1 ? 1 : 0);
@@ -35,15 +35,15 @@
       glow(S.X(.5), S.Y(.3), S.h * .6, KIT.CYANW, .6 * lit); }, glow: 0 });
     // his wrist, band and fingers
     const s = seg(t, CLICK - .36, CLICK), bandK = t < 11.74 ? 0 : t < CLICK - .36 ? .3 : .6 + .4 * s;
-    const her = herPos(t), chest = [her[0] - 6, her[1] - 3.2 * HER_U];
+    const her = herPos(t), chest = [her[0] - 3.5 * HER_U, her[1] - 3.7 * HER_U];      // her left hand, stretched out to the band's end
     const end = t < 11.98 ? lerp2(WNEAR, chest, ease(seg(t, 11.74, 11.98))) : chest;
     himWrist(WX, WY, WU, { ang: WANG, bandK, bandEnd: end, clickT: CLICK, twitch: seg(t, CLICK + .12, CLICK + .42), outfit: 'launch', boilKey: 's01a wrist' });
     // her
     const p = (t - CLIMB0) / CLIMB, climbing = p < 1.05, f = aiEmotions(t, [[T_A, 'eager'], [CLICK + .3, 'smile']]);
     const grab = t >= 11.74 && t < CLICK + .5, pat = t >= CLICK + .1 && t < CLICK + .6;
     let act = {};
-    if (!climbing && t < CLICK) act = { reachRW: end, reachLW: [end[0] - 18, end[1] + 6], handL: 'fist', handR: 'fist', handAL: 1.2, handAR: 1.9 };
-    else if (t >= CLICK && t < 13.55) { const tap = Math.abs(Math.sin((t - CLICK - .1) * 10)) * (pat ? 1 : 0); act = { reachRW: [WNEAR[0] + 8, WNEAR[1] - 4 - 18 * tap], reachLW: [WNEAR[0] + 26, WNEAR[1] + 10], handR: 'flat', handL: 'fist', handAR: -1.2, handAL: 1.4 }; }
+    if (!climbing && t < CLICK) act = { reachLW: end, reachR: [.7, -3.4], handL: 'fist', handR: 'fist', handAL: Math.PI, handAR: 1.9 };
+    else if (t >= CLICK && t < 13.55) { const tap = Math.abs(Math.sin((t - CLICK - .1) * 10)) * (pat ? 1 : 0); act = { reachLW: [WNEAR[0] + 14, WNEAR[1] - 6 - 20 * tap], reachR: [.7, -3.3], handL: 'flat', handR: 'fist', handAL: Math.PI - .6, handAR: 1.9 }; }
     else if (t >= 13.55) act = aiAct('salute', t, 13.58);
     if (climbing || t < 11.2 + CLIMB) ai(PX, PTOP, HER_U, { ...f, ...aiClimb(t, CLIMB0, CLIMB), form: 'chibi', view: 'front', pal: 'glow', t, seed: 4, clip: climbing ? [PX - 300, PTOP - 700, PX + 300, PTOP] : null, noShadow: true, boilKey: 's01a her' });
     else ai(her[0], her[1], HER_U, { ...f, ...act, ...(t < 12.0 ? { dy: -.35 * Math.sin(seg(t, 11.74, 12.0) * Math.PI) } : {}), form: 'chibi', view: 'front', flip: false, pal: 'glow', t, seed: 4, noShadow: false, boilKey: 's01a her' });
