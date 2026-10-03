@@ -26,9 +26,9 @@
 | 樂譜、歌聲（DiffSinger）、混音、母帶 | ✅ 定稿：−11.01 LUFS／−1.32 dBTP，WER 主唱 0.062，0 句不合格 |
 | 盲測分析 | ✅ 172.007 BPM、節拍誤差 2.5 ms、小節線命中 100 % |
 | 手繪水彩引擎、角色、場景 | ✅ |
-| 67 個鏡頭（S00–S13） | ✅ 六組都審過；G6（S10–S13）和 S00–S01 的最後潤飾在 Mac 上收尾 |
-| 全片算圖與交付 MP4 | ⏳ `docs/tasks/mac_03_final_render.md`，在 Mac 上跑 |
-| README | ✅ 已改寫；剩下算完圖後填 `{{RENDER_MIN}}`，並放進劇照 |
+| 67 個鏡頭（S00–S13） | ✅ 全部通過審稿 |
+| 全片算圖與交付 MP4 | ✅ 在 M5 上 7.5 分鐘算完；`output/病名為AI_The_Disease_Called_AI.mp4` 93.65 MB，−11.1 LUFS，音畫逐樣本對齊（`docs/tasks/mac_03_report.md`）；HQ 版留在委託者的 Mac |
+| README | ✅ 完成（含劇照） |
 
 ---
 
@@ -82,12 +82,13 @@
 
 ## 4. 下一步
 
-1. 等 Mac 推 `[review] G6 fix #1 + S00/S01 polish`，審過以後傳訊叫 Mac 執行 `docs/tasks/mac_03_final_render.md`。
-2. Mac 推 `[review] final render` 之後：
-   - 確認 `output/病名為AI_The_Disease_Called_AI.mp4` 小於 95 MB，抽查畫面和聲音對齊；
-   - 把 `claude/mac-local` 合併進 `claude/compassionate-dijkstra-16o5bo`。
-3. README 填入 `{{RENDER_MIN}}`，確認 `docs/stills/*.jpg` 都在。
-4. 更新 PR 描述，push。
+成品已經交付，主線工作完成。以下是可以再做的（都不擋交付）：
+- 各組回饋裡標為「有空再做」的小潤飾：
+  - 02G 被子上的淡色圓斑；
+  - 09B 說話空檔的嘴型；
+  - 09H 手掌的質感；
+  - 巨大的手 `aiGiantHand` 再精細一點。
+- 改了任何鏡頭，都在 Mac 上重算全片（約 7.5 分鐘），再跑 `tools/assemble.py`。整部片必須在同一台機器上算。
 
 ---
 

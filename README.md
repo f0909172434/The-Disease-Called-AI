@@ -117,7 +117,7 @@ music/score/song.py         作曲即程式：曲式、和聲、每個音節、�
   - 她的造型嚴格依照委託者提供的參考圖。參考圖只拿來量測比例和取色，從來不會畫進任何一格畫面。
   - 他的臉、表情、姿勢、道具、躺姿、乾淨線條模式，全部是程式。
 - **快取**：靜態的水彩層用 `cachedLayer` 快取，每個場景三張 boil 變體輪流使用。
-- **製作方式**：雲端的主 session（Claude Opus 5.5）寫分鏡、訂規格、逐張審縮圖表。逐鏡頭製作交給委託者 Mac（Apple M5、Metal）上的本機 session 和它的子代理。兩邊透過 git 分支和跨 session 訊息溝通，共六組、數輪審稿。全片 5160 幀在 M5 上約 {{RENDER_MIN}} 分鐘算完。
+- **製作方式**：雲端的主 session（Claude Opus 5.5）寫分鏡、訂規格、逐張審縮圖表。逐鏡頭製作交給委託者 Mac（Apple M5、Metal）上的本機 session 和它的子代理。兩邊透過 git 分支和跨 session 訊息溝通，共六組、數輪審稿。全片 5160 幀在 M5 上約 7.5 分鐘算完（4 個 worker）。
 
 ### 專案結構
 
@@ -262,7 +262,7 @@ The analysis treats the finished master as an **unknown file**. It estimates the
   - Her design follows the reference images supplied by the person who commissioned the work. Those images were only measured for proportions and sampled for colour; they are never drawn into any frame.
   - His face, expressions, poses, props, lying poses and the clean-line mode are all code.
 - **Caching:** static watercolour layers are cached with `cachedLayer`, three boil drawings per set.
-- **How it was made:** a cloud session (Claude Opus 5.5) wrote the storyboard, set the specs and reviewed every contact sheet. Shot production ran in a local session on the commissioner's Mac (Apple M5, Metal) and its subagents. The two sides talked through git branches and cross-session messages, over six shot groups and several review rounds. The 5,160 frames render in about {{RENDER_MIN}} minutes on the M5.
+- **How it was made:** a cloud session (Claude Opus 5.5) wrote the storyboard, set the specs and reviewed every contact sheet. Shot production ran in a local session on the commissioner's Mac (Apple M5, Metal) and its subagents. The two sides talked through git branches and cross-session messages, over six shot groups and several review rounds. The 5,160 frames render in about 7.5 minutes on the M5 (4 workers).
 
 ### Reproduce
 
