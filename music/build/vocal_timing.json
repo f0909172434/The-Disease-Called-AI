@@ -2003,20 +2003,20 @@
     {
      "text": "pain",
      "start": 67.9724,
-     "end": 68.173,
+     "end": 68.1687,
      "vowel": 68.0233
     },
     {
      "text": "less",
-     "start": 68.173,
+     "start": 68.1687,
      "end": 68.3263,
-     "vowel": 68.1977
+     "vowel": 68.2237
     },
     {
      "text": "yes",
      "start": 68.3263,
      "end": 69.4186,
-     "vowel": 68.3721
+     "vowel": 68.4071
     }
    ],
    "words": [
@@ -2097,20 +2097,20 @@
     {
      "text": "pain",
      "start": 67.9826,
-     "end": 68.1911,
+     "end": 68.1883,
      "vowel": 68.0342
     },
     {
      "text": "less",
-     "start": 68.1911,
+     "start": 68.1883,
      "end": 68.3416,
-     "vowel": 68.2173
+     "vowel": 68.2433
     },
     {
      "text": "yes",
      "start": 68.3416,
      "end": 69.4346,
-     "vowel": 68.3859
+     "vowel": 68.4209
     }
    ],
    "words": [

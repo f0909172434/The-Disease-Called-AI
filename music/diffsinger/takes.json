@@ -7,18 +7,24 @@
   "wer_take0": 0.6
  },
  "C1_5": {
-  "take": 5,
+  "take": 25,
   "wer": 0.167,
-  "transcript": "Feed me your perfect penis, yes!",
-  "takes_tried": 6,
-  "wer_take0": 0.5
+  "transcript": "A perfect painless yes!",
+  "takes_tried": 36,
+  "wer_take0": 0.5,
+  "check": {
+   "small.en": "A perfect painless yes!"
+  }
  },
  "C1_5_dbl": {
-  "take": 2,
-  "wer": 0.167,
-  "transcript": "Feed me your perfect penless yes!",
-  "takes_tried": 6,
-  "wer_take0": 0.333
+  "take": 22,
+  "wer": 0.0,
+  "transcript": "Your perfect painless yes!",
+  "takes_tried": 36,
+  "wer_take0": 0.333,
+  "check": {
+   "small.en": "Your perfect painless yes!"
+  }
  },
  "C2_2": {
   "take": 2,

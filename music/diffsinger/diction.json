@@ -1,0 +1,8 @@
+{
+ "_note": "Per-line diction edits (diffsinger_backend.edit_times / phonemes.override_phonemes; README: Diction edits). C1_5_dbl uses C1_5's entry.",
+ "C1_5": {
+  "_why": "'painless' on two 1/2-beat notes (~350 ms at 172 bpm): the duration model gives [l] 25 ms and the word was heard as 'penis' / 'princess' / 'palaces'; 'yes' after the [s] was heard as 'ass'. [n] 45 ms, [l] 55 ms (distinct onset), the schwa lands 26 ms after its beat and [s] 24 ms later, the vowel of 'yes' 35 ms later (its [j] glide carries the beat). Seeded takes then picked with medium.en + small.en both hearing 'painless yes' (takes.json).",
+  "starts": {"less/ax": 26, "less/s": 24, "yes/eh": 35},
+  "lengths": {"less/l": 55, "pain/n": 45}
+ }
+}
