@@ -165,7 +165,10 @@ function setWard(v = 'c1', o = {}) {
 function setWardLights(v, o = {}) {
   const P = setWardPal(v), t = o.t ?? T, [lx, ly] = SET_WARD.lamp, B = SET_WARD.bed, cfg = o.cfg || { lamp: true, iv: true };
   const lk = (o.lampK ?? 1) + (o.flash || 0);
-  if (cfg.lamp !== false) setRingLampLight(lx, ly, 1, lk * (v === 'final' ? .6 : 1), P.lamp);
+  if (cfg.lamp !== false) {
+    setRingLampLight(lx, ly, 1, lk * (v === 'final' ? .6 : 1), P.lamp);
+    if (v !== 'final') { glow(lx, B.top + 10, 640, P.lamp, .24 * lk); glow(lx, SET_WARD.island[1], 900, P.lamp, .12 * lk); }   // a surgical lamp: its pool lands on the bed and the island
+  }
   if (v === 'c1') { const f = o.fever ?? .6; glow((B.x0 + B.x1) / 2 - 150, B.top - 60, 520, P.fever, .35 * f); glow(B.x0 + 200, B.top - 160, 300, P.fever, .3 * f * (.7 + .3 * pulse(t, 3))); }
   if (cfg.iv !== false) setWardPorts(v).forEach(([px, py]) => glow(px, py - 140, 150, P.liquid, .55));
   if (v === 'c2' && (o.alarm ?? 1) > 0) {

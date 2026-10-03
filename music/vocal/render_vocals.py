@@ -143,6 +143,7 @@ def run_qa(renders, lines, model: str, plots: list[str], qa_dir: str) -> dict:
 
 
 def summarize(rows: list[dict]) -> dict:
+    import qa
     def stats(rs, key="wer"):
         v = [r[key] for r in rs if r.get(key) is not None]
         if not v:
@@ -156,6 +157,9 @@ def summarize(rows: list[dict]) -> dict:
     spoken = [r for r in rows if r["mode"] != "sung" and not r["exempt"]]
     fails = []
     for r in rows:
+        bad = qa.unwanted_words(r["text"], r["transcript"])
+        if bad:
+            fails.append({"id": r["id"], "check": "mishearing", "value": bad, "transcript": r["transcript"]})
         lim = 0.35 if r["mode"] == "sung" else 0.15
         if not r["exempt"] and not r["double_of"] and r["wer"] > lim:
             fails.append({"id": r["id"], "check": "wer", "value": r["wer"], "limit": lim})

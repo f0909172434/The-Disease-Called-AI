@@ -23,10 +23,14 @@ DiffSinger backend for sung lines:  render_vocals.py --sung-backend diffsinger
              singer.world_render (hard-tune contour, +3 % formants, vocoder layer, choir).
              Gates, levels, inhale, timing entry and QA data: singer.finish_sung.
 
+    diction  music/diffsinger/diction.json: per-line phoneme timing edits on top of the
+             duration model (edit_times); such a line is rendered with timed lyrics.
+
 Caches (music/build/cache/): ds_<line> = the DiffSinger stage (keyed by the line, its
-banks' fingerprints, the renderer build and these sources); dsline_<line> = the finished
-line (adds the WORLD/styling sources). OpenUtau's tensor cache (music/diffsinger/oudata)
-makes a re-render of the same input bit-identical (the diffusion sampler is otherwise random).
+banks' fingerprints, the renderer build, take, diction edit and these sources);
+dsline_<line> = the finished line (adds the WORLD/styling sources). DiffSinger's sampling is
+seeded per line + bank + take (seed_models.py + ourender), so a render is reproducible
+without any cache; OpenUtau's tensor cache (music/diffsinger/oudata) only saves time.
 """
 from __future__ import annotations
 
@@ -64,6 +68,7 @@ DS_SOURCES = ["diffsinger_backend.py", "contour.py", "planner.py", "phonology.py
 LINE_SOURCES = DS_SOURCES + ["singer.py", "world_voice.py", "lineaudio.py"]
 DS_VERSION = 1
 TAKES_JSON = os.path.join(DS_DIR, "takes.json")
+DICTION_JSON = os.path.join(DS_DIR, "diction.json")
 FAMILY_BANK = {"her": os.environ.get("DIFFSINGER_HER", "hanami"),
                "him": os.environ.get("DIFFSINGER_HIM", "tiger")}
 
@@ -114,6 +119,27 @@ def takes() -> dict[str, int]:
     return out
 
 
+def diction() -> dict[str, dict]:
+    """Per-line diction edits, music/diffsinger/diction.json (VOCAL_DS_DICTION = JSON
+    overrides it): {line id: {"phonemes": {"<syllable>": "ARPAbet ..."},
+    "starts" | "lengths": {"<syllable>/<ARPAbet>": ms}}}. A double without an entry of its
+    own uses its lead's. See phonemes.override_phonemes and edit_times."""
+    out = {}
+    try:
+        with open(DICTION_JSON) as fh:
+            out.update({k: v for k, v in json.load(fh).items() if not k.startswith("_")})
+    except (OSError, ValueError):
+        pass
+    if os.environ.get("VOCAL_DS_DICTION"):
+        out.update(json.loads(os.environ["VOCAL_DS_DICTION"]))
+    return out
+
+
+def diction_for(line: dict) -> dict | None:
+    d = diction()
+    return d.get(line["id"]) or (d.get(line["double_of"]) if line.get("double_of") else None)
+
+
 def source_line(line: dict) -> dict:
     """What is actually sung: a human double is a second take (jittered landings)."""
     from singer import jitter_line, stable_seed
@@ -130,6 +156,7 @@ def ds_key(line: dict, voices: dict, cfg: Config) -> str:
     return cache.key("ds", source_line(line), weights, stage_cfg, DS_VERSION, fps,
                      runner.build_id(), style.timing, style.expr, line.get("detune_cents"),
                      *([("take", takes().get(line["id"], 0))] if takes().get(line["id"]) else []),
+                     *([("diction", diction_for(line))] if diction_for(line) else []),
                      sources=DS_SOURCES)
 
 
@@ -251,6 +278,61 @@ def times_from_render(part: su.PartSpec, info: dict, lp: phm.LinePhonemes, bank:
     return out
 
 
+MIN_LEN = {"vowel": 0.040, "consonant": 0.030}
+
+
+def edit_times(lp: phm.LinePhonemes, times: dict[int, list[tuple[float, float]]],
+               edit: dict) -> dict[int, list[tuple[float, float]]]:
+    """Diction edits on the duration model's phoneme times; phonemes are named
+    "<syllable text>/<ARPAbet>" (every syllable with that text).
+
+      starts   {name: ms}  move the phoneme's start by ms from where the model put it
+               (+ = later: a late vowel leaves its onset more room).
+      lengths  {name: ms}  give the phoneme that length keeping its end, i.e. the next
+               phoneme's start (for an onset consonant the vowel lands where it is).
+
+    Edits are applied from the end of the line backwards (so a length is measured against
+    the already edited next phoneme). The time comes out of (or goes to) the phonemes before
+    the edited one, each kept at >= MIN_LEN (a squeezed one pushes its own start back in
+    turn); a rest between phonemes stops the chain. Used where the model's timing loses a
+    word: "painless" with a 25 ms [l] was heard as "penis"."""
+    by_idx = {s.index: s for s in lp.syllables}
+    flat = [(s.index, k) for s in lp.syllables if not s.shares_prev for k in range(len(s.phones))]
+    seq = [list(times[si][k]) for si, k in flat]
+    orig = [tuple(x) for x in seq]
+
+    def hits(key):
+        syl, ph = key.lower().split("/")
+        out = [i for i, (si, k) in enumerate(flat)
+               if phm._norm(by_idx[si].text) == phm._norm(syl) and by_idx[si].phones[k].arpa == ph]
+        if not out:
+            raise KeyError(f"{lp.line_id}: diction edit {key!r} matches no phoneme")
+        return out
+
+    def min_len(j):
+        si, k = flat[j]
+        return MIN_LEN["vowel" if by_idx[si].phones[k].is_vowel else "consonant"]
+
+    def set_start(i, t):
+        seq[i][0] = min(t, max(seq[i][1] - min_len(i), seq[i][0]))
+        for j in range(i - 1, -1, -1):
+            if orig[j][1] < orig[j + 1][0] - 1e-4 and seq[j][1] <= seq[j + 1][0]:
+                break                                       # a rest in between: untouched
+            seq[j][1] = seq[j + 1][0]
+            if seq[j][1] - seq[j][0] >= min_len(j):
+                break
+            seq[j][0] = seq[j][1] - min_len(j)
+
+    ops = [(i, 0, ms) for key, ms in (edit.get("starts") or {}).items() for i in hits(key)] + \
+          [(i, 1, ms) for key, ms in (edit.get("lengths") or {}).items() for i in hits(key)]
+    for i, kind_, ms in sorted(ops, key=lambda o: (-o[0], o[1])):
+        set_start(i, orig[i][0] + ms / 1000.0 if kind_ == 0 else seq[i][1] - ms / 1000.0)
+    out = {s.index: [] for s in lp.syllables}
+    for (si, _), (a, b) in zip(flat, seq):
+        out[si].append((a, b))
+    return out
+
+
 # ----------------------------------------------------------------------------- batch stage
 
 def _shard(parts: list[su.PartSpec], n: int) -> list[list[su.PartSpec]]:
@@ -321,9 +403,11 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
         weights = bank_weights(voices[line["voice"]]["blend"])
         for b, _ in weights:
             banks.setdefault(b, bk.find(b))
+        edit = diction_for(line) or {}
+        lp = phm.override_phonemes(phm.line_phonemes(src, style.timing), edit.get("phonemes"))
         jobs.append({"line": line, "src": src, "key": key, "style": style, "weights": weights,
-                     "take": takes().get(line["id"], 0),
-                     "seed": stable_seed(line["id"]), "lp": phm.line_phonemes(src, style.timing)})
+                     "take": takes().get(line["id"], 0), "edit": edit, "lp": lp,
+                     "seed": stable_seed(line["id"])})
     timed = cfg.timing == "ours"
     prim_tracks, prim_index = [], {}
     for b in sorted({j["weights"][0][0] for j in jobs}):
@@ -345,6 +429,13 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
         for j in jobs:
             b = j["weights"][0][0]
             j["times"] = times_from_render(j["part1"], infos[j["part1"].name], j["lp"], banks[b], False)
+    for j in jobs:                           # diction edits: these lines render with timed lyrics
+        j["timed"] = timed or bool(j["edit"].get("starts") or j["edit"].get("lengths"))
+        if j["timed"] and not timed:
+            j["times"] = edit_times(j["lp"], j["times"], j["edit"])
+    for b in sorted({j["weights"][0][0] for j in jobs if j["timed"] and not timed}):
+        prim_index[(b, True)] = len(prim_tracks)
+        prim_tracks.append(su.track_for(banks[b], True))
 
     # ---- plan + contour
     for j in jobs:
@@ -357,8 +448,9 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
     for j in jobs:
         b = j["weights"][0][0]
         contour = (j["con"].t, j["con"].target_midi) if cfg.pitch == "score" else None
-        j["part2"] = su.part_for_line(j["src"], j["lp"], banks[b], prim_index[b],
-                                      times=j["times"] if timed else None, contour=contour,
+        track = prim_index[(b, True)] if j["timed"] and not timed else prim_index[b]
+        j["part2"] = su.part_for_line(j["src"], j["lp"], banks[b], track,
+                                      times=j["times"] if j["timed"] else None, contour=contour,
                                       take=j["take"], name=f"{j['line']['id']}__{b}")
         parts.append(j["part2"])
     infos = _run_batch("render", prim_tracks, parts, work, "primary", cfg,
@@ -367,7 +459,7 @@ def _prepare(todo, voices, cfg: Config, work: str, log) -> dict:
     for j in jobs:
         info = infos[j["part2"].name]
         b = j["weights"][0][0]
-        t2 = times_from_render(j["part2"], info, j["lp"], banks[b], timed)
+        t2 = times_from_render(j["part2"], info, j["lp"], banks[b], j["timed"])
         drift = max((abs(a[0] - c[0]) for k in t2 for a, c in zip(t2[k], j["times"].get(k, []))), default=0.0)
         if drift > 0.002:                      # cannot happen unless the phonemizer changed
             log(f"warning: {j['line']['id']}: render timing moved {drift * 1000:.1f} ms; using it")

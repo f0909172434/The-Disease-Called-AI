@@ -42,6 +42,8 @@ python3 music/vocal/render_vocals.py                       # everything (DiffSin
 python3 music/vocal/render_vocals.py --lines C1_2,B_L1 --no-stems --wav-dir /tmp/x
 python3 music/vocal/render_vocals.py --sung-backend kokoro # the old Kokoro singer
 python3 music/diffsinger/audition.py --lines V1_1,C1_2 --mp3 /tmp/him.mp3   # + WER/pitch/crack table
+python3 music/diffsinger/audition.py --lines C1_5,C1_5_dbl --retake 8 --check-models large-v3,small.en --mp3 /tmp/x.mp3
+python3 music/diffsinger/check_determinism.py [--lines C1_2,PO_1,B_L1]       # two clean renders, compared
 ```
 
 Options (environment): `DIFFSINGER_COLOR_HANAMI` / `DIFFSINGER_COLOR_TIGER` (voice mode,
@@ -103,6 +105,29 @@ mis-hears, `audition.py --retake N --lines A,B` sings takes 0..N-1 (take k = noi
 with line + bank + k) and records the best in `takes.json` (committed, with the WER of
 each); the take number is all that is needed to reproduce it anywhere.
 
+**Diction edits.** Where the bank's duration model loses a word, `diction.json` (committed)
+re-spells or re-times single phonemes of that line (`diffsinger_backend.edit_times`,
+`phonemes.override_phonemes`):
+
+```json
+"C1_5": {"phonemes": {"pain": "p eh y n"},
+         "starts":   {"less/eh": 30},
+         "lengths":  {"less/l": 55, "pain/n": 45}}
+```
+
+`phonemes` replaces a syllable's ARPAbet (one vowel); `starts` moves a phoneme's start by
+ms from where the duration model put it (+ = later); `lengths` gives it that length keeping
+its end. Edits run from the end of the line backwards and take the time from the phonemes
+before them (none below 30 ms, vowels 40 ms; a rest stops the chain). Pass 1 still runs the
+duration model; an edited line is then rendered through the timed phonemizer (`OUR TIMED`)
+and `vocal_timing.json` reports the edited times. A double without an entry of its own uses
+its lead's; `VOCAL_DS_DICTION` (JSON) overrides the file.
+
+**Mis-hearings.** `music/vocal/qa.py` has a list of words that must never be heard where
+the lyric does not have them (`UNWANTED`): `vocal_qa.json` fails such a line (check
+`mishearing`, doubles and exempt lines included) and `audition.py --retake` never keeps such
+a take — with `--check-models large-v3,small.en` the other models' transcripts count too.
+
 **Caches.** `music/build/cache/ds_<line>` (DiffSinger stage: line, bank fingerprints incl.
 voice mode, renderer build, sources) and `dsline_<line>` (finished line). OpenUtau's tensor
 cache lives in `oudata/` (git-ignored).
@@ -115,10 +140,13 @@ difference). `seed_models.py` (run by `fetch_voicebanks.sh`) rewrites each of th
 a slice of a new input `ourender_{normal|uniform}_<k>__{t|f}<n>`; the patched OpenUtau
 (`DiffSingerNoise.cs`) fills it from xoshiro256** seeded by
 XXH64(`<line>__<bank>|take<k>|phrase<i>|<model>|<input>`) — keys registered by ourender per
-phrase (the phrase hash for other callers). Verified: two renders of C1_2 / PO_1 / B_L1 with
-empty caches are bit-identical (raw DiffSinger audio and finished lines), a line rendered
-alone equals the same line in a batch, take 7 differs from take 1. Same build + machine type
-→ same audio (Box–Muller uses libm log/cos; other platforms may differ in the last bit).
+phrase (the phrase hash for other callers). Verified (`check_determinism.py`, 2026-10-03):
+two clean renders of C1_2 (TIGER), PO_1 (Hanami) and B_L1 (her→him, both banks) — separate
+processes, empty render cache, empty OpenUtau data dir, i.e. no tensor cache — are
+bit-identical in every bank's raw audio and in the finished lines; a line rendered alone
+equals the same line in a batch, take 7 differs from take 1 (the `RealBanks` test checks
+both renders + another take on PO_1). Same build + machine type → same audio (Box–Muller
+uses libm log/cos; other platforms may differ in the last bit).
 Rewritten banks need ourender (stock OpenUtau reports the extra inputs as missing); the zips
 restore the originals. OpenUtau's tensor cache (`oudata/`) only saves time now; ourender drops
 OpenUtau's 16-bit phrase WAV cache so a re-render equals the first. ONNX Runtime uses its

@@ -58,6 +58,12 @@ if [ ! -x "$HERE/.venv/bin/python" ]; then
   python3 -m venv --system-site-packages "$HERE/.venv"
   "$HERE/.venv/bin/pip" install -q onnx
 fi
+# banks fetched before this venv existed are still unseeded: seed them now (no-op otherwise)
+VB="${DIFFSINGER_VOICEBANKS:-$HERE/voicebanks}"
+if [ -d "$VB" ]; then
+  echo "== seeding installed banks"
+  "$HERE/.venv/bin/python" "$HERE/seed_models.py" --voicebanks "$VB"
+fi
 
 echo "== building ourender"
 t0=$(date +%s)

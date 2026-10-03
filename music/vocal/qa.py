@@ -85,6 +85,23 @@ def wer(ref: str, hyp: str) -> float:
     return float(d[len(h)]) / len(r)
 
 
+# Mis-hearings that must never ship, whatever the WER: a listener can hear what Whisper
+# hears (C1_5 "painless yes" was transcribed "penis, yes" at WER 0.17). A transcript word in
+# this list that the lyric does not contain fails the line, doubles and exempt lines included,
+# and audition.py --retake never keeps such a take.
+UNWANTED = set("""
+penis penises dick cock cocks ass arse asshole butt boob boobs tits nipple nipples vagina
+pussy sex sexy naked nude porn orgasm horny fuck fucking fucked shit shitty bitch whore slut
+cunt rape raped nazi nazis hitler
+""".split())
+
+
+def unwanted_words(ref: str, hyp: str) -> list[str]:
+    """Transcript words from UNWANTED that the reference text does not contain."""
+    r = set(normalize(ref))
+    return sorted({w for w in normalize(hyp) if w in UNWANTED and w not in r})
+
+
 # ----------------------------------------------------------------------------- pitch
 
 def pitch_error_cents(audio: np.ndarray, fs: int, t_start: float, frames_t: np.ndarray,

@@ -210,6 +210,48 @@ def line_phonemes(line: dict, timing_style=None, sung: bool = True) -> LinePhone
     return LinePhonemes(line["id"], ps, slots, sylls)
 
 
+def override_phonemes(lp: LinePhonemes, table: dict[str, str] | None) -> LinePhonemes:
+    """Per-line pronunciation edits (music/diffsinger/diction.json "phonemes"):
+    {"<syllable text>": "p eh y n"} replaces that syllable's ARPAbet (every syllable with that
+    text; one vowel, or none for a melisma syllable). The misaki characters the old phonemes
+    came from go to the new ones of the same role (onsets aligned at the start, codas at the
+    end; a phoneme without a counterpart has none, extra old ones join the vowel), so the
+    plan rebuilt from DiffSinger's times still covers the whole line."""
+    if not table:
+        return lp
+    want = {_norm(k): v.split() for k, v in table.items()}
+    used, out = set(), []
+    for s in lp.syllables:
+        arpas = want.get(_norm(s.text))
+        if arpas is None or s.shares_prev:
+            out.append(s)
+            continue
+        used.add(_norm(s.text))
+        vi = [i for i, a in enumerate(arpas) if a in ARPA_VOWELS]
+        if len(vi) != 1:
+            raise ValueError(f"{lp.line_id}: {s.text!r} -> {arpas}: need exactly one vowel")
+        new = {"onset": arpas[:vi[0]], "nucleus": [arpas[vi[0]]], "coda": arpas[vi[0] + 1:]}
+        old = {r: [p for p in s.phones if p.role == r] for r in new}
+        phones, spare = [], []
+        for role in ("onset", "nucleus", "coda"):
+            names, olds = new[role], old[role]
+            if role == "coda":                  # right-aligned: "n" stays "n" in [eh y n]
+                pad = len(names) - len(olds)
+                pairs = [(a, olds[k - pad] if 0 <= k - pad < len(olds) else None) for k, a in enumerate(names)]
+                spare += [p for k, p in enumerate(olds) if k + pad < 0]
+            else:
+                pairs = [(a, olds[k] if k < len(olds) else None) for k, a in enumerate(names)]
+                spare += olds[len(names):]
+            phones += [Ph(a, list(o.src) if o else [], role) for a, o in pairs]
+        nuc = next(p for p in phones if p.role == "nucleus")
+        nuc.src = sorted(nuc.src + [i for p in spare for i in p.src])
+        out.append(Syl(s.index, s.word, s.text, s.notes, phones, False))
+    missing = set(want) - used
+    if missing:
+        raise KeyError(f"{lp.line_id}: phoneme override for {sorted(missing)}: no such syllable")
+    return LinePhonemes(lp.line_id, lp.ps, lp.slots, out)
+
+
 # ----------------------------------------------------------------------------- bank dictionaries
 
 # legal English onsets, in ARPAbet (from music/vocal/phonology.LEGAL_ONSETS)

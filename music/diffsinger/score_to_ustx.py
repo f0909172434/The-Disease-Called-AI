@@ -115,8 +115,22 @@ def ours_times(line: dict, lp: phm.LinePhonemes, st=None) -> dict[int, list[tupl
     plan = pl.plan_sung(line, nat, lp.ps, lp.slots, st)
     out = {}
     for s in lp.syllables:
-        out[s.index] = [(min(plan.phones[i + 1].start for i in p.src),
-                         max(plan.phones[i + 1].end for i in p.src)) for p in s.phones]
+        spans = []
+        for p in s.phones:
+            if p.src:
+                spans.append((min(plan.phones[i + 1].start for i in p.src),
+                              max(plan.phones[i + 1].end for i in p.src)))
+            elif spans:                     # an added phoneme (diction override): it takes
+                a, b = spans[-1]            # the second half of the one before it
+                spans[-1] = (a, (a + b) / 2)
+                spans.append(((a + b) / 2, b))
+            else:
+                spans.append(None)
+        for k in range(len(spans) - 1, -1, -1):      # leading added phonemes: the next one's first half
+            if spans[k] is None:
+                a, b = spans[k + 1]
+                spans[k], spans[k + 1] = (a, (a + b) / 2), ((a + b) / 2, b)
+        out[s.index] = spans
     return out
 
 

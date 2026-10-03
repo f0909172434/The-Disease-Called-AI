@@ -149,8 +149,11 @@ function setRingLight(x, y, rx, ry, col = SET_C.cyan, a = .8, ang = 0) { setAdd(
 
 // ---------- cached sets ----------
 // Resolution of a world-space set's cache for a camera zoom: layer pixels per world pixel. A whole-room view (zoom ≈ .41)
-// is painted at .4 (the room fits one 4800 × 2700 tile), up to .56 at .5, up to 1.1 at 1:1, then 2× and 3× for close framings.
-const setAutoRes = z => z <= .42 ? .4 : z <= .56 ? .5 : z <= 1.12 ? 1 : z <= 2.2 ? 2 : 3;
+// is painted at .4 (the room fits one 4800 × 2700 tile); closer framings step up to 3 layer px per world px.
+// The steps are ≤ 15 % apart and the largest step ≤ zoom is taken (≤ 13 % upscale), so a tile is never smaller than the
+// view: any framing needs at most 2 × 2 tiles (12 cached layers with 3 boil drawings; the page's LRU holds 24).
+const SET_RES = [.4, .45, .5, .56, .62, .7, .78, .87, 1, 1.12, 1.25, 1.4, 1.6, 1.8, 2, 2.25, 2.5, 2.8, 3];
+const setAutoRes = z => { let r = SET_RES[0]; for (const s of SET_RES) if (s <= z * 1.0001) r = s; return r; };
 // setTiles(key, draw, o): a static world-space layer drawn under the current camera, cached in frame-sized tiles.
 //   draw(x0, y0, x1, y1, res): paints everything that touches that world rectangle (world coordinates; cull by it).
 //   o.res: fix the resolution for a shot (default setAutoRes(zoom): fix it for a push or pull, or the detail pops).
@@ -161,7 +164,8 @@ const setAutoRes = z => z <= .42 ? .4 : z <= .56 ? .5 : z <= 1.12 ? 1 : z <= 2.2
 // Every element must seed itself (boilSeed per element) so a shape crossing a tile seam paints identically in both.
 let SET_TILE_STATS = { tiles: 0 };
 function setTiles(key, draw, o = {}) {
-  const cam = o.cam || CAM || { cx: W / 2, cy: H / 2, zoom: 1, rot: 0 };
+  const oc = Array.isArray(o.cam) ? { cx: o.cam[0], cy: o.cam[1], zoom: o.cam[2], rot: o.cam[3] || 0 } : o.cam;   // [cx, cy, zoom(, rot)] or a CAM object
+  const cam = oc || CAM || { cx: W / 2, cy: H / 2, zoom: 1, rot: 0 };
   const res = o.res ?? setAutoRes(cam.zoom), tw = W / res, th = H / res;
   const hw = W / 2 / cam.zoom, hh = H / 2 / cam.zoom, c = Math.abs(Math.cos(cam.rot || 0)), s = Math.abs(Math.sin(cam.rot || 0));
   const ex = hw * c + hh * s, ey = hw * s + hh * c;
@@ -175,7 +179,9 @@ function setTiles(key, draw, o = {}) {
     };
     const fade = o.alpha != null && o.alpha < 1;
     if (fade) { push(); translate(1e6, 1e6); cachedLayer(id, o.variants ?? 3, paintTile, { paper: o.paper !== false }); pop(); }   // paint it untinted (off-canvas) first
-    push(); translate(wx, wy); scale(1 / res);
+    // each tile is drawn ~1 screen px larger on every side: neighbours overlap instead of leaving a hairline of paper
+    const e = Math.max(.5, res / (cam.zoom || 1));
+    push(); translate(wx, wy); scale(1 / res); translate(-e, -e); scale((W + 2 * e) / W, (H + 2 * e) / H);
     if (fade) tint(255, 255 * clamp(o.alpha));
     cachedLayer(id, o.variants ?? 3, paintTile, { paper: o.paper !== false });
     if (fade) noTint();

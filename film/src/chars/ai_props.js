@@ -104,7 +104,9 @@ function aiPhone(c, a, h, sp) {
   const at = (x, y) => [c[0] + d[0] * x + n[0] * y, c[1] + d[1] * x + n[1] * y];
   const rr = (hx, hy, r) => { const p = []; for (const [cx, cy, a0] of [[hx - r, hy - r, 0], [-hx + r, hy - r, Math.PI / 2], [-hx + r, -hy + r, Math.PI], [hx - r, -hy + r, Math.PI * 1.5]]) for (let i = 0; i <= 3; i++) { const t = a0 + i / 3 * Math.PI / 2; p.push(at(cx + Math.cos(t) * r, cy + Math.sin(t) * r)); } return p; };
   const scr = sp.screen || 'glow';
-  if (scr !== 'back' && scr !== 'dark' && S.u > 10) aiGlow(c[0], c[1], h * 1.1, AI_CYAN, .6);
+  // in a hand the light is smaller and softer (additive light over the fingers on paper turns them white); sp.glow overrides
+  const held = S.pts.handL || S.pts.handR, ga = sp.glow ?? (held ? .3 : .6);
+  if (scr !== 'back' && scr !== 'dark' && S.u > 10 && ga > 0) aiGlow(c[0], c[1], h * (held ? .8 : 1.1), AI_CYAN, ga);
   aiPaint(rr(h * .5, w * .5, w * .16), { wash: '#262B3E', ink: S.P.ink, sw: sw * .5 });
   if (scr === 'back') { aiPaint(aiEll(...at(h * .36, w * .24), w * .07, w * .07, 8), { wash: '#4A5170', ink: null }); aiLine([at(-h * .45, -w * .38), at(h * .45, -w * .38)], sw * .3, '#3C4258'); return { screen: c }; }
   const sc = rr(h * .45, w * .42, w * .1);
@@ -134,7 +136,7 @@ function aiCord(g, sp, hl) {
   const m = [lerp(top[0], g[0], .5) + (g[1] - top[1]) * sag, lerp(top[1], g[1], .5)];
   aiLine(aiCurve([top, m, [g[0], g[1] - hl * .2]], 6), S.sw * .45, '#3A3550');
   aiPaint(aiEll(g[0], g[1] - hl * .05, hl * .14, hl * .2, 10), { wash: AI_CYANW, ink: S.P.ink, sw: S.sw * .35 });
-  if (S.u > 12) aiGlow(g[0], g[1], hl * .8, AI_CYAN, .5);
+  if (S.u > 12) aiGlow(g[0], g[1] - hl * .15, hl * .45, AI_CYAN, sp.glow ?? .3);   // small: the bead sits in her fingers
   return { bead: g };
 }
 // The light stethoscope (03B): earpieces at her ears, the tubes down to a Y at her chest, one tube to the chestpiece in her

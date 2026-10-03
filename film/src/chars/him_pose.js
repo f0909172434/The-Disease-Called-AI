@@ -2,7 +2,7 @@
 // arm presets (hands on the lap, holding the phone, reaching up, hugging, wrists offered, waving, puppet, lever, palm on
 // glass), arm IK to points in the scene, a walk and a run cycle, lying on his back, lying on his side, sitting on the
 // bed's edge and falling back, hugging his knees, curled up on the floor. Loaded after him.js; same him / HIM_ prefix.
-// Everything is painted through himKit (paint() / inkLine()); every option is a pure function of its inputs and T.
+// Everything is painted through himKit (himPaintV() / himInkV()); every option is a pure function of its inputs and T.
 
 // a colour of a prop or the covers, through the figure's palette (drained / clean / mirror / cyan)
 function himCol(c, hex) {
@@ -70,7 +70,12 @@ function himArmResolve(sp, S, u) {
 // in the caller's coordinates (o.toR / o.toL: [x, y] for the hand), the wave, the walk/run swing, the lever, the glass.
 function himArmSpec(o, view, side, S, mode, u, gait) {
   const v = view === 'q' ? 'q' : view === 'side' ? 'side' : 'front', t = T;
-  let pre = o['arm' + side] || o.arms || (mode === 'bed' ? 'lap' : mode === 'lie' ? (o.phone === 'chest' && side === 'R' ? 'chest' : 'flat') : mode === 'sidelie' ? 'onCovers' : null), sp = null;
+  const def = mode === 'bed' ? 'lap' : mode === 'lie' ? (o.phone === 'chest' && side === 'R' ? 'chest' : 'flat') : mode === 'sidelie' ? 'onCovers' : null;
+  let pre = o['arm' + side] || o.arms || def, sp = null;
+  if (typeof pre === 'string' && def && !o['arm' + side] && HIM_ARMS[def][v] && HIM_ARMS[def][v][side]) {   // o.arms: 'plug' etc. pose one arm; the other keeps the bed's / lying default
+    const one = { wave: 'R', lever: 'R', glass: 'R', finger: 'R', plug: 'R' }[pre];
+    if (one ? one !== side : pre !== 'strung' && !(HIM_ARMS[pre] && HIM_ARMS[pre][v] && HIM_ARMS[pre][v][side])) pre = def;
+  }
   if (typeof pre === 'object' && pre) sp = { ...pre };
   else if (pre === 'wave' && side === 'R') {   // waving bye: the forearm up beside the head, rocking from the elbow
     const ph = Math.sin((o.waveT ?? t) * TAU * 2.6), k = o.wave ?? 1, base = v === 'front' ? [-4.6, -12.6] : [S[0] + 1.6, S[1] - 1.0];
@@ -92,8 +97,10 @@ function himArmSpec(o, view, side, S, mode, u, gait) {
     return { ...himArmIK(S, W, 1), hand: k > .7 ? 'flat' : 'relax', handAng: lerp(-.4, Math.PI, ease(seg(k, .3, 1))) };
   }
   else if (pre === 'finger' && side === 'R') {   // one finger raised ("one more?", 02G)
-    const W = v === 'front' ? [-2.4, -9.6] : [S[0] + 2.4, S[1] - .4];
-    return { ...himArmIK(S, W, 1), hand: 'point', handAng: Math.PI - .2 + .06 * Math.sin(t * TAU * 1.4) };
+    // front / 3/4: the hand up beside his face, the elbow down in front of the chest (the upper arm foreshortened toward
+    // the camera); profile (side-lying 02G): the hand raised in front of his face
+    const W = v === 'front' ? [-2.9, -10.7] : v === 'q' ? [S[0] - .3, S[1] - 2.0] : [S[0] + 2.4, S[1] - .4], fs = v === 'side' ? 1 : .42;
+    return { ...himArmIK(S, W, v === 'side' ? 1 : 0, fs), hand: 'point', handAng: Math.PI - .2 + .06 * Math.sin(t * TAU * 1.4) };
   }
   else if (pre === 'plug' && side === 'R') {   // holding the unplugged headphone jack up in front of his eyes (04H)
     const W = v === 'front' ? [-1.4, -7.4] : v === 'q' ? [3.6, -7.2] : [4.4, -7.4];
@@ -102,6 +109,7 @@ function himArmSpec(o, view, side, S, mode, u, gait) {
   else if (typeof pre === 'string' && HIM_ARMS[pre]) { const e = HIM_ARMS[pre][v] && HIM_ARMS[pre][v][side]; if (e) sp = { ...e }; }
   // the walk / run swing (angles), unless a preset owns this arm
   if (!sp && gait && gait.arms) return { a: gait.arms[side], hand: gait.hand || null };
+  if (!sp && gait && gait.armW && !o['to' + side]) { const g = gait.armW[side]; return { ...himArmIK(S, g.W, g.bend ?? 1), hand: o['hand' + side] || g.hand, handAng: g.handAng ?? undefined }; }
   // targets in the caller's coordinates (the hand's centre)
   const to = o['to' + side];
   if (to) {   // resolved where the arm is drawn (himArmResolve), since it needs that frame's matrix
@@ -195,6 +203,8 @@ function himCovers(K, c, o, view, u, mode) {
 // o.walk = phase (cycles, any real; one cycle = two steps) or o.run = phase. Returns hip height, lean, bob, ankle
 // targets per leg (hip-local units) with the heel lift, and the arm swing angles. stride: o.stride (u, default 1).
 function himGait(o, view) {
+  if (view === 'side' && o.rise != null && o.walk == null && o.run == null) return himRise(o);
+  if (view === 'side' && o.yank != null && o.walk == null && o.run == null) return himYank(o);
   if (view !== 'side' || (o.walk == null && o.run == null)) return null;
   const run = o.run != null, ph = frac(run ? o.run : o.walk), st = (o.stride ?? 1) * (run ? 6.2 : 4.4);
   const hipH = run ? 14.9 : 15.3, L = {};
@@ -211,8 +221,59 @@ function himGait(o, view) {
   one(ph, 'R'); one(ph + .5, 'L');
   const bob = run ? -.45 * Math.abs(Math.sin(ph * TAU)) + .2 : -.22 * Math.cos(ph * TAU * 2);   // lowest at the contacts (walk)
   const sw = run ? .95 : .42, s = Math.sin(ph * TAU);
-  const arms = run ? { R: [-sw * s + .15, -1.45], L: [sw * s + .15, -1.45] } : { R: [-sw * s, .18 + .12 * Math.max(0, -s)], L: [sw * s, .18 + .12 * Math.max(0, s)] };
+  const arms = run ? { R: [-sw * s + .1, 1.35], L: [sw * s + .1, 1.35] } : { R: [-sw * s, .18 + .12 * Math.max(0, -s)], L: [sw * s, .18 + .12 * Math.max(0, s)] };
   return { hipH, legs: L, bob, lean: run ? .2 : .04, arms, hand: run ? 'fist' : null, order: [['L', true], ['R', false]] };
+}
+
+// Getting up (04C), profile: o.rise 0..1 goes from sitting on the bed's edge (feet on the floor, hands on the thighs) to
+// standing (the same drawing as stand / side with contra 0, so it cuts straight into walk, wave, ...). Anchor = the
+// standing anchor (the ground point under his feet); the seat (the bed's top edge) is 4u behind it at height o.seatH
+// (u, default 8.2, as for 'edge'); the hips sit 1.6u in from the edge. Phases: 0–.3 the feet slide back under the
+// knees and he leans forward over them; .3–.85 the hips lift forward and up; .85–1 he straightens.
+const HIM_STANDH = 14.7 * Math.sqrt(.997) + .95;   // the standing hip height (soles → hip centre), as himStand computes it
+const HIM_FEET_SIDE = { R: [.05, -.95], L: [1.1, -.95] };   // the standing feet in profile (contra 0), anchor units
+function himRise(o) {
+  const k = clamp(o.rise), sh = o.seatH ?? 8.2, s0 = [-5.6, -(sh + 1.2)];
+  const a = ease(seg(k, 0, .3)), b = seg(k, .3, .85), c2 = ease(seg(k, .85, 1));
+  let hx = lerp(s0[0], s0[0] + .35, a), hy = s0[1];
+  if (k > .3) { const e1 = 1 - Math.pow(1 - b, 2.2), e2 = b * b * (3 - 2 * b); hx = lerp(s0[0] + .35, -.45, e1); hy = lerp(s0[1], -(HIM_STANDH - .5), e2); }
+  if (k > .85) { hx = lerp(-.45, 0, c2); hy = lerp(-(HIM_STANDH - .5), -HIM_STANDH, c2); }
+  const lean = k <= .3 ? lerp(.1, .78, a) : k <= .85 ? lerp(.78, .1, ease(b)) : lerp(.1, 0, c2);
+  const slide = lerp(1.4, 0, ease(seg(k, 0, .25))), F = HIM_FEET_SIDE;
+  const legs = {}, hipH = -hy;
+  for (const sd of ['R', 'L']) legs[sd] = { A: [F[sd][0] + slide - hx, hipH - .95], lift: 0 };
+  // the hands: pushing on the thighs, then hanging (torso frame: the arm IK runs in himArmSpec)
+  const L0 = lean + (o.lean || 0), cl = Math.cos(-L0), sl = Math.sin(-L0), toT = p => [p[0] * cl - p[1] * sl, p[0] * sl + p[1] * cl];
+  const armW = {}, push = 1 - ease(seg(k, .45, .8));
+  for (const sd of ['R', 'L']) {
+    const H = HIM_RIG.side.hip[sd], A = legs[sd].A, N = himIK(H, A, HIM_THIGH, HIM_SHIN, -1), d = himDir(H, N);
+    const onThigh = toT([lerp(H[0], N[0], .62) + d[1] * .55, lerp(H[1], N[1], .62) - Math.abs(d[0]) * .55]);
+    const S = HIM_RIG.side.sh[sd], hang = himChain(S, sd === 'R' ? .06 : -.02, 4.9, sd === 'R' ? .16 : .1, 4.3)[2], td = toT(d);
+    armW[sd] = { W: [lerp(hang[0], onThigh[0], push), lerp(hang[1], onThigh[1], push)], hand: push > .5 ? 'rest' : 'relax', handAng: push > .5 ? Math.atan2(td[0], td[1]) : null };
+  }
+  return { hipH, hipX: hx, legs, bob: 0, lean, armW, order: [['L', true], ['R', false]] };
+}
+// Yanked backward off his feet (04C: the IV line snaps him back to the bed like a rubber band), profile: o.yank 0..1
+// throws him back — the legs swing forward and up, the torso tips back, the head lags forward, the near arm (the IV
+// arm, o.iv) is pulled back toward the bed and the far arm flails forward. Combine with dx / dy along the arc and
+// o.rot (whole figure, about the hips) for the flight; land with pose 'edge', fall 1, and dy / sq for the bounces.
+function himYank(o) {
+  const k = clamp(o.yank), e = ease(k), legs = {};
+  const sp = [[1.3, .75, 0], [1.02, .45, .25]];   // [thigh angle from vertical, knee bend, delay] per leg (R near, L far)
+  ['R', 'L'].forEach((sd, i) => {
+    const [th0, kb, dl] = sp[i], kk = ease(seg(k, dl * .5, 1)), th = th0 * kk, ph = kb * kk, H = HIM_RIG.side.hip[sd];
+    const N = [H[0] + Math.sin(th) * HIM_THIGH, H[1] + Math.cos(th) * HIM_THIGH], A = [N[0] + Math.sin(th - ph) * HIM_SHIN * .995, N[1] + Math.cos(th - ph) * HIM_SHIN * .995];
+    legs[sd] = { A: [A[0] + (sd === 'L' ? lerp(1.05, 0, kk) : 0), A[1]], lift: 0 };
+  });
+  // the arms, aimed in the figure's upright frame (the near arm back and up toward the bed, the far arm flung forward), then
+  // turned into the leaning torso's frame
+  const lean = -.48 * e, L0 = lean + (o.lean || 0), cl = Math.cos(-L0), sl = Math.sin(-L0), toT = p => [p[0] * cl - p[1] * sl, p[0] * sl + p[1] * cl];
+  const S = HIM_RIG.side.sh, sw = .5 * Math.sin(T * 9) * e;
+  const W = (S0, a0, a1, L) => { const s0 = [S0[0] * Math.cos(L0) - S0[1] * Math.sin(L0), S0[0] * Math.sin(L0) + S0[1] * Math.cos(L0)], a = lerp(a0, a1, e);
+    return toT([s0[0] + Math.sin(a) * L, s0[1] + Math.cos(a) * L]); };   // shoulder → upright frame, aim, back to the torso frame
+  const armW = { R: { W: W(S.R, .06, -2.2, lerp(8.9, 8.8, e)), hand: e > .4 ? 'open' : 'relax', bend: 1 },
+                 L: { W: W(S.L, -.02, 2.3 + sw, lerp(8.9, 7.4, e)), hand: e > .4 ? 'open' : 'relax', bend: -1 } };
+  return { hipH: HIM_STANDH, legs, bob: 0, lean, tilt: .34 * e, armW, order: [['L', true], ['R', false]] };
 }
 
 // ---------- sitting and lying poses ----------
@@ -271,8 +332,8 @@ const himToTorso = (p, hip, lean) => { const dx = p[0] - hip[0], dy = p[1] - hip
 // bed, pivoting at the hips, the phone sliding onto his chest. Anchor: the floor under the bed's edge; o.seatH: the
 // mattress height (u, default 8.2). The mattress top is at y = -seatH, his hips 1.2u above it, 1.6u in from the edge.
 function himEdge(K, c, f, o, outfit, u, sw, rs) {
-  const fl = ease(clamp(o.fall || 0)), sh = o.seatH ?? 8.2, hip = [-1.6, -sh - 1.2];
-  const lean = lerp(o.lean ?? .1, -1.42, fl), th = lerp(0, -.32, fl);   // the thighs lift a little as he goes over
+  const fl = ease(clamp(o.fall || 0)), sh = o.seatH ?? 8.2, hip = [-1.6, -sh - 1.2 + .3 * fl];   // lying back, the pelvis rolls onto its back: a little lower
+  const lean = lerp(o.lean ?? .1, -1.52, fl), th = lerp(0, -.32, fl);   // the thighs lift a little as he goes over
   const knee = [hip[0] + Math.cos(th) * HIM_THIGH, hip[1] + Math.sin(th) * HIM_THIGH];
   const ank = dx => [knee[0] + dx + lerp(-.3, 1.4, fl), Math.min(-.95, knee[1] + HIM_SHIN * .98)];
   const arms = {}, hold = o.arms !== 'lap';

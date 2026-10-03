@@ -1,4 +1,4 @@
-// him.js: "him", the human lead: an original young AI engineer, painted with p5.brush through paint() / inkLine().
+// him.js: "him", the human lead: an original young AI engineer, painted with p5.brush through himPaintV() / himInkV().
 // Global-script style (no modules). Everything here is prefixed him / HIM_ so it can share a page with ai.js.
 
 // ---------- palettes ----------
@@ -59,7 +59,7 @@ function himFromCaller(x, y, M0 = HIM_M0) {
   return [(M[3] * dx - M[2] * dy) / det, (-M[1] * dx + M[0] * dy) / det];
 }
 
-// ---------- geometry helpers (all return point lists; painting is always paint()/inkLine()) ----------
+// ---------- geometry helpers (all return point lists; painting is always himPaintV()/himInkV()) ----------
 const himMir = P => P.map(p => [-p[0], p[1], p[2]]);
 const himSc = (P, u, ox = 0, oy = 0) => P.map(p => [(p[0] + ox) * u, (p[1] + oy) * u]);
 const himJ = (P, j) => P.map(p => [p[0] + jit(j), p[1] + jit(j), p[2]]);
@@ -140,6 +140,48 @@ function himClipLine(P, g) {
 let HIM_DISC = null, HIM_EDGE = [];
 if (typeof brush !== 'undefined') brush.add('himclean', { type: 'default', weight: 3.4 / 5, scatter: .04 / 5, sharpness: 1, grain: 40, opacity: 250, spacing: .14 / 5, pressure: [1, 1], rotate: 'natural', noise: 0 });
 function himCleanBrush() {}
+// Viewport guard. p5.brush gets pathologically slow when STROKES run off the canvas while washes are interleaved with
+// them (measured on SwiftShader: his head crossing the frame edge cost 20–110 s/frame instead of 1–4 s; 30 hair clumps
+// + strand lines crossing x = 0: 9–14 s vs 1 s; the cost grows with how far the strokes reach outside). So every mark
+// painted through himPaintV / himInkV (the kit, the props) is clipped in canvas space (through the current matrix:
+// cameras and nested transforms are honoured): strokes, outlines and hatching at HIM_VIEW_LINE px outside the frame,
+// washes and fills at HIM_VIEW_WASH px (their soft edges stay out of view); marks wholly outside are skipped. A shape
+// crossing the edge is painted as its clipped wash plus its outline as open runs (no stroke along the clip edge).
+// Nothing inside the frame changes except at the frame edge itself. HIM_VIEWCLIP = false turns it off (A/B).
+let HIM_VIEWCLIP = true, HIM_VIEW_LINE = 2, HIM_VIEW_WASH = 60;
+function himView() {
+  if (!HIM_VIEWCLIP || typeof W === 'undefined') return null;
+  const M = himMat(), X = p => M[0] * p[0] + M[2] * p[1] + M[4], Y = p => M[1] * p[0] + M[3] * p[1] + M[5];
+  // the model space of a frame is centred (each frame starts with translate(-W / 2, -H / 2))
+  const gs = m => [p => (-W / 2 - m) - X(p), p => X(p) - (W / 2 + m), p => (-H / 2 - m) - Y(p), p => Y(p) - (H / 2 + m)];
+  return {
+    // 0: inside the frame + m (draw as is), 1: crosses it (clip), 2: wholly outside (skip)
+    test(P, m) {
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      for (const p of P) { const x = X(p), y = Y(p); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+      if (x0 >= -W / 2 - m && x1 <= W / 2 + m && y0 >= -H / 2 - m && y1 <= H / 2 + m) return 0;
+      return x1 < -W / 2 - m || x0 > W / 2 + m || y1 < -H / 2 - m || y0 > H / 2 + m ? 2 : 1;
+    },
+    poly(P, m) { for (const f of gs(m)) { P = himClipPoly(P, f); if (P.length < 3) return []; } return P; },
+    runs(P, m) { return gs(m).reduce((rs, f) => rs.flatMap(q => himClipLine(q, f)), [P]); }
+  };
+}
+function himPaintV(pts, o = {}) {
+  const V = himView(), ml = HIM_VIEW_LINE, mw = HIM_VIEW_WASH;
+  if (!V || pts.length < 2 || V.test(pts, ml) === 0) return paint(pts, o);
+  if (V.test(pts, mw) === 2) return;
+  if (o.wash || o.fill) { const P = V.poly(pts, mw); if (P.length > 2) paint(P, { ...o, hatch: null, ink: null }); }
+  if (o.hatch) { const P = V.poly(pts, ml); if (P.length > 2) paint(P, { hatch: o.hatch, ink: null }); }
+  if (o.ink !== null) for (const r of V.runs(pts.concat([pts[0]]), ml)) inkLine(r, o.sw ?? 1, o.ink || PAL.ink, o.br || 'ink', o.curv || 0);
+}
+function himInkV(pts, sw, col, br, curv) {
+  const V = himView(), ml = HIM_VIEW_LINE;
+  if (!V || pts.length < 2) return inkLine(pts, sw, col, br, curv);
+  const t = V.test(pts, ml);
+  if (t === 0) return inkLine(pts, sw, col, br, curv);
+  if (t === 2) return;
+  for (const r of V.runs(pts, ml)) inkLine(r, sw, col, br, curv);
+}
 function himKit(u, c, swBase, J, clean) {
   clean = clean || !!c.clean;
   const k = { u, cut: null, det: u * HIM_HS >= 13, det2: u * HIM_HS >= 26, clean, c };   // det / det2: levels of detail
@@ -162,7 +204,7 @@ function himKit(u, c, swBase, J, clean) {
     const G = g(); if (G) { pts = clipP(pts, G); if (pts.length < 3) return pts; }
     if (c.clean) {
       const inkC = o.ink === undefined ? c.ink : o.ink;
-      paint(pts, { wash: o.wash ? (o.cl || o.wash) : undefined, washOp: o.op, ink: inkC === null ? null : cc(inkC), sw: swBase * ((o.sw ?? 1) >= .5 ? .62 : .44), br: 'himclean' });
+      himPaintV(pts, { wash: o.wash ? (o.cl || o.wash) : undefined, washOp: o.op, ink: inkC === null ? null : cc(inkC), sw: swBase * ((o.sw ?? 1) >= .5 ? .62 : .44), br: 'himclean' });
       return pts;
     }
     const sw = (o.sw ?? 1) * swBase, inkC = o.ink === undefined ? c.ink : o.ink;
@@ -171,35 +213,35 @@ function himKit(u, c, swBase, J, clean) {
       // watercolour: the wash, a second translucent layer slightly offset and shrunk (a soft wet edge), granulation in
       // the shadow masses, and pigment pooling as a darker ring just inside the edge
       const wk = o.wc === true ? 1 : o.wc, dk = mixCol(o.wash, c.ink, .28);
-      paint(pts, { wash: o.wash, washOp: o.op, ink: null });
+      himPaintV(pts, { wash: o.wash, washOp: o.op, ink: null });
       let cx = 0, cy = 0, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
       for (const [x, y] of pts) { cx += x; cy += y; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
       cx /= pts.length; cy /= pts.length;
       // a real watercolour fill (bleeding, pigment texture), kept a little inside so its bleed stays on the shape
-      if (o.fill) paint(pts.map(([x, y]) => [cx + (x - cx) * .86, cy + (y - cy) * .92]), { fill: o.fill, fillOp: o.fillOp ?? 100, bleed: .015, tex: .65, border: .6, ink: null });
+      if (o.fill) himPaintV(pts.map(([x, y]) => [cx + (x - cx) * .86, cy + (y - cy) * .92]), { fill: o.fill, fillOp: o.fillOp ?? 100, bleed: .015, tex: .65, border: .6, ink: null });
       const off = .05 * u * wk, hs = hash(Math.round(x1 - x0) + Math.round(y1 - y0) * 7);
-      paint(pts.map(([x, y]) => [cx + (x - cx) * .965 + off * .7, cy + (y - cy) * .965 + off]), { wash: dk, washOp: 40 * wk, ink: null });
+      himPaintV(pts.map(([x, y]) => [cx + (x - cx) * .965 + off * .7, cy + (y - cy) * .965 + off]), { wash: dk, washOp: 40 * wk, ink: null });
       if (!o.ring && (x1 - x0) > 2 * u && (y1 - y0) > 2 * u) {   // a soft lighter bloom where the wash dried unevenly
         const r = Math.min(x1 - x0, y1 - y0) * .16, bx = cx + (hs - .5) * r, by = cy - r * .6;
-        paint(ellPts(bx, by, r * 1.3, r, 14, r * .18, hs * 3), { wash: mixCol(o.wash, c.white, .3), washOp: 38, ink: null });
+        himPaintV(ellPts(bx, by, r * 1.3, r, 14, r * .18, hs * 3), { wash: mixCol(o.wash, c.white, .3), washOp: 38, ink: null });
       }
-      if (o.ring && o.gran !== false) paint(pts.map(([x, y]) => [cx + (x - cx) * .9, cy + (y - cy) * .9]), { ink: null, hatch: { d: 4.5, a: .3 + hs * 2.4, b: 'HB', c: mixCol(o.wash, c.ink, .22), w: .25, o: { rand: .9 } } });
+      if (o.ring && o.gran !== false) himPaintV(pts.map(([x, y]) => [cx + (x - cx) * .9, cy + (y - cy) * .9]), { ink: null, hatch: { d: 4.5, a: .3 + hs * 2.4, b: 'HB', c: mixCol(o.wash, c.ink, .22), w: .25, o: { rand: .9 } } });
       // pigment pooling: a darker ring just inside the edge of the wash
-      inkLine(pts.concat([pts[0]]), (o.ring ? .55 : .4) * swBase, mixCol(o.wash, c.ink, o.ring ? .4 : .22), 'inkfine', 0);
-      if (inkC !== null) paint(pts, { ink: inkC, sw, br: o.br || ((o.sw ?? 1) < .5 ? 'inkfine' : 'ink') });
-      if (o.hatch) paint(pts, { ink: null, hatch: o.hatch });
+      himInkV(pts.concat([pts[0]]), (o.ring ? .55 : .4) * swBase, mixCol(o.wash, c.ink, o.ring ? .4 : .22), 'inkfine', 0);
+      if (inkC !== null) himPaintV(pts, { ink: inkC, sw, br: o.br || ((o.sw ?? 1) < .5 ? 'inkfine' : 'ink') });
+      if (o.hatch) himPaintV(pts, { ink: null, hatch: o.hatch });
       return pts;
     }
-    paint(pts, { wash: o.wash, washOp: o.op, ink: inkC, sw, br: o.br || (clean || (o.sw ?? 1) < .5 ? 'inkfine' : 'ink'), hatch: o.hatch && k.det ? o.hatch : null, fill: o.fill, fillOp: o.fillOp ?? 110, bleed: o.bleed ?? .12, tex: o.tex ?? .55, border: .5 });
+    himPaintV(pts, { wash: o.wash, washOp: o.op, ink: inkC, sw, br: o.br || (clean || (o.sw ?? 1) < .5 ? 'inkfine' : 'ink'), hatch: o.hatch && k.det ? o.hatch : null, fill: o.fill, fillOp: o.fillOp ?? 110, bleed: o.bleed ?? .12, tex: o.tex ?? .55, border: .5 });
     return pts;
   };
   k.line = (P, w = .5, col = c.ink, o = {}) => {
     const pts = o.raw ? himSc(himJ(P, (o.j ?? J) / u), u) : k.pts(P, false, o.n || 5, o.j ?? J);
     const G = g(), runs = G ? clipL(pts, G) : [pts];
-    if (c.clean) { const ww = w >= .5 ? .62 : w >= .3 ? .46 : .36; for (const r of runs) inkLine(r, ww * swBase, cc(col), 'himclean', o.curv ?? 0); return; }
+    if (c.clean) { const ww = w >= .5 ? .62 : w >= .3 ? .46 : .36; for (const r of runs) himInkV(r, ww * swBase, cc(col), 'himclean', o.curv ?? 0); return; }
     // line-weight hierarchy: silhouettes and main contours in 'ink', thin inner details in 'inkfine'
     const br = o.br || (clean || w < .5 ? 'inkfine' : 'ink'), ww = br === 'inkfine' && !o.br ? w * 1.5 : w;
-    for (const r of runs) inkLine(r, ww * swBase, col, br, o.curv ?? 0);
+    for (const r of runs) himInkV(r, ww * swBase, col, br, o.curv ?? 0);
   };
   return k;
 }
@@ -1233,9 +1275,11 @@ function him(x, y, u, o = {}) {
   const f = himFace(o), sq = o.sq || 0;
   HIM_M0 = himMat(); HIM_LAST = {}; HIM_W = {};
   rs('shadow');
-  if (pose === 'stand' && !o.noShadow) paint(ellPts(x + (o.dx || 0) * u, y + u * .4, u * 6.2, u * 1.0, 22), { wash: c.ink, washOp: clean ? 0 : 34, ink: null });
+  const air = 1 / (1 + Math.max(0, -(o.dy || 0)) / 8);   // in the air (dy < 0): the shadow stays on the ground, smaller and fainter
+  if (pose === 'stand' && !o.noShadow) himPaintV(ellPts(x + (o.dx || 0) * u, y + u * .4, u * 6.2 * air, u * 1.0 * air, 22), { wash: c.ink, washOp: clean ? 0 : 34 * air, ink: null });
   push(); translate(x + (o.dx || 0) * u, y + (o.dy || 0) * u);
   scale((o.flip ? -1 : 1) * (1 + sq * .5), 1 - sq);
+  if (pose === 'stand' && o.rot) { const pv = o.rotAt || [0, -15.6]; translate(pv[0] * u, pv[1] * u); rotate(o.rot); translate(-pv[0] * u, -pv[1] * u); }   // tumbling: about the hips (figure units)
   if (pose === 'desk') himDesk(K, c, f, o, outfit, u, sw, rs);
   else if (pose === 'stand' || pose === 'bust' || pose === 'bed') himStand(K, c, f, o, view, outfit, u, sw, rs, pose === 'bust' ? true : pose === 'bed' ? 'bed' : false);
   else if (typeof himPose === 'function') himPose(K, c, f, o, pose, view, outfit, u, sw, rs);
@@ -1378,7 +1422,8 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
     rs('leg' + side);   // the trousers over the shoe: the hem rests on it
     himLeg(K, c, H, N, [A[0], A[1] + fwd * .6], legProf, { far, hem: view === 'front' ? 'front' : 'side', outer: view === 'front' ? (side === 'R' ? -1 : 1) : -1, heavy: view === 'front' ? (side === 'R' ? 1.2 : .85) : 1 });
   };
-  push(); translate(dxh * u, (bust || bed ? hipY : lie || slie ? 0 : -legH) * u);
+  push(); translate((dxh + (gait && gait.hipX || 0)) * u, (bust || bed ? hipY : lie || slie ? 0 : -legH) * u);
+  if (!bust && !bed) HIM_W.hip = himToCaller(0, 0);   // the hip centre (rise / yank / IV pulls)
   // legs: seat of the trousers first
   if (!noLegs) {
     push(); rotate(ht);
@@ -1414,7 +1459,7 @@ function himStand(K, c, f, o, view, outfit, u, sw, rs, mode) {
   if (view === 'side') arm('R');
   // head on the neck pivot
   rs('head');
-  push(); translate(R.neck[0] * u, R.neck[1] * u); rotate(o.tilt || 0); translate(R.head[0] * u * HIM_HS, (R.head[1] + (o.nod || 0)) * u * HIM_HS); scale(HIM_HS);
+  push(); translate(R.neck[0] * u, R.neck[1] * u); rotate((o.tilt || 0) + (gait && gait.tilt || 0)); translate(R.head[0] * u * HIM_HS, (R.head[1] + (o.nod || 0)) * u * HIM_HS); scale(HIM_HS);
   const cut = K.cut; K.cut = null;
   HIM_W.head = himToCaller(0, 0);
   const hp = typeof himHeadProps === 'function';
@@ -1576,11 +1621,11 @@ function himLabel(txt, x, y, size = 22) { letter(txt, x, y, size, '#5A4650', { i
 LOOPS.him_sheet = t => {
   HIM_N = 0;
   boilSeed('him sheet bg');
-  paint(rectPts(16, 16, 888, 1048, 3), { wash: '#F6DFC0', washOp: 130, ink: null });
-  paint(rectPts(916, 16, 988, 352, 3), { wash: '#EFD3B0', washOp: 110, ink: null });
-  paint(rectPts(916, 380, 988, 256, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
-  paint(rectPts(916, 644, 988, 200, 3), { wash: '#F6DFC0', washOp: 110, ink: null });
-  paint(rectPts(916, 852, 988, 212, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
+  himPaintV(rectPts(16, 16, 888, 1048, 3), { wash: '#F6DFC0', washOp: 130, ink: null });
+  himPaintV(rectPts(916, 16, 988, 352, 3), { wash: '#EFD3B0', washOp: 110, ink: null });
+  himPaintV(rectPts(916, 380, 988, 256, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
+  himPaintV(rectPts(916, 644, 988, 200, 3), { wash: '#F6DFC0', washOp: 110, ink: null });
+  himPaintV(rectPts(916, 852, 988, 212, 3), { wash: '#F3E2C8', washOp: 90, ink: null });
   // main panel: standing, launch outfit, front and 3/4
   him(250, 1046, 30, { ...himFeel('neutral', t), browIn: .3, view: 'front', boilKey: 'mf', seed: .4 });
   him(650, 1046, 30, { ...himFeel('neutral', t), browIn: .3, view: 'q', boilKey: 'mq', seed: 1.3 });
@@ -1620,7 +1665,7 @@ LOOPS.him_sheet = t => {
 LOOPS.him_sheet.len = 4;
 LOOPS.him_emotions = t => {
   HIM_N = 0;
-  boilSeed('him emo bg'); paint(rectPts(-20, -20, W + 40, H + 40), { wash: '#F2DCC0', washOp: 110, ink: null });
+  boilSeed('him emo bg'); himPaintV(rectPts(-20, -20, W + 40, H + 40), { wash: '#F2DCC0', washOp: 110, ink: null });
   const keys = [[0, 'focused'], [.75, 'smile'], [1.5, 'tired'], [2.25, 'anxious'], [3.0, 'panic'], [3.75, 'blank'], [4.5, 'cry'], [5.25, 'laugh']];
   him(960, 760, 62, { ...himEmotions(t, keys), pose: 'bust', view: 'q', boilKey: 'emo' });
 };

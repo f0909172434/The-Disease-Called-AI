@@ -12,6 +12,10 @@
 #   Hoshino Hanami ~AI❤dol~     lottev.moe (2024-09 release post) -> MediaFire,
 #   for DiffSinger v1.0 (Lotte V) Hoshino_Hanami_~AIdol~_for_DiffSinger_v1.0.zip
 #
+# Then seed_models.py (with setup.sh's .venv) turns the models' random ops into seeded
+# inputs, so renders are reproducible (README: Determinism); already seeded models are left
+# alone. To get the original models back, delete the bank folder and run this again.
+#
 # Licences: non-commercial use, credit required ("TIGER (tigermeat)",
 # "Hoshino Hanami ~AI❤dol~ (Lotte V)"); both forbid re-uploading or redistributing the
 # models — never commit voicebanks/ (it is git-ignored) and do not share the folder.
@@ -25,7 +29,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --from) FROM="$2"; shift 2 ;;
     --delete-zips) DELETE=1; shift ;;
-    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
   esac
 done

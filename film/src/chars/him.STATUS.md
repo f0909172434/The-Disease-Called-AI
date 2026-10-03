@@ -1,16 +1,23 @@
 # him.js — status
 
-"Him", the human lead: an original young AI engineer (late 20s). Painted only through `paint()` / `inkLine()` (flat
-`wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
+"Him", the human lead: an original young AI engineer (late 20s). Painted only through `paint()` / `inkLine()` (since
+round 8b by way of the viewport-guard wrappers `himPaintV` / `himInkV`; flat `wash` + tapered ink, sparse `hatch` on jacket/shirt shadows, `glow()` for light). No watercolour `fill` on the
 character. Global-script style; every global is prefixed `him` / `HIM_`.
 
 Round 8 (storyboard §7.1 "他": the poses, props and modes the film's shots need). Split over three files, all loaded by
 `studio.html` in this order: `him.js` (the figure; stand / bust / bed / lie / side-lie through `himStand`; faces;
 palettes; the kit), `him_pose.js` (arm presets and IK, the covers, the gait, sitting and lying poses), `him_prop.js`
 (new hands, the phone, the wristband, worn props, light effects, the `him_poses` sheet). Sheet:
-`output/sheets/char_him_poses.jpg` (4 pages: in bed and lying · actions and expressions · hand/phone/band close-ups and
-the heart / dissolve · head effects). Render: `node render.mjs --soft-gl --loop=him_poses --sheet=0.5,1.5,2.5,3.5
---cols=1 --w=1920 --out=../output/sheets/char_him_poses.jpg`.
+`output/sheets/char_him_poses.jpg` (6 pages of 1920×1080: in bed and lying · actions and expressions · hand/phone/band
+close-ups and the heart / dissolve · head effects · 04C getting up, walking off, yanked back, landing · bed + phone in
+both hands, the mirror / clean palettes, the u 150 mouth and u 90 lens close-ups). Render: `node render.mjs --soft-gl
+--loop=him_poses --sheet=0.5,1.5,2.5,3.5,4.5,5.5 --cols=1 --w=1920 --out=../output/sheets/char_him_poses.jpg`.
+
+Round 8b (finishing pass): getting up / yanked back (`rise`, `yank`, `rot` on standing poses: 04C, the last missing
+priority-2 item), the viewport guard (a large speed-up whenever he crosses the frame edge, see **Cost**), real
+wall-clock costs, fixes (run arms bent the wrong way; in bed an arm that a one-arm preset leaves free hung down through
+the covers, it now keeps `lap`; `fall: 1` floated above the mattress; the 3/4 `finger` covered his mouth), sheet pages
+5–6 and the done/left table below.
 
 ### Round 8 API (everything is optional and backward compatible; `him(x, y, u, o)` as before)
 
@@ -26,6 +33,17 @@ the heart / dissolve · head effects). Render: `node render.mjs --soft-gl --loop
 
 **Walk / run** (stand, `view: 'side'`, `flip` to go left): `walk` = phase (cycles; one cycle = two steps), `run` = phase,
 `stride` (1). Hips bob, arms swing (run: bent arms, fists, lean). `armR: 'wave'` waves bye (`wave` 0..1, `waveT`).
+
+**Getting up, yanked back, tumbling (04C; round 8b)** — standing profile options (`view: 'side'`, `flip` to face left):
+| option | what | notes |
+|---|---|---|
+| `rise` 0..1 | from sitting on the bed's edge (feet on the floor, hands on the thighs) to standing | anchor = where he will stand (the ground under his feet); the bed's top edge is 4u behind it at `seatH` (u, 8.2 like `edge`), hips 1.6u in from the edge, so `rise: 0` matches `edge` on the same bed. 0–.3 the feet slide back and he leans over them, .3–.85 the hips lift forward and up, .85–1 he straightens; `rise: 1` is exactly `stand` side with `contra: 0`, so it cuts straight into `walk` / `armR: 'wave'`. Hands: on the thighs, then hanging (any `armR` / `armL` preset or `toR` / `toL` still wins) |
+| `yank` 0..1 | yanked backward off his feet by the IV line: the legs swing forward, the torso tips back (−.48), the head lags (tilt +.34), the near arm (the IV arm with `iv: 1`) reaches back and up toward the bed, the far arm flails forward | same anchor and hip height as standing; fly him with `dx` / `dy` (the shadow stays on the ground, smaller) and `rot` |
+| `rot` (stand) | rotates the whole standing figure about `rotAt` (figure units, default the hips `[0, −15.6]`); + tips him forward | lie / side-lie keep their own `rot` (about the anchor) |
+| landing | `pose: 'edge'`, `fall: 1`, `arms: 'lap'`, `phone: false`, with `dy` (bounce) / `sq` (impact) | `fall: 1` now lies flat on the mattress (lean −1.52, the pelvis .3u lower) |
+04C as staged on sheet page 5: `edge` → `rise` 0→1 (+ `armR: 'wave'`) → `walk` (the IV line taut to her pole) → `yank`
+0→1 with `rot` −.35 and `dy` along the arc → `edge` `fall` .85 `dy` −3.2 → `sq` .14 → `dy` −1.1 → settled, then 04D.
+`HIM_LAST.hip` (new, every standing / lying pose): the hip centre, for pulling him by the IV line or placing the arc.
 
 **Arms** (stand / bust / bed / lie / side-lie): `arms` (both) or `armR` / `armL`: `lap` · `phone` (+ `phone: 'two'` draws
 the phone in both hands: its back in front / q, edge-on in profile) · `up` · `hug` (forearms in front of a tall thing:
@@ -76,7 +94,17 @@ himBandProp(x, y, u, o)  // the cut band lying flat, label up (12C): ang, curve
 The band's label is `letter()` lettering (whitelisted text): it composites above the paint, so call `flushLetters()`
 before anything is painted over it. **Contact points** after any `him()` (caller coordinates): `HIM_LAST.head`,
 `handR/L`, `wristR/L`, `heart`, `mouth`, `phone`, `screen`/`screenC` (phone on chest), `iv[]`, `cuffR/L`, `cable`,
-`pinch`, `plug`, `stetho`, `lens[]` (+ desk `handL/handR` as before).
+`pinch`, `plug`, `stetho`, `lens[]`, `hip` (+ desk `handL/handR` as before).
+
+**Viewport guard (round 8b)** — `himPaintV(pts, o)` / `himInkV(pts, sw, col, br, curv)` are `paint()` / `inkLine()`
+with the marks clipped to the frame in canvas space (through the current matrix, so cameras and nested transforms are
+honoured): strokes, outlines and hatching at `HIM_VIEW_LINE` (2) px outside the frame, washes and fills at
+`HIM_VIEW_WASH` (60) px; marks wholly outside are skipped; a shape that crosses the edge is painted as its clipped wash
+plus its outline as open runs (no stroke along the clip edge). Everything in him*.js paints through them. Why: p5.brush
+on SwiftShader gets pathologically slow when strokes run off the canvas between washes (30 hair clumps + strand lines
+across x = 0: 9–14 s vs 1 s; the cost grows with how far the strokes reach outside). Marks inside the frame are
+pixel-identical with the guard on or off (checked); only marks crossing the edge are clipped there. `HIM_VIEWCLIP =
+false` turns it off. The same problem very likely affects her (ai*.js) and the sets wherever strokes leave the frame.
 
 **Cost** (in-page ms per frame, medians of 6 frames, this box at load average 14–17, the empty frame ≈ 15 ms): the old
 standing 3/4 u 30 as the reference ≈ 1330 ms; bed 3/4 + IV ≈ 925, bed front ≈ 1020, bed + headphones ≈ 390; lie + 3 IV
@@ -92,17 +120,42 @@ thumb); clean mode identical across boil frames; two processes rendering in diff
 noise (≤ 10 levels on a few hundred pixels — `tools/check_determinism.mjs` reports those as DIFF under this load, and
 did so for the untouched `him_test` loop too).
 
-### Round 8: what's left
-- No getting-up transition (04C): cut from `bed` to standing `walk`; the bounce back is `bed` with `dy` / `sq`.
-- `hug` is a cartoon hug (both forearms in front of the object); `curl` is balled up sitting (head on the knees), not
-  a fetal position lying down; side-lying is drawn for a top view (profile), no lying 3/4 from beside the bed.
-- In `front` / `q` the in-hand phone shows its back (he looks at the screen); the close-up `himPhone` is the shot
-  for the screen. Arms reaching toward the camera are shortened (`k1`/`k2`), not truly foreshortened.
+### Storyboard §7.1 "他": done / left (audited by rendering each item, round 8b)
+| P | item | shots | status | how |
+|---|---|---|---|---|
+| 1 | sitting up in bed, covers to the waist | 04A/B/E/F/G/H, 08A/B/E, 10A/B | done | `pose: 'bed'` front / q / side (+ `flip`), `coverW` / `coverD`, `knees` |
+| 1 | the phone: one hand (screen cheated to camera, thumb typing, finger poking); both hands; pressed to the forehead | 02B, 02E, 03A, 06H, 07A, 07D, 07E | done | `himPhone` grip `hold` / `poke` (close-ups); `arms: 'phone'` + `phone: 'two'` (bed / stand / edge; the back of the phone in front / q); `phone: 'forehead'` (knees / curl). Contacts checked in crops |
+| 1 | `band: false`; the band prop: fastened (animated), cut and lying on the keyboard | 00B, 00D, 01A, 12C | done | `band: false`; `himWrist` (`bandK`, `clickT`); `himBandProp` |
+| 1 | expressions sad, wide, peace, confused, holding his breath (cheeks puffed) | 03A, 04H, 06D, 09A, 09I, 10A, 10B, 10E | done | `HIM_EMO` sad / wide / peace / confused / hold |
+| 1 | clean-line mode (the real `swapped`) | 10A–10F | done | `pal: 'swapped'` (no boil, flat navy masses, one cyan line, glows) |
+| 2 | lying on his back (top view); on his side on the pillow, face left; head on her lap | 03B/03C/08D; 02G/06F; 10E | done | `pose: 'lie'` / `'sidelie'` (+ `flip`); the lap / pillow goes under `HIM_LAST.head` |
+| 2 | sitting on the bed's edge → falling back (hip pivot) | 03A | done | `pose: 'edge'`, `fall` |
+| 2 | `knees` (hugging his knees), `curl` (curled on the floor) | 06A/06H, 07D | done | `pose: 'knees'` / `'curl'` (curl = balled up sitting, head on the knees) |
+| 2 | getting up + two steps + bounced back; run cycle (profile) | 04C, 08C | done (8b) | `rise`, `walk`, `yank` + `rot` + `dy`, landing on `edge` `fall: 1`; `run` (arms fixed in 8b) |
+| 2 | both arms up hugging something; wrists together raised | 08A, 08B | done | `arms: 'hug'` (draw the object first), `arms: 'wrists'` + `cuffs` |
+| 3 | pulling the lever (profile, a hard yank) | 09E | done | `armR: 'lever'`, `pull` |
+| 3 | palm flat on glass (profile) | 09I | done | `armR: 'glass'`, `glassX`, `reachK` |
+| 3 | puppet: fingers spread up; limp arms on strings | 10C, 10D | done | `arms: 'puppet'` / `'strung'` (`lift`, `sway`) |
+| 3 | hair turning into parallel lines (progressively) | 08F | done | `hairLines` 0..1 |
+| 3 | unravelling into threads (capped) | 10F | done | `unravel`, ≤ 40 threads |
+| 3 | lens reflection insert; mouth close-up (u ≈ 150) with cyan light pouring out, line widths scaling down with u | 00D, 08G | done, two limits | `lens(i, rect)` hook + `pupil`; `mouthGlow`, `eyeGlow`; ink widths stop growing at u ≈ 140 (`sw` ≤ 1.7), so at u 150 they are relatively thinner. Limits: the reflection is not clipped to the lens shape; u 150 is costly (below) |
+| 3 | `mirror` palette (low-contrast silver) | 09H | done | `pal: 'mirror'` |
+| 3 | worn props: headphones (cable + plug), thermometer, forehead sticker, stethoscope on the chest, IV (1 and many), cuff rings, the heart light | S03, S04, S06, S08, S10 | done | `phones` / `plugAt` / `arms: 'plug'`, `thermo`, `sticker`, `stetho`, `iv` 1–5 + `ivTo`, `cuffs`, `heart` / `heartSpin` / `heartGrey` |
+
+**Left (known limits, none blocks a shot):**
+- 04C's yank is a profile pose for a flight that is mostly a quick move; there is no in-between from `bed` (covers) to
+  `edge` (legs swung out): the whip pan lands on him already on the edge.
+- `hug` is a cartoon hug (both forearms in front of the object); `curl` is balled up sitting, not a fetal position lying
+  down; side-lying is drawn for a top view (profile), no lying 3/4 from beside the bed.
+- In `front` / `q` the in-hand phone shows its back (he looks at the screen); the close-up `himPhone` is the shot for
+  the screen. Arms reaching toward the camera are shortened (`k1` / `k2`), not truly foreshortened.
 - The covers are fixed silhouettes per view (bed front / q / side, lie, side-lie) scaled by `coverW` / `coverD`.
 - The lens reflection is a hook (the scene paints inside the lens rectangle; nothing clips it to the lens shape).
-- Hair lines: tested in profile and front; 3/4 uses the same code but wasn't reviewed closely.
-- Mouth close-up (u ≈ 150) uses the normal face with `mouthGlow`; line widths are clamped (`sw` ≤ 1.7), not scaled
-  down further.
+- A u ≈ 150 close-up costs several seconds per frame on this CPU box even with the guard (big strokes); 08G can draw the
+  mouth close-up at u ≈ 90 with a camera zoom ≤ 1.7 (p5.brush only collapses outlines at zoom > 2), or hold the last
+  push-in as a cached layer.
+- The emotions' idle motion (`himFeel`: breath, sway) moves the outline on every frame (24 fps), so a boil pair is only
+  identical with static parameters; that is by design (v2), noted because it shows up in boil diffs.
 
 v7 (round 7, user direction change: SLIM build; the muscular v3–v6 build and its photo reference are retired):
 - proportions: a lean young engineer, ~7 heads with the hair (~7.8 to the skull): `HIM_HS` .92 (was 1.24), longer legs
@@ -201,7 +254,7 @@ Loops: `LOOPS.him_sheet` (model sheet), `LOOPS.him_emotions` (6 s, all emotions 
 ## Views / poses
 | pose | front | q (3/4) | side | notes |
 |---|---|---|---|---|
-| stand | done | done | done | launch + home outfits; `reach`; walk / run / wave in side (round 8) |
+| stand | done | done | done | launch + home outfits; `reach`; walk / run / wave / rise / yank in side (round 8, 8b); `rot` |
 | bust | done | done | done | close-ups / expressions |
 | desk | — | — | done | profile, typing, chair + `himDeskProps` |
 | bed (sitting up, covers) | done | done | done | round 8 |
@@ -228,7 +281,7 @@ Timing loops: `him_perf` (3/4), `him_perf_front`, `him_perf_fill` (front without
 - Hands: the relaxed hand is articulated (v5); 'type' and 'fist' are still profile silhouettes with nail/knuckle hints
   (fine at desk scale, plain in an extreme close-up); round 8 redrew 'open'/'press' (and added 'rest', 'spread') as the
   back of the hand with jointed fingers and a thumb.
-- Contrapposto always puts the weight on his right leg (mirror with `flip` for the other side); no walk cycle yet.
+- Contrapposto always puts the weight on his right leg (mirror with `flip` for the other side). (Walk / run cycles: round 8.)
 - Hair clumps radiate from one crown point, which can read slightly as a starburst on the top of the head (v7 presses
   the top volume down, which softens it).
 - The slim torso is the old wide drawing narrowed by `HIM_SLIM`; lapel and pocket proportions follow from that warp

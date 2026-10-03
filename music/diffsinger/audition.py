@@ -114,10 +114,11 @@ def write_mp3(path: str, x: np.ndarray, sr: int = 48000) -> None:
                         "-b:a", "160k", path], check=True)
 
 
-def retake(lines: list[dict], voices: dict, n: int, model: str) -> dict:
+def retake(lines: list[dict], voices: dict, n: int, model: str, check_models: tuple[str, ...] = ()) -> dict:
     """Sing takes 0..n-1 of every line (take k = DiffSinger's noise seeded with line, bank
     and k: a different but reproducible performance), score them with Whisper and keep the
-    best in takes.json."""
+    best in takes.json. A take whose transcript — by `model` or any of `check_models` —
+    contains an unwanted word (qa.UNWANTED, e.g. "painless" heard as "penis") is never kept."""
     import diffsinger_backend as dsb
     import qa
     import soxr
@@ -127,11 +128,16 @@ def retake(lines: list[dict], voices: dict, n: int, model: str) -> dict:
         dsb.prepare(lines, voices)
         for line in lines:
             r = dsb.render_sung(line, voices)
-            hyp = qa.transcribe(soxr.resample(r.audio, 48000, 16000), model)
+            x16 = soxr.resample(r.audio, 48000, 16000)
+            hyp = qa.transcribe(x16, model)
+            others = {m: qa.transcribe(x16, m) for m in check_models}
+            bad = sorted({w for h in [hyp, *others.values()] for w in qa.unwanted_words(line["text"], h)})
             x24 = soxr.resample(r.audio, 48000, 24000)
             err, _ = qa.pitch_error_cents(x24, 24000, r.start, r.qa["frames_t"], r.qa["score_midi"], r.qa["vowel"])
-            tried[line["id"]].append((round(qa.wer(line["text"], hyp), 3), float(np.nan_to_num(err, nan=99.0)), take, hyp))
-            print(f"  {line['id']} take {take}: WER {tried[line['id']][-1][0]:.2f}  “{hyp}”")
+            tried[line["id"]].append((bool(bad), round(qa.wer(line["text"], hyp), 3),
+                                      float(np.nan_to_num(err, nan=99.0)), take, hyp, others))
+            print(f"  {line['id']} take {take}: WER {tried[line['id']][-1][1]:.2f}  “{hyp}”"
+                  + "".join(f"  {m}: “{h}”" for m, h in others.items()) + (f"  REJECTED {bad}" if bad else ""))
     os.environ.pop("VOCAL_DS_TAKES", None)
     try:
         with open(dsb.TAKES_JSON) as fh:
@@ -139,10 +145,14 @@ def retake(lines: list[dict], voices: dict, n: int, model: str) -> dict:
     except (OSError, ValueError):
         book = {}
     for lid, rows in tried.items():
-        w, e, take, hyp = min(rows)
+        bad, w, e, take, hyp, others = min(rows, key=lambda r: r[:4])
+        if bad:
+            print(f"  {lid}: every take has an unwanted mis-hearing; fix the diction (diction.json)")
         if take:
             book[lid] = {"take": take, "wer": w, "transcript": hyp, "takes_tried": len(rows),
-                         "wer_take0": rows[0][0]}
+                         "wer_take0": rows[0][1]}
+            if others:
+                book[lid]["check"] = others
         else:
             book.pop(lid, None)
     with open(dsb.TAKES_JSON, "w") as fh:
@@ -162,6 +172,9 @@ def main(argv=None):
     ap.add_argument("--retake", type=int, default=0, metavar="N",
                     help="sing each line as takes 0..N-1, keep the best (Whisper WER, then pitch) "
                          "in music/diffsinger/takes.json")
+    ap.add_argument("--check-models", default="",
+                    help="with --retake: more Whisper models (e.g. large-v3,small.en) whose "
+                         "transcripts must not contain unwanted words either")
     a = ap.parse_args(argv)
     import cache
     if a.cache_dir:
@@ -174,7 +187,8 @@ def main(argv=None):
     L = {l["id"]: l for l in vocals["lines"]}
     lines = [L[i] for i in a.lines.split(",")]
     if a.retake:
-        retake(lines, vocals["voices"], a.retake, a.qa_model)
+        retake(lines, vocals["voices"], a.retake, a.qa_model,
+               tuple(m for m in a.check_models.split(",") if m))
     t = time.time()
     st = dsb.prepare(lines, vocals["voices"])
     t_ds = time.time() - t

@@ -79,7 +79,7 @@ function aiArmsFull(G, B, view, o, sit) {
       a = r.a; e = r.e;
     }
     out['a' + k] = a ?? .06; out['e' + k] = e ?? (s < 0 ? 1.05 : 1.0); out['h' + k] = hand;
-    out['x' + k] = { prop: o['prop' + k], hang: o['handA' + k] ?? (rest ? (view === 'q' ? AI_SIT.restAQ : AI_SIT.restA)[k] : undefined), key: k, ik };
+    out['x' + k] = { prop: o['prop' + k], hk: o['handK' + k] ?? o.handK, hang: o['handA' + k] ?? (rest ? (view === 'q' ? AI_SIT.restAQ : AI_SIT.restA)[k] : undefined), key: k, ik };
   }
   return out;
 }
@@ -101,7 +101,7 @@ function aiChibiRig(o, q, u) {
     Sh[1] -= .3 * u * clamp((Sh[1] - T[1]) / (2 * u));   // the shoulder lifts for a high reach
     const D = Math.hypot(T[0] - Sh[0], T[1] - Sh[1]), reach = (A.lu + A.lf + A.hl * .55) * u, st = clamp(D / (reach * .9), 1, o.armStretch ?? 1.9);
     const r = aiIK(Sh, T, A.lu * u * st, A.lf * u * st, s, (hA === undefined ? A.hl * .55 + .1 : .1) * u, false, 0);
-    out[i] = { s, Sh, a: r.a, e: r.e, st, hand: o['hand' + k] || 'fist', prop: o['prop' + k], hang: o['handA' + k], up: T[1] < Sh[1] - .25 * u || Math.abs(T[0]) > 2.1 * u, key: k };
+    out[i] = { s, Sh, a: r.a, e: r.e, st, hand: o['hand' + k] || 'fist', prop: o['prop' + k], hang: o['handA' + k], hk: o['handK' + k] ?? o.handK ?? 1, up: T[1] < Sh[1] - .25 * u || Math.abs(T[0]) > 2.1 * u, key: k };
   });
   return out;
 }
@@ -125,7 +125,7 @@ function aiChibiArm(R, part) {
   const ca = Math.atan2(d2[1], d2[0]);
   aiPaint(aiEll(Wr[0], Wr[1], .19 * u, .26 * u, 18, ca), { wash: mixCol(C.navy, C.ink, .15), ink: C.ink, sw: sw * .55 });
   aiPaint(aiEll(Wr[0], Wr[1], .155 * u, .21 * u, 16, ca), { ink: C.gold, sw: sw * .35 });
-  const ha = R.hang ?? ca, hp = [Wr[0] + d2[0] * .1 * u, Wr[1] + d2[1] * .1 * u], L = A.hl * u, grip = [hp[0] + Math.cos(ha) * L * .5, hp[1] + Math.sin(ha) * L * .5];
+  const ha = R.hang ?? ca, hp = [Wr[0] + d2[0] * .1 * u, Wr[1] + d2[1] * .1 * u], L = A.hl * u * R.hk, grip = [hp[0] + Math.cos(ha) * L * .5, hp[1] + Math.sin(ha) * L * .5];
   S.pts['hand' + R.key] = grip; S.pts['wrist' + R.key] = Wr;
   const th = s * (Math.cos(ha) < 0 ? 1 : -1);
   if (R.prop && !aiPropFront(R.prop)) aiPropAt(R.prop, grip, ha, u, s, 'chibi');
@@ -283,7 +283,8 @@ function aiTailSit(G, view, sway) {
 //   stetho  the light stethoscope: earpieces in, chestpiece held down (03B)
 //   catch   one hand up to catch (06G)
 //   full form only: cover (hands over his ears, o.at = his head, world px), cup (hands cupping his face, o.at), stroke
-//   (stroking his hair on her lap, o.at), throat (hand on her own throat, 10G), glass (palm raised to the glass, 09H/09I)
+//   (stroking his hair on her lap, o.at), throat (hand on her own throat, 10G), glass (palm raised to the glass, 09H/09I;
+//   with o.view 'side' the palm is pressed flat to it, seen edge-on: hand 'edge')
 function aiAct(name, t, t0 = 0, o = {}) {
   const r = aiAct0(name, t, t0, o);
   return o.side === 'L' ? aiActMirror(r) : r;
@@ -291,7 +292,7 @@ function aiAct(name, t, t0 = 0, o = {}) {
 // The same action done with the other hand: swap the arms' keys, mirror their x and hand angles.
 function aiActMirror(r) {
   const out = { ...r };
-  for (const [a, b] of [['reachL', 'reachR'], ['handL', 'handR'], ['handAL', 'handAR'], ['propL', 'propR'], ['reachLW', 'reachRW']]) { out[a] = r[b]; out[b] = r[a]; if (out[a] === undefined) delete out[a]; if (out[b] === undefined) delete out[b]; }
+  for (const [a, b] of [['reachL', 'reachR'], ['handL', 'handR'], ['handAL', 'handAR'], ['propL', 'propR'], ['reachLW', 'reachRW'], ['handKL', 'handKR']]) { out[a] = r[b]; out[b] = r[a]; if (out[a] === undefined) delete out[a]; if (out[b] === undefined) delete out[b]; }
   for (const k of ['reachL', 'reachR']) if (out[k]) out[k] = [-out[k][0], out[k][1]];
   for (const k of ['handAL', 'handAR']) if (out[k] !== undefined) out[k] = Math.PI - out[k];
   for (const k of ['tilt', 'rot', 'lookX', 'yaw', 'headDx', 'dx']) if (out[k] !== undefined) out[k] = -out[k];
@@ -303,9 +304,9 @@ function aiAct0(name, t, t0, o) {
   const restL = full ? [-.25, -6.75] : [-.55, -3.55], restR = full ? [.25, -6.75] : [.55, -3.55];
   switch (name) {
     case 'wave': {
-      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : o.high ? [4.0, -8.9] : [2.75, -5.75];   // high: the hand clears the hair (a shadow puppet)
+      const sw = Math.sin(b * Math.PI), up = full ? [1.25, -9.55] : o.high ? [4.35, -8.6] : [2.75, -5.75];   // high: the hand clears the hair (a shadow puppet)
       const p = [up[0] + .22 * sw * k, up[1] - .1 * Math.abs(sw) * k];
-      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .55 * sw * k + .15, armStretch: o.high ? 4 : undefined, reachL: mix(restL, full ? [-.05, -7.75] : [-.3, -4.15]), handL: 'flat', handAL: full ? -.2 : -.35,
+      return { reachR: mix(restR, p), handR: 'open', handAR: -Math.PI / 2 + .55 * sw * k + .15, armStretch: o.high ? 4 : undefined, handKR: o.high ? 1.9 : undefined, reachL: mix(restL, full ? [-.05, -7.75] : [-.3, -4.15]), handL: 'flat', handAL: full ? -.2 : -.35,
         tilt: .06 * k + .02 * sw, rot: -.02 * k, lookX: .25 };
     }
     case 'point': {
@@ -344,8 +345,8 @@ function aiAct0(name, t, t0, o) {
     case 'cover': { const c = o.at, r = o.r || 40; return { reachLW: [c[0] - r * .95, c[1] + r * .05], reachRW: [c[0] + r * .95, c[1] - r * .05], handL: 'flat', handR: 'flat', handAL: -Math.PI / 2 - .1, handAR: -Math.PI / 2 + .1, tilt: .1 }; }
     case 'cup': { const c = o.at, r = o.r || 40; return { reachLW: [c[0] - r * .85, c[1] + r * .35], reachRW: [c[0] + r * .85, c[1] + r * .3], handL: 'flat', handR: 'flat', handAL: -Math.PI / 2 + .35, handAR: -Math.PI / 2 - .35, tilt: .08 }; }
     case 'stroke': { const c = o.at, r = o.r || 40, s = Math.sin(age * TAU * .5); return { reachRW: [c[0] + r * (.1 + .35 * s), c[1] - r * .55], handR: 'flat', handAR: .25 + .2 * s, reachL: [-.15, -6.05], tilt: .14, lookY: .7 }; }
-    case 'throat': return { reachR: mix(restR, [.06, -8.22]), handR: 'flat', handAR: -2.15, tilt: -.05 };
-    case 'glass': { const p = o.at || [1.0, -9.0]; return { reachR: mix(restR, p), handR: 'flat', handAR: -Math.PI / 2, tilt: .04 }; }
+    case 'throat': return { reachR: mix(restR, [.1, -8.13]), handR: 'flat', handAR: -Math.PI + .22, tilt: -.05 };   // her neck is short: the palm lies across its base, over the collar
+    case 'glass': { const p = o.at || [1.0, -9.0]; return { reachR: mix(restR, p), handR: o.view === 'side' ? 'edge' : 'flat', handAR: -Math.PI / 2, tilt: .04 }; }
   }
   return {};
 }
@@ -363,7 +364,7 @@ function aiClimb(t, t0, dur = 1.2) {
   if (p > .75) { const k = ph(.75, 1); dy = lerp(2.0, 0, k) - 1.4 * 4 * k * (1 - k); }
   const grab = ph(.28, .4), hold = p < .8;
   const o = { dy, float: 0, bob: 0, eyes: p < .45 ? 'wide' : 'normal', lookY: p < .3 ? .2 : 0, sq: p > .45 && p < .75 ? -.06 * Math.sin(ph(.45, .75) * Math.PI) : 0, tilt: .05 * Math.sin(p * 9) };
-  if (grab > 0 && hold) { const y = -dy - .38; o.reachL = [lerp(-.55, -1.8, grab), lerp(-3.55, y, grab)]; o.reachR = [lerp(.55, 1.85, grab), lerp(-3.55, y, grab)]; o.handL = o.handR = 'fist'; o.handAL = Math.PI / 2 + .3; o.handAR = Math.PI / 2 - .3; }
+  if (grab > 0 && hold) { const y = -dy - .38, gx = lerp(2.35, 1.75, ease(ph(.45, .75))); o.reachL = [lerp(-.55, -gx, grab), lerp(-3.55, y, grab)]; o.reachR = [lerp(.55, gx + .05, grab), lerp(-3.55, y, grab)]; o.handL = o.handR = 'fist'; o.handAL = Math.PI / 2 + .3; o.handAR = Math.PI / 2 - .3; }
   return o;
 }
 // Descending out of the lamp (04A): from h u above, slowing to land at t1, then the curtsy dip and settle.

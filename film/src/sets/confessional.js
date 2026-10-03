@@ -5,6 +5,7 @@
 //   S = setConfScreen(x, y, w, h, o)    the monitor frame; o.content(S) paints the glass (her, clipped to S), o.refresh
 //                                       (the ↻ in the corner, 0..1 visible), o.press 0..1 (finger on it), o.lit 0..1
 //   setSlot(x, y, w, h, o)              the screen grown into a slot machine: o.k 0..1 (trim, bulbs, reel dividers grow),
+//                                       o.cache (k = 1: the machine and the void behind it cached in tiles; skip setConfVoid),
 //                                       o.reels [{ spin 0..1 blur, off px }], o.reel(i, R) paints reel i's slice of her face
 //                                       (R = {x, y, w, h}), o.t (bulbs chase), o.win 0..1 (jackpot: gold light)
 //   setLever(x, y, s, o)                the lever on its housing: o.pull 0..1, o.grow 0..1
@@ -21,6 +22,15 @@ function setConfVoid(o = {}) {
       .forEach(([x, y, rx, ry, c, op], i) => { boilSeed('cv bloom' + i); paint(ellPts(W * x, H * y, W * rx, H * ry, 24, 30), { fill: c, fillOp: op, bleed: .3, tex: .6, ink: null }); });
     for (let i = 0; i < 60; i++) { boilSeed('cv dust' + i); const r = .8 + 2 * hash(i * 4.9); paint(ellPts(W * hash(i * 2.13), H * hash(i * 6.71), r, r, 6), { wash: '#2A4A8A', washOp: 80 + 100 * hash(i), ink: null }); }
   }, { par: o.par });
+}
+// The same void painted inside a cached tile (x0..x1 × y0..y1 in the current coordinates; frame-sized composition round
+// (W/2, H/2)), for confessional pieces cached together with their background (setSlot o.cache).
+function setConfVoidTile(x0, y0, x1, y1) {
+  boilSeed('cv bg'); paint(setBox(x0 - 40, y0 - 40, x1 + 40, y1 + 40), { wash: SET_C.navy, ink: null });
+  [[.5, .45, .45, .4, '#0F1C40', 130], [.22, .7, .3, .3, '#13285A', 80], [.8, .3, .25, .3, '#16204A', 80], [.5, .9, .5, .2, '#0A1230', 90]]
+    .forEach(([x, y, rx, ry, c, op], i) => { if (!setHit([W * (x - rx), H * (y - ry), W * (x + rx), H * (y + ry)], x0, y0, x1, y1)) return; boilSeed('cv bloom' + i); paint(ellPts(W * x, H * y, W * rx, H * ry, 24, 30), { fill: c, fillOp: op, bleed: .3, tex: .6, ink: null }); });
+  boilSeed('cv dust');
+  for (let i = 0; i < 60; i++) { const r = .8 + 2 * hash(i * 4.9), dx = W * hash(i * 2.13), dy = H * hash(i * 6.71); if (dx < x0 - 10 || dx > x1 + 10 || dy < y0 - 10 || dy > y1 + 10) continue; paint(ellPts(dx, dy, r, r, 6), { wash: '#2A4A8A', washOp: 80 + 100 * hash(i), ink: null }); }
 }
 // The monitor frame (front), centre (x, y), glass w × h. Returns S (the glass).
 function setConfScreen(x, y, w, h, o = {}) {
@@ -39,25 +49,30 @@ function setConfScreen(x, y, w, h, o = {}) {
 // The slot machine around the same glass. Reel windows split the glass in three.
 function setSlot(x, y, w, h, o = {}) {
   const k = clamp(o.k ?? 1), t = o.t ?? T, sw = setSW(h / 600), x0 = x - w / 2, y0 = y - h / 2, b = h * .07, G = SET_C.gold, win = o.win || 0;
-  boilSeed('slot body');
-  if (k > 0) {
-    const e = easeOut(k) * h * .16;
+  const e = easeOut(k) * h * .16, cy = y0 - b - e * 1.3, n = 22;
+  const bulb = i => {               // bulbs round the frame
+    const u = i / n, per = 2 * (w + h), d = u * per, px = d < w ? x0 + d : d < w + h ? x0 + w : d < 2 * w + h ? x0 + w - (d - w - h) : x0, py = d < w ? y0 : d < w + h ? y0 + (d - w) : d < 2 * w + h ? y0 + h : y0 + h - (d - 2 * w - h);
+    return [x + (px - x) * (1 + (b + e * .75) / (w / 2)), y + (py - y) * (1 + (b + e * .75) / (h / 2))];
+  };
+  const body = () => {              // the static machine: cabinet, gold trim, crest + heart, dark bulb sockets, the glass
+    boilSeed('slot body');
     setP(rrPts(x0 - b - e, y0 - b - e * 1.3, w + 2 * (b + e), h + 2 * b + e * 2.6, b), { wash: '#3A1E3E', ink: SET_C.ink, sw: sw * 1.2 });
     setP(rrPts(x0 - b - e * .5, y0 - b - e * .6, w + 2 * b + e, h + 2 * b + e * 1.2, b * .8), { wash: null, ink: G, sw: sw * 1.6 * k });
-    const cy = y0 - b - e * 1.3;   // the crest: a half-disc with a painted heart (no text)
-    setP(ellPts(x, cy, w * .22 * k, h * .14 * k, 24).filter(p => p[1] <= cy + 1), { wash: '#4A2450', ink: G, sw: sw * 1.2 });
-    setHeart(x, cy - h * .06 * k, h * .1 * k, SET_C.fever, { glow: .4 * k + .6 * win, key: 'crest' });
-    const n = 22;                    // bulbs round the frame, chasing (two groups alternating, ≤ 2.5 flashes a second)
-    for (let i = 0; i < n; i++) {
-      const u = i / n, per = 2 * (w + h), d = u * per, px = d < w ? x0 + d : d < w + h ? x0 + w : d < 2 * w + h ? x0 + w - (d - w - h) : x0, py = d < w ? y0 : d < w + h ? y0 + (d - w) : d < 2 * w + h ? y0 + h : y0 + h - (d - 2 * w - h);
-      const bx = x + (px - x) * (1 + (b + e * .75) / (w / 2)) * 1, by = y + (py - y) * (1 + (b + e * .75) / (h / 2));
-      const on = (i + Math.floor(t * 2.5)) % 2 ? 1 : .35;
-      boilSeed('slot bulb' + i); setP(ellPts(bx, by, h * .018 * k, h * .018 * k, 10), { wash: on > .5 ? '#FFE9A8' : '#8A6A3A', ink: null });
-      if (on > .5) glow(bx, by, h * .06, G, .5 * k + .4 * win);
-    }
+    setP(ellPts(x, cy, w * .22 * k, h * .14 * k, 24).filter(p => p[1] <= cy + 1), { wash: '#4A2450', ink: G, sw: sw * 1.2 });   // the crest (no text)
+    setHeart(x, cy - h * .06 * k, h * .1 * k, SET_C.fever, { key: 'crest' });
+    boilSeed('slot sockets'); for (let i = 0; i < n; i++) setP(ellPts(...bulb(i), h * .018 * k, h * .018 * k, 10), { wash: '#8A6A3A', ink: null });
+  };
+  if (o.cache && k >= 1) {          // 09F: the machine (and the void behind it) cached in tiles; bulbs, reels, light live
+    setTiles(`setslot ${x},${y},${w},${h}`, (X0, Y0, X1, Y1) => { setConfVoidTile(X0, Y0, X1, Y1); body(); setScreenGlass(setScr(x0, y0, w, h), 'night', { key: 'slot' }); }, { res: o.res, variants: o.variants, cam: o.cam });
+  } else if (k > 0) { body(); setScreenGlass(setScr(x0, y0, w, h), 'night', { key: 'slot' }); }
+  else setScreenGlass(setScr(x0, y0, w, h), 'night', { key: 'slot' });
+  if (k > 0) {
+    glow(x, cy - h * .06 * k, h * .16 * k, SET_C.fever, .4 * k + .6 * win);
+    boilSeed('slot bulbs');         // the lit half chases (two groups alternating, ≤ 2.5 flashes a second)
+    for (let i = 0; i < n; i++) if ((i + Math.floor(t * 2.5)) % 2) { const [bx, by] = bulb(i); setP(ellPts(bx, by, h * .018 * k, h * .018 * k, 10), { wash: '#FFE9A8', ink: null }); }
+    for (let i = 0; i < n; i++) if ((i + Math.floor(t * 2.5)) % 2) { const [bx, by] = bulb(i); glow(bx, by, h * .06, G, .5 * k + .4 * win); }
   }
   const S = setScr(x0, y0, w, h), rw = w / 3;
-  setScreenGlass(S, 'night', { key: 'slot' });
   for (let i = 0; i < 3; i++) {
     const R = setScr(x0 + i * rw, y0, rw, h), r = (o.reels || [])[i] || {}, sp = clamp(r.spin || 0);
     if (o.reel && sp < 1) o.reel(i, R, r);
@@ -117,4 +132,31 @@ function setGlassEdge(x, y0, y1, o = {}) {
   setL([[x - 5, y0], [x - 5, y1]], sw * .7, col, 'inkfine', 0);
   setL([[x + 5, y0], [x + 5, y1]], sw * .5, col, 'inkfine', 0);
   setShaft([x, y0], [x, y1], 30, '#BFD8E8', .35 * (o.a ?? 1));
+}
+// 09F: the jackpot's gold confetti: streamers and flakes bursting from (x, y) and fluttering down. age = s since the
+// burst (151.40), o.n (≤ 40), o.spread (px, 900), o.up (initial lift, 700), o.s (piece size, 1.6 ≈ 35 px), o.cols. Batched by colour (each colour change
+// is a blend pass), a few sparkles as glow.
+function setConfetti(x, y, age, o = {}) {
+  if (age < 0) return;
+  const n = Math.min(40, o.n ?? 32), spread = o.spread ?? 900, up = o.up ?? 700, cols = o.cols || [SET_C.gold, '#FFE9A8', '#E8A23A', SET_C.fever];
+  const k = 1 - Math.exp(-age * 2.6), fall = 260 * Math.max(0, age - .25) * (1 + .25 * age);
+  const P = [];
+  for (let i = 0; i < n; i++) {
+    const h1 = hash(i * 3.17 + .4), h2 = hash(i * 5.93 + 1.3), ang = -Math.PI / 2 + (h1 - .5) * 2.4, sp = .45 + .55 * h2;
+    const px = x + Math.cos(ang) * spread * sp * k + 40 * Math.sin(age * (3 + 2 * h2) + i) * clamp(age * 2);
+    const py = y + Math.sin(ang) * up * sp * k + fall * (.7 + .6 * h1);
+    P.push({ i, px, py, rot: age * (2 + 5 * h2) * (h1 > .5 ? 1 : -1) + i, flip: Math.cos(age * (5 + 6 * h1) + i), col: cols[i % cols.length], strip: i % 3 === 0 });
+  }
+  for (const col of cols) {
+    boilSeed('confetti ' + col);
+    for (const q of P) {
+      if (q.col !== col) continue;
+      const sz = (o.s ?? 1.6) * (16 + 10 * hash(q.i * 2.2));
+      if (q.strip) {      // a curly streamer
+        const L = []; for (let j = 0; j <= 6; j++) L.push([j * sz * .55, Math.sin(j * 1.3 + q.rot * 2) * sz * .45]);
+        setP(ribbon(setTf(L, q.px, q.py, 1, q.rot), sz * .22 * Math.max(.25, Math.abs(q.flip))), { wash: col, ink: null });
+      } else setP(setTf([[-1, -.6], [1, -.6], [1, .6], [-1, .6]].map(([a, b]) => [a * sz * .5, b * sz * .5 * Math.max(.15, Math.abs(q.flip))]), q.px, q.py, 1, q.rot), { wash: col, ink: null, line: true });
+    }
+  }
+  for (let i = 0; i < 8; i++) { const q = P[i * 4 % n]; glow(q.px, q.py, 40, SET_C.gold, .5 * clamp(1.6 - age * .5) * (.5 + .5 * Math.abs(q.flip))); }
 }

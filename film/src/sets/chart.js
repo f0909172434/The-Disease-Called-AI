@@ -7,33 +7,27 @@
 //       t - 16.74). o.fall: seconds since `A.` let go (10B: t - 171.63) — it drops out of frame, `I.` stays.
 //     o.ecg: options for the strip (beats, t, dotsT, ...: see setECG); o.style 'paint' | 'line' (10B, in the line-drawn
 //     ward: cyan outlines, cyan-white lettering); o.mini (small, cached in the ward: no lettering, red marks instead).
+//     o.cache: paint the static paper (board, clip, form, graph paper) once into cached tiles (setTiles) together with
+//       the background behind it, o.bg: 'indigo' (01B) | 'final' (10B) | any setVoidLayer kind | fn(x0, y0, x1, y1) (+ o.bgKey);
+//       o.res / o.variants as setTiles (fix res for a push). The stamps, the ECG trace and its dots stay live.
 //   SET_CHART.barcode: the barcode's centre at s = 1 (01B's match cut from the wristband's barcode lands here).
 const SET_CHART = { w: 760, h: 1000, barcode: [-205, -352], title1: [0, -175], title2: [0, -20], ecg: [-300, 150, 600, 270] };
 function setChart(x, y, s = 1, o = {}) {
   const P = setPalOf(o), line = o.style === 'line' || SET_MODE === 'line', m0 = SET_MODE;
   if (line) { SET_MODE = 'line'; SET_LINE.col = o.lineCol || SET_C.cyan; }
   const X = (px, py) => [x + px * s, y + py * s], M = Q => Q.map(([a, b]) => X(a, b)), sw = setSW(s), kk = 'setchart' + (o.key || '');
-  boilSeed(kk + ' board');
-  setP(M(rrPts(-380, -500, 760, 1000, 34, 1)), { wash: P.board || '#8A6A4C', ink: P.ink, sw: sw * 1.2 });
-  if (!o.mini && !line) setP(M(rrPts(-360, -480, 720, 960, 30)), { fill: P.boardDk || '#634830', fillOp: 60, bleed: .1, tex: .6, ink: null });
-  boilSeed(kk + ' paper');
-  setP(M([[-332, -430], [334, -426], [330, 466], [-334, 470]]), { wash: P.page || '#F4ECDA', ink: P.ink, sw: sw * .8 });
-  setP(M([[-334, 440], [330, 436], [330, 466], [-334, 470]]), { wash: P.pageSh || '#D9CDB4', washOp: 150, ink: null });
-  // the clip
-  boilSeed(kk + ' clip');
-  setP(M([[-150, -446], [150, -446], [160, -404], [-160, -404]]), { wash: P.clip || '#B9BCC4', ink: P.ink, sw });
-  setP(M([[-90, -446], [-76, -520], [76, -520], [90, -446]]), { wash: P.clip || '#B9BCC4', ink: P.ink, sw, curv: .3 });
-  setP(M(ellPts(0, -486, 26, 16, 14)), { wash: P.board || '#8A6A4C', ink: P.ink, sw: sw * .6 });
-  for (const rx of [-120, 120]) setP(M(ellPts(rx, -424, 9, 9, 10)), { wash: P.metalDk || '#5E5B6A', ink: null, line: true });
-  // header: barcode, rules, boxes (no words)
-  boilSeed(kk + ' form');
-  const [bx, by] = SET_CHART.barcode;
-  for (let i = 0; i < 24; i++) { const xx = bx - 80 + i * 7 + (hash(i * 3.7) - .5) * 2; setL(M([[xx, by - 24], [xx, by + 24]]), sw * (hash(i * 1.9) > .6 ? 1.3 : .6), P.code || P.ink, 'inkfine', 0); }
-  for (let i = 0; i < 3; i++) setL(M([[-40, -380 + i * 26], [280 - 60 * (i % 2), -380 + i * 26]]), sw * .5, '#8FA6C8', 'inkfine', 0);
-  for (let i = 0; i < 3; i++) setP(M(setBox(-300 + i * 200, -290, -276 + i * 200, -266)), { wash: null, ink: P.inkSoft || P.ink, sw: sw * .5 });
-  if (o.mini || line) for (let i = 0; i < 3; i++) setL(M([[-220 + i * 200, -278], [-120 + i * 200, -278]]), sw * .5, '#8FA6C8', 'inkfine', 0);
-  for (let i = 0; i < 4; i++) setL(M([[-300, 70 + i * 20 - 40], [300, 70 + i * 20 - 40]]), sw * .35, '#B9C6DA', 'inkfine', 0);
-  setECG(...X(SET_CHART.ecg[0], SET_CHART.ecg[1]), SET_CHART.ecg[2] * s, SET_CHART.ecg[3] * s, { key: kk, line, ...(o.ecg || {}) });
+  const ecg = [...X(SET_CHART.ecg[0], SET_CHART.ecg[1]), SET_CHART.ecg[2] * s, SET_CHART.ecg[3] * s], eo = { key: kk, line, ...(o.ecg || {}) };
+  if (o.cache && !o.mini) {   // the board, paper, form and graph paper cached in tiles (with the background behind them)
+    const bg = o.bg, bk = typeof bg === 'string' ? bg : bg ? (o.bgKey || 'custom') : 'none';
+    setTiles(`setchart ${line ? 'line' : 'paint'} ${bk} ${x},${y},${s}`, (x0, y0, x1, y1) => {
+      const mm = SET_MODE; SET_MODE = 'paint';
+      if (typeof bg === 'string') setChartBg(bg, x, y, s, x0, y0, x1, y1); else if (bg) bg(x0, y0, x1, y1);
+      if (line) SET_MODE = 'line';
+      setChartPaper(x, y, s, o, P, line, kk); setECG(...ecg, { ...eo, part: 'paper' });
+      SET_MODE = mm;
+    }, { res: o.res, variants: o.variants ?? (line ? 1 : 3), cam: o.cam });
+    setECG(...ecg, { ...eo, part: 'trace' });
+  } else { setChartPaper(x, y, s, o, P, line, kk); setECG(...ecg, eo); }
   const red = line ? SET_C.cyanW : (o.stampCol || '#D9284F');
   if (o.mini) {            // illegible red stamp marks for wide shots
     boilSeed(kk + ' mini');
@@ -59,6 +53,47 @@ function setChart(x, y, s = 1, o = {}) {
   }
   SET_MODE = m0;
 }
+// The static paper of the chart: board, paper, clip, header form (barcode, rules, boxes; no words).
+function setChartPaper(x, y, s, o, P, line, kk) {
+  const X = (px, py) => [x + px * s, y + py * s], M = Q => Q.map(([a, b]) => X(a, b)), sw = setSW(s);
+  boilSeed(kk + ' board');
+  setP(M(rrPts(-380, -500, 760, 1000, 34, 1)), { wash: P.board || '#8A6A4C', ink: P.ink, sw: sw * 1.2 });
+  if (!o.mini && !line) setP(M(rrPts(-360, -480, 720, 960, 30)), { fill: P.boardDk || '#634830', fillOp: 60, bleed: .1, tex: .6, ink: null });
+  boilSeed(kk + ' paper');
+  setP(M([[-332, -430], [334, -426], [330, 466], [-334, 470]]), { wash: P.page || '#F4ECDA', ink: P.ink, sw: sw * .8 });
+  setP(M([[-334, 440], [330, 436], [330, 466], [-334, 470]]), { wash: P.pageSh || '#D9CDB4', washOp: 150, ink: null });
+  // the clip
+  boilSeed(kk + ' clip');
+  setP(M([[-150, -446], [150, -446], [160, -404], [-160, -404]]), { wash: P.clip || '#B9BCC4', ink: P.ink, sw });
+  setP(M([[-90, -446], [-76, -520], [76, -520], [90, -446]]), { wash: P.clip || '#B9BCC4', ink: P.ink, sw, curv: .3 });
+  setP(M(ellPts(0, -486, 26, 16, 14)), { wash: P.board || '#8A6A4C', ink: P.ink, sw: sw * .6 });
+  for (const rx of [-120, 120]) setP(M(ellPts(rx, -424, 9, 9, 10)), { wash: P.metalDk || '#5E5B6A', ink: null, line: true });
+  // header: barcode, rules, boxes (no words)
+  boilSeed(kk + ' form');
+  const [bx, by] = SET_CHART.barcode;
+  for (let i = 0; i < 24; i++) { const xx = bx - 80 + i * 7 + (hash(i * 3.7) - .5) * 2; setL(M([[xx, by - 24], [xx, by + 24]]), sw * (hash(i * 1.9) > .6 ? 1.3 : .6), P.code || P.ink, 'inkfine', 0); }
+  for (let i = 0; i < 3; i++) setL(M([[-40, -380 + i * 26], [280 - 60 * (i % 2), -380 + i * 26]]), sw * .5, '#8FA6C8', 'inkfine', 0);
+  for (let i = 0; i < 3; i++) setP(M(setBox(-300 + i * 200, -290, -276 + i * 200, -266)), { wash: null, ink: P.inkSoft || P.ink, sw: sw * .5 });
+  if (o.mini || line) for (let i = 0; i < 3; i++) setL(M([[-220 + i * 200, -278], [-120 + i * 200, -278]]), sw * .5, '#8FA6C8', 'inkfine', 0);
+  for (let i = 0; i < 4; i++) setL(M([[-300, 70 + i * 20 - 40], [300, 70 + i * 20 - 40]]), sw * .35, '#B9C6DA', 'inkfine', 0);
+}
+// A void behind a cached chart, painted in the chart's own coordinates (the frame-filling chart is s ≈ 1.04): kind
+// 'indigo' | 'navy' | 'black' | 'blood' | 'ash' (as setVoidLayer) or 'final' (10B: the line ward's blueprint navy + grid).
+function setChartBg(kind, x, y, s, x0, y0, x1, y1) {
+  const k = s / 1.04, F = (u, v) => [x + (u - .5) * W * k, y + (v - .5) * H * k];
+  if (kind === 'final') {
+    boilSeed('chartbg final'); paint(setBox(x0 - 40, y0 - 40, x1 + 40, y1 + 40), { wash: '#070B16', ink: null });
+    paint(ellPts(...F(.5, .55), W * .5 * k, H * .45 * k, 30, 10), { wash: '#0B1430', washOp: 120, ink: null });
+    const g = 120 * k;
+    for (let gx = Math.ceil((x0 - x) / g) * g + x; gx < x1; gx += g) { boilSeed('chartbg gx' + Math.round((gx - x) / g)); inkLine([[gx, y0], [gx, y1]], .35, '#123060', 'inkfine', 0); }
+    for (let gy = Math.ceil((y0 - y) / g) * g + y; gy < y1; gy += g) { boilSeed('chartbg gy' + Math.round((gy - y) / g)); inkLine([[x0, gy], [x1, gy]], .35, '#123060', 'inkfine', 0); }
+    return;
+  }
+  const [a, b] = SET_VOIDS[kind] || SET_VOIDS.indigo;
+  boilSeed('chartbg ' + kind); paint(setBox(x0 - 40, y0 - 40, x1 + 40, y1 + 40), { wash: a, ink: null });
+  [[.5, .5, .42, .4, 110], [.2, .3, .25, .3, 60], [.82, .72, .25, .25, 60]].forEach(([u, v, rx, ry, op], i) => { boilSeed('chartbg bloom' + i);
+    paint(ellPts(...F(u, v), W * rx * k, H * ry * k, 24, 30), { fill: b, fillOp: op * (kind === 'black' ? .45 : 1), bleed: .3, tex: .6, ink: null }); });
+}
 // The ECG strip: graph paper and the trace (cyan), scrolling right to left with "now" at the right edge.
 // (x, y) top-left, w × h. o.t (now), o.beats (times of the beats: e.g. kick onsets; default a steady 2 per second),
 // o.span (seconds across the strip, 2.8), o.dotsT (from this time the scroll freezes and the last three beats turn into
@@ -66,6 +101,7 @@ function setChart(x, y, s = 1, o = {}) {
 function setECG(x, y, w, h, o = {}) {
   const t = o.t ?? T, span = o.span ?? 2.8, col = o.col || SET_C.cyan, kk = 'setecg' + (o.key || ''), now = o.dotsT != null ? Math.min(t, o.dotsT) : t;
   const beats = o.beats || Array.from({ length: Math.ceil(now * 2) + 2 }, (_, i) => i * .5).filter(b => b <= now && b > now - span - .5);
+  if (o.part !== 'trace') {   // the graph paper (static: cached with the chart when it is)
   boilSeed(kk + ' paper');
   if (!o.line) setP(setBox(x, y, x + w, y + h), { wash: '#F7E4E2', ink: null });
   setP(setBox(x, y, x + w, y + h), { wash: null, ink: o.line ? SET_C.cyan : '#D9A0A6', sw: setSW(h / 270) * .7 });
@@ -74,6 +110,8 @@ function setECG(x, y, w, h, o = {}) {
     for (let i = 1; i < n; i++) setL([[x + i * g, y + 2], [x + i * g, y + h - 2]], setSW(h / 270) * .35, gc, 'inkfine', 0, { skipLine: false, lineCol: gc, lineSw: .35 });
     for (let j = 1; j < Math.round(h / g); j++) setL([[x + 2, y + j * g], [x + w - 2, y + j * g]], setSW(h / 270) * .35, gc, 'inkfine', 0, { lineCol: gc, lineSw: .35 });
   }
+  }
+  if (o.part === 'paper') return null;
   const base = y + h * .62, amp = h * .42, mk = o.dotsT != null ? ease(clamp((t - o.dotsT) / .4)) : 0;
   const last3 = o.dotsT != null ? beats.filter(b => b <= o.dotsT).slice(-3) : [];
   const shape = d => {   // P wave, QRS, T wave around a beat (d in s from the beat)

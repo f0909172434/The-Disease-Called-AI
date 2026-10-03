@@ -716,12 +716,19 @@ function aiFrill(Pts, d, n, o = {}) {
   if (S.u > 25 && o.flute !== false) for (let j = 0; j < n; j++) { const i = Math.round((j + .5) / n * (m - 1)); aiLine([[lerp(inner[i][0], outer[i][0], .25), lerp(inner[i][1], outer[i][1], .25)], [lerp(inner[i][0], outer[i][0], .7), lerp(inner[i][1], outer[i][1], .7)]], S.sw * .22, C.creamSh); }
 }
 
-// A hand at p, pointing along angle a (rad, 0 = +x), length L. kind: relax | open | fist. th = thumb side (+1 / -1).
+// A hand at p, pointing along angle a (rad, 0 = +x), length L. kind: relax | open | fist | grip | flat | point | pinch | edge. th = thumb side (+1 / -1).
 function aiHand(p, a, L, kind, th, chibi, dark) {
   const C = AI_S.P, sw = AI_S.sw * .55;
   const R = (x, y) => { const c = Math.cos(a), n = Math.sin(a); return [p[0] + (x * c - y * th * n) * L, p[1] + (x * n + y * th * c) * L]; };
   const M = pts => pts.map(q => q[2] ? [...R(q[0], q[1]), 1] : R(q[0], q[1]));
   const crease = mixCol(C.skinSh, C.ink, .25), skin = dark ? mixCol(C.skin, C.skinSh, .5) : C.skin;
+  if (kind === 'edge') {   // a flat hand seen edge-on, its palm pressed to a surface on the +y side (a palm on glass, in profile)
+    aiPaint(aiLoop(M([[0, -.17], [.3, -.19], [.62, -.17], [.95, -.14], [1.12, -.1], [1.2, -.03], [1.18, .05], [1.05, .09], [.7, .11], [.35, .13], [0, .13]]), 4), { wash: skin, ink: C.ink, sw });
+    aiPaint(aiLoop(M([[.05, .02], [.6, .06], [1.1, .05], [1.12, .09], [.6, .11], [.05, .12]]), 3), { wash: C.skinSh, op: 110, ink: null });   // the palm in shadow against the glass
+    aiPaint(aiLoop(M([[.1, -.09], [.3, -.15], [.52, -.1], [.68, -.02], [.75, .06], [.66, .1], [.46, .06], [.26, .06], [.1, .04]]), 3), { wash: skin, ink: C.ink, sw: sw * .75 });   // the thumb, toward the viewer
+    if (L > 12) { aiLine(M([[.78, -.11], [.86, -.1]]), sw * .4, crease); aiLine(M([[.98, -.1], [1.04, -.08]]), sw * .35, crease); }
+    return;
+  }
   if (kind === 'flat') {   // fingers together and straight, the thumb along the edge: a palm on glass, on a throat, a salute
     aiPaint(aiLoop(M([[0, -.24], [.3, -.29], [.55, -.3], [.86, -.29], [1.08, -.24], [1.22, -.15], [1.26, -.04], [1.2, .06], [.95, .13], [.6, .16], [.48, .2], [.62, .34], [.7, .42], [.62, .46], [.42, .4], [.18, .3], [0, .24]]), 4), { wash: skin, ink: C.ink, sw });
     if (L > 12) { for (const y of [-.15, -.05, .05]) aiLine(M([[.62, y], [.92, y + .005], [1.12, y - .01]]), sw * .4, crease); aiLine(M([[.18, .02], [.4, .1]]), sw * .35, crease); }
@@ -791,7 +798,7 @@ function aiArm(G, B, s, a, e, hand, part, dark, prof, ext = {}) {
     aiPaint([[c0[0] + n[0] * cw, c0[1] + n[1] * cw], [Wr[0] + n[0] * cw, Wr[1] + n[1] * cw], [Wr[0] - n[0] * cw, Wr[1] - n[1] * cw], [c0[0] - n[0] * cw, c0[1] - n[1] * cw]], { wash: C.gold, ink: C.ink, sw: sw * .4 });
     aiFrill([[Wr[0] + n[0] * cw * 1.1, Wr[1] + n[1] * cw * 1.1], Wr, [Wr[0] - n[0] * cw * 1.1, Wr[1] - n[1] * cw * 1.1]], -.11 * u, 3, { sw: sw * .4 });
     const ha = ext.hang ?? (Math.atan2(d2[1], d2[0]) + (hand === 'open' || ext.ik ? 0 : s * .35 * clamp(e / 1.2)));
-    const hp = [Wr[0] + d2[0] * .06 * u, Wr[1] + d2[1] * .06 * u], L = lh * u * AI_HANDK, grip = [hp[0] + Math.cos(ha) * L * .5, hp[1] + Math.sin(ha) * L * .5];
+    const hp = [Wr[0] + d2[0] * .06 * u, Wr[1] + d2[1] * .06 * u], L = lh * u * AI_HANDK * (ext.hk || 1), grip = [hp[0] + Math.cos(ha) * L * .5, hp[1] + Math.sin(ha) * L * .5];
     if (ext.key) { S.pts['hand' + ext.key] = grip; S.pts['wrist' + ext.key] = Wr; }
     const th = s * (Math.cos(ha) < 0 ? 1 : -1) * (prof ? -1 : 1);
     if (ext.prop && !aiPropFront(ext.prop)) aiPropAt(ext.prop, grip, ha, u, s, 'full');
@@ -1451,8 +1458,9 @@ function aiBodySide(G, P, A, part) {
 // head (centre), eyeL, eyeR, mouth, throat, handL / handR (palm centre), gripL / gripR (where a held prop sits), lap
 // (pose 'sit'), notch (the collarbone notch), u, flip. Scenes use them to attach props, light and the other character.
 let AI_LAST = null;
+const AI_GIANT_JU = 260;
 // pose 'lie': the hair spreads over the pillow (drifting toward her head's left, which the roll turns onto the pillow)
-const AI_LIE_HAIR = { sweepL: -.9, sweepR: -.55, lenL: 4.4, lenR: 3.8 };
+const AI_LIE_HAIR = { sweepL: -.9, sweepR: -.55, lenL: 3.6, lenR: 3.6 };
 function ai(x, y, u, o = {}) {
   const id = o.boilKey ?? ('n' + (++CLAWD_N)), rs = part => boilSeed(`ai ${id} ${part}`);
   const form = o.form === 'chibi' ? 'chibi' : 'full', G = AI_FORM[form];
@@ -1472,16 +1480,17 @@ function ai(x, y, u, o = {}) {
   const X = x + (o.dx || 0) * u, Y = y + ((o.dy || 0) - fl - bob - anc) * u;
   const sx = (o.flip ? -1 : 1) * (1 + sq * .6), sy = 1 - sq;
   // squash and stretch pivot at her waist (she hovers, so no foot contact to keep); at the anchor in bust / sit
-  const py = bust || sit ? anc * u : -6 * u, roll = o.roll ?? (pose === 'lie' ? -.45 : 0);
+  const py = bust || sit ? anc * u : -6 * u, roll = o.roll ?? (pose === 'lie' ? -1.0 : 0);
   let clip = null;
   if (o.clip) { const [a, b, c, d] = o.clip, xs = [(a - X) / sx, (c - X) / sx].sort((p, q) => p - q); clip = [xs[0], (b - Y - py) / sy + py, xs[1], (d - Y - py) / sy + py]; }
   if (bust) { const cy = (anc + (o.cut ?? (form === 'chibi' ? 1.45 : 2.1))) * u; clip = clip ? [clip[0], clip[1], clip[2], Math.min(clip[3], cy)] : [-1e6, -1e6, 1e6, cy]; }
   const g = clamp(o.glitch || 0), gf = Math.floor(tt * 12);
   const rotA = o.rot || 0, warp = g > 0 ? yy => { const band = Math.floor(yy / (u * .38)) + 300, r = hash(band * 7.13 + gf * 3.31 + 1); return r < g * .6 ? (hash(band * 1.7 + gf * .91) - .5) * 2.2 * g * u : 0; } : null;
-  // line weights follow u up to a cap (o.giant raises the cap with u, for the giant shots drawn at a huge u)
+  // line weights follow u up to a cap (o.giant raises the cap with u, for the giant shots drawn at a huge u); the giant's
+  // boil wobble stops growing at u = AI_GIANT_JU (at u 900 it would move each shape ~6 px a drawing: the iris swims in the eye)
   const swMax = o.swMax ?? (o.giant ? 1.7 * Math.sqrt(Math.max(1, u / 145)) : 1.7);
   const lite = o.lod === 'thumb' || (o.lod !== 'full' && form === 'chibi' && u < 20);
-  AI_S = { P: pal, u, k: G.k * u, sw: clamp(u / 85, .22, swMax) * pal.swk, swF: clamp(G.k * u / 75, .22, swMax * .88) * pal.swk, J: pal.J * u / 60, warp, clip, rot: rotA,
+  AI_S = { P: pal, u, k: G.k * u, sw: clamp(u / 85, .22, swMax) * pal.swk, swF: clamp(G.k * u / 75, .22, swMax * .88) * pal.swk, J: pal.J * (o.giant ? Math.min(u, AI_GIANT_JU) : u) / 60, warp, clip, rot: rotA,
     rc: [0, anc * u], lite, sil: o.silhouette || null, silOp: o.silOp, dis: clamp(o.dissolve || 0), disp: o.ripple ? aiRippleDisp(o.ripple, u) : null, n: 0, pts: {},
     tf: { X, Y, py, sx, sy, roll } };
   const eyes = o.eyes || 'normal';
@@ -1493,9 +1502,10 @@ function ai(x, y, u, o = {}) {
     yaw: o.yaw || 0, hair: o.hair ?? (pose === 'lie' ? AI_LIE_HAIR : undefined), bust, sit, cut: bust ? clip[3] : null,
   };
   push(); translate(X, Y + py); scale(sx, sy); if (roll) rotate(roll); translate(0, -py);
+  const farPass = o.layer === 'far' && form === 'full' && view === 'q' && pose !== 'curtsy';   // see o.layer below
   rs('shadow');
-  if (!o.noShadow && !bust && !sit && !AI_S.sil) { const k = 1 / (1 + (fl + bob) * .4), sy0 = (fl + bob) * u; aiPaint(aiEll(0, sy0, 1.55 * u * k * (form === 'chibi' ? 1.1 : 1), .24 * u * k, 20), { wash: pal.shadow, op: 50, ink: null }); }
-  if (pal.glowK && !bust) { rs('halo'); aiGlow(0, (form === 'chibi' ? -6.2 : sit ? -7.4 : -5.6) * u, 6 * u, pal.rim, .4 * pal.glowK); }
+  if (!o.noShadow && !bust && !sit && !AI_S.sil && !farPass) { const k = 1 / (1 + (fl + bob) * .4), sy0 = (fl + bob) * u; aiPaint(aiEll(0, sy0, 1.55 * u * k * (form === 'chibi' ? 1.1 : 1), .24 * u * k, 20), { wash: pal.shadow, op: 50, ink: null }); }
+  if (pal.glowK && !bust && !farPass) { rs('halo'); aiGlow(0, (form === 'chibi' ? -6.2 : sit ? -7.4 : -5.6) * u, 6 * u, pal.rim, .4 * pal.glowK); }
   const qc = form === 'chibi' ? .1 : .12;
   const B = xx => (view === 'q' ? qc + xx * (xx < 0 ? 1 : .72) : xx) * u, P = (xx, yy) => [B(xx), yy * u];
   const hcx = view === 'q' ? B(0) - .05 * u : view === 'side' ? -.02 * u : 0, hc = [hcx + (o.headDx || 0) * u, (G.hc[1] + (o.headDy || 0)) * u], k = G.k * u;
@@ -1511,9 +1521,14 @@ function ai(x, y, u, o = {}) {
     // arms: angles (aL / eL ...) or a reach target for the hand (IK), and what each hand holds
     const R = aiArmsFull(G, B, view, o, sit), hL = R.hL, hR = R.hR;
     const hd = aiHD(H, Hh, 'full', view, A, k, sit ? AI_SIT.hair : null);
+    // o.layer (full form, 3/4): 'far' paints what lies behind her body (the back hair, the tail, the far arm), 'near' the
+    // rest, so a scene can paint him between the two passes: her far hand goes behind his head, the near one over it
+    // (cup, cover, stroke). Call ai() twice with the same options and boilKey.
+    const layer = view === 'q' ? o.layer : null;
+    if (layer !== 'near') { rs('hairback'); aiHairBack(hd); if (!bust) { rs('tail'); if (sit) aiTailSit(G, view, tailSway); else aiTail(G, view, tailSway); } }
+    if (layer === 'far') { rs('armfar'); aiArm(G, B, 1, R.aR, R.eR, hR, 'all', true, false, R.xR); }
+    else {
     const showSkirt = !bust || (o.cut ?? 2.1) > 1.72, cutAt = bust ? clip[3] : 1e9;
-    rs('hairback'); aiHairBack(hd);
-    if (!bust) { rs('tail'); if (sit) aiTailSit(G, view, tailSway); else aiTail(G, view, tailSway); }
     if (view === 'side') {
       if (!bust) { rs('legs'); aiLegs(G, B, 'side', swing); }
       if (showSkirt) { rs('skirt'); aiBodySide(G, P, A, 'lower'); }
@@ -1521,7 +1536,7 @@ function ai(x, y, u, o = {}) {
       aiHeadFull(hd);
       rs('armR'); aiArm(G, () => 0, 1, R.aR, R.eR, hR, 'all', false, true, R.xR);
     } else {
-      if (view === 'q') { rs('armfar'); aiArm(G, B, 1, R.aR, R.eR, hR, 'all', true, false, R.xR); }
+      if (view === 'q' && layer !== 'near') { rs('armfar'); aiArm(G, B, 1, R.aR, R.eR, hR, 'all', true, false, R.xR); }
       if (sit) { rs('legs'); aiSitLower(G, B, P, view, swing, tt); }
       else if (!bust) { rs('legs'); aiLegs(G, B, view, swing); rs('skirt'); aiSkirt(G, P, view); }
       else if (showSkirt) { rs('skirt'); aiSkirt(G, P, view); }
@@ -1534,12 +1549,14 @@ function ai(x, y, u, o = {}) {
       aiHeadFull(hd);
       if (view === 'front') { rs('armlowR'); aiArm(G, B, 1, R.aR, R.eR, hR, 'lower', false, false, R.xR); } rs('armlow'); aiArm(G, B, -1, R.aL, R.eL, hL, 'lower', false, false, R.xL);
     }
+    }
   }
-  if (o.draw) { rs('draw'); o.draw(u, H); }
-  if (o.emote && !AI_S.sil) { rs('emote'); aiEmote(o.emote, H, o.emoteK ?? 1, o.emoteAge ?? tt); }
-  if (o.strings) { rs('strings'); aiStrings(o.strings, H, u); }
-  if (g > .02) { rs('glitch'); aiGlitchMarks(g, u, gf); }
-  if (AI_S.dis > .02) { rs('dissolve'); aiDissolveMotes(AI_S.dis, H, u, tt, o.dissolveTo); }
+  if (o.draw && !farPass) { rs('draw'); o.draw(u, H); }
+  if (farPass) { /* the far arm only: no marks over her */ }
+  else if (o.emote && !AI_S.sil) { rs('emote'); aiEmote(o.emote, H, o.emoteK ?? 1, o.emoteAge ?? tt); }
+  if (o.strings && !farPass) { rs('strings'); aiStrings(o.strings, H, u); }
+  if (g > .02 && !farPass) { rs('glitch'); aiGlitchMarks(g, u, gf); }
+  if (AI_S.dis > .02 && !farPass) { rs('dissolve'); aiDissolveMotes(AI_S.dis, H, u, tt, o.dissolveTo); }
   pop();
   AI_LAST = aiLastPts(H, form, u, o, sit);
   AI_S = null;

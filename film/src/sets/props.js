@@ -274,6 +274,42 @@ function setWardrobe(x, y, s = 1, o = {}) {
     setP(M([[11, -402], [37, -404], [40, -372], [12, -370]]), { wash: P.sheet, ink: P.ink, sw: sw * .5 });
   }
 }
+// A shirt on a hanger, held up by the hook (02B: the two he holds up; the grey one gets her ✓). Anchor: the top of the
+// hook (put it in his hand: HIM_LAST.handR / handL). ~300 × 420 at s = 1. o.kind 'grey' (the one she picks) | 'warm' (a
+// rust check shirt, the one he throws away) or o.col; o.rot swings it about the hook; o.hanger (default true).
+// Returns the chest point (where her ✓ lands).
+const SET_SHIRTS = { grey: ['#9A9EA8', '#767A86', '#B9BCC4'], warm: ['#C0603E', '#8E3E26', '#E08A5C'] };
+function setShirt(x, y, s = 1, o = {}) {
+  const P = setPalOf(o), sw = setSW(s), [c, cd, cl] = o.col ? [o.col, mixCol(o.col, P.ink, .3), mixCol(o.col, '#FFF4E4', .3)] : SET_SHIRTS[o.kind || 'grey'];
+  const a = o.rot || 0, M = Q => setTf(Q, x, y, s, a), kk = 'setshirt' + (o.kind || '') + (o.key || '');
+  boilSeed(kk + ' hanger');
+  if (o.hanger !== false) {
+    setL(M([[0, 0], [9, 4], [11, 16], [3, 26], [0, 40]]), sw * 1.1, P.metalDk, 'ink', .5);
+    setL(M([[0, 40], [-128, 82], [128, 82], [0, 40]]), sw * .9, P.woodDk, 'ink', .1);
+  }
+  boilSeed(kk + ' body');
+  // sleeves hang down along the sides (behind the body), then the body with its shoulders on the hanger
+  for (const sd of [-1, 1]) setP(M([[sd * 118, 80], [sd * 150, 104], [sd * 162, 250], [sd * 150, 330], [sd * 122, 332], [sd * 118, 250], [sd * 104, 130]]), { wash: cd, ink: P.ink, sw: sw * .8, curv: .3 });
+  for (const sd of [-1, 1]) setP(M([[sd * 150, 316], [sd * 162, 344], [sd * 126, 348], [sd * 120, 320]]), { wash: cl, ink: P.ink, sw: sw * .6 });
+  const body = [[-34, 48], [-120, 80], [-118, 250], [-114, 404], [-60, 418], [0, 410], [60, 418], [114, 404], [118, 250], [120, 80], [34, 48]];
+  setP(M(body), { wash: c, ink: P.ink, sw, curv: .25 });
+  if (SET_MODE !== 'line') setP(M([[-110, 120], [-60, 110], [-70, 400], [-112, 398]]), { fill: cd, fillOp: 90, bleed: .15, tex: .5, ink: null });
+  if (o.kind === 'warm' && SET_MODE !== 'line') {   // the check: a few darker stripes each way
+    for (let i = 0; i < 5; i++) { const xx = -88 + i * 44; setL(M([[xx, 92], [xx + 2, 404]]), sw * 1.6, cd, 'dry', 0); }
+    for (let i = 0; i < 6; i++) { const yy = 120 + i * 50; setL(M([[-112, yy], [112, yy + 2]]), sw * 1.3, cd, 'dry', 0); }
+  }
+  // collar, placket, buttons, pocket
+  setP(M([[-36, 46], [0, 72], [36, 46], [26, 34], [0, 50], [-26, 34]]), { wash: cl, ink: P.ink, sw: sw * .7 });
+  setP(M([[-36, 46], [-58, 84], [-4, 78]]), { wash: cl, ink: P.ink, sw: sw * .7 });
+  setP(M([[36, 46], [58, 84], [4, 78]]), { wash: cl, ink: P.ink, sw: sw * .7 });
+  setL(M([[0, 78], [2, 240], [0, 408]]), sw * .6, cd, 'inkfine', .3);
+  for (let i = 0; i < 5; i++) setP(M(ellPts(-9, 110 + i * 62, 4.5, 4.5, 8)), { wash: cl, ink: null, line: true });
+  setP(M([[-92, 140], [-46, 138], [-46, 186], [-70, 194], [-92, 186]]), { wash: null, ink: cd, sw: sw * .6 });
+  setL(M([[-60, 100], [-40, 180], [-58, 300]]), sw * .45, cd, 'inkfine', .6);
+  setL(M([[64, 120], [46, 230], [70, 360]]), sw * .45, cd, 'inkfine', .6);
+  return setTf([[0, 190]], x, y, s, a)[0];
+}
+
 // One standing photo frame with a warm party snapshot (friends' amber silhouettes). Anchor: bottom centre (on the
 // ledge); SET_PHOTOS[i][0] wide. o.i 0..4 picks the photo; o.grey 0..1 fades it to grey; o.rot tips it over its bottom-right corner (06E dominoes).
 const SET_PHOTOS = [   // [w, h, heads: [x, y, r] in frame units (0..1)]
@@ -328,25 +364,28 @@ function setMumPhoto(x, y, w, h, o = {}) {
 }
 // Door with a frosted-glass panel. Anchor: floor point under the centre. 410 × 1150 (+ frame).
 // o.open 0..1 (1 = half open: the leaf turns away, a warm gap of the outside shows on the left), o.outside colour,
-// o.knock { k: 0..1 the friend's grey silhouette behind the glass, age: s since the last knock, knocks: count }.
+// o.knock { k: 0..1 the friend's grey silhouette behind the glass, age: s since the last knock, knocks: count };
+// o.knockOnly: paint just the silhouette and the knock marks (over the room's baked door: 06H, much cheaper).
 function setDoor(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), M = Q => Q.map(([a, b]) => [x + a * s, y + b * s]), op = clamp(o.open || 0), kk = 'setdoor' + (o.key || '');
-  boilSeed(kk + ' frame');
-  setP(M(setBox(-238, -1196, 238, 4, 1)), { wash: P.doorFrame, ink: P.ink, sw });
-  setP(M(setBox(-206, -1164, 206, 0)), { wash: op > 0 ? (o.outside || P.outside) : P.doorDk, ink: P.ink, sw: sw * .7 });
-  if (op > 0 && SET_MODE !== 'line') setP(M([[-206, -1164], [-206 + 300 * op, -1164], [-206 + 300 * op, 0], [-206, 0]]), { fill: '#FFF1D6', fillOp: 120, bleed: .1, ink: null });
-  // the leaf: hinged on the right, it narrows (and shows its edge) as it opens
-  const lx = -204 + 330 * op, rx = 204, ew = 18 * op;
-  boilSeed(kk + ' leaf');
-  if (op > 0) setP(M([[lx - ew, -1166], [lx, -1162], [lx, 0], [lx - ew, 2]]), { wash: P.doorDk, ink: P.ink, sw: sw * .7 });
-  setP(M([[lx, -1162], [rx, -1162], [rx, 0], [lx, 0]]), { wash: P.door, ink: P.ink, sw });
-  const gx0 = lerp(lx, rx, .17), gx1 = lerp(lx, rx, .83);
-  setP(M(setBox(gx0, -1080, gx1, -520, .5)), { wash: P.glass, ink: P.ink, sw: sw * .8 });
-  if (SET_MODE !== 'line') setP(M(setBox(gx0 + 10, -1060, gx1 - 10, -540)), { fill: P.glassDk, fillOp: 90, bleed: .3, tex: .8, ink: null });
-  for (const [a, b] of [[-440, -250], [-210, -40]]) setP(M(setBox(gx0, a, gx1, b, .5)), { wash: null, ink: P.doorDk, sw: sw * .6 });
-  const hx = lerp(lx, rx, .07);
-  setP(M([[hx - 6, -600], [hx + 6, -600], [hx + 6, -540], [hx - 6, -540]]), { wash: P.metal, ink: P.ink, sw: sw * .5 });
-  setP(M([[hx - 4, -578], [hx + 46 * (1 - op), -580], [hx + 46 * (1 - op), -566], [hx - 4, -564]]), { wash: P.metal, ink: P.ink, sw: sw * .5 });
+  let gx0 = lerp(-204 + 330 * op, 204, .17), gx1 = lerp(-204 + 330 * op, 204, .83);
+  if (!o.knockOnly) {
+    boilSeed(kk + ' frame');
+    setP(M(setBox(-238, -1196, 238, 4, 1)), { wash: P.doorFrame, ink: P.ink, sw });
+    setP(M(setBox(-206, -1164, 206, 0)), { wash: op > 0 ? (o.outside || P.outside) : P.doorDk, ink: P.ink, sw: sw * .7 });
+    if (op > 0 && SET_MODE !== 'line') setP(M([[-206, -1164], [-206 + 300 * op, -1164], [-206 + 300 * op, 0], [-206, 0]]), { fill: '#FFF1D6', fillOp: 120, bleed: .1, ink: null });
+    // the leaf: hinged on the right, it narrows (and shows its edge) as it opens
+    const lx = -204 + 330 * op, rx = 204, ew = 18 * op;
+    boilSeed(kk + ' leaf');
+    if (op > 0) setP(M([[lx - ew, -1166], [lx, -1162], [lx, 0], [lx - ew, 2]]), { wash: P.doorDk, ink: P.ink, sw: sw * .7 });
+    setP(M([[lx, -1162], [rx, -1162], [rx, 0], [lx, 0]]), { wash: P.door, ink: P.ink, sw });
+    setP(M(setBox(gx0, -1080, gx1, -520, .5)), { wash: P.glass, ink: P.ink, sw: sw * .8 });
+    if (SET_MODE !== 'line') setP(M(setBox(gx0 + 10, -1060, gx1 - 10, -540)), { fill: P.glassDk, fillOp: 90, bleed: .3, tex: .8, ink: null });
+    for (const [a, b] of [[-440, -250], [-210, -40]]) setP(M(setBox(gx0, a, gx1, b, .5)), { wash: null, ink: P.doorDk, sw: sw * .6 });
+    const hx = lerp(lx, rx, .07);
+    setP(M([[hx - 6, -600], [hx + 6, -600], [hx + 6, -540], [hx - 6, -540]]), { wash: P.metal, ink: P.ink, sw: sw * .5 });
+    setP(M([[hx - 4, -578], [hx + 46 * (1 - op), -580], [hx + 46 * (1 - op), -566], [hx - 4, -564]]), { wash: P.metal, ink: P.ink, sw: sw * .5 });
+  }
   const kn = o.knock;
   if (kn && kn.k > 0 && SET_MODE !== 'line') {    // the friend outside, a grey blur behind the frosted glass
     const kx = (gx0 + gx1) / 2, a = 150 * clamp(kn.k), bob = kn.age < .3 ? -10 * Math.sin(kn.age / .3 * Math.PI) : 0;
@@ -529,19 +568,21 @@ function setTube(p0, p1, o = {}) {
   return pts;
 }
 // The giant ring surgical lamp. Anchor: the ring's centre. rx × ry (default 420 × 105 at s = 1), seen a little from
-// below. o.stem (default true: two rods up into the dark), o.cells (lamp cells on the front arc). Light is live:
+// below. o.stem (default true: two rods up into the dark; o.stemTop = world y where they end), o.cells (lamp cells on the
+// front arc), o.op 0..1 (the body fades: 08B, where it turns into light). Light is live:
 // setRingLampLight(x, y, s, k, col).
 function setRingLamp(x, y, s = 1, o = {}) {
   const P = setPalOf(o), sw = setSW(s), rx = (o.rx || 420) * s, ry = (o.ry || 105) * s, th = (o.th || 34) * s, kk = 'setlamp' + (o.key || '');
   const arc = (a0, a1, r1, r2, n = 22) => { const A = []; for (let i = 0; i <= n; i++) { const a = lerp(a0, a1, i / n); A.push([x + Math.cos(a) * r1, y + Math.sin(a) * r2]); } return A; };
   boilSeed(kk);
-  if (o.stem !== false) for (const sd of [-1, 1]) setP(setBox(x + sd * rx * .32 - 6 * s, y - ry - 1400 * s, x + sd * rx * .32 + 6 * s, y - ry * .7), { wash: P.lampDk, ink: P.ink, sw: sw * .6 });
+  if (o.stem !== false) for (const sd of [-1, 1]) setP(setBox(x + sd * rx * .32 - 6 * s, o.stemTop ?? y - ry - 1400 * s, x + sd * rx * .32 + 6 * s, y - ry * .7), { wash: P.lampDk, ink: P.ink, sw: sw * .6 });
   // back half (far side, upper arc), then the front half thicker and lit
   const back = arc(Math.PI, TAU, rx, ry), backIn = arc(TAU, Math.PI, rx - th, ry - th * .35);
-  setP([...back, ...backIn], { wash: P.lampDk, ink: P.ink, sw: sw * .8 });
+  const op = clamp(o.op ?? 1), ink = op < 1 ? mixCol(P.lampDk, P.ink, op) : P.ink;
+  setP([...back, ...backIn], { wash: P.lampDk, washOp: 255 * op, ink, sw: sw * .8 });
   const front = arc(0, Math.PI, rx, ry + th * .4), frontIn = arc(Math.PI, 0, rx - th, ry - th * .35);
-  setP([...front, ...frontIn], { wash: P.lampBody, ink: P.ink, sw });
-  if (o.cells !== false) for (let i = 0; i < 11; i++) { const a = lerp(.18, Math.PI - .18, i / 10); setP(ellPts(x + Math.cos(a) * (rx - th * .5), y + Math.sin(a) * (ry + th * .05), 12 * s, 7 * s, 10), { wash: P.lampCell, ink: P.ink, sw: sw * .4 }); }
+  setP([...front, ...frontIn], { wash: P.lampBody, washOp: 255 * op, ink, sw });
+  if (o.cells !== false) for (let i = 0; i < 11; i++) { const a = lerp(.18, Math.PI - .18, i / 10); setP(ellPts(x + Math.cos(a) * (rx - th * .5), y + Math.sin(a) * (ry + th * .05), 12 * s, 7 * s, 10), { wash: P.lampCell, washOp: 255 * op, ink: op > .5 ? P.ink : null, sw: sw * .4 }); }
 }
 function setRingLampLight(x, y, s = 1, k = 1, col = SET_C.cyan, o = {}) {
   if (k <= 0) return;
@@ -549,4 +590,31 @@ function setRingLampLight(x, y, s = 1, k = 1, col = SET_C.cyan, o = {}) {
   setRingLight(x, y + 8 * s, rx * 1.02, ry * 1.25, col, .9 * k);
   for (let i = 0; i < 7; i++) { const a = lerp(.3, Math.PI - .3, i / 6); glow(x + Math.cos(a) * rx * .93, y + Math.sin(a) * ry * 1.05, 70 * s, col, .55 * k); }
   glow(x, y + ry * 2.4, rx * 1.3, col, .35 * k);   // the pool of light it throws down
+}
+// 08B: the ring lamp comes down, splits into two small rings of light and closes them on his offered wrists.
+// k 0..1: 0 the lamp in place → .45 lowered and shrunk over the wrists' midpoint (its body fading into light) → .6 pinched
+// into two rings → 1 each ring round a wrist (from here him({ cuffs: 1 }) carries on). o.from [x, y] (default the ward's
+// lamp), o.to [[x, y], [x, y]] the wrists (world px), o.r the cuff radius (40), o.col, o.pal, o.stemTop. Returns the two
+// ring centres. Draw the ward with setWard(v, { lamp: false }) under it.
+function setRingLampCuffs(k, o = {}) {
+  const P = setPalOf(o), col = o.col || P.lamp || SET_C.cyan, [fx, fy] = o.from || SET_WARD.lamp, to = o.to || [[1600, 1300], [1700, 1300]], r = o.r ?? 40;
+  const mx = (to[0][0] + to[1][0]) / 2, my = (to[0][1] + to[1][1]) / 2 - r * 2.2, a = ease(seg(k, 0, .45)), b = ease(seg(k, .45, .6)), c = ease(seg(k, .6, 1));
+  const cx = lerp(fx, mx, a), cy = lerp(fy, my, a), sc = lerp(1, r * 2.4 / 420, a);
+  if (b <= 0) {   // the lamp itself, descending (its rods stretch up to where they were hung)
+    setRingLamp(cx, cy, sc, { pal: P, op: 1 - .7 * a, stemTop: o.stemTop ?? fy - 1400, key: 'cuffs' });
+    setRingLampLight(cx, cy, sc, .6 + .6 * a, col);
+    return [[cx, cy], [cx, cy]];
+  }
+  const out = [];
+  for (let i = 0; i < 2; i++) {
+    const sd = i ? 1 : -1, sx = cx + sd * r * 1.2 * b, sy = cy;
+    const px = lerp(sx, to[i][0], c), py = lerp(sy, to[i][1], c), rx = lerp(lerp(210 * sc, r * 1.1, b), r, c), ry = rx * lerp(.3, .42, c);
+    setRingLight(px, py, rx, ry, col, .9);
+    boilSeed('setcuffring' + i);
+    setP(ellPts(px, py, rx, ry, 28), { wash: null, ink: mixCol(col, SET_C.cyanW, .5), sw: setSW(rx / 120) * .8, line: true });
+    glow(px, py, rx * 1.6, col, .45);
+    out.push([px, py]);
+  }
+  if (b < 1) glow(cx, cy, 120 * (1 - b) + r, SET_C.cyanW, .7 * (1 - b));   // the pinch flashes
+  return out;
 }

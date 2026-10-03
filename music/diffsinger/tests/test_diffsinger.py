@@ -204,6 +204,71 @@ class Plan(unittest.TestCase):
         self.assertLess(con.voiced.mean(), 1.0)
 
 
+class Diction(unittest.TestCase):
+    def test_edit_times_lengthens_onset_keeps_the_vowel(self):
+        import diffsinger_backend as dsb
+        line = LINES["C1_5"]
+        lp = phm.line_phonemes(line)
+        times = su.ours_times(line, lp)
+        less = next(s for s in lp.syllables if s.text == "less")
+        pain = next(s for s in lp.syllables if s.text == "pain")
+        k = [p.arpa for p in less.phones].index("l")
+        got = dsb.edit_times(lp, times, {"lengths": {"less/l": 90, "less/s": 50}})
+        l0, l1 = got[less.index][k]
+        self.assertAlmostEqual(l1 - l0, 0.090, places=6)
+        self.assertAlmostEqual(l1, times[less.index][k][1], places=6)       # vowel unmoved
+        s0, s1 = got[less.index][-1]
+        self.assertAlmostEqual(s1 - s0, 0.050, places=6)
+        self.assertAlmostEqual(got[less.index][k + 1][1], s0, places=6)    # vowel takes the rest
+        # the time came out of "pain": its coda ends where [l] starts, nothing below the minimum
+        self.assertAlmostEqual(got[pain.index][-1][1], l0, places=6)
+        for ph, (a, b) in zip(pain.phones, got[pain.index]):
+            self.assertGreaterEqual(b - a + 1e-9, dsb.MIN_LEN["vowel" if ph.is_vowel else "consonant"])
+        flat = [t for s in lp.syllables for t in got[s.index]]
+        self.assertEqual([a for a, _ in flat], sorted(a for a, _ in flat))
+        for s in lp.syllables:              # rest untouched ("fect" may lend its [t])
+            if s.text not in ("fect", "pain", "less"):
+                self.assertEqual(got[s.index], times[s.index])
+        with self.assertRaises(KeyError):
+            dsb.edit_times(lp, times, {"lengths": {"less/z": 50}})
+        # a later vowel: the onset before it ends there, the vowel's end stays
+        v = next(i for i, p in enumerate(less.phones) if p.is_vowel)
+        got = dsb.edit_times(lp, times, {"starts": {f"less/{less.phones[v].arpa}": 25}})
+        self.assertAlmostEqual(got[less.index][v][0], times[less.index][v][0] + 0.025, places=6)
+        self.assertAlmostEqual(got[less.index][v][1], times[less.index][v][1], places=6)
+        self.assertAlmostEqual(got[less.index][v - 1][1], got[less.index][v][0], places=6)
+
+    def test_phoneme_override_keeps_sources(self):
+        lp = phm.line_phonemes(LINES["C1_5"])
+        got = phm.override_phonemes(lp, {"pain": "p eh y n", "less": "l eh s"})
+        pain = next(s for s in got.syllables if s.text == "pain")
+        old = next(s for s in lp.syllables if s.text == "pain")
+        self.assertEqual([p.arpa for p in pain.phones], ["p", "eh", "y", "n"])
+        self.assertEqual([p.role for p in pain.phones], ["onset", "nucleus", "coda", "coda"])
+        self.assertEqual(pain.phones[1].src, old.phones[1].src)       # eh <- ey's characters
+        self.assertEqual(pain.phones[3].src, old.phones[2].src)       # codas aligned at the end
+        self.assertEqual(pain.phones[2].src, [])
+        # every misaki character is still covered exactly once
+        cov = sorted(i for s in got.syllables for p in s.phones for i in p.src)
+        self.assertEqual(cov, sorted(i for s in lp.syllables for p in s.phones for i in p.src))
+        times = su.ours_times(LINES["C1_5"], got)                     # added [y] gets a slot
+        for a, b in times[pain.index]:
+            self.assertLess(a, b)
+        with self.assertRaises(ValueError):
+            phm.override_phonemes(lp, {"pain": "p n"})
+        with self.assertRaises(KeyError):
+            phm.override_phonemes(lp, {"pane": "p ey n"})
+
+    def test_committed_edits_apply(self):
+        import diffsinger_backend as dsb
+        for lid, edit in dsb.diction().items():
+            line = LINES[lid]
+            lp = phm.override_phonemes(phm.line_phonemes(line), edit.get("phonemes"))
+            dsb.edit_times(lp, su.ours_times(line, lp), edit)
+        dbl = LINES["C1_5_dbl"]
+        self.assertEqual(dsb.diction_for(dbl), dsb.diction().get("C1_5_dbl") or dsb.diction().get("C1_5"))
+
+
 class Morph(unittest.TestCase):
     def _env(self, scale, n=40):
         import world_voice as wv

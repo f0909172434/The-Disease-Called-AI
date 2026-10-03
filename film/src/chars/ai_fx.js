@@ -275,14 +275,14 @@ function aiScanBands(x, y, w, h, k, t, o = {}) {
   }
 }
 
-// ---------- LOOPS.ai_poses: every new mode, action and prop, labelled (five pages: t 0-1, 1-2 ... 4-5) ----------
-// node render.mjs --soft-gl --loop=ai_poses --sheet=0.5,1.5,2.5,3.5,4.5 --cols=1 --w=1920 --out=../output/sheets/char_ai_poses.jpg
+// ---------- LOOPS.ai_poses: every new mode, action and prop, labelled (six pages: t 0-1, 1-2 ... 5-6) ----------
+// node render.mjs --soft-gl --loop=ai_poses --stills=0.5,1.5,2.5,3.5,4.5,5.5 --out=out/ai_poses   (full-res pages; see ai.STATUS.md)
 LOOPS.ai_poses = t => {
-  const page = clamp(Math.floor(t), 0, 4), lab = (s, x, y, col = '#2B2233', sz = 21) => letter(s, x, y, sz, col, { screen: true, ink: false });
+  const page = clamp(Math.floor(t), 0, 5), lab = (s, x, y, col = '#2B2233', sz = 21) => letter(s, x, y, sz, col, { screen: true, ink: false });
   const bg = (col, key) => { boilSeed('aip bg ' + key); paint(rectPts(-20, -20, W + 40, H + 40), { wash: col, ink: null }); };
   const panel = (x, y, w, h, col, key) => { boilSeed('aip panel ' + key); paint(rectPts(x, y, w, h, 1.2), { wash: col, ink: '#2B2233', sw: .5, br: 'inkfine' }); };
   const beatT = f => OFF + (f + 2) * BEAT;   // a time at beat fraction f (for beat-locked actions)
-  if (page < 4) lab(['page 1 · chibi actions (aiAct)', 'page 2 · chibi: climb, thumbnails, silhouette', 'page 3 · full form: close-up (pose bust), sit, lie, dissolve', 'page 4 · props, descend, puppet strings, glass', 'page 5 · the giant (08), shards (07B), slot reels (09E/F), rewind'][page], 960, 22, '#2B2233', 24);
+  if (page !== 4) lab(['page 1 · chibi actions (aiAct)', 'page 2 · chibi: climb, thumbnails, silhouette', 'page 3 · full form: close-up (pose bust), sit, lie, dissolve', 'page 4 · props, descend, puppet strings, glass', '', 'page 6 · at scale: 08A giant face + hands, 06C cup (two-shot), 09H glass, 10G throat, climb grab'][page], 960, 22, '#2B2233', 24);
   if (page === 0) {
     bg('#EEF1F2', 0);
     const acts = [['wave', 'smile', 1.1], ['point', 'smile', 1.1], ['nod', 'eager', beatT(.5)], ['shake', 'smile', .35], ['carry', 'eager', 1.1], ['push', 'eager', 1.1],
@@ -339,13 +339,16 @@ LOOPS.ai_poses = t => {
     const lap = AI_LAST.lap; boilSeed('aip head'); paint(ellPts(lap[0] + 30, lap[1] - 25, 34, 28, 18), { wash: '#E8C9B0', ink: '#2B2233', sw: .5 });
     ai(500, 850, 45, { ...aiFeel('gentle', 1), ...aiAct('stroke', 1.2, 0, { at: [lap[0] + 30, lap[1] - 25], r: 32 }), form: 'full', pose: 'sit', view: 'q', t: 1, seed: 10, boilKey: 'aip2s1' });
     lab('sit · 3/4 · stroke (his head on her lap)', 590, 1058);
-    bed(830, 400, 'c'); boilSeed('aip head2'); paint(ellPts(1075, 715, 40, 46, 18), { wash: '#E8C9B0', ink: '#2B2233', sw: .5 });
-    ai(980, 850, 45, { ...aiFeel('gentle', 1), ...aiAct('cover', 1.2, 0, { at: [1075, 715], r: 40 }), form: 'full', pose: 'sit', view: 'q', t: 1, seed: 11, boilKey: 'aip2s2' });
-    lab('sit · 3/4 · cover (his ears)', 1030, 1058);
+    bed(830, 400, 'c');
+    const cov = { ...aiFeel('gentle', 1), ...aiAct('cover', 1.2, 0, { at: [1068, 735], r: 38 }), form: 'full', pose: 'sit', view: 'q', t: 1, seed: 11, boilKey: 'aip2s2' };
+    ai(980, 850, 45, { ...cov, layer: 'far' });   // two passes: her far hand behind his head, the near one over it
+    boilSeed('aip head2'); paint(ellPts(1068, 735, 38, 44, 18), { wash: '#E8C9B0', ink: '#2B2233', sw: .5 }); paint(ellPts(1072, 706, 40, 22, 14), { wash: '#4A3A35', ink: '#2B2233', sw: .5 });
+    ai(980, 850, 45, { ...cov, layer: 'near' });
+    lab('sit · 3/4 · cover (his ears; layer far / near)', 1030, 1058);
     // lying on the pillow, then dissolving into the phone (06F)
     [[0, 1395], [.55, 1715]].forEach(([k, x], i) => {
       boilSeed('aip pil' + i); paint(rrPts(x - 150, 560, 310, 230, 70), { wash: '#C9CCE0', ink: '#2B2233', sw: .5 });
-      ai(x - 15, 850, 82, { ...aiFeel('gentle', 1), eyes: 'heart', blush: .8, form: 'full', pose: 'lie', t: 1, seed: 12, dissolve: k, dissolveTo: [x + 50, 790], cut: 1.25, boilKey: 'aip2l' });
+      ai(x + 40, 805, 82, { ...aiFeel('gentle', 1), eyes: 'heart', blush: .8, form: 'full', pose: 'lie', t: 1, seed: 12, dissolve: k, dissolveTo: [x + 50, 790], cut: 1.25, boilKey: 'aip2l' });
       if (k) aiProp('phone', x + 50, 790, 70, { ang: -1.2, screen: 'glow', size: 1.2, boilKey: 'aip2p' });
       boilSeed('aip blk' + i); paint([[x - 160, 845], [x + 160, 815], [x + 160, 1030], [x - 160, 1030]], { wash: '#8C90B8', ink: '#2B2233', sw: .5 });
       lab(k ? 'lie · dissolve .55 → phone' : 'lie (pose lie)', x, 1058);
@@ -379,13 +382,15 @@ LOOPS.ai_poses = t => {
     lab('strings: on her (10C) · held by her (10D)', 980, 625);
     // palm on the glass, in profile (09I)
     boilSeed('aip gl'); paint(rectPts(1380, 600, 520, 470, 1.2), { wash: '#0B0D14', ink: '#2B2233', sw: .5, br: 'inkfine' });
-    ai(1560, 900, 120, { ...aiFeel('gentle', 1), lid: .55, ...aiAct('glass', 1.2, 0, { at: [1.55, -8.9] }), form: 'full', pose: 'bust', view: 'side', pal: 'mirror', t: 1, seed: 44, cut: 1.5, clip: [1382, 602, 1898, 1068], boilKey: 'aip3g' });
+    ai(1560, 900, 120, { ...aiFeel('gentle', 1), lid: .55, ...aiAct('glass', 1.2, 0, { at: [1.55, -8.9], view: 'side' }), form: 'full', pose: 'bust', view: 'side', pal: 'mirror', t: 1, seed: 44, cut: 1.5, clip: [1382, 602, 1898, 1068], boilKey: 'aip3g' });
     boilSeed('aip glass'); inkLine([[1752, 602], [1752, 1068]], 1.2, '#9FD8E8', 'inkfine', 0);
     lab('palm on the glass · side · mirror', 1640, 625, '#E8FDFF');
     return;
   }
-  // page 4: the giant, shards, reels, rewind
+  if (page === 5) return aiPoses6(t, lab, panel);
+  // page 5: the giant, shards, reels, rewind
   bg('#2A0A14', 4);
+  lab('page 5 · the giant (08), shards (07B), slot reels (09E/F), rewind', 320, 22, '#F3D9DF', 22);
   // the giant's face cropped by the frame: the unblinking eye (08D) and the syncing mouth (08E), u 900
   panel(20, 50, 600, 300, '#3A0A18', 'g0'); panel(20, 380, 600, 300, '#3A0A18', 'g1');
   // the anchor is the collarbone notch: the eyes sit .67u above it, the mouth .35u (full form)
@@ -411,6 +416,38 @@ LOOPS.ai_poses = t => {
   ai(1675, 750 + 120 + .98 * 120, 120, { ...aiFeel('eager', aiRewindT(1.5, 1.2)), form: 'full', pose: 'bust', t: aiRewindT(1.5, 1.2), seed: 52, cut: 1.2, clip: [1462, 752, 1888, 1028], boilKey: 'aip4r' });
   aiScanBands(1462, 752, 426, 276, .7, 1.5, { key: 'aip' }); lab('09B-D · rewind (aiRewindT + aiScanBands)', 1675, 1048, '#F3D9DF');
 };
-LOOPS.ai_poses.len = 5;
+LOOPS.ai_poses.len = 6;
+// page 6: the new modes at the size the shots use them, for contact and line-weight checks
+function aiPoses6(t, lab, panel) {
+  boilSeed('aip bg 5'); paint(rectPts(-20, -20, W + 40, H + 40), { wash: '#EEF1F2', ink: null });
+  // 08A: the giant face filling the top of the frame (u 300, line weights scaled), her cupped hands holding the bed island
+  panel(20, 50, 920, 650, '#2A0A14', 'g6'); const A = [22, 52, 938, 698];
+  ai(480, 300 + .98 * 300, 300, { ...aiFeel('heart', 1), blink: 0, lookY: .7, form: 'full', pose: 'bust', giant: true, t: 1, seed: 60, cut: .8, clip: A, boilKey: 'aip6g' });
+  const hk = { u: 300, sleeve: .6 };
+  aiGiantHand(215, 605, 200, { ...hk, kind: 'cup', ang: -.1, part: 'back', boilKey: 'aip6h0' }); aiGiantHand(745, 605, 200, { ...hk, kind: 'cup', ang: Math.PI + .1, flip: true, part: 'back', boilKey: 'aip6h1' });
+  boilSeed('aip6 island'); paint([[300, 555], [660, 555], [640, 590], [320, 590]], { wash: '#E9E3F4', ink: '#2B2233', sw: .6 }); paint([[320, 590], [640, 590], [600, 633], [360, 633]], { wash: '#6E5A8E', ink: '#2B2233', sw: .6 });
+  aiGiantHand(215, 605, 200, { ...hk, kind: 'cup', ang: -.1, part: 'front', boilKey: 'aip6h0' }); aiGiantHand(745, 605, 200, { ...hk, kind: 'cup', ang: Math.PI + .1, flip: true, part: 'front', boilKey: 'aip6h1' });
+  lab('08A · giant bust u 300 (giant: true) + cup hands (u 300 line weights)', 480, 718);
+  // 06C: the two-shot, she cups his face (he sits lower, looking up: a stand-in head)
+  panel(960, 50, 940, 470, '#F4F1EA', 'c6'); const B = [962, 52, 1898, 518], hc = [1400, 400];
+  const cup = { ...aiFeel('gentle', 1), ...aiAct('cup', 1.2, 0, { at: hc, r: 60 }), form: 'full', pose: 'bust', view: 'q', t: 1, seed: 61, cut: 2.4, clip: B, boilKey: 'aip6c' };
+  ai(1250, 210 + .98 * 105, 105, { ...cup, layer: 'far' });
+  boilSeed('aip6 head'); paint(ellPts(hc[0], hc[1], 60, 68, 20), { wash: '#E8C9B0', ink: '#2B2233', sw: .6 }); paint(ellPts(hc[0] + 8, hc[1] - 50, 64, 32, 16), { wash: '#4A3A35', ink: '#2B2233', sw: .6 });
+  ai(1250, 210 + .98 * 105, 105, { ...cup, layer: 'near' });
+  lab('06C · bust q · cup, two passes (layer far → his head → near)', 1430, 538);
+  // 09H: the palm raised to the glass (front, mirror); 10G: the hand on her throat (amber)
+  panel(960, 560, 460, 480, '#0B0D14', 'm6');
+  ai(1190, 760 + .98 * 125, 125, { ...aiFeel('gentle', 1), ...aiAct('glass', 1.2, 0, { at: [1.25, -9.35] }), form: 'full', pose: 'bust', pal: 'mirror', t: 1, seed: 62, cut: 1.6, clip: [962, 562, 1418, 1038], boilKey: 'aip6m' });
+  lab('09H · glass (front, mirror)', 1190, 1058);
+  panel(1440, 560, 460, 480, '#3A2414', 'a6');
+  ai(1670, 760 + .98 * 125, 125, { ...aiFeel('gentle', 1), lookY: -.2, ...aiAct('throat', 1.2, 0, { form: 'full' }), form: 'full', pose: 'bust', pal: 'amber', t: 1, seed: 63, cut: 1.6, clip: [1442, 562, 1898, 1038], boilKey: 'aip6a' });
+  lab('10G · throat (amber)', 1670, 1058);
+  // climbing out of a screen at the grab and at the pull (her hands on the edge beside the face)
+  [[.42, 250], [.62, 690]].forEach(([p, x], i) => {
+    const edge = 900; boilSeed('aip6 scr' + i); paint(rrPts(x - 200, edge, 400, 140, 16), { wash: '#BFF4FF', ink: '#1B6FFF', sw: .6 }); glow(x, edge + 60, 200, '#7FE9FF', .4);
+    ai(x, edge, 42, { ...aiFeel('eager', 1), ...aiClimb(p * 1.2, 0, 1.2), form: 'chibi', t: 1, seed: 64 + i, clip: [x - 230, 740, x + 230, edge], noShadow: true, boilKey: 'aip6k' + i });
+    lab('climb ' + Math.round(p * 100) + '% (' + (p < .45 ? 'grab' : 'pull') + ')', x, 1058);
+  });
+}
 // A stand-in quilt outline for the sheet.
 function aiQuilt(x, y, w, h) { const P = []; for (let i = 0; i <= 12; i++) P.push([x + w * i / 12, y + 18 * Math.sin(i * 1.3)]); for (let i = 12; i >= 0; i--) P.push([x + w * i / 12 + 20 * Math.sin(i), y + h - 10 * Math.cos(i * 1.7)]); return P; }

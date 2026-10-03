@@ -8,6 +8,7 @@
 //   setRoomScreen(S => setChatScreen(S, t, {...}));   // what is on the monitor (default: her dim glow)
 //   camEnd();
 //
+// Each variant bakes its light's falloff (SET_ROOM_SHADE: glazes darkening away from the screen / the window).
 // Variants: 'night' (S00–S01), 'morning' (02A–02B), 'day' (02C–02E), 'dusk' (02F–S03, o.p 0..1 fades dusk → small
 // hours), 'drained' (S06: desaturated, grey snow), 'black503' (S07), 'scan' (11A: the beam), 'dawn' (12C).
 // World: 4660 × 2622, floor line y 2020, ceiling line y 520, corners at x 1700 and 3000 (left wall: bed, window, alarm
@@ -162,6 +163,8 @@ function setRoomItems(v, cfg) {
     setDoor(...R.door, 1, { pal: P, open: cfg.door });
     setP(rrPts(4080, 1330, 30, 46, 5), { wash: P.doorFrame, ink: P.ink, sw: .5 });
   });
+  const sh = SET_ROOM_SHADE[v];
+  if (sh) add('shade', [-1e5, -1e5, 1e5, 1e5], (x0, y0, x1, y1) => setShadeRings(sh).forEach(([rx, ry], i) => setShadeGlaze(sh.c[0], sh.c[1], rx, ry, sh.col, sh.op, x0, y0, x1, y1, i * 1.7 + 3)));
   if (cfg.snow) add('snow', [-400, FL - 10, 5200, 2700], () => {
     // the unread notifications that piled up on the floor (S06 on): drifts against the walls and the bed, fixed by hash
     const L = [];
@@ -171,7 +174,31 @@ function setRoomItems(v, cfg) {
     }
     setFlakes(L, { pal: P, op: 235 });
   });
+  const si = I.findIndex(it => it.id === 'shade'); if (si >= 0) I.push(I.splice(si, 1)[0]);   // the falloff glazes go over everything
   return I;
+}
+// The light's falloff, baked into the tiles: glazes of a shadow colour, each one everywhere OUTSIDE a wobbly ellipse round
+// the variant's light source (the monitor at night, the window by day), so the room darkens step by step away from it.
+const SET_ROOM_SHADE = {   // c: the light; the glazes' ellipses grow from r0 to r1 in n steps (geometric), op each
+  night: { c: [2330, 1420], r0: [520, 400], r1: [2500, 1700], n: 8, op: 30, col: '#04061A' },
+  scan: { c: [2330, 1420], r0: [480, 370], r1: [2000, 1400], n: 7, op: 28, col: '#020309' },
+  morning: { c: [1000, 1480], r0: [600, 480], r1: [2700, 1850], n: 8, op: 25, col: '#120F20' },
+  dusk: { c: [950, 1200], r0: [800, 640], r1: [2700, 1850], n: 7, op: 22, col: '#1A0E26' },
+  dawn: { c: [1350, 1250], r0: [1000, 760], r1: [3000, 2000], n: 6, op: 19, col: '#262A40' },
+  day: { c: [950, 1150], r0: [1500, 1100], r1: [3000, 2000], n: 4, op: 15, col: '#5E4A3A' },
+  drained: { c: [2330, 1400], r0: [1700, 1250], r1: [3200, 2100], n: 4, op: 15, col: '#30323C' }
+};
+const setShadeRings = sh => Array.from({ length: sh.n }, (_, i) => { const k = sh.n > 1 ? i / (sh.n - 1) : 0; return [sh.r0[0] * Math.pow(sh.r1[0] / sh.r0[0], k), sh.r0[1] * Math.pow(sh.r1[1] / sh.r0[1], k)]; });
+function setShadeGlaze(cx, cy, rx, ry, col, op, x0, y0, x1, y1, seed = 0) {
+  if (SET_MODE === 'line') return;
+  const m = 90, X0 = x0 - m, Y0 = y0 - m, X1 = x1 + m, Y1 = y1 + m, w = a => 1 + .06 * Math.sin(3 * a + seed) + .035 * Math.sin(5 * a + 2.3 * seed);
+  const inside = (x, y) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < .85;
+  if (inside(X0, Y0) && inside(X1, Y0) && inside(X0, Y1) && inside(X1, Y1)) return;      // the tile is all lit
+  boilSeed('room shade ' + seed);
+  if (cx + rx * 1.1 < X0 || cx - rx * 1.1 > X1 || cy + ry * 1.1 < Y0 || cy - ry * 1.1 > Y1) { paint(setBox(X0, Y0, X1, Y1), { wash: col, washOp: op, ink: null }); return; }
+  const bx0 = Math.min(X0, cx - rx * 1.2), by0 = Math.min(Y0, cy - ry * 1.2), bx1 = Math.max(X1, cx + rx * 1.2), by1 = Math.max(Y1, cy + ry * 1.2), hole = [];
+  for (let i = 0; i <= 72; i++) { const a = Math.PI - i / 72 * TAU, k = w(a); hole.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]); }
+  paint([[bx0, by0], [bx1, by0], [bx1, by1], [bx0, by1], [bx0, cy], ...hole, [bx0, cy + .5]], { wash: col, washOp: op, ink: null });   // a slit polygon: everything but the hole
 }
 // Paint the room under the active camera (its tiles), plus its live light. o: t, res (fix the cache resolution for
 // a camera move), lights (false: none; call setRoomLights yourself, e.g. after the characters), p (dusk 0..1 → small
@@ -180,11 +207,14 @@ function setRoomItems(v, cfg) {
 function setRoom(v = 'night', o = {}) {
   const cfg = setRoomCfg(v, o), key = `setroom ${v} ${cfg.covers} d${cfg.door} b${cfg.blinds} ${cfg.photos} ${cfg.snow ? 's' : ''}${cfg.chair ? 'c' : ''}${cfg.clock ? 'k' : ''}${cfg.pillow ? 'p' : ''}`;
   const items = setRoomItems(v, cfg);
-  const draw = (x0, y0, x1, y1) => { for (const it of items) if (setHit(it.bb, x0, y0, x1, y1)) { boilSeed('room ' + it.id); it.draw(); } };
-  if (v === 'dusk' && (o.p || 0) > 0) {   // dusk → small hours: the night painting fades in over the dusk one
-    setTiles(key, draw, o);
-    const cfgN = setRoomCfg('night', { ...cfg, ...o }), itemsN = setRoomItems('night', cfgN);
-    setTiles(key.replace('dusk', 'night'), (x0, y0, x1, y1) => { for (const it of itemsN) if (setHit(it.bb, x0, y0, x1, y1)) { boilSeed('room ' + it.id); it.draw(); } }, { ...o, alpha: clamp(o.p) });
+  const draw = (x0, y0, x1, y1) => { for (const it of items) if (setHit(it.bb, x0, y0, x1, y1)) { boilSeed('room ' + it.id); it.draw(x0, y0, x1, y1); } };
+  if (v === 'dusk') {   // dusk → small hours: the night painting fades in over the dusk one (2 boil drawings each, so the
+    // two tile sets of a close framing stay inside the page's 24-layer cache)
+    setTiles(key, draw, { ...o, variants: 2 });
+    if ((o.p || 0) > 0) {
+      const cfgN = setRoomCfg('night', { ...cfg, ...o }), itemsN = setRoomItems('night', cfgN);
+      setTiles(key.replace('dusk', 'night'), (x0, y0, x1, y1) => { for (const it of itemsN) if (setHit(it.bb, x0, y0, x1, y1)) { boilSeed('room ' + it.id); it.draw(x0, y0, x1, y1); } }, { ...o, alpha: clamp(o.p), variants: 2 });
+    }
   } else setTiles(key, draw, o);
   if (o.lights !== false) setRoomLights(v, o);
   return cfg;
@@ -194,10 +224,11 @@ function setRoom(v = 'night', o = {}) {
 // o.beamK, o.coverGlow 0..1 (morning: the cyan glow inside the lump of covers), o.lump (x of the lump), o.stripes 0..1.
 function setRoomLights(v, o = {}) {
   const R = SET_ROOM, sc = R.screen, mx = sc.x + sc.w / 2, my = sc.y + sc.h / 2, t = o.t ?? T, [wx, wy, ww, wh] = R.win;
-  const scr = o.screen ?? { night: 1, morning: .35, day: .3, dusk: .7, drained: .8, black503: 0, scan: 0, dawn: .25 }[v] ?? .5;
+  const scr = o.screen ?? { night: 1, morning: 0, day: .3, dusk: .7, drained: .8, black503: 0, scan: 0, dawn: .3 }[v] ?? .5;
   if (scr > 0) {
-    const col = o.screenCol || SET_C.cyan;
-    glow(mx, my, sc.w * 1.6, col, .7 * scr); glow(mx, my + 120, 1300, col, (v === 'night' ? .4 : .25) * scr);
+    const col = o.screenCol || (v === 'dawn' ? SET_C.amber : SET_C.cyan);   // 12C: her amber line is all that is on it
+    glow(mx, my, sc.w * 1.6, col, .8 * scr); glow(mx, my + 120, 1300, col, (v === 'night' ? .5 : .25) * scr);
+    if (v === 'night' || v === 'drained') { glow(mx, my - 60, 760, col, .3 * scr); glow(R.desk[0], R.FL - 470, 640, col, .3 * scr); }   // her light on the wall and the desk top
     glow(R.keyboard[0], R.keyboard[1], 260, col, .45 * scr); glow(mx, R.FL + 60, 520, col, .18 * scr);
   }
   const BG = setBlindsGeom(wx, wy, ww, wh, o.blinds ?? (SET_ROOM_DEF[v] || {}).blinds ?? 0), gaps = BG.gaps;

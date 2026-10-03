@@ -1,7 +1,7 @@
 // him_prop.js: what the human lead wears and holds (round 8): new hand shapes, the phone with his hand (and on its
 // own), the wristband prop and the band being fastened, the IV line, the cuff rings, the headphones and their plug, the
 // thermometer, the sticker, the heart light under the shirt, the lens and mouth effects; the poses sheet.
-// Loaded after him.js and him_pose.js. Painted only through himKit / paint() / inkLine() / ribbon() / glow().
+// Loaded after him.js and him_pose.js. Painted only through himKit / himPaintV() / himInkV() / ribbon() / glow().
 
 // ---------- hands ----------
 // A finger in hand units: from base along angle a (0 = +y, + toward +x), segment lengths L, widths w0 → w1, a round tip.
@@ -303,7 +303,7 @@ function himTorsoProps(K, c, o, view, u) {
   if (o.phone === 'chest') {   // lying on his chest, screen up (03B): o.content paints the screen, HIM_LAST.screen its corners
     const Kp = himKit(u * 1.25, c, clamp(.28 + u * 1.25 / 120, .32, 1.7), Math.max(.4, u * .006), false), P = HIM_PHONE;
     push(); translate(-.25 * u, -6.4 * u); rotate(o.phoneAng ?? .22);
-    paint(rrPts(-.5 * u * 1.25 + .15 * u, -1.03 * u * 1.25 + .2 * u, u * 1.25, 2.06 * u * 1.25, .16 * u), { wash: c.shirtSh, washOp: 140, ink: null });   // its shadow on the shirt
+    himPaintV(rrPts(-.5 * u * 1.25 + .15 * u, -1.03 * u * 1.25 + .2 * u, u * 1.25, 2.06 * u * 1.25, .16 * u), { wash: c.shirtSh, washOp: 140, ink: null });   // its shadow on the shirt
     himPhoneBody(Kp, c, 'front', { screen: o.screen, content: o.content });
     const sw2 = (P.w - 2 * P.sx) / 2, sh2 = (P.h - 2 * P.sy) / 2, pu = u * 1.25;
     HIM_W.screen = [[-sw2, -sh2], [sw2, -sh2], [sw2, sh2], [-sw2, sh2]].map(([a2, b2]) => himToCaller(a2 * pu, b2 * pu));
@@ -391,7 +391,7 @@ function himHeadProps(K, c, f, o, view, u, when) {
     const p = view === 'front' ? [.15, -1.05] : view === 'q' ? [.42, -1.05] : [1.05, -1.25], w = view === 'side' ? .32 : .6;
     push(); translate(p[0] * u, p[1] * u); rotate(-.12);
     const S2 = rrPts(-w / 2, -.32, w, .64, .1).map(([x, y]) => [x * u, y * u]);
-    paint(S2.map(([x, y]) => [x + .04 * u, y + .05 * u]), { wash: c.skinSh, washOp: 110, ink: null });
+    himPaintV(S2.map(([x, y]) => [x + .04 * u, y + .05 * u]), { wash: c.skinSh, washOp: 110, ink: null });
     K.shape(rrPts(-w / 2, -.32, w, .64, .1), { wash: '#F2F0EA', sw: .35, raw: true, j: 0 });
     K.shape([[0, -.2, 1], [.12 * w / .6, .02], [.1 * w / .6, .14], [0, .19], [-.1 * w / .6, .14], [-.12 * w / .6, .02]], { wash: himCol(c, '#7F93B3'), ink: null, n: 3 });
     pop();
@@ -454,8 +454,8 @@ function himAfter(K, c, o, u, sw, x, y) {
     const to = Array.isArray(o.ivTo && o.ivTo[0]) ? (o.ivTo[i] || o.ivTo[0]) : o.ivTo || [x - sx * (6 + 2 * i) * u, y - 30 * u];
     const d = HIM_W.ivDir[i], a1 = [p[0] + (d[0] - p[0]) * .8, p[1] + (d[1] - p[1]) * .8];
     const P = through([p, a1, ...sag(a1, to, 2.5 * u).slice(1)], 6);
-    inkLine(P, .9 * sw, mixCol(HIM_CYAN, '#1B6FFF', .25), c.clean ? 'himclean' : 'inkfine', 0);
-    inkLine(P, .35 * sw, HIM_CYANW, 'inkfine', 0);
+    himInkV(P, .9 * sw, mixCol(HIM_CYAN, '#1B6FFF', .25), c.clean ? 'himclean' : 'inkfine', 0);
+    himInkV(P, .35 * sw, HIM_CYANW, 'inkfine', 0);
     for (let k = 0; k < 3; k++) {   // glowing tokens flowing down the line into his arm (one light per line: glow() is costly)
       const s2 = 1 - frac(T * .45 + k / 3 + i * .13), q = P[Math.min(P.length - 1, Math.floor(s2 * (P.length - 1)))];
       Kw.shape(ellPts(q[0] / u, q[1] / u, .22, .22, 8), { wash: HIM_CYAN, op: 120, ink: null, raw: true, j: 0, cl: HIM_CYAN });
@@ -465,7 +465,7 @@ function himAfter(K, c, o, u, sw, x, y) {
   });
   if (o.phones && o.cable !== false && HIM_W.cable) {
     const a = HIM_W.cable, end = HIM_W.pinch || o.plugAt || [a[0] + sx * 1.5 * u, a[1] + 13 * u], P = through(sag(a, end, (HIM_W.pinch ? 3 : 1.2) * u), 6);
-    inkLine(P, .7 * sw, himCol(c, '#2C2A35'), c.clean ? 'himclean' : 'ink', 0);
+    himInkV(P, .7 * sw, himCol(c, '#2C2A35'), c.clean ? 'himclean' : 'ink', 0);
     const d = himDir(P[P.length - 2], P[P.length - 1]), e = P[P.length - 1];   // the plug: a sleeve and the metal tip, hanging free
     const q = P2 => P2.map(([s2, t2]) => [e[0] / u + d[0] * s2 - d[1] * t2, e[1] / u + d[1] * s2 + d[0] * t2]);
     Kw.shape(q([[-.1, -.17], [.75, -.15], [.75, .15], [-.1, .17]]), { wash: himCol(c, '#3A3846'), sw: .5, raw: true, j: 0 });
@@ -480,11 +480,11 @@ function himAfter(K, c, o, u, sw, x, y) {
     for (let i = 0; i < n; i++) {
       const th = -Math.PI / 4 + (hash(i * 7.1) - .5) * Math.PI * 1.7, s0 = ne > 4 ? E[Math.floor(hash(i * 5.7 + 1) * ne)] : [cx + Math.cos(th) * r, cy + Math.sin(th) * r], L = (3 + 11 * hash(i * 3.3)) * u * (.25 + .75 * k), nn = [-D[1], D[0]];
       const P = []; for (let j = 0; j <= 7; j++) { const t2 = j / 7, w = Math.sin(j * .9 + T * 2.2 + i) * .5 * u * t2; P.push([s0[0] + (D[0] * L + Math.cos(th) * L * .25 * (1 - t2)) * t2 + nn[0] * w, s0[1] + (D[1] * L + Math.sin(th) * L * .25 * (1 - t2)) * t2 + nn[1] * w]); }
-      inkLine(through(P, 4), (.32 + .25 * hash(i)) * sw, i % 3 ? HIM_CYAN : HIM_CYANW, c.clean ? 'himclean' : 'inkfine', 0);
+      himInkV(through(P, 4), (.32 + .25 * hash(i)) * sw, i % 3 ? HIM_CYAN : HIM_CYANW, c.clean ? 'himclean' : 'inkfine', 0);
     }
     if (r > 1) glow(cx, cy, r * .9 + 2 * u, HIM_CYAN, .35 * (1 - k));
   }
-  if (o.cuffs >= 1 && HIM_W.cuffR && HIM_W.cuffL) { const a = HIM_W.cuffR, b = HIM_W.cuffL; inkLine([a, himAt(a, b, .5).map((v, i) => v + (i ? .4 * u : 0)), b], .5 * sw, HIM_CYAN, 'inkfine', 0); }
+  if (o.cuffs >= 1 && HIM_W.cuffR && HIM_W.cuffL) { const a = HIM_W.cuffR, b = HIM_W.cuffL; himInkV([a, himAt(a, b, .5).map((v, i) => v + (i ? .4 * u : 0)), b], .5 * sw, HIM_CYAN, 'inkfine', 0); }
   Object.assign(HIM_LAST, HIM_W);
 }
 
@@ -520,7 +520,7 @@ function himWrist(x, y, u, o = {}) {
   const ang = o.ang ?? -2.2, d = [Math.sin(ang), Math.cos(ang)], W = [0, 0], E = [-d[0] * 4.3, -d[1] * 4.3], S = [E[0] - d[0] * 4.9, E[1] - d[1] * 4.9];
   HIM_M0 = himMat(); HIM_LAST = {};
   push(); translate(x, y);
-  rs('shadow'); paint(ribbon([[E[0] * u + 30, E[1] * u + 40], [W[0] * u + 30, W[1] * u + 40], [(W[0] + d[0] * 2.6) * u + 30, (W[1] + d[1] * 2.6) * u + 40]], 2.2 * u, 1.9 * u), { wash: c.ink, washOp: 30, ink: null });
+  rs('shadow'); himPaintV(ribbon([[E[0] * u + 30, E[1] * u + 40], [W[0] * u + 30, W[1] * u + 40], [(W[0] + d[0] * 2.6) * u + 30, (W[1] + d[1] * 2.6) * u + 40]], 2.2 * u, 1.9 * u), { wash: c.ink, washOp: 30, ink: null });
   const tw = Math.sin(clamp(o.twitch || 0) * Math.PI);
   rs('arm');
   HIM_HANDS.desk = HIM_HANDS.desk || { draw: himHandBack, spread: .22, curl: .3, thumbA: .7, thumbL: .74 };
@@ -560,7 +560,7 @@ function himBandProp(x, y, u, o = {}) {
   HIM_M0 = himMat();
   push(); translate(x, y); rotate(o.ang ?? -.08);
   const C = []; for (let i = 0; i <= 14; i++) { const s = i / 14 - .5; C.push([s * 4.6, -cv * 1.1 * (1 - 4 * s * s) + .035 * Math.sin(i * 1.9)]); }
-  rs('shadow'); paint(ribbon(C.map(([a, b]) => [(a + .08) * u, (b + .16) * u]), .5 * u, .5 * u), { wash: c.ink, washOp: 50, ink: null });
+  rs('shadow'); himPaintV(ribbon(C.map(([a, b]) => [(a + .08) * u, (b + .16) * u]), .5 * u, .5 * u), { wash: c.ink, washOp: 50, ink: null });
   rs('strip'); himBandStrip(K, c, C, .48, { text: true, code0: .08, code1: .3, t0: 1.55, t1: 3.85, size: .2 * u });
   // the snap end and the cut end (a short ragged edge)
   K.shape(ellPts(C[14][0] - .2, C[14][1], .15, .15, 10), { wash: himCol(c, '#C9CDD6'), sw: .35, raw: true, j: 0 });
@@ -570,13 +570,13 @@ function himBandProp(x, y, u, o = {}) {
   pop();
 }
 
-// ---------- the round-8 sheet: every new pose, prop and expression, labelled (four pages: t in [0,1), [1,2), [2,3), [3,4)) ----------
-// node render.mjs --soft-gl --loop=him_poses --sheet=0.5,1.5,2.5,3.5 --cols=1 --w=1920 --out=../output/sheets/char_him_poses.jpg
-function himPanel(x, y, w, h, col, op = 120, key = '') { boilSeed('panel' + x + y + key); paint(rectPts(x, y, w, h, 2), { wash: col, washOp: op, ink: null }); }
+// ---------- the round-8 sheet: every new pose, prop and expression, labelled (six pages: t in [0,1), [1,2), ... [5,6)) ----------
+// node render.mjs --soft-gl --loop=him_poses --sheet=0.5,1.5,2.5,3.5,4.5,5.5 --cols=1 --w=1920 --out=../output/sheets/char_him_poses.jpg
+function himPanel(x, y, w, h, col, op = 120, key = '') { boilSeed('panel' + x + y + key); himPaintV(rectPts(x, y, w, h, 2), { wash: col, washOp: op, ink: null }); }
 function himStandIn(kind, x, y, w, h = 0) {   // grey stand-ins for set dressing that belongs to the sets (pillow, mattress), for checking contacts
   boilSeed('standin' + kind + x + y);
-  if (kind === 'pillow') paint(ellPts(x, y, w, h || w * .55, 22), { wash: '#ECE8DE', washOp: 230, ink: '#6E6670', sw: .45 });
-  else paint(rectPts(x, y, w, h), { wash: '#B9AD9C', washOp: 200, ink: '#6E6670', sw: .45 });
+  if (kind === 'pillow') himPaintV(ellPts(x, y, w, h || w * .55, 22), { wash: '#ECE8DE', washOp: 230, ink: '#6E6670', sw: .45 });
+  else himPaintV(rectPts(x, y, w, h), { wash: '#B9AD9C', washOp: 200, ink: '#6E6670', sw: .45 });
 }
 LOOPS.him_poses = t => {
   HIM_N = 0;
@@ -621,18 +621,15 @@ LOOPS.him_poses = t => {
     letter('clean line: pal swapped', 1650, 590, 15, '#BFD8EE', { ink: false });
     L('new expressions (HIM_EMO) · bust u 30', 960, 640, 20);
     ['sad', 'wide', 'peace', 'confused', 'hold'].forEach((e, i) => {
-      const x = 130 + i * 300;
+      const x = 150 + i * 375;
       him(x, 900, 30, { ...himFeel(e, tt), pose: 'bust', view: 'front', outfit: 'home', cut: 2.2, boilKey: 'x' + i });
       him(x + 135, 1010, 18, { ...himFeel(e, tt), pose: 'bust', view: i % 2 ? 'side' : 'q', flip: true, outfit: 'home', cut: 2.2, boilKey: 'y' + i });
       L(e, x, 668);
     });
-    himPanel(1510, 655, 390, 410, '#0A1024', 240, 'm');
-    him(1610, 1000, 30, { ...himFeel('neutral', tt), pose: 'bust', view: 'front', outfit: 'home', pal: 'mirror', cut: 2.2, boilKey: 'mi' }); letter('mirror (09H)', 1610, 690, 17, '#BFD8EE', { ink: false });
-    him(1800, 1000, 30, { ...himFeel('wide', tt), pose: 'bust', view: 'q', flip: true, outfit: 'home', pal: 'swapped', cut: 2.2, boilKey: 'cl' }); letter('swapped', 1800, 690, 17, '#BFD8EE', { ink: false });
   } else if (page === 2) {   // close-ups: the phone in his hand, the wristband; the heart light and the dissolve
     himPanel(10, 10, 1900, 480, '#3A3550', 220);
     const lc = '#E9E2F0', LL = (s, x, y, z = 17) => letter(s, x, y, z, lc, { ink: false });
-    himPhone(170, 220, 60, { boilKey: 'ph1', type: 6, content: S => { paint(rrPts(-S.w * .38, -S.h * .36, S.w * .5, S.h * .1, 6), { wash: '#FFFFFF', washOp: 200, ink: null }); paint(rrPts(-S.w * .1, -S.h * .2, S.w * .48, S.h * .1, 6), { wash: '#7FE9FF', washOp: 230, ink: null }); } });
+    himPhone(170, 220, 60, { boilKey: 'ph1', type: 6, content: S => { himPaintV(rrPts(-S.w * .38, -S.h * .36, S.w * .5, S.h * .1, 6), { wash: '#FFFFFF', washOp: 200, ink: null }); himPaintV(rrPts(-S.w * .1, -S.h * .2, S.w * .48, S.h * .1, 6), { wash: '#7FE9FF', washOp: 230, ink: null }); } });
     himPhone(480, 220, 60, { boilKey: 'ph2', grip: 'poke', poke: [.5, .42], press: .5 + .5 * Math.sin(tt * 20), screen: 'white' });
     himPhone(730, 210, 42, { boilKey: 'ph3', grip: 'poke', poke: [.5, .5], blur: 1 });
     himWrist(1010, 300, 56, { bandK: .45, bandEnd: [1180, 150], ang: -2.75, boilKey: 'w1' });
@@ -647,11 +644,46 @@ LOOPS.him_poses = t => {
       const x = 200 + i * 380;
       him(x, 790, 30, { ...himFeel('blank', tt), pose: 'bust', view: 'front', outfit: 'home', cut: 5, ...ex, boilKey: 'fx' + i }); LL(lab, x, 570);
     });
+  } else if (page === 4) {   // 04C: getting up, waving, walking off, yanked back by the IV line, landing on the bed
+    himPanel(10, 10, 1900, 525, '#E9D8C0', 120); himPanel(10, 545, 1900, 525, '#E4D2BC', 110);
+    const u = 13, bed = (x, y, w = 150) => himStandIn('bed', x - w, y - 8.2 * u, w, 8.2 * u), pole = (x, y) => { boilSeed('pole' + x); himInkV([[x, y], [x, y - 25 * u]], 1.1, '#6E6670', 'ink', 0); himPaintV(rrPts(x - 1.1 * u, y - 25 * u, 2.2 * u, 3.2 * u, 6), { wash: '#DDEBF2', washOp: 200, ink: '#6E6670', sw: .45 }); return [x, y - 22 * u]; };
+    L('getting up (rise) · waving · walking off · profile u 13 (grey: stand-ins for the bed and her IV pole)', 960, 30, 20);
+    const y1 = 470;
+    [[0, 'rise 0 · on the edge'], [.35, 'rise .35'], [.7, 'rise .7']].forEach(([k, lab], i) => { const x = 240 + i * 250; bed(x - 4 * u, y1); him(x, y1, u, { ...himFeel(i ? 'focused' : 'smile', tt), view: 'side', outfit: 'home', rise: k, iv: 1, ivTo: [x - 4 * u - 120, y1 - 22 * u], boilKey: 'g' + i }); L(lab, x - 30, y1 + 40); });
+    him(1010, y1, u, { ...himFeel('smile', tt), view: 'side', outfit: 'home', rise: 1, armR: 'wave', iv: 1, ivTo: [880, y1 - 22 * u], boilKey: 'g3' }); L('rise 1 · armR wave', 1010, y1 + 40);
+    him(1290, y1, u, { ...himFeel('smile', tt), view: 'side', outfit: 'home', walk: .25, iv: 1, ivTo: [1130, y1 - 22 * u], boilKey: 'g4' }); L('walk', 1290, y1 + 40);
+    const tp = pole(1450, y1); him(1720, y1, u, { ...himFeel('anxious', tt), view: 'side', outfit: 'home', walk: .75, lean: -.12, iv: 1, ivTo: tp, boilKey: 'g5' }); L('walk · the line pulls taut', 1690, y1 + 40);
+    L('yanked back along an arc (yank + rot + dy), landing on the bed (pose edge, fall 1, dy / sq for the bounces)', 1240, 566, 20);
+    const y2 = 1000;
+    him(220, y2, u, { ...himFeel('panic', tt), view: 'side', outfit: 'home', yank: .45, iv: 1, ivTo: [40, y2 - 26 * u], boilKey: 'h0' }); L('yank .45', 220, y2 + 40);
+    him(560, y2, u, { ...himFeel('panic', tt), view: 'side', outfit: 'home', yank: 1, rot: -.35, dy: -3.5, iv: 1, ivTo: [330, y2 - 28 * u], boilKey: 'h1' }); L('yank 1 · rot −.35 · dy −3.5 (in the air)', 560, y2 + 40);
+    for (let i = 0; i < 3; i++) bed(1060 + i * 340, y2, 250);
+    [[{ dy: -3.2, fall: .85 }, 'land · fall .85 · dy −3.2'], [{ sq: .14, fall: 1 }, 'impact · sq .14 (then dy −1.1: the 2nd bounce)'], [{ fall: 1 }, 'settled (04D cuts to the pillow)']].forEach(([ex, lab], i) => {
+      const x = 1060 + i * 340; him(x, y2, u, { ...himFeel(i < 2 ? 'panic' : 'blank', tt), pose: 'edge', outfit: 'home', seatH: 8.2, arms: 'lap', phone: false, ...ex, boilKey: 'h' + (i + 2) }); L(lab, x - 60, y2 + 40, 16);
+    });
+  } else if (page === 5) {   // close-ups at large u (drawn first, then covered round their windows), bed + phone, the mirror / clean palettes
+    const cover = (x, y, w, h, col) => himPanel(x, y, w, h, col, 255, 'cv' + x + y);
+    himPanel(10, 560, 940, 510, '#141A33', 255, 'w1'); himPanel(970, 560, 940, 510, '#141A33', 255, 'w2');
+    him(480, 1060, 150, { ...himFeel('blank', tt), pose: 'bust', view: 'front', outfit: 'home', cut: 1.1, mouth: 'A', mouthGlow: 1, eyeGlow: .6, boilKey: 'mc' });
+    him(1440, 1130, 90, { ...himFeel('smile', tt), pose: 'bust', view: 'front', outfit: 'home', cut: 1.1, pupil: 1.6, lookX: .2, boilKey: 'lc', lens: (i, Ls) => {
+      boilSeed('lensc' + i); himPaintV(ellPts(Ls.x + Ls.w * .18, Ls.y + Ls.h * .05, Ls.w * .1, Ls.w * .12, 12), { wash: '#7FE9FF', washOp: 190, ink: null });
+      himPaintV(ellPts(Ls.x + Ls.w * .18, Ls.y - Ls.h * .12, Ls.w * .05, Ls.w * .05, 10), { wash: '#E8FDFF', washOp: 220, ink: null }); glow(Ls.x + Ls.w * .18, Ls.y, Ls.w * .3, '#7FE9FF', .5); } });
+    cover(0, 0, 1920, 559, '#E6D6C2'); cover(0, 1072, 1920, 20, '#E6D6C2'); cover(950, 552, 22, 530, '#E6D6C2'); cover(0, 552, 12, 530, '#E6D6C2'); cover(1908, 552, 20, 530, '#E6D6C2');
+    const lc = '#E9E2F0', LL = (s2, x, y, z = 17) => letter(s2, x, y, z, lc, { ink: false });
+    ['mouth close-up', 'u 150 (08G)', 'mouthGlow 1', 'eyeGlow .6'].forEach((s2, i) => LL(s2, 105, 610 + i * 26, 17));
+    ['lens close-up', 'u 90 (00D)', 'pupil 1.6, the', 'lens(i, rect) hook', 'paints her'].forEach((s2, i) => LL(s2, 1085, 610 + i * 26, 17));
+    himPanel(10, 10, 1240, 535, '#E9D8C0', 120, 'p5a'); himPanel(1260, 10, 650, 535, '#0A1024', 240, 'p5b');
+    L('in bed, the phone in both hands (arms: \'phone\', phone: \'two\') · u 20', 630, 30, 20);
+    [['front', false], ['q', true], ['side', true]].forEach(([v, fl], i) => { const x = 230 + i * 400; him(x, 430, 20, { ...himFeel('focused', tt), pose: 'bed', view: v, flip: fl, outfit: 'home', arms: 'phone', phone: 'two', coverW: .62, coverD: .6, boilKey: 'bp' + i }); L(v, x, 525); });
+    letter('palettes: mirror (09H) · swapped, the clean line (10A–F) · bust u 26, bed u 15', 1585, 34, 16, '#BFD8EE', { ink: false });
+    him(1390, 400, 26, { ...himFeel('neutral', tt), pose: 'bust', view: 'front', outfit: 'home', pal: 'mirror', cut: 2.2, boilKey: 'mi' }); letter('mirror', 1390, 230, 16, '#BFD8EE', { ink: false });
+    him(1600, 400, 26, { ...himFeel('wide', tt), pose: 'bust', view: 'q', flip: true, outfit: 'home', pal: 'swapped', cut: 2.2, boilKey: 'cl' }); letter('swapped', 1600, 230, 16, '#BFD8EE', { ink: false });
+    him(1800, 470, 15, { ...himFeel('wide', tt), pose: 'bed', view: 'front', outfit: 'home', pal: 'swapped', arms: 'look', coverW: .62, coverD: .6, boilKey: 'cb' }); letter('bed · look (10A)', 1800, 188, 15, '#BFD8EE', { ink: false });
   } else {   // head effects
     himPanel(10, 10, 1900, 1060, '#1C2040', 240);
     const lc = '#E9E2F0', LL = (s, x, y, z = 17) => letter(s, x, y, z, lc, { ink: false });
     LL('head effects and props · bust u 44', 960, 32, 20);
-    [['sticker', { ...himFeel('sad', tt), sticker: 1, view: 'q', flip: true }, 'sticker (06D)'], ['lens', { ...himFeel('smile', tt), pupil: 1.7, lens: (i, Ls) => { boilSeed('lens' + i); paint(ellPts(Ls.x + Ls.w * .1, Ls.y, Ls.w * .12, Ls.w * .16, 12), { wash: '#7FE9FF', washOp: 170, ink: null }); } }, 'pupils + lens hook (00D)'],
+    [['sticker', { ...himFeel('sad', tt), sticker: 1, view: 'q', flip: true }, 'sticker (06D)'], ['lens', { ...himFeel('smile', tt), pupil: 1.7, lens: (i, Ls) => { boilSeed('lens' + i); himPaintV(ellPts(Ls.x + Ls.w * .1, Ls.y, Ls.w * .12, Ls.w * .16, 12), { wash: '#7FE9FF', washOp: 170, ink: null }); } }, 'pupils + lens hook (00D)'],
      ['hair', { ...himFeel('peace', tt), hairLines: .55, view: 'side', flip: true }, 'combed into lines (08F)']].forEach(([k, ex, lab], i) => {
       const x = 330 + i * 630; him(x, 470, 44, { pose: 'bust', view: 'front', outfit: 'home', cut: 2.4, ...ex, boilKey: 'fz' + i }); LL(lab, x, 120);
     });
@@ -661,4 +693,4 @@ LOOPS.him_poses = t => {
     });
   }
 };
-LOOPS.him_poses.len = 4;
+LOOPS.him_poses.len = 6;
