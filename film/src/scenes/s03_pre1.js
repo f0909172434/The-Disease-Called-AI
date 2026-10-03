@@ -45,7 +45,7 @@
       const fl = faceLight(t);
       glow(-140, 450, 1300, DOT_COL, .8 * fl); glow(40, 520, 640, DOT_COL, .75 * fl);
       const f = himEmotions(t, [[T_A, 'focused'], [T_HOLD - .08, 'hold']], { take: .3 });
-      him(900, 740, 96, { ...f, pose: 'bust', view: 'side', flip: true, outfit: 'home', cut: 2.8, boilKey: 's03a him', seed: .3, glare: .35 + .35 * fl, breath: kitEase.sine(seg(t, 45.45, T_HOLD)) * .8 });
+      him(900, 740, 96, { ...f, pose: 'bust', view: 'side', flip: true, outfit: 'home', cut: 9, boilKey: 's03a him', seed: .3, glare: .35 + .35 * fl, breath: kitEase.sine(seg(t, 45.45, T_HOLD)) * .8 });
       glow(680, 470, 700, DOT_COL, .6 * fl);                                                   // the light across his cheek
       pop();
     };

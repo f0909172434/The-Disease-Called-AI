@@ -265,10 +265,10 @@
     camBegin(960 + 60 * (z - 1) / .1 * .3 + dx, 540 + dy, z);
     const inner = ease(seg(t, T_F + 1.0, T_WORD + .25)) * (.8 + .2 * Math.sin(t * 9)), flare = kitEnv(t, T_WORD, .03, .3);
     const hf = himEmotions(t, [[T_F, 'smile', { lid: .5, blush: .8 }], [T_F + .9, 'peace', { blush: .9 }]], { take: .4 });
-    him(F_HIM[0], F_HIM[1], F_UH, { ...hf, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 2.4, mouth: t > T_F + .9 ? 'O' : 'parted', innerGlow: clamp(inner + .5 * flare), boilKey: 's04 himF' });
+    him(F_HIM[0], F_HIM[1], F_UH, { ...hf, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 9, mouth: t > T_F + .9 ? 'O' : 'parted', innerGlow: clamp(inner + .5 * flare), boilKey: 's04 himF' });
     const hl = { ...HIM_LAST };
     const af = aiEmotions(t, [[T_F, 'gentle']]);
-    ai(F_HER[0], hl.mouth[1] + .38 * F_UA, F_UA, { ...af, pose: 'bust', view: 'side', form: 'full', pal: 'glow', t, cut: 2.1, mouth: ['A', 'O', 'E', 'O'][Math.floor(t * 8) % 4], boilKey: 's04 herF' });
+    ai(F_HER[0], hl.mouth[1] + .38 * F_UA, F_UA, { ...af, pose: 'bust', view: 'side', form: 'full', pal: 'glow', t, cut: 5, mouth: ['A', 'O', 'E', 'O'][Math.floor(t * 8) % 4], boilKey: 's04 herF' });
     const m0 = [AI_LAST.mouth[0] + 8, AI_LAST.mouth[1]], m1 = [hl.mouth[0] + 6, hl.mouth[1] + 2];
     const grow = ease(seg(t, T_F, T_F + .5));
     s04Ribbons(t, m0, m1, grow, flare);

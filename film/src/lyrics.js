@@ -132,9 +132,23 @@ function lyricLightness(c) {   // 0 (dark picture) .. 1 (light picture): luminan
     if (!LYRIC_PROBE) { const cv = document.createElement('canvas'); cv.width = 24; cv.height = 6; LYRIC_PROBE = { cv, g: cv.getContext('2d', { willReadFrequently: true }) }; }
     const y0 = Math.round(H * LYRIC_CFG.bandTop), g = LYRIC_PROBE.g; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
     g.drawImage(c.canvas, 0, y0, W, H - y0, 0, 0, 24, 6);
-    const d = g.getImageData(0, 0, 24, 6).data; let sum = 0; for (let i = 0; i < d.length; i += 4) sum += (.2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]) / 255;
-    return clamp((sum / (d.length / 4) - LYRIC_LIGHT.lo) / (LYRIC_LIGHT.hi - LYRIC_LIGHT.lo));
+    const d = g.getImageData(0, 0, 24, 6).data, n = d.length / 4; let sum = 0, sq = 0;
+    for (let i = 0; i < d.length; i += 4) { const v = (.2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2]) / 255; sum += v; sq += v * v; }
+    const mean = sum / n; LYRIC_PROBE.mean = mean; LYRIC_PROBE.sd = Math.sqrt(Math.max(0, sq / n - mean * mean));
+    return clamp((mean - LYRIC_LIGHT.lo) / (LYRIC_LIGHT.hi - LYRIC_LIGHT.lo));
   } catch (e) { return 0; }
+}
+// A soft feathered scrim right behind a text block (about 25-35 %), only where the band is bright or busy and the text is light:
+// k = 0 on a dark calm picture, up to 1 on a bright or high-contrast one. The blur is the canvas filter (deterministic).
+function lyricScrimK(lk) {
+  const P = LYRIC_PROBE; if (!P || lk > .5) return 0;
+  return clamp(clamp((P.mean - .2) / .12) * .7 + clamp((P.sd - .06) / .06) * .7);
+}
+function lyricScrim(c, x, y0, w, h, a) {
+  if (a < .01) return;
+  const u = H / 1080, pad = 26 * u;
+  c.save(); c.filter = `blur(${16 * u}px)`; c.fillStyle = `rgba(8,10,20,${(.34 * a).toFixed(3)})`;
+  c.beginPath(); c.roundRect(x - pad, y0 - pad * .5, w + pad * 2, h + pad, 22 * u); c.fill(); c.restore();
 }
 function drawLyrics(c, t, mode = 'karaoke', styleFn = null) {
   if (mode === 'hidden' || !LYRICS.length) return;
@@ -152,6 +166,13 @@ function drawLyrics(c, t, mode = 'karaoke', styleFn = null) {
   for (const a of act) {
     const l = a.line, st = a.st, ai = st.font ? st.font === 'ai' : l.ai, pal = ai ? L.ai : L.you, align = st.align || 'left';
     const outline0 = st.outline === undefined ? L.outline : st.outline, outline = lk > .5 && outline0 ? LYRIC_LIGHT.halo : outline0, enY = H * L.enY + a.shift * u, zhY = H * L.zhY + a.shift * u;
+    if (lk <= .5 && lyricScrimK(lk) > 0.01) {   // scrim behind the whole block (EN + 中文 rows)
+      const sk = lyricScrimK(lk) * a.alpha, es = L.enSize * u, ai0 = st.font ? st.font === 'ai' : l.ai, role0 = ai0 ? 'ai' : 'human';
+      let ew = 0; if (mode === 'karaoke') { const f0 = fontCSS(role0, es); ew = Math.min(right - left, charLayout(c, l.text, f0, FONT_ROLES[role0].tracking * es).width); }
+      const zw0 = l.zh ? charLayout(c, l.zh, ai0 ? fontCSS('sans', L.zhSize * u) : fontCSS('title', L.zhSize * u, { weight: 400 }), 0).width : 0, bw = Math.max(ew, zw0);
+      const bx = align === 'center' ? (W - bw) / 2 : left, by = (mode === 'karaoke' ? enY - es * .95 : zhY - L.zhSize * u * .95), bh = zhY + L.zhSize * u * .3 - by;
+      lyricScrim(c, bx, by, bw, bh, sk);
+    }
     if (mode === 'karaoke') {
       const col = lk > .02 ? mixCol(st.color || pal.color, ai ? LYRIC_LIGHT.ai : LYRIC_LIGHT.you, lk) : (st.color || pal.color), role = ai ? 'ai' : 'human', track = FONT_ROLES[role].tracking;
       let size = L.enSize * u, font = fontCSS(role, size), w = charLayout(c, l.text, font, track * size).width;

@@ -303,7 +303,7 @@
     const face = himEmotions(t, [[T_E, 'focused', { lookX: -.35, lookY: .3 }], [E_TAKE, 'blank'], [E_LAUGH, 'laugh']], { take: 1 });
     const U = 70 + 4 * push;
     glow(1330, 420, 560, SET_C.cyan, .3 + .25 * seg(t, E_AM, E_SEND));
-    him(1340, 640, U, { ...face, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 4.2, boilKey: 's02e him', seed: .5, glare: .5 });
+    him(1340, 640, U, { ...face, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 9, boilKey: 's02e him', seed: .5, glare: .5 });
     // the phone in his hand
     const typing = t < E_AM + .05, p = clamp((t - T_E - .08) / .72) * .4, thumbX = lerp(.2, .6, clamp(p / .4)), tap = typing ? Math.pow(Math.abs(Math.sin((t - T_E) * 8.5)), 3) : 0;
     const q = kitEase.in2(seg(t, E_AM, E_AM + .45)), sent = kitEase.sine(seg(t, E_SEND, E_SEND + .2)), hv = t >= E_HEART;
@@ -360,7 +360,7 @@
     const dips = Math.max(0, Math.sin(clamp((t - 40.0) / .5) * Math.PI)) * .5 + Math.max(0, Math.sin(clamp((t - 40.5) / .5) * Math.PI)) * .7 + Math.max(0, Math.sin(clamp((t - 40.95) / .35) * Math.PI)) * .85;
     const wake = kitEnv(t, F_WAKE, .06, .22), lid = clamp(.1 + .75 * kitEase.sine(seg(t, F_YAWN + .5, F_WAKE - .1)) * (t < F_WAKE ? 1 : 0) - .5 * wake);
     const face = himEmotions(t, [[T_F, 'tired'], [F_YAWN - .1, 'tired', { eye: 'squeeze' }], [F_YAWN + .75, 'tired']], { take: .4 });
-    him(1440, 700, 74, { ...face, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 4.2, lid: Math.max(face.lid || 0, lid), mouth: yk > .15 ? 'gasp' : face.mouth,
+    him(1440, 700, 74, { ...face, pose: 'bust', view: 'q', flip: true, outfit: 'home', cut: 9, lid: Math.max(face.lid || 0, lid), mouth: yk > .15 ? 'gasp' : face.mouth,
       nod: (face.nod || 0) + .55 * dips + .6 * yk * .3 - .8 * wake, tilt: (face.tilt || 0) - .12 * wake, boilKey: 's02f him', seed: .9, glare: .3 + .4 * dk });
   }
   function s02fLeft(t, lt, k) {                                             // the left panel; k 0..1 shrinks it into the phone
