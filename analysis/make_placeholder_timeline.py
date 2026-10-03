@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Generate visuals/data/timeline.placeholder.json from the 172 BPM score grid.
+"""Generate film/data/timeline.placeholder.json from the 172 BPM score grid.
 
-    python3 analysis/make_placeholder_timeline.py [--fps 60] [--out visuals/data/timeline.placeholder.json]
+    python3 analysis/make_placeholder_timeline.py [--fps 60] [--out film/data/timeline.placeholder.json]
 
-Same schema as the real analysis output (docs/06_tech_spec.md §5) so the visual engine can be
-developed before music exists. Everything here is *fake but plausible*:
+Same schema as the real analysis output (docs/06_tech_spec.md §5) so the film engine can be
+developed before the analysis of the master exists. Everything here is *fake but plausible*:
 
   * beats / downbeats / sections straight from the grid (tb -> seconds)
   * drum onsets from per-section patterns (four-on-the-floor kicks in choruses, half-time in
@@ -28,7 +28,7 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
 LYRICS_MD = REPO / "docs" / "03_lyrics.md"
-DEFAULT_OUT = REPO / "visuals" / "data" / "timeline.placeholder.json"
+DEFAULT_OUT = REPO / "film" / "data" / "timeline.placeholder.json"
 
 BPM = 172.0
 BEAT = 60.0 / BPM
@@ -268,7 +268,7 @@ def parse_lyrics_md() -> list[dict]:
             text = text[1:-1]
             zh = zh.strip("（）")
         speaker = {"YOU": "you", "BOTH": "both", "YOU (+AI)": "you"}.get(who, "ai")
-        style = "human" if speaker == "you" else ("choir" if speaker == "both" else ("ai_her" if "她" in who else "ai"))
+        style = "human" if speaker == "you" else ("choir" if speaker == "both" else ("ai_him" if "他的聲音" in who else "ai"))
         lines.append({"section": sid, "speaker": speaker, "style": style,
                       "mode": "spoken" if (spoken or interject) else "sung",
                       "text": text, "zh": zh, **({"harmony": ["ai"]} if who == "YOU (+AI)" else {})})

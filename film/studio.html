@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>病名為AI — paint studio</title>
+<style>
+  html, body { margin: 0; background: #1b1820; color: #eee; font: 13px system-ui, sans-serif; }
+  main { padding: 12px; display: grid; gap: 8px; }
+  #out { width: min(100%, 1280px); aspect-ratio: 16 / 9; height: auto; background: #F3EBDC; }
+  .p5Canvas { display: none !important; }
+  .bar { display: flex; gap: 10px; align-items: center; max-width: 1280px; }
+  #scrub { flex: 1; }
+  #tt { font-variant-numeric: tabular-nums; min-width: 190px; }
+</style>
+<script src="vendor/p5.min.js"></script>
+<script src="vendor/p5.brush.js"></script>
+</head>
+<body>
+<main>
+  <canvas id="out" width="1920" height="1080"></canvas>
+  <div class="bar"><input id="scrub" type="range" min="0" max="215" step="0.041667" value="0"><span id="tt">loading…</span></div>
+</main>
+<!-- engine (adapted from ClaudeAnimationBase, MIT; see docs/ClaudeAnimationBase.LICENSE) -->
+<script src="src/config.js"></script>
+<script src="src/core.js"></script>
+<script src="src/data.js"></script>      <!-- song data: sections, beats, events, lyrics (MV, section(t), events(name) ...) -->
+<script src="src/lyrics.js"></script>    <!-- fonts + bilingual karaoke overlay -->
+<script src="src/timeline.js"></script>
+<!-- characters: each file defines its draw functions and registers its model-sheet loops in LOOPS -->
+<script src="src/chars/him.js"></script>
+<script src="src/chars/him_pose.js"></script>
+<script src="src/chars/him_prop.js"></script>
+<script src="src/chars/ai.js"></script>
+<script src="src/chars/ai_pose.js"></script>
+<script src="src/chars/ai_props.js"></script>
+<script src="src/chars/ai_fx.js"></script>
+<script src="src/chars/_smoke.js"></script>   <!-- only registers the benchmark loops smoke / load (--loop=load); never draws into the film -->
+<!-- sets: painted sets and set dressing (src/sets/STATUS.md); globals prefixed set / SET_ -->
+<script src="src/sets/sets_core.js"></script>
+<script src="src/sets/props.js"></script>
+<script src="src/sets/screens.js"></script>
+<script src="src/sets/room.js"></script>
+<script src="src/sets/ward.js"></script>
+<script src="src/sets/chart.js"></script>
+<script src="src/sets/confessional.js"></script>
+<script src="src/sets/void.js"></script>
+<script src="src/sets/sheet.js"></script>
+<!-- scenes (src/scenes/README.md): _kit.js first, then one file per section, in order; a later agent only edits its own file -->
+<script src="src/scenes/_kit.js"></script>
+<script src="src/scenes/s00_intro.js"></script>
+<script src="src/scenes/s01_riff.js"></script>
+<script src="src/scenes/s02_verse1.js"></script>
+<script src="src/scenes/s03_pre1.js"></script>
+<script src="src/scenes/s04_chorus1.js"></script>
+<script src="src/scenes/s05_post.js"></script>
+<script src="src/scenes/s06_verse2.js"></script>
+<script src="src/scenes/s07_503.js"></script>
+<script src="src/scenes/s08_chorus2.js"></script>
+<script src="src/scenes/s09_bridge.js"></script>
+<script src="src/scenes/s10_final.js"></script>
+<script src="src/scenes/s11_tag.js"></script>
+<script src="src/scenes/s12_outro.js"></script>
+<script src="src/scenes/s13_end.js"></script>
+<script>
+  // studio.html?loop=<name> scrubs a standalone loop (model sheets) instead of the film. ?t=55.8 jumps to a time,
+  // ?lyrics=hidden|karaoke|subtitle-only overrides the overlay, ?nocache paints cached layers every frame.
+  // Data and fonts load over XHR: open it through `node render.mjs --serve` (a local server), not from file://.
+  const q = new URLSearchParams(location.search).get('loop'); if (q && LOOPS[q]) window.LOOP = LOOPS[q];
+</script>
+</body>
+</html>

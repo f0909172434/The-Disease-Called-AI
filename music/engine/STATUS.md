@@ -6,7 +6,15 @@
 - Outputs: `build/master.wav` (+ identical `.flac`), `stems/{drums,bass,music,fx,vocals}.wav` (post-fader, float32), `build/qa/` (loudness_report.json, track_balance.json, full + per-section spectrograms, loudness timeline).
 - Modules: common, dsp (numba biquads/SVF/comp/limiter/BS.1770), drums, synths, guitar, fluid, fx, qa.
 
-**Current master (with the 14:02 vox stems):** −11.02 LUFS integrated (pyloudnorm −11.06), −1.32 dBTP,
+**Current master (2026-10-02: score −2 st re-rendered, DiffSinger vocals — TIGER/Hanami):** −11.01 LUFS
+integrated (pyloudnorm −11.05), −1.32 dBTP, LRA 5.75 LU, limiter max GR 1.94 dB, 0 clipped, 215.000 s.
+Sections: choruses −9.2…−9.7, verses −12.2/−12.7, bridge −12.9, intro −17.4 LUFS. VIR: verses −0.6/+0.1,
+choruses −1.1/−0.9/−0.5 LU. Vocal faders: you +4.3, ai +4.2 dB (Kokoro stems: +5.7/+6.0).
+Vocal chains for the DiffSinger voices: `human` de-ess split 5.5 → 5.0 kHz (male sibilants, −0.7 dB on
+the sibilant peaks); `ai` presence +3 → +2, air +4 → +2.5, exciter −13 → −16 dB (Hanami has real air to
+16 kHz; sibilant peaks vs voice −13.7 → −14.2 dB; his stem −19.3 dB).
+
+**Previous master (with the 14:02 Kokoro vox stems):** −11.02 LUFS integrated (pyloudnorm −11.06), −1.32 dBTP,
 LRA 6.1 LU, limiter max GR 2.0 dB, 0 clipped samples, exactly 215.000 s. Sections: choruses −9.2…−9.7,
 verses −12.1/−12.5, bridge −13.0, intro −16.9 LUFS. VIR (vocals vs band): verses ≈0, choruses −0.1…−1.1 LU.
 

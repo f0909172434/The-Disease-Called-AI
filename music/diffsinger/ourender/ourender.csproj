@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    ourender: headless DiffSinger renderer on top of OpenUtau.Core (MIT).
+    Built by ../setup.sh, which clones OpenUtau at a pinned commit into ../vendor/OpenUtau
+    and swaps the CUDA ONNX Runtime for the CPU package (cpu-onnxruntime.targets).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <AssemblyName>ourender</AssemblyName>
+    <RootNamespace>Ourender</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <TieredPGO>true</TieredPGO>
+    <OpenUtauDir Condition="'$(OpenUtauDir)' == ''">$(MSBuildThisFileDirectory)../vendor/OpenUtau</OpenUtauDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(OpenUtauDir)/OpenUtau.Core/OpenUtau.Core.csproj" />
+  </ItemGroup>
+</Project>

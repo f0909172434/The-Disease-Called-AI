@@ -11,7 +11,12 @@ Reads music/build/vocals.json (compiled from music/score/song.py) and writes
     music/build/vocal_qa.json                      Whisper WER + pitch accuracy per line
     music/build/qa_vocal/*.png                     spectrogram + F0 diagnostics
 
-Method (details in each module):
+Sung lines are rendered by DiffSinger by default (diffsinger_backend.py: him = TIGER v106,
+her = Hoshino Hanami ~AI❤dol~ in Nectar mode, her->him blends; music/diffsinger/README.md).
+`--sung-backend kokoro` (or VOCAL_SUNG_BACKEND=kokoro) selects the Kokoro singer below.
+Spoken and whispered lines always use Kokoro.
+
+Method (Kokoro path; details in each module):
   1. phonology/planner  misaki G2P per word (+ sung pronunciation overrides), onset-maximal
                         syllabification matched to the score's syllables, and a time map:
                         vowels land on the beat, onsets anticipate it, codas sit at the end
@@ -63,20 +68,27 @@ def _worker_init():
 
 def render_line(job):
     """Render one line (cached on its inputs + the engine source)."""
-    line, voices = job
+    line, voices, backend = job
     import cache
-    k = cache.key("line", line, voices[line["voice"]], sources=ENGINE_SOURCES)
-    hit = cache.load("line", line["id"], k)
+    ds = backend == "diffsinger" and line["mode"] == "sung"
+    if ds:                                         # sung lines through DiffSinger
+        import diffsinger_backend as dsb
+        stage, k = "dsline", dsb.line_key(line, voices)
+    else:
+        stage, k = "line", cache.key("line", line, voices[line["voice"]], sources=ENGINE_SOURCES)
+    hit = cache.load(stage, line["id"], k)
     if hit is not None:
         return hit, 0.0
     t = time.time()
-    if line["mode"] == "sung":
+    if ds:
+        r = dsb.render_sung(line, voices)
+    elif line["mode"] == "sung":
         from singer import render_sung
         r = render_sung(line, voices)
     else:
         from speaker import render_spoken
         r = render_spoken(line, voices)
-    cache.save("line", line["id"], k, r)
+    cache.save(stage, line["id"], k, r)
     return r, time.time() - t
 
 
@@ -112,7 +124,7 @@ def run_qa(renders, lines, model: str, plots: list[str], qa_dir: str) -> dict:
                                               r.qa["score_midi"], r.qa["vowel"])
                 row["pitch_err_cents"] = None if np.isnan(err) else round(err, 1)
                 row["pitch_frames"] = n
-                row["pitch_target_cents"] = 15.0 if line["style"] in ("ai", "ai_her") else 35.0
+                row["pitch_target_cents"] = 15.0 if line["style"] in ("ai", "ai_him") else 35.0
                 row["timing_offset_ms"] = qa.timing_offset_ms(r.audio, 48000, r.start, r.timing)
             cache.save("qa", r.id, k, row)
             hit = row
@@ -125,12 +137,13 @@ def run_qa(renders, lines, model: str, plots: list[str], qa_dir: str) -> dict:
                          f"→ “{hit['transcript']}” (WER {hit['wer']:.2f})",
                          os.path.join(qa_dir, f"{r.id}.png"))
     res = summarize(out)
-    # the AI's voice should drift toward hers: ai_0 -> ai_1 -> ai_2 -> ai_her (sung lines)
+    # the AI's voice should drift toward his: ai_0 -> ai_1 -> ai_2 -> ai_him (sung lines)
     res["summary"]["timbre_distance_to_you"] = qa.drift_report(timbre)
     return res
 
 
 def summarize(rows: list[dict]) -> dict:
+    import qa
     def stats(rs, key="wer"):
         v = [r[key] for r in rs if r.get(key) is not None]
         if not v:
@@ -144,6 +157,9 @@ def summarize(rows: list[dict]) -> dict:
     spoken = [r for r in rows if r["mode"] != "sung" and not r["exempt"]]
     fails = []
     for r in rows:
+        bad = qa.unwanted_words(r["text"], r["transcript"])
+        if bad:
+            fails.append({"id": r["id"], "check": "mishearing", "value": bad, "transcript": r["transcript"]})
         lim = 0.35 if r["mode"] == "sung" else 0.15
         if not r["exempt"] and not r["double_of"] and r["wer"] > lim:
             fails.append({"id": r["id"], "check": "wer", "value": r["wer"], "limit": lim})
@@ -151,7 +167,7 @@ def summarize(rows: list[dict]) -> dict:
         if pe is not None and pe >= r["pitch_target_cents"]:
             fails.append({"id": r["id"], "check": "pitch", "value": pe, "limit": r["pitch_target_cents"]})
     pitch = {}
-    for grp, styles in (("ai", ("ai", "ai_her")), ("human", ("human",)), ("choir", ("choir",))):
+    for grp, styles in (("ai", ("ai", "ai_him")), ("human", ("human",)), ("choir", ("choir",))):
         pitch[grp] = stats([r for r in rows if r.get("style") in styles and r["mode"] == "sung"],
                            "pitch_err_cents")
     offs = [abs(r["timing_offset_ms"]) for r in rows if r.get("timing_offset_ms") is not None]
@@ -177,6 +193,10 @@ def main():
     ap.add_argument("--qa-model", default="medium.en")
     ap.add_argument("--plots", default=",".join(PLOT_LINES))
     ap.add_argument("--wav-dir", help="also write each line as a WAV here (auditions)")
+    ap.add_argument("--sung-backend", choices=["diffsinger", "kokoro"],
+                    default=os.environ.get("VOCAL_SUNG_BACKEND", "diffsinger"),
+                    help="sung lines: DiffSinger banks (default; music/diffsinger, see "
+                         "diffsinger_backend.py) or Kokoro forced singing (fallback)")
     args = ap.parse_args()
 
     import cache
@@ -192,7 +212,12 @@ def main():
     # longest lines first for load balance
     def cost(l):
         return sum(n["d"] for s in l.get("syllables", []) for n in s["notes"]) or 4.0
-    jobs = [(l, voices) for l in sorted(sel, key=cost, reverse=True)]
+    jobs = [(l, voices, args.sung_backend) for l in sorted(sel, key=cost, reverse=True)]
+    if args.sung_backend == "diffsinger":
+        import diffsinger_backend as dsb
+        t = time.time()
+        st = dsb.prepare(sel, voices)             # one batched DiffSinger pass for all lines
+        print(f"DiffSinger stage: {st} in {time.time() - t:.1f} s")
     t = time.time()
     if args.jobs > 1 and len(jobs) > 1:
         ctx = mp.get_context("spawn")
@@ -217,6 +242,7 @@ def main():
         info = stems.write(stems.mix(renders, lines), os.path.join(BUILD, "stems"))
         timing = {"meta": {"bpm": 172, "sr": 48000, "duration": stems.DURATION,
                            "units": "seconds", "generator": "music/vocal/render_vocals.py",
+                  "sung_backend": args.sung_backend,
                            "notes": "start = consonant onset, end = release; syllable 'vowel' = "
                                     "vowel landing (the note's beat)"},
                   "lines": [r.timing for r in renders]}

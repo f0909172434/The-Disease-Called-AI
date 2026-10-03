@@ -93,9 +93,16 @@ def _lowpass(y: np.ndarray, hz: float, sr: int = wv.FS) -> np.ndarray:
 
 def world_stage(r: dict, style: SungStyle, seed: int, detune: float) -> np.ndarray:
     """Formant-preserving transpose to the target contour + timbre styling (24 kHz)."""
-    con, plan = r["con"], r["plan"]
+    con = r["con"]
     f0_native = np.where(con.voiced, ct.midi_to_hz(r["nat_m"]), 0.0)
     _, sp, ap = wv.analyze(r["native"], f0_native)
+    return world_render(sp, ap, con, r["plan"], style, seed, detune)
+
+
+def world_render(sp: np.ndarray, ap: np.ndarray, con, plan, style: SungStyle, seed: int,
+                 detune: float) -> np.ndarray:
+    """Style a WORLD analysis (envelope `sp`, aperiodicity `ap`, 5 ms frames from plan.t0)
+    and synthesise it on the target contour (24 kHz). Shared with diffsinger_backend."""
     n = sp.shape[0]
     sp = wv.formant_warp(sp, style.formant)
     if style.tilt_db_oct:
@@ -144,10 +151,16 @@ def render_sung(line: dict, voices: dict) -> LineRender:
     if line.get("double_of") and line["style"] == "human":
         src = jitter_line(line, seed)
     r = sing_native(src, blend, style, seed)
-    plan, con = r["plan"], r["con"]
     detune = float(line.get("detune_cents") or 0.0)
     y = add_air(to48k(world_stage(r, style, seed, detune)), seed=seed)
+    return finish_sung(line, y, r["plan"], r["con"], style, seed, r["ps"])
 
+
+def finish_sung(line: dict, y: np.ndarray, plan, con, style: SungStyle, seed: int,
+                phonemes: str) -> LineRender:
+    """48 kHz line audio starting at plan.t0 -> gated, levelled, delayed LineRender with its
+    timing entry and QA data. Shared with diffsinger_backend."""
+    detune = float(line.get("detune_cents") or 0.0)
     # gate the edges, set the level, apply the double's gain and delay
     sylls = plan.syllables
     t_on = min(s.start for s in sylls) - plan.t0
@@ -181,5 +194,5 @@ def render_sung(line: dict, voices: dict) -> LineRender:
     if line.get("double_of"):
         timing["double_of"] = line["double_of"]
     qa = {"frames_t": con.t + delay, "score_midi": con.score_midi + detune / 100.0,
-          "vowel": con.vowel & con.voiced, "phonemes": r["ps"]}
+          "vowel": con.vowel & con.voiced, "phonemes": phonemes}
     return LineRender(line["id"], y, start, timing, qa)

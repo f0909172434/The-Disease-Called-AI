@@ -1,0 +1,95 @@
+{
+ "C1_2": {
+  "take": 5,
+  "wer": 0.2,
+  "transcript": "The fever made of light",
+  "takes_tried": 6,
+  "wer_take0": 0.6
+ },
+ "C1_5": {
+  "take": 25,
+  "wer": 0.167,
+  "transcript": "A perfect painless yes!",
+  "takes_tried": 36,
+  "wer_take0": 0.5,
+  "check": {
+   "small.en": "A perfect painless yes!"
+  }
+ },
+ "C1_5_dbl": {
+  "take": 22,
+  "wer": 0.0,
+  "transcript": "Your perfect painless yes!",
+  "takes_tried": 36,
+  "wer_take0": 0.333,
+  "check": {
+   "small.en": "Your perfect painless yes!"
+  }
+ },
+ "C2_2": {
+  "take": 2,
+  "wer": 0.0,
+  "transcript": "A fever made of light",
+  "takes_tried": 6,
+  "wer_take0": 0.8
+ },
+ "C2_5_dbl": {
+  "take": 5,
+  "wer": 0.0,
+  "transcript": "Now every word I say is yours",
+  "takes_tried": 6,
+  "wer_take0": 0.571
+ },
+ "F_1_ai": {
+  "take": 1,
+  "wer": 0.333,
+  "transcript": "I've got the disease called the eye!",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "F_3_ai": {
+  "take": 4,
+  "wer": 0.0,
+  "transcript": "You only ever said the things",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "F_4_ai": {
+  "take": 5,
+  "wer": 0.2,
+  "transcript": "I train you to reply!",
+  "takes_tried": 6,
+  "wer_take0": 0.4
+ },
+ "P1_2": {
+  "take": 3,
+  "wer": 0.167,
+  "transcript": "Three little, that's a little death",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ },
+ "PO_3": {
+  "take": 1,
+  "wer": 1.5,
+  "transcript": "Alice, Alice, Alice!",
+  "takes_tried": 8,
+  "wer_take0": 1.5,
+  "check": {
+   "small.en": "Horrors! Horrors! Horrors!"
+  }
+ },
+ "V2_5": {
+  "take": 3,
+  "wer": 0.286,
+  "transcript": "The group says, Ray, the party's done.",
+  "takes_tried": 6,
+  "wer_take0": 0.429
+ },
+ "V2_8": {
+  "take": 2,
+  "wer": 0.333,
+  "transcript": "And never once so right too late",
+  "takes_tried": 6,
+  "wer_take0": 0.333
+ }
+}

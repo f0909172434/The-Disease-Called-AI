@@ -1,0 +1,70 @@
+{
+ "tempo": {
+  "tempogram_peak": 86.13,
+  "metrical_ladder": [
+   {
+    "bpm": 86.004,
+    "between_on_ratio": 0.565
+   }
+  ],
+  "octave_method": "backbeat rule (drum stems)",
+  "refined": 172.007,
+  "backbeat": {
+   "snare_ioi_mode_s": 0.695,
+   "kick_between_snares": 0.884
+  }
+ },
+ "detected_bpm": 172.007,
+ "score_bpm": 172.0,
+ "bpm_error": 0.007,
+ "beat_mae_ms": 2.478512184723555,
+ "downbeat_phase_scores": [
+  89.49564872280963,
+  92.11198672763776,
+  77.60413669404406,
+  99.7844558270892
+ ],
+ "downbeat_runs": [
+  {
+   "from": 2.421,
+   "beats": 598,
+   "phase": 1,
+   "scores": [
+    -0.731,
+    2.258,
+    -1.132,
+    -0.405
+   ]
+  }
+ ],
+ "downbeat_hit_rate": 1.0,
+ "n_beats": 598,
+ "beat_snap": {
+  "snapped": 352,
+  "of": 598,
+  "median_shift_ms": -40.59
+ },
+ "structure_boundary_error_s": {
+  "RIFF": 0.969,
+  "VERSE1": 12.132,
+  "PRE1": 34.458,
+  "CHORUS1": 45.62,
+  "POST": 33.734,
+  "VERSE2": 28.153,
+  "PRE2_503": 5.827,
+  "CHORUS2": 0.366,
+  "BRIDGE": 0.238,
+  "FINAL": 2.882,
+  "TAG": 6.139,
+  "OUTRO": 0.558,
+  "ENDCARD": 3.884
+ },
+ "onset_counts": {
+  "kick": 400,
+  "snare": 190,
+  "hat": 804,
+  "musicbox": 72,
+  "vox_you": 335,
+  "vox_ai": 148
+ }
+}
