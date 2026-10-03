@@ -7,3 +7,5 @@
 - 08F 131.16-133.95 (~0.05-0.6): profile, two giant fingertips ride the hair top and comb; hairLines ramp 132.0-133.7 gives parallel cyan lines. Weak: tips hover very close, not clearly touching.
 - 08G 133.95-139.53 (~0.05-0.6): turn side->q->front, own amber breath strokes pulled straight and cyan, mouthGlow at "coming" (data), eyeGlow, cyan flood, hard cut black 138.84 with a ↻ turning once. Weak: front view breath goes down-right over the collar.
 Determinism: --range=117.21:139.53:0.5, 45 frames identical.
+## Fix #1
+- Cuts: him busts use cut 9; her giant bust fades with a soft bump gradient (no hard edge) in 08A/08D/08E. 08E: her nose-to-chin fills the top ~40%, mouth ~0.14H, same visemes from 129.60. 08F: tips pressed into the hair (parted patch + strokes), lines trail the comb from 131.75. 08G: 4 amber strokes up-right, straightened/cyan 135.2-136.74, push to 1.75x on the mouth by 137.9. 08B: push to 1.6x on the wrists 121.0-121.6, blanket dark red. ~0.04-0.6 s/frame.

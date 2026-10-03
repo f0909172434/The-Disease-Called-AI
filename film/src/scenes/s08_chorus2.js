@@ -33,7 +33,7 @@
   function s08Fever(t, k = 1) { glow(1700, 1420, 700, RED, .28 * k * (.85 + .15 * pulse(t, 3))); glow(1450, 1300, 380, '#FF6A3D', .12 * k); }
   // him in bed (q or side, facing left = toward her), three IV lines from the three bags
   function s08HimBed(t, o = {}) {
-    him(HIP[0] + (o.dx || 0), HIP[1] + (o.dy || 0), HU, { pose: 'bed', view: 'q', flip: true, outfit: 'home', coverCol: '#D9A5B0', iv: 3, ivTo: PORTS, boilKey: 's08 him', ...o });
+    him(HIP[0] + (o.dx || 0), HIP[1] + (o.dy || 0), HU, { pose: 'bed', view: 'q', flip: true, outfit: 'home', coverCol: '#9A4A5C', iv: 3, ivTo: PORTS, boilKey: 's08 him', ...o });
     return { ...HIM_LAST };
   }
   // a mouth shape (A I U E O) from the syllable being sung in one of the lines; 'closed' between syllables
@@ -50,10 +50,10 @@
   // a soft dark band (screen space): where her giant bust is cut off, the dark of the ward takes over. A real gradient (a drawn
   // texture), dark at the bottom edge y1 and clear at y0; k = strength 0..1.
   let S08_DIM = null;
-  function s08Dim(y0, y1, k = 1, col = [30, 3, 10]) {
+  function s08Dim(y0, y1, k = 1, col = [30, 3, 10]) {      // a bump: clear at y0, full dark from 28% to 62%, clear again at y1 (no hard edge at either end)
     if (!S08_DIM) {
       const g = createGraphics(4, 256); g.pixelDensity(1); const c = g.drawingContext, gr = c.createLinearGradient(0, 0, 0, 256);
-      [[0, 0], [.3, .35], [.65, .8], [1, 1]].forEach(([s2, a]) => gr.addColorStop(s2, `rgba(255,255,255,${a})`));
+      [[0, 0], [.1, .12], [.28, .75], [.4, 1], [.62, 1], [.8, .55], [.93, .15], [1, 0]].forEach(([s2, a]) => gr.addColorStop(s2, `rgba(255,255,255,${a})`));
       c.fillStyle = gr; c.fillRect(0, 0, 4, 256); S08_DIM = g;
     }
     flushBrush();
@@ -89,9 +89,9 @@
     s08Tubes(t);
     // her face, over everything (she is nearer the lens): eyes open, never blinking; heart eyes once he is in her finger
     const af = aiEmotions(t, [[T_A, 'perfect'], [118.5, 'heart']], { take: .3 });
-    ai(A_NOTCH[0], A_NOTCH[1] + yoff, A_U, { ...af, blink: 0, lookY: .75, lookX: -.2, form: 'full', pose: 'bust', view: 'front', giant: true, pal: 'glow', cut: .12, t, boilKey: 's08 herA', dy: .02 * Math.sin(t * 1.7) });
+    ai(A_NOTCH[0], A_NOTCH[1] + yoff, A_U, { ...af, blink: 0, lookY: .75, lookX: -.2, form: 'full', pose: 'bust', view: 'front', giant: true, pal: 'glow', cut: .2, t, boilKey: 's08 herA', dy: .02 * Math.sin(t * 1.7) });
     camEnd();
-    { const ny = 540 + (A_NOTCH[1] + yoff - (lerp(A_S[1], A_E[1], p) + dy)) * z; s08Dim(ny - 40, ny + 100, 1); }
+    { const ny = 540 + (A_NOTCH[1] + yoff - (lerp(A_S[1], A_E[1], p) + dy)) * z; s08Dim(ny - 20, ny + 240, 1); }
     // the cyan of 07E's last frame drains out of the picture into the red
     const fl = 1 - ease(seg(lt, 0, .32));
     if (fl > .01) { flash(.96 * fl, '#B9F4FF'); glow(W * .5, H * .55, W * .9, KIT.CYAN, fl * .8); }
@@ -112,7 +112,9 @@
   }
   function s08b(t, lt, dur) {
     const p = kitEase.inOut3(seg(lt, .05, 1.7)), [dx, dy] = kitDrift(lt, 3, .35, .5);
-    camBegin(lerp(1760, 1600, p) + dx, lerp(1000, 1390, p) + dy, lerp(.85, 1.12, p));
+    const z0 = lerp(.85, 1.12, p), cx0 = lerp(1760, 1600, p), cy0 = lerp(1000, 1390, p), zk = kitEase.inOut3(seg(t, 121.0, 121.6)), W0 = [1330, 1270];
+    const zz = lerp(z0, 1.6, zk), cc = kitAnchor(W0[0], W0[1], lerp(960 + (W0[0] - cx0) * z0, 900, zk), lerp(540 + (W0[1] - cy0) * z0, 470, zk), zz);
+    camBegin(lerp(cx0, cc[0], zk) + dx, lerp(cy0, cc[1], zk) + dy, zz);
     s08Ward(t);
     const k = seg(t, T_B, B_CLOSE);
     s08Fever(t, 1.3);
@@ -219,7 +221,7 @@
     const ey = lerp(-720, 135, p), U = 640;
     const af = aiEmotions(t, [[T_D, 'perfect']], { take: 0 });
     ai(960, ey + .67 * U, U, { ...af, blink: 0, lookY: 1, lookX: -.05, form: 'full', pose: 'bust', view: 'front', giant: true, pal: 'glow', cut: .15, t, clip: [0, 0, W, 420], boilKey: 's08 herD' });
-    s08Dim(290, 430, clamp((ey + 520) / 320));
+    s08Dim(230, 560, clamp((ey + 520) / 320));
     glow(960, ey, 520, KIT.CYAN, .12 * p);
   }
 
@@ -236,13 +238,13 @@
     const v = s08Vis(t, ['C2_5']), vh = t >= E_HERS ? s08Vis(t, ['C2_5']) : null;
     push(); translate(0, shift);
     const f = himEmotions(t, [[T_E, 'blank', { sweat: .8, blush: .8 }]], { take: 0 });
-    him(900, 830, 86, { ...f, pose: 'bust', cut: 1.9, view: 'q', flip: true, outfit: 'home', mouth: v ? v.m : 'closed', lookY: -.75, lookX: .1, nod: -.12, glare: .6, boilKey: 's08 himE' });
+    him(940, 940, 76, { ...f, pose: 'bust', cut: 9, view: 'q', flip: true, outfit: 'home', mouth: v ? v.m : 'closed', lookY: -.75, lookX: .1, nod: -.12, glare: .3, boilKey: 's08 himE' });
     pop();
-    // her mouth: the lower half of the giant face, the chin at the top of the frame; the dark of the ward closes over her neck
-    const U = 520, my = 70 - 80 * p;
+    // her lower face (nose to chin) fills the top third; the dark of the ward closes over her neck with a long soft gradient
+    const U = 1400, my = 200 - 60 * p;
     const af = aiEmotions(t, [[T_E, 'perfect']], { take: 0 });
-    ai(880, my + .354 * U, U, { ...af, blink: 0, mouth: vh ? vh.m : 'perfect', form: 'full', pose: 'bust', view: 'front', giant: true, pal: 'glow', cut: .15, t, clip: [0, 0, W, 300], boilKey: 's08 herE' });
-    s08Dim(190, 310, 1);
+    ai(960, my + .354 * U, U, { ...af, blink: 0, mouth: vh ? vh.m : 'perfect', form: 'full', pose: 'bust', view: 'front', giant: true, pal: 'glow', cut: .2, t, clip: [0, 0, W, 520], boilKey: 's08 herE' });
+    s08Dim(330, 610, 1);
   }
 
   // =============================================================================================================
@@ -253,15 +255,20 @@
   function s08f(t, lt, dur) {
     setWardVoid('c2');
     s08Alarm(t, 600, -300, .8);
-    const comb = ease(seg(t, 132.0, 133.7)), come = kitMove(t, T_F + .05, T_F + .95, { ant: .03, over: .03 });
+    const comb = ease(seg(t, 131.75, 133.75)), come = kitMove(t, T_F + .05, T_F + .6, { ant: .03, over: .03 });
     const f = himEmotions(t, [[T_F, 'peace', { blush: .8, sweat: .4 }]], { take: 0 });
     const v = s08Vis(t, ['C2_6']);
-    him(900, 900, 100, { ...f, pose: 'bust', cut: 2.2, view: 'side', flip: true, outfit: 'home', mouth: v ? v.m : 'soft', hairLines: comb, nod: .03 * Math.sin(t * 2), boilKey: 's08 himF' });
+    him(900, 900, 100, { ...f, pose: 'bust', cut: 9, view: 'side', flip: true, outfit: 'home', mouth: v ? v.m : 'soft', hairLines: comb, nod: .03 * Math.sin(t * 2), boilKey: 's08 himF' });
     const hl = { ...HIM_LAST };
     const hx = hl.head ? hl.head[0] : 900, hy = hl.head ? hl.head[1] : 625, FU = 100;
     // the comb's edge on screen (he faces left: the front of the head is on the left); the tips ride on the top of the hair just ahead of it
-    const ex = hx - lerp(2.0, -3.0, comb) * FU, k = clamp(come), ty = hy - 244 + 22 * Math.abs(Math.sin(t * 7)) * (comb > 0 && comb < 1 ? 1 : 0);
+    const ex = hx - lerp(2.0, -3.0, comb) * FU, k = clamp(come), ty = hy - 222 + 22 * Math.abs(Math.sin(t * 7)) * (comb > 0 && comb < 1 ? 1 : 0);
     const FS = 640, FA = Math.PI * .78, tx = ex - 30 + 330 * (1 - k), tyy = ty - 520 * (1 - k);
+    if (k >= .95) {                                         // the hair is parted and pressed under the fingertips: a flat dark patch and strokes splayed to both sides
+      const cx2 = ex - 20, top = hy - 262;
+      boilSeed('s08part'); paint(ellPts(cx2, top + 30, 62, 15, 14, .6), { wash: '#0B1830', washOp: 235, ink: null });
+      for (let i = -2; i <= 2; i++) inkLine([[cx2 + i * 14, top + 30], [cx2 + i * 30, top + 8 - Math.abs(i) * 4], [cx2 + i * 46, top + 2 + Math.abs(i) * 8]], 1.4, '#1B2A4A', 'ink', .4);
+    }
     aiGiantHand(tx - FS * Math.cos(FA), tyy - FS * Math.sin(FA), FS, { kind: 'two', ang: FA, back: true, u: 300, sleeve: .7, boilKey: 's08 two' });
   }
 
@@ -275,22 +282,22 @@
   function s08Breath(t, m, st, k) {
     if (k <= .02) return;
     const col = mixCol('#FFB070', KIT.CYAN, st), colHi = mixCol('#FFE2C0', KIT.CYANW, st);
-    for (let i = 0; i < 6; i++) {
-      const a0 = lerp(.5, .25, st) + (i - 2.5) * lerp(.16, .035, st), L = 360 + 70 * (i % 3), u0 = frac(t * .55 + i / 6), len = L * .46, pts = [];
+    for (let i = 0; i < 4; i++) {
+      const a0 = lerp(-.7, -.3, st) + (i - 1.5) * lerp(.2, .05, st), L = 330 + 40 * (i % 3), u0 = frac(t * .6 + i / 4), len = L * .7, pts = [];
       const head = u0 * L, tail = Math.max(0, head - len);
       for (let j = 0; j <= 10; j++) {
-        const v = lerp(tail, head, j / 10), wob = (1 - st) * 26 * Math.sin(v * .028 + t * 6 + i * 2) * (v / L);
+        const v = lerp(tail, head, j / 10), wob = (1 - st) * 30 * Math.sin(v * .03 + t * 6 + i * 2) * (v / L);
         pts.push([m[0] + 8 + Math.cos(a0) * v - Math.sin(a0) * wob, m[1] + 6 + Math.sin(a0) * v + Math.cos(a0) * wob]);
       }
       const fade = Math.min(1, Math.sin(Math.PI * u0) * 2.2) * k;
-      boilSeed('s08breath' + i); paint(ribbon(pts, 1.5, 7 + 4 * st), { wash: col, washOp: 230 * fade, ink: null });
+      boilSeed('s08breath' + i); paint(ribbon(pts, 3, 16 + 6 * st), { wash: col, washOp: 230 * fade, ink: null });
       inkLine(pts, 1.6, colHi, 'inkfine', .3);
       if (st > .3) glow(pts[5][0], pts[5][1], 60, KIT.CYAN, .3 * st * fade);
     }
   }
   function s08g(t, lt, dur) {
     if (t >= T_BLACK) { setRefreshVoid(seg(t, T_BLACK, T_END), { s: 150 }); return; }
-    const z = kitZoom(lt, .5, T_BLACK - T_G, 1.0, 1.7, kitEase.in2);
+    const z = kitZoom(lt, .3, 137.9 - T_G, 1.0, 1.75, kitEase.sine);
     const turn = (T_G + .3 - t) / .3, vw = turn > .66 ? ['side', true] : turn > .33 ? ['q', true] : ['front', false];
     setWardVoid('c2');
     s08Alarm(t, 960, -300, .9);
@@ -298,9 +305,9 @@
     const v = s08Vis(t, ['C2_7', 'C2_8']);
     const f = himEmotions(t, [[T_G, 'blank', { sweat: .6 }]], { take: 0 });
     glow(960, 520, 560, '#FF6A80', .22 * (1 - eg));
-    const c = kitAnchor(960, 560, 960, 540, z);
+    const zk = (z - 1) / .75, c = kitAnchor(960, 585, 960, lerp(540, 470, zk), z);
     camBegin(c[0], c[1], z);
-    him(960, 740, 86, { ...f, pose: 'bust', cut: 1.4, view: vw[0], flip: vw[1], outfit: 'home', mouth: v ? v.m : 'closed', mouthGlow: mg * .9, eyeGlow: eg, glare: .3, boilKey: 's08 himG' });
+    him(960, 740, 86, { ...f, pose: 'bust', cut: 9, view: vw[0], flip: vw[1], outfit: 'home', mouth: v ? v.m : 'closed', mouthGlow: mg * .9, eyeGlow: eg, glare: .3, boilKey: 's08 himG' });
     if (HIM_LAST.mouth) s08Breath(t, HIM_LAST.mouth, st, ease(seg(t, T_G + .35, T_G + .8)) * (1 - ease(seg(t, T_COMING + .1, T_COMING + .4))));
     camEnd();
     const mp = HIM_LAST.mouth ? toScreen(HIM_LAST.mouth[0], HIM_LAST.mouth[1], LAST_CAM) : [960, 560];

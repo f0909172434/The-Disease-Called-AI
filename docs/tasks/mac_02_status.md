@@ -5,8 +5,8 @@
 | G1 | S02+S03 | 待審（fix #1 已 push） | 0.03–0.55，首幀 0.5–1.2 s | – | `film/out/preview_G1.mp4`（重出中） |
 | G2 | S04+S05 | 待審（fix #2 已 push） | 穩定幀約 0.1 | – | `film/out/preview_G2.mp4` |
 | G3 | S06+S07 | 待審（fix #1 已 push） | 0.1–0.5（重畫 tile 幀到 1+） | – | `film/out/preview_G3.mp4`（已重出，0.13 s/幀牆鐘） |
-| G4 | S08 | 修改中（回饋 #1：切口、08E 巨嘴、08F、08G…） | 0.05–0.1 | – | `film/out/preview_G4.mp4` |
-| G5 | S09 | 待審（已 push） | 0.07–0.2（拉霸 0.25–0.6） | – | `film/out/preview_G5.mp4` |
+| G4 | S08 | 待審（fix #1 已 push） | 0.04–0.6 | – | `film/out/preview_G4.mp4`（已重出，0.09 s/幀牆鐘） |
+| G5 | S09 | 修改中（回饋 #1） | 0.07–0.2（拉霸 0.25–0.6） | – | `film/out/preview_G5.mp4` |
 | G6 | S10–S13 | 進行中 | – | – | `film/out/preview_G6.mp4` |
 
 ## 共用檔案請求（候選，等主 session 決定）
@@ -29,3 +29,4 @@
 - G5 回報：`aiReels` 的快取臉原本依賴全域 T（愛心眼脈動），已在 `ai_fx.js` 內修（lead）；`him.js` 缺「從畫面外伸入的手指」共用版（G5 自寫 `s09Finger`）。決定性：150–151 s 的 `check_determinism` 在 t=150 仍會出現 warm/cold 差異（冷 vs 暖單獨重現時 PSNR=inf，與先前畫面順序有關），未解。
 - G5 弱點：她說「I can't love you」時嘴型偏開心；09A 屏息只有約 0.3 s；09E 他半個身體在畫面外、拉桿擺動小；09H 的琥珀是調色＋glow、不是真的邊緣滲入；09C 她沒有指向的手臂（bust 沒有手），改為視線＋箭頭。
 - 09 的 him bust 已把 `cut` 改成 9（lead），切口移出畫面。
+- G4 fix 備註：他的 bust 全改 `cut: 9`；巨大的她在 08A/08D/08E 以柔和漸層融進暗處；08F 的「撥開頭髮」是畫上去的補丁、不是真的頭髮變形；08G 同時只看得到 1–2 道呼氣筆觸且會跨過臉頰；08C 的 key／strip 沒重出（strip_08C 已刪）。
